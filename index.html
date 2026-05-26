@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ukraine Market</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--tg-theme-hint-color, #ccc);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            background: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .category-card {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .category-card:active {
+            transform: scale(0.98);
+        }
+        
+        .category-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .category-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .goods-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .goods-card {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+        }
+        
+        .goods-card:active {
+            transform: scale(0.98);
+        }
+        
+        .goods-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .goods-info {
+            flex: 1;
+        }
+        
+        .goods-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .goods-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--tg-theme-button-color, #2aab6e);
+            margin-bottom: 4px;
+        }
+        
+        .goods-city {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #666);
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-top: 1px solid var(--tg-theme-hint-color, #ccc);
+        }
+        
+        .nav-item {
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            flex: 1;
+        }
+        
+        .nav-item.active {
+            background: var(--tg-theme-button-color, #2aab6e);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+        }
+        
+        .nav-label {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
+        button {
+            background: var(--tg-theme-button-color, #2aab6e);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .back-button {
+            background: transparent;
+            color: var(--tg-theme-text-color, #000);
+            text-align: left;
+            padding: 8px 0;
+            width: auto;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--tg-theme-hint-color, #666);
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <div class="bottom-nav" id="bottomNav">
+        <div class="nav-item" data-page="home">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Головна</div>
+        </div>
+        <div class="nav-item" data-page="categories">
+            <div class="nav-icon">📦</div>
+            <div class="nav-label">Категорії</div>
+        </div>
+        <div class="nav-item" data-page="profile">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Профіль</div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.MainButton.hide();
+        
+        let currentPage = 'home';
+        let currentCategory = null;
+        let goodsData = [];
+        
+        const BOT_TOKEN = '8935619238:AAG4rSiSWEsNM0NlX0fDivsZ6mWlhEN5ukg';
+        const BOT_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+        
+        const categories = [
+            { name: 'Електроніка', icon: '📱', id: 'Електроніка' },
+            { name: 'Авто', icon: '🚗', id: 'Авто' },
+            { name: 'Шини/Диски', icon: '🛞', id: 'Шини_Диски' },
+            { name: 'Автозапчастини', icon: '🔧', id: 'Автозапчастини' },
+            { name: 'Нерухомість', icon: '🏠', id: 'Нерухомість' },
+            { name: 'Дім і сад', icon: '🏡', id: 'Дім_і_сад' },
+            { name: 'Дитячий світ', icon: '👶', id: 'Дитячий_світ' },
+            { name: 'Тварини', icon: '🐾', id: 'Тварини' },
+            { name: 'Мода і стиль', icon: '👕', id: 'Мода_і_стиль' },
+            { name: 'Книги', icon: '📚', id: 'Книги' },
+            { name: 'Віддам безкоштовно', icon: '🎁', id: 'Віддам_безкоштовно' }
+        ];
+        
+        async function loadGoods(category = null) {
+            showLoading();
+            
+            try {
+                const url = category ? `https://raw.githubusercontent.com/ваш-username/ukraine-market-app/main/goods.json` : `https://raw.githubusercontent.com/ваш-username/ukraine-market-app/main/goods.json`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    goodsData = category ? data.filter(item => item.category === category) : data;
+                    renderGoodsList();
+                } else {
+                    loadFromBot(category);
+                }
+            } catch (error) {
+                loadFromBot(category);
+            }
+        }
+        
+        async function loadFromBot(category) {
+            const userId = tg.initDataUnsafe.user?.id || 0;
+            
+            try {
+                const response = await fetch(`${BOT_API}/getUpdates`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                goodsData = [];
+                renderEmpty();
+            } catch (error) {
+                renderEmpty();
+            }
+        }
+        
+        function showLoading() {
+            document.getElementById('app').innerHTML = '<div class="loading">⏳ Завантаження...</div>';
+        }
+        
+        function renderGoodsList() {
+            if (goodsData.length === 0) {
+                renderEmpty();
+                return;
+            }
+            
+            const html = `
+                <div class="header">
+                    <span>📦 ${currentCategory || 'Всі товари'}</span>
+                    <button class="back-button" onclick="goBack()">← Назад</button>
+                </div>
+                <input type="text" class="search-bar" placeholder="🔍 Пошук..." id="searchInput" onkeyup="searchGoods()">
+                <div class="goods-list">
+                    ${goodsData.map(item => `
+                        <div class="goods-card" onclick="openGoods(${item.id})">
+                            <div class="goods-image" style="background-image: url('${item.image || ''}')"></div>
+                            <div class="goods-info">
+                                <div class="goods-title">${escapeHtml(item.title)}</div>
+                                <div class="goods-price">💰 ${item.price} грн</div>
+                                <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('app').innerHTML = html;
+        }
+        
+        function renderEmpty() {
+            document.getElementById('app').innerHTML = `
+                <div class="empty">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                    <div>Немає товарів</div>
+                    <button onclick="loadGoods(currentCategory)">🔄 Оновити</button>
+                </div>
+            `;
+        }
+        
+        function renderHome() {
+            document.getElementById('app').innerHTML = `
+                <div class="header">
+                    <span>🏠 Ukraine Market</span>
+                </div>
+                <div class="category-grid">
+                    ${categories.slice(0, 6).map(cat => `
+                        <div class="category-card" onclick="selectCategory('${cat.id}')">
+                            <div class="category-icon">${cat.icon}</div>
+                            <div class="category-name">${cat.name}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="viewAllCategories()">📦 Всі категорії →</button>
+            `;
+        }
+        
+        function viewAllCategories() {
+            currentPage = 'categories';
+            renderCategories();
+        }
+        
+        function renderCategories() {
+            document.getElementById('app').innerHTML = `
+                <div class="header">
+                    <span>📦 Категорії</span>
+                </div>
+                <div class="category-grid">
+                    ${categories.map(cat => `
+                        <div class="category-card" onclick="selectCategory('${cat.id}')">
+                            <div class="category-icon">${cat.icon}</div>
+                            <div class="category-name">${cat.name}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="goBack()">◀️ Назад</button>
+            `;
+        }
+        
+        function renderProfile() {
+            const user = tg.initDataUnsafe.user || { first_name: 'Користувач', id: 0, username: null };
+            const html = `
+                <div class="header">
+                    <span>👤 Профіль</span>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 64px; margin-bottom: 16px;">👤</div>
+                    <h2>${escapeHtml(user.first_name)}</h2>
+                    <p>@${user.username || 'користувач'}</p>
+                    <p>ID: ${user.id}</p>
+                    <p style="margin-top: 20px; color: var(--tg-theme-hint-color, #666);">
+                        💡 Ви можете додавати товари через бота
+                    </p>
+                    <button onclick="openBot()">📱 Відкрити бота</button>
+                    <button onclick="tg.close()" style="margin-top: 10px; background: #dc3545;">❌ Закрити</button>
+                </div>
+            `;
+            document.getElementById('app').innerHTML = html;
+        }
+        
+        function selectCategory(category) {
+            currentCategory = category;
+            currentPage = 'goods';
+            loadGoods(category);
+        }
+        
+        function goBack() {
+            if (currentPage === 'goods') {
+                currentPage = 'categories';
+                renderCategories();
+            } else if (currentPage === 'categories') {
+                currentPage = 'home';
+                renderHome();
+            } else {
+                currentPage = 'home';
+                renderHome();
+            }
+        }
+        
+        function searchGoods() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = goodsData.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                (item.description && item.description.toLowerCase().includes(query))
+            );
+            
+            const html = `
+                <div class="header">
+                    <span>🔍 Результати пошуку</span>
+                    <button class="back-button" onclick="goBack()">← Назад</button>
+                </div>
+                <div class="goods-list">
+                    ${filtered.map(item => `
+                        <div class="goods-card" onclick="openGoods(${item.id})">
+                            <div class="goods-image" style="background-image: url('${item.image || ''}')"></div>
+                            <div class="goods-info">
+                                <div class="goods-title">${escapeHtml(item.title)}</div>
+                                <div class="goods-price">💰 ${item.price} грн</div>
+                                <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('app').innerHTML = html;
+        }
+        
+        function openGoods(id) {
+            const item = goodsData.find(g => g.id === id);
+            if (item) {
+                tg.showPopup({
+                    title: item.title,
+                    message: `💰 ${item.price} грн\n📍 ${item.city || 'не вказано'}\n📝 ${item.description || 'Без опису'}`,
+                    buttons: [{ type: 'default', text: 'OK' }]
+                });
+            }
+        }
+        
+        function openBot() {
+            tg.openTelegramLink('https://t.me/UkraineMarketBot');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        document.getElementById('bottomNav').addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            
+            const page = navItem.dataset.page;
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            navItem.classList.add('active');
+            
+            if (page === 'home') {
+                currentPage = 'home';
+                renderHome();
+            } else if (page === 'categories') {
+                currentPage = 'categories';
+                renderCategories();
+            } else if (page === 'profile') {
+                currentPage = 'profile';
+                renderProfile();
+            }
+        });
+        
+        renderHome();
+        document.querySelector('.nav-item[data-page="home"]').classList.add('active');
+        loadGoods();
+    </script>
+</body>
+</html>
