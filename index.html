@@ -24,7 +24,7 @@
             border-radius: 12px;
         }
         .header h2 { font-size: 18px; }
-        .back-button, .menu-button {
+        .back-button {
             background: transparent;
             color: var(--tg-theme-text-color, #000);
             border: none;
@@ -82,19 +82,6 @@
         .goods-category { font-size: 12px; color: #888; margin-bottom: 2px; }
         .goods-city, .job-city { font-size: 12px; color: #666; }
         .goods-date, .job-date { font-size: 10px; color: #999; margin-top: 4px; }
-        .goods-status {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            background: #2aab6e;
-            color: white;
-        }
-        .goods-status.archived { background: #ff9800; }
-        .goods-status.sold { background: #2196f3; }
-        .goods-status.moderation { background: #9c27b0; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -228,7 +215,8 @@
         }
         .btn-publish { background: #2aab6e; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
         .btn-cancel { background: #dc3545; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 8px; }
-        .btn-secondary { background: #6c757d; color: white; border: none; padding: 8px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+        .btn-view { background: #2196f3; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-refresh { background: #ff9800; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
         .message {
             position: fixed;
             bottom: 100px;
@@ -479,9 +467,38 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
+        // ========== БЕЗПЕЧНЕ ЕКРАНУВАННЯ (FIXED XSS) ==========
+        function escapeHtml(text = '') {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            try {
+                return new Date(dateStr).toLocaleDateString('uk-UA');
+            } catch(e) {
+                return '';
+            }
+        }
+        
+        function showMessage(text, isError = false) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.style.backgroundColor = isError ? '#dc3545' : '#2aab6e';
+            msgDiv.style.display = 'block';
+            setTimeout(() => { msgDiv.style.display = 'none'; }, 2000);
+        }
+        
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
+        // ========== СТАН ==========
         let currentPage = 'home';
         let currentCategory = null;
         let goodsData = [];
@@ -519,14 +536,7 @@
             'Домашній персонал', 'Освіта/Репетитори', 'Медицина/Краса', 'Віддалена робота'
         ];
         
-        function showMessage(text, isError = false) {
-            const msgDiv = document.getElementById('message');
-            msgDiv.textContent = text;
-            msgDiv.style.backgroundColor = isError ? '#dc3545' : '#2aab6e';
-            msgDiv.style.display = 'block';
-            setTimeout(() => { msgDiv.style.display = 'none'; }, 2000);
-        }
-        
+        // ========== ФОТО ==========
         function addPhotoInput() {
             if (selectedPhotos.length >= 15) {
                 showMessage('Максимум 15 фото', true);
@@ -581,20 +591,23 @@
             return urls.join(',');
         }
         
+        // ========== API ==========
         async function loadUserProfile() {
             const user = tg.initDataUnsafe.user || { id: 0, first_name: 'Гість', username: null };
             currentUser = user;
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=*`, {
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            });
-            const data = await response.json();
-            if (!data.length) {
-                await fetch(`${SUPABASE_URL}/rest/v1/users`, {
-                    method: 'POST',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: user.id, username: user.username, first_name: user.first_name, created_at: new Date().toISOString() })
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=*`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
-            }
+                const data = await response.json();
+                if (!data.length) {
+                    await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+                        method: 'POST',
+                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: user.id, username: user.username, first_name: user.first_name, created_at: new Date().toISOString() })
+                    });
+                }
+            } catch(e) { console.error(e); }
         }
         
         async function updateUserPhone(phone) {
@@ -702,13 +715,14 @@
             return response.ok;
         }
         
+        // ========== RENDER ==========
         function renderGoodsList() {
             if (!goodsData.length) {
                 document.getElementById('app').innerHTML = '<div class="empty">📭 Немає товарів</div>';
                 return;
             }
             document.getElementById('app').innerHTML = `
-                <div class="header"><h2>📦 ${currentCategory || 'Всі товари'}</h2><button class="back-button" onclick="goBack()">← Назад</button></div>
+                <div class="header"><h2>📦 ${escapeHtml(currentCategory || 'Всі товари')}</h2><button class="back-button" onclick="goBack()">← Назад</button></div>
                 <input type="text" class="search-bar" placeholder="🔍 Пошук за назвою..." id="searchInput" onkeyup="searchGoods()">
                 <div class="goods-list" id="goodsList"></div>
                 <button class="btn-refresh" onclick="loadGoods()">🔄 Оновити</button>
@@ -716,13 +730,13 @@
             const container = document.getElementById('goodsList');
             container.innerHTML = goodsData.map(item => `
                 <div class="goods-card" onclick="openGoodsDetail(${item.id})">
-                    <div class="goods-image" style="background-image: url('${item.photos ? item.photos.split(',')[0] : ''}')"></div>
+                    <div class="goods-image" style="background-image: url('${escapeHtml(item.photos ? item.photos.split(',')[0] : '')}')"></div>
                     <div class="goods-info">
                         <div class="goods-title">${escapeHtml(item.title)}</div>
-                        <div class="goods-price">💰 ${item.price} грн</div>
-                        <div class="goods-category">📂 ${item.category || 'Без категорії'}</div>
-                        <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
-                        <div class="goods-date">📅 ${new Date(item.created_at).toLocaleDateString()}</div>
+                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                        <div class="goods-category">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                        <div class="goods-date">📅 ${formatDate(item.created_at)}</div>
                     </div>
                 </div>
             `).join('');
@@ -737,12 +751,12 @@
             container.innerHTML = myGoodsData.map(item => `
                 <div class="my-goods-card">
                     <div class="my-goods-header">
-                        <div class="my-goods-image" style="background-image: url('${item.photos ? item.photos.split(',')[0] : ''}')"></div>
+                        <div class="my-goods-image" style="background-image: url('${escapeHtml(item.photos ? item.photos.split(',')[0] : '')}')"></div>
                         <div class="my-goods-info">
                             <div class="my-goods-title">${escapeHtml(item.title)}</div>
-                            <div class="my-goods-price">💰 ${item.price} грн</div>
-                            <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
-                            <div class="goods-date">📅 ${new Date(item.created_at).toLocaleDateString()}</div>
+                            <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                            <div class="goods-date">📅 ${formatDate(item.created_at)}</div>
                         </div>
                     </div>
                     <div class="my-goods-actions">
@@ -765,9 +779,9 @@
             `;
             const container = document.getElementById('homeCategories');
             container.innerHTML = categories.slice(0, 8).map(cat => `
-                <div class="category-card" onclick="selectHomeCategory('${cat.id}')">
+                <div class="category-card" onclick="selectHomeCategory('${escapeHtml(cat.id)}')">
                     <div class="category-icon">${cat.icon}</div>
-                    <div class="category-name">${cat.name}</div>
+                    <div class="category-name">${escapeHtml(cat.name)}</div>
                 </div>
             `).join('');
         }
@@ -788,9 +802,9 @@
                     <div class="job-card" onclick="openJobDetail(${job.id})">
                         <div class="job-info">
                             <div class="job-title">${escapeHtml(job.title)}</div>
-                            <div class="job-salary">💰 ${job.salary} грн</div>
-                            <div class="job-city">📍 ${job.city || 'не вказано'}</div>
-                            <div class="job-date">📅 ${new Date(job.created_at).toLocaleDateString()}</div>
+                            <div class="job-salary">💰 ${escapeHtml(job.salary)} грн</div>
+                            <div class="job-city">📍 ${escapeHtml(job.city || 'не вказано')}</div>
+                            <div class="job-date">📅 ${formatDate(job.created_at)}</div>
                         </div>
                     </div>
                 `).join('') || '<div class="empty">📭 Немає вакансій</div>';
@@ -799,9 +813,9 @@
                     <div class="resume-card" onclick="openResumeDetail(${resume.id})">
                         <div class="job-info">
                             <div class="resume-specialty">${escapeHtml(resume.specialty)}</div>
-                            <div class="job-salary">💰 ${resume.salary} грн</div>
-                            <div class="job-city">📍 ${resume.city || 'не вказано'}</div>
-                            <div class="job-date">📅 ${new Date(resume.created_at).toLocaleDateString()}</div>
+                            <div class="job-salary">💰 ${escapeHtml(resume.salary)} грн</div>
+                            <div class="job-city">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
+                            <div class="job-date">📅 ${formatDate(resume.created_at)}</div>
                         </div>
                     </div>
                 `).join('') || '<div class="empty">📭 Немає резюме</div>';
@@ -826,7 +840,7 @@
                     <div class="stat-item"><div class="stat-number">${stats.total}</div><div class="stat-label">Всього</div></div>
                 </div>
                 <div class="profile-phone">
-                    <input type="tel" id="profilePhone" placeholder="+380XXXXXXXXX" value="${localStorage.getItem('userPhone') || ''}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                    <input type="tel" id="profilePhone" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
                     <button class="btn-publish" style="margin-top:10px" onclick="savePhone()">💾 Зберегти номер</button>
                 </div>
                 <div class="profile-tabs">
@@ -841,6 +855,7 @@
             loadMyGoods(currentProfileTab);
         }
         
+        // ========== ДІЇ ==========
         function savePhone() {
             const phone = document.getElementById('profilePhone').value;
             if (phone) {
@@ -886,18 +901,18 @@
         }
         
         function searchGoods() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput')?.value.toLowerCase() || '';
             const filtered = goodsData.filter(item => item.title.toLowerCase().includes(query));
             const container = document.getElementById('goodsList');
             if (container) {
                 container.innerHTML = filtered.map(item => `
                     <div class="goods-card" onclick="openGoodsDetail(${item.id})">
-                        <div class="goods-image" style="background-image: url('${item.photos ? item.photos.split(',')[0] : ''}')"></div>
+                        <div class="goods-image" style="background-image: url('${escapeHtml(item.photos ? item.photos.split(',')[0] : '')}')"></div>
                         <div class="goods-info">
                             <div class="goods-title">${escapeHtml(item.title)}</div>
-                            <div class="goods-price">💰 ${item.price} грн</div>
-                            <div class="goods-category">📂 ${item.category || 'Без категорії'}</div>
-                            <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
+                            <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                            <div class="goods-category">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                         </div>
                     </div>
                 `).join('');
@@ -921,7 +936,7 @@
             const sheet = document.getElementById('bottomSheet');
             const overlay = document.getElementById('bottomSheetOverlay');
             const content = document.getElementById('sheetContent');
-            content.innerHTML = actions.map(a => `<div class="sheet-item" onclick="${a.onclick}(); closeBottomSheet();">${a.text}</div>`).join('');
+            content.innerHTML = actions.map(a => `<div class="sheet-item" onclick="${a.onclick}(); closeBottomSheet();">${escapeHtml(a.text)}</div>`).join('');
             sheet.classList.add('show');
             overlay.classList.add('show');
         }
@@ -975,7 +990,7 @@
             let photosHtml = '';
             if (item.photos) {
                 const photos = item.photos.split(',');
-                photosHtml = `<div class="detail-photo" style="background-image: url('${photos[0]}')"></div>`;
+                photosHtml = `<div class="detail-photo" style="background-image: url('${escapeHtml(photos[0])}')"></div>`;
             } else {
                 photosHtml = `<div class="detail-photo" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>`;
             }
@@ -983,12 +998,12 @@
             content.innerHTML = `
                 ${photosHtml}
                 <div class="detail-title">${escapeHtml(item.title)}</div>
-                <div class="detail-price">💰 ${item.price} грн</div>
-                <div class="detail-category">📂 Категорія: ${item.category || 'не вказано'}</div>
-                <div class="detail-city">📍 ${item.city || 'не вказано'}</div>
-                <div class="detail-desc">📝 ${item.description || 'Без опису'}</div>
-                <div class="detail-phone">📱 Телефон: ${item.phone || user?.phone || 'не вказано'}</div>
-                <button class="contact-btn" onclick="contactSeller('${item.phone || user?.phone}')">💬 Зв'язатися</button>
+                <div class="detail-price">💰 ${escapeHtml(item.price)} грн</div>
+                <div class="detail-category">📂 Категорія: ${escapeHtml(item.category || 'не вказано')}</div>
+                <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                <div class="detail-desc">📝 ${escapeHtml(item.description || 'Без опису')}</div>
+                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || user?.phone || 'не вказано')}</div>
+                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || user?.phone)}')">💬 Зв'язатися</button>
             `;
             modal.style.display = 'flex';
         }
@@ -1001,12 +1016,12 @@
             const content = document.getElementById('detailContent');
             content.innerHTML = `
                 <div class="detail-title">${escapeHtml(item.title)}</div>
-                <div class="detail-price">💰 ${item.salary} грн</div>
-                <div class="detail-city">📍 ${item.city || 'не вказано'}</div>
-                <div class="detail-desc">🕐 Графік: ${item.schedule || 'не вказано'}</div>
-                <div class="detail-desc">📝 ${item.description || 'Без опису'}</div>
-                <div class="detail-phone">📱 Телефон: ${item.phone || user?.phone || 'не вказано'}</div>
-                <button class="contact-btn" onclick="contactSeller('${item.phone || user?.phone}')">💬 Відгукнутися</button>
+                <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
+                <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                <div class="detail-desc">🕐 Графік: ${escapeHtml(item.schedule || 'не вказано')}</div>
+                <div class="detail-desc">📝 ${escapeHtml(item.description || 'Без опису')}</div>
+                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || user?.phone || 'не вказано')}</div>
+                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || user?.phone)}')">💬 Відгукнутися</button>
             `;
             modal.style.display = 'flex';
         }
@@ -1019,12 +1034,12 @@
             const content = document.getElementById('detailContent');
             content.innerHTML = `
                 <div class="detail-title">${escapeHtml(item.specialty)}</div>
-                <div class="detail-price">💰 ${item.salary} грн</div>
-                <div class="detail-city">📍 ${item.city || 'не вказано'}</div>
-                <div class="detail-desc">📝 Досвід: ${item.experience || 'не вказано'}</div>
-                <div class="detail-desc">🛠️ Навички: ${item.skills || 'не вказано'}</div>
-                <div class="detail-phone">📱 Телефон: ${item.phone || user?.phone || 'не вказано'}</div>
-                <button class="contact-btn" onclick="contactSeller('${item.phone || user?.phone}')">💬 Запросити</button>
+                <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
+                <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                <div class="detail-desc">📝 Досвід: ${escapeHtml(item.experience || 'не вказано')}</div>
+                <div class="detail-desc">🛠️ Навички: ${escapeHtml(item.skills || 'не вказано')}</div>
+                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || user?.phone || 'не вказано')}</div>
+                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || user?.phone)}')">💬 Запросити</button>
             `;
             modal.style.display = 'flex';
         }
@@ -1126,8 +1141,7 @@
             if (ok) { closeModal(); loadResumes(); }
         }
         
-        function escapeHtml(text) { if (!text) return ''; return text; }
-        
+        // ========== INIT ==========
         document.getElementById('bottomNav').addEventListener('click', (e) => {
             const btn = e.target.closest('.nav-item');
             if (!btn) return;
