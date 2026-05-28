@@ -75,17 +75,6 @@
         .nav-item.active { background: #2aab6e; color: white; }
         .nav-icon { font-size: 24px; }
         .nav-label { font-size: 12px; margin-top: 4px; }
-        button {
-            background: #2aab6e;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
         .add-button {
             position: fixed;
             bottom: 80px;
@@ -93,7 +82,7 @@
             width: 56px;
             height: 56px;
             border-radius: 28px;
-            background: #2aab6e;
+            background: #dc3545;
             color: white;
             font-size: 28px;
             display: flex;
@@ -103,6 +92,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             z-index: 100;
         }
+        .add-button:active { transform: scale(0.95); }
         .modal {
             display: none;
             position: fixed;
@@ -132,11 +122,28 @@
         }
         .modal-content textarea { min-height: 80px; resize: vertical; }
         .tab-buttons { display: flex; gap: 10px; margin-bottom: 16px; }
-        .tab-btn { flex: 1; text-align: center; padding: 10px; background: #e0e0e0; border-radius: 8px; cursor: pointer; }
+        .tab-btn { 
+            flex: 1; text-align: center; padding: 10px; 
+            background: #e0e0e0; border-radius: 8px; cursor: pointer; 
+        }
         .tab-btn.active { background: #2aab6e; color: white; }
         .back-button { background: transparent; color: #000; text-align: left; padding: 8px 0; width: auto; }
         .loading { text-align: center; padding: 40px; }
         .empty { text-align: center; padding: 40px; color: #666; }
+        
+        /* Кольорові кнопки */
+        .btn-publish { background: #2aab6e; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-cancel { background: #dc3545; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 8px; }
+        .btn-view { background: #007bff; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; }
+        .btn-search { background: #6c5ce7; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; }
+        .btn-refresh { background: #ff9800; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; }
+        
+        button, .btn-publish, .btn-cancel, .btn-view, .btn-search, .btn-refresh {
+            transition: transform 0.1s;
+        }
+        button:active, .btn-publish:active, .btn-cancel:active, .btn-view:active, .btn-search:active, .btn-refresh:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -172,7 +179,7 @@
                 <input type="text" id="goodsPrice" placeholder="Ціна (грн)">
                 <input type="text" id="goodsCity" placeholder="Місто">
                 <textarea id="goodsDesc" placeholder="Опис товару"></textarea>
-                <button onclick="submitGoods()">Опублікувати</button>
+                <button class="btn-publish" onclick="submitGoods()">✅ Опублікувати</button>
             </div>
             <div id="addJobForm" style="display:none">
                 <h3>➕ Додати вакансію</h3>
@@ -189,7 +196,7 @@
                 <input type="text" id="jobCity" placeholder="Місто">
                 <input type="text" id="jobSchedule" placeholder="Графік роботи">
                 <textarea id="jobDesc" placeholder="Опис вакансії"></textarea>
-                <button onclick="submitJob()">Опублікувати</button>
+                <button class="btn-publish" onclick="submitJob()">✅ Опублікувати</button>
             </div>
             <div id="addResumeForm" style="display:none">
                 <h3>➕ Додати резюме</h3>
@@ -198,9 +205,9 @@
                 <input type="text" id="resumeSkills" placeholder="Навички">
                 <input type="text" id="resumeCity" placeholder="Місто">
                 <input type="text" id="resumeSalary" placeholder="Очікувана зарплата">
-                <button onclick="submitResume()">Опублікувати</button>
+                <button class="btn-publish" onclick="submitResume()">✅ Опублікувати</button>
             </div>
-            <button onclick="closeModal()" style="background:#dc3545; margin-top:8px">Скасувати</button>
+            <button class="btn-cancel" onclick="closeModal()">❌ Скасувати</button>
         </div>
     </div>
 
@@ -327,11 +334,12 @@
                         </div>
                     `).join('')}
                 </div>
+                <button class="btn-refresh" onclick="loadGoods()">🔄 Оновити</button>
             `;
         }
         
         function renderEmpty() {
-            document.getElementById('app').innerHTML = `<div class="empty">📭 Немає товарів<br><button onclick="loadGoods()">🔄 Оновити</button></div>`;
+            document.getElementById('app').innerHTML = `<div class="empty">📭 Немає товарів<br><button class="btn-refresh" onclick="loadGoods()">🔄 Оновити</button></div>`;
         }
         
         function renderHome() {
@@ -345,8 +353,8 @@
                         </div>
                     `).join('')}
                 </div>
-                <button onclick="viewAllCategories()">📦 Всі категорії →</button>
-                <button onclick="goToJobs()">💼 Шукаю роботу →</button>
+                <button class="btn-view" onclick="viewAllCategories()">📦 Всі категорії →</button>
+                <button class="btn-search" onclick="goToJobs()">💼 Шукаю роботу →</button>
             `;
         }
         
@@ -375,15 +383,16 @@
                     <div class="tab-btn ${currentJobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
                 </div>
                 <div id="jobsContent"></div>
+                <button class="btn-refresh" onclick="loadJobs()">🔄 Оновити</button>
             `;
             if (currentJobsTab === 'jobs') {
                 document.getElementById('jobsContent').innerHTML = jobsData.map(job => `
                     <div class="job-card" onclick="openJob(${job.id})"><div class="job-info"><div class="job-title">${escapeHtml(job.title)}</div><div class="job-salary">💰 ${job.salary} грн</div><div class="job-city">📍 ${job.city || 'не вказано'}</div></div></div>
-                `).join('');
+                `).join('') || '<div class="empty">📭 Немає вакансій</div>';
             } else {
                 document.getElementById('jobsContent').innerHTML = resumesData.map(resume => `
                     <div class="job-card" onclick="openResume(${resume.id})"><div class="job-info"><div class="job-title">${escapeHtml(resume.specialty)}</div><div class="job-salary">💰 ${resume.salary} грн</div><div class="job-city">📍 ${resume.city || 'не вказано'}</div></div></div>
-                `).join('');
+                `).join('') || '<div class="empty">📭 Немає резюме</div>';
             }
         }
         
@@ -391,7 +400,7 @@
             const user = tg.initDataUnsafe.user || { first_name: 'Користувач', id: 0 };
             document.getElementById('app').innerHTML = `
                 <div class="header"><span>👤 Профіль</span></div>
-                <div style="text-align:center;padding:20px"><div style="font-size:64px">👤</div><h2>${escapeHtml(user.first_name)}</h2><p>ID: ${user.id}</p><button onclick="tg.close()">❌ Закрити</button></div>
+                <div style="text-align:center;padding:20px"><div style="font-size:64px">👤</div><h2>${escapeHtml(user.first_name)}</h2><p>ID: ${user.id}</p><button class="btn-cancel" onclick="tg.close()">❌ Закрити</button></div>
             `;
         }
         
@@ -416,6 +425,7 @@
             document.getElementById('app').innerHTML = `
                 <div class="header"><span>🔍 Результати</span><button onclick="goBack()">←</button></div>
                 <div class="goods-list">${filtered.map(item => `<div class="goods-card" onclick="openGoods(${item.id})"><div class="goods-info"><div class="goods-title">${escapeHtml(item.title)}</div><div class="goods-price">💰 ${item.price} грн</div></div></div>`).join('')}</div>
+                <button class="btn-refresh" onclick="loadGoods()">🔄 Оновити</button>
             `;
         }
         
