@@ -58,8 +58,8 @@
         .category-card:active { transform: scale(0.98); }
         .category-icon { font-size: 28px; margin-bottom: 4px; }
         .category-name { font-size: 12px; font-weight: 500; }
-        .goods-list, .jobs-list { display: flex; flex-direction: column; gap: 12px; }
-        .goods-card, .job-card, .resume-card {
+        .goods-list { display: flex; flex-direction: column; gap: 12px; }
+        .goods-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
             border-radius: 12px;
             padding: 12px;
@@ -76,12 +76,12 @@
             background-size: cover;
             background-position: center;
         }
-        .goods-info, .job-info { flex: 1; }
-        .goods-title, .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-        .goods-price, .job-salary { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 2px; }
+        .goods-info { flex: 1; }
+        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 2px; }
         .goods-category { font-size: 12px; color: #888; margin-bottom: 2px; }
-        .goods-city, .job-city { font-size: 12px; color: #666; }
-        .goods-date, .job-date { font-size: 10px; color: #999; margin-top: 4px; }
+        .goods-city { font-size: 12px; color: #666; }
+        .goods-date { font-size: 10px; color: #999; margin-top: 4px; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -275,17 +275,20 @@
             flex-wrap: wrap;
         }
         .action-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
             cursor: pointer;
             border: none;
+            font-weight: 500;
         }
         .action-view { background: #2196f3; color: white; }
         .action-edit { background: #ff9800; color: white; }
         .action-archive { background: #9c27b0; color: white; }
         .action-sold { background: #4caf50; color: white; }
         .action-delete { background: #dc3545; color: white; }
+        .action-btn:active { transform: scale(0.96); }
+        .action-btn.loading { opacity: 0.6; cursor: wait; }
         .empty { text-align: center; padding: 40px; color: #666; }
         .detail-modal {
             display: none;
@@ -364,19 +367,42 @@
         }
         .bottom-sheet-overlay.show { display: block; }
         .sheet-item {
-            padding: 14px;
+            padding: 16px;
             text-align: center;
             border-bottom: 1px solid #eee;
             cursor: pointer;
+            font-size: 16px;
         }
         .sheet-item:active { background: #f0f0f0; }
         .sheet-cancel {
-            padding: 14px;
+            padding: 16px;
             text-align: center;
             cursor: pointer;
             color: #dc3545;
             font-weight: 600;
+            font-size: 16px;
         }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .job-card, .resume-card {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
+        .job-city { font-size: 12px; color: #666; }
     </style>
 </head>
 <body>
@@ -467,7 +493,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // ========== БЕЗПЕЧНЕ ЕКРАНУВАННЯ (FIXED XSS) ==========
+        // ========== БЕЗПЕКА ==========
         function escapeHtml(text = '') {
             if (!text) return '';
             return String(text)
@@ -482,17 +508,28 @@
             if (!dateStr) return '';
             try {
                 return new Date(dateStr).toLocaleDateString('uk-UA');
-            } catch(e) {
-                return '';
-            }
+            } catch(e) { return ''; }
         }
         
-        function showMessage(text, isError = false) {
+        function showMessage(text, isError = false, duration = 2000) {
             const msgDiv = document.getElementById('message');
             msgDiv.textContent = text;
             msgDiv.style.backgroundColor = isError ? '#dc3545' : '#2aab6e';
             msgDiv.style.display = 'block';
-            setTimeout(() => { msgDiv.style.display = 'none'; }, 2000);
+            setTimeout(() => { msgDiv.style.display = 'none'; }, duration);
+        }
+        
+        function setButtonLoading(btn, isLoading) {
+            if (isLoading) {
+                btn.originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="loading-spinner"></span> Завантаження...';
+                btn.disabled = true;
+                btn.classList.add('loading');
+            } else {
+                btn.innerHTML = btn.originalText;
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            }
         }
         
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
@@ -715,6 +752,79 @@
             return response.ok;
         }
         
+        // ========== UI ACTIONS ==========
+        function showConfirmSheet(title, message, onConfirm) {
+            openBottomSheet([
+                { text: '✅ ' + title, onclick: `window.confirmedAction = true; window.pendingConfirm = () => { ${onConfirm} }; window.checkConfirm()`, danger: true }
+            ]);
+            window.pendingConfirmMessage = message;
+            showMessage(message, false, 3000);
+        }
+        
+        window.checkConfirm = function() {
+            if (window.confirmedAction && window.pendingConfirm) {
+                window.pendingConfirm();
+                window.confirmedAction = false;
+                window.pendingConfirm = null;
+            }
+        };
+        
+        async function deleteGoodsWithFeedback(id, btnElement) {
+            setButtonLoading(btnElement, true);
+            try {
+                const success = await deleteGoods(id);
+                if (success) {
+                    showMessage('🗑 Оголошення видалено');
+                    await loadMyGoods(currentProfileTab);
+                    await loadGoods();
+                    const card = document.getElementById(`my-goods-${id}`);
+                    if (card) card.style.display = 'none';
+                } else {
+                    showMessage('❌ Помилка видалення', true);
+                }
+            } catch(e) {
+                showMessage('❌ Помилка', true);
+            } finally {
+                setButtonLoading(btnElement, false);
+            }
+        }
+        
+        async function archiveGoodsWithFeedback(id, btnElement) {
+            setButtonLoading(btnElement, true);
+            try {
+                const success = await updateGoodsStatus(id, 'archived');
+                if (success) {
+                    showMessage('📦 Переміщено в архів');
+                    await loadMyGoods(currentProfileTab);
+                    await loadGoods();
+                } else {
+                    showMessage('❌ Помилка', true);
+                }
+            } catch(e) {
+                showMessage('❌ Помилка', true);
+            } finally {
+                setButtonLoading(btnElement, false);
+            }
+        }
+        
+        async function markAsSoldWithFeedback(id, btnElement) {
+            setButtonLoading(btnElement, true);
+            try {
+                const success = await updateGoodsStatus(id, 'sold');
+                if (success) {
+                    showMessage('💰 Позначено як продано');
+                    await loadMyGoods(currentProfileTab);
+                    await loadGoods();
+                } else {
+                    showMessage('❌ Помилка', true);
+                }
+            } catch(e) {
+                showMessage('❌ Помилка', true);
+            } finally {
+                setButtonLoading(btnElement, false);
+            }
+        }
+        
         // ========== RENDER ==========
         function renderGoodsList() {
             if (!goodsData.length) {
@@ -730,7 +840,7 @@
             const container = document.getElementById('goodsList');
             container.innerHTML = goodsData.map(item => `
                 <div class="goods-card" onclick="openGoodsDetail(${item.id})">
-                    <div class="goods-image" style="background-image: url('${escapeHtml(item.photos ? item.photos.split(',')[0] : '')}')"></div>
+                    <div class="goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
                     <div class="goods-info">
                         <div class="goods-title">${escapeHtml(item.title)}</div>
                         <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
@@ -742,6 +852,17 @@
             `).join('');
         }
         
+        function getFirstPhoto(photos) {
+            if (!photos) return '';
+            if (photos.startsWith('[')) {
+                try {
+                    const arr = JSON.parse(photos);
+                    return arr[0] || '';
+                } catch(e) { return ''; }
+            }
+            return photos.split(',')[0] || '';
+        }
+        
         function renderMyGoodsList() {
             const container = document.getElementById('myGoodsList');
             if (!myGoodsData.length) {
@@ -749,9 +870,9 @@
                 return;
             }
             container.innerHTML = myGoodsData.map(item => `
-                <div class="my-goods-card">
+                <div class="my-goods-card" id="my-goods-${item.id}">
                     <div class="my-goods-header">
-                        <div class="my-goods-image" style="background-image: url('${escapeHtml(item.photos ? item.photos.split(',')[0] : '')}')"></div>
+                        <div class="my-goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
                         <div class="my-goods-info">
                             <div class="my-goods-title">${escapeHtml(item.title)}</div>
                             <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
@@ -762,9 +883,9 @@
                     <div class="my-goods-actions">
                         <button class="action-btn action-view" onclick="openGoodsDetail(${item.id})">👁 Переглянути</button>
                         <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
-                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="archiveGoods(${item.id})">📦 В архів</button>` : ''}
-                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="markAsSold(${item.id})">💰 Продано</button>` : ''}
-                        <button class="action-btn action-delete" onclick="deleteGoodsConfirm(${item.id})">🗑 Видалити</button>
+                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="archiveGoodsWithFeedback(${item.id}, this)">📦 В архів</button>` : ''}
+                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="markAsSoldWithFeedback(${item.id}, this)">💰 Продано</button>` : ''}
+                        <button class="action-btn action-delete" onclick="deleteGoodsWithFeedback(${item.id}, this)">🗑 Видалити</button>
                     </div>
                 </div>
             `).join('');
@@ -907,7 +1028,7 @@
             if (container) {
                 container.innerHTML = filtered.map(item => `
                     <div class="goods-card" onclick="openGoodsDetail(${item.id})">
-                        <div class="goods-image" style="background-image: url('${escapeHtml(item.photos ? item.photos.split(',')[0] : '')}')"></div>
+                        <div class="goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
                         <div class="goods-info">
                             <div class="goods-title">${escapeHtml(item.title)}</div>
                             <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
@@ -950,36 +1071,6 @@
             showMessage('✏️ Редагування в розробці');
         }
         
-        async function archiveGoods(id) {
-            if (await updateGoodsStatus(id, 'archived')) {
-                showMessage('📦 Переміщено в архів');
-                loadMyGoods(currentProfileTab);
-                loadGoods();
-            }
-        }
-        
-        async function markAsSold(id) {
-            if (await updateGoodsStatus(id, 'sold')) {
-                showMessage('💰 Позначено як продано');
-                loadMyGoods(currentProfileTab);
-                loadGoods();
-            }
-        }
-        
-        function deleteGoodsConfirm(id) {
-            openBottomSheet([
-                { text: '🗑 Видалити оголошення', onclick: `deleteGoodsItem(${id})` }
-            ]);
-        }
-        
-        async function deleteGoodsItem(id) {
-            if (await deleteGoods(id)) {
-                showMessage('🗑 Оголошення видалено');
-                loadMyGoods(currentProfileTab);
-                loadGoods();
-            }
-        }
-        
         async function openGoodsDetail(id) {
             const item = goodsData.find(g => g.id === id);
             if (!item) return;
@@ -988,9 +1079,9 @@
             const content = document.getElementById('detailContent');
             
             let photosHtml = '';
-            if (item.photos) {
-                const photos = item.photos.split(',');
-                photosHtml = `<div class="detail-photo" style="background-image: url('${escapeHtml(photos[0])}')"></div>`;
+            const firstPhoto = getFirstPhoto(item.photos);
+            if (firstPhoto) {
+                photosHtml = `<div class="detail-photo" style="background-image: url('${escapeHtml(firstPhoto)}')"></div>`;
             } else {
                 photosHtml = `<div class="detail-photo" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>`;
             }
@@ -1160,6 +1251,34 @@
         loadGoods();
         loadJobs();
         loadResumes();
+        
+        // Глобальні для onclick
+        window.deleteGoodsWithFeedback = deleteGoodsWithFeedback;
+        window.archiveGoodsWithFeedback = archiveGoodsWithFeedback;
+        window.markAsSoldWithFeedback = markAsSoldWithFeedback;
+        window.showAddModal = showAddModal;
+        window.closeDetailModal = closeDetailModal;
+        window.goBack = goBack;
+        window.openGoodsDetail = openGoodsDetail;
+        window.openJobDetail = openJobDetail;
+        window.openResumeDetail = openResumeDetail;
+        window.contactSeller = contactSeller;
+        window.editGoods = editGoods;
+        window.savePhone = savePhone;
+        window.switchProfileTab = switchProfileTab;
+        window.switchJobsTab = switchJobsTab;
+        window.goToAllGoods = goToAllGoods;
+        window.goToJobs = goToJobs;
+        window.selectHomeCategory = selectHomeCategory;
+        window.searchGoods = searchGoods;
+        window.submitGoods = submitGoods;
+        window.submitJob = submitJob;
+        window.submitResume = submitResume;
+        window.switchAddTab = switchAddTab;
+        window.closeModal = closeModal;
+        window.closeBottomSheet = closeBottomSheet;
+        window.addPhotoInput = addPhotoInput;
+        window.removePhoto = removePhoto;
     </script>
 </body>
 </html>
