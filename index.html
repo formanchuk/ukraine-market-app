@@ -24,6 +24,16 @@
             border-radius: 12px;
         }
         .header h2 { font-size: 18px; }
+        .back-button, .menu-button {
+            background: transparent;
+            color: var(--tg-theme-text-color, #000);
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+            margin: 0;
+        }
         .search-bar {
             width: 100%;
             padding: 12px;
@@ -48,14 +58,15 @@
         .category-card:active { transform: scale(0.98); }
         .category-icon { font-size: 28px; margin-bottom: 4px; }
         .category-name { font-size: 12px; font-weight: 500; }
-        .goods-list { display: flex; flex-direction: column; gap: 12px; }
-        .goods-card {
+        .goods-list, .jobs-list { display: flex; flex-direction: column; gap: 12px; }
+        .goods-card, .job-card, .resume-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
             border-radius: 12px;
             padding: 12px;
             display: flex;
             gap: 12px;
             cursor: pointer;
+            position: relative;
         }
         .goods-image {
             width: 80px;
@@ -65,11 +76,25 @@
             background-size: cover;
             background-position: center;
         }
-        .goods-info { flex: 1; }
-        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-        .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 2px; }
+        .goods-info, .job-info { flex: 1; }
+        .goods-title, .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .goods-price, .job-salary { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 2px; }
         .goods-category { font-size: 12px; color: #888; margin-bottom: 2px; }
-        .goods-city { font-size: 12px; color: #666; }
+        .goods-city, .job-city { font-size: 12px; color: #666; }
+        .goods-date, .job-date { font-size: 10px; color: #999; margin-top: 4px; }
+        .goods-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #2aab6e;
+            color: white;
+        }
+        .goods-status.archived { background: #ff9800; }
+        .goods-status.sold { background: #2196f3; }
+        .goods-status.moderation { background: #9c27b0; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -138,6 +163,27 @@
             background: #e0e0e0; border-radius: 8px; cursor: pointer; 
         }
         .tab-btn.active { background: #2aab6e; color: white; }
+        .profile-tabs { display: flex; gap: 5px; margin-bottom: 16px; flex-wrap: wrap; }
+        .profile-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .profile-tab.active { background: #2aab6e; color: white; }
+        .jobs-tabs { display: flex; gap: 5px; margin-bottom: 16px; }
+        .jobs-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .jobs-tab.active { background: #2aab6e; color: white; }
         .photo-list {
             display: flex;
             flex-wrap: wrap;
@@ -182,6 +228,7 @@
         }
         .btn-publish { background: #2aab6e; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
         .btn-cancel { background: #dc3545; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 8px; }
+        .btn-secondary { background: #6c757d; color: white; border: none; padding: 8px; border-radius: 8px; font-size: 12px; cursor: pointer; }
         .message {
             position: fixed;
             bottom: 100px;
@@ -193,41 +240,65 @@
             border-radius: 20px;
             z-index: 300;
             display: none;
-            white-space: nowrap;
         }
-        .profile-info {
+        .profile-header {
             text-align: center;
             padding: 20px;
-        }
-        .profile-avatar { font-size: 80px; margin-bottom: 16px; }
-        .profile-name { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-        .profile-id { color: #666; margin-bottom: 20px; }
-        .profile-phone {
-            background: #f0f0f0;
-            padding: 12px;
-            border-radius: 10px;
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 16px;
             margin-bottom: 20px;
         }
-        .job-card {
+        .profile-avatar { font-size: 60px; margin-bottom: 8px; }
+        .profile-name { font-size: 20px; font-weight: 600; }
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 24px; font-weight: 700; color: #2aab6e; }
+        .stat-label { font-size: 12px; color: #666; }
+        .my-goods-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 12px;
-            cursor: pointer;
+            position: relative;
         }
-        .job-title { font-size: 16px; font-weight: 600; }
-        .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
-        .job-city { font-size: 12px; color: #666; }
-        .resume-card {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            cursor: pointer;
+        .my-goods-header {
+            display: flex;
+            gap: 12px;
         }
-        .resume-specialty { font-size: 16px; font-weight: 600; }
-        .resume-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
-        .resume-city { font-size: 12px; color: #666; }
+        .my-goods-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            background: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+        .my-goods-info { flex: 1; }
+        .my-goods-title { font-size: 15px; font-weight: 600; }
+        .my-goods-price { font-size: 16px; font-weight: 700; color: #2aab6e; }
+        .my-goods-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+        .action-view { background: #2196f3; color: white; }
+        .action-edit { background: #ff9800; color: white; }
+        .action-archive { background: #9c27b0; color: white; }
+        .action-sold { background: #4caf50; color: white; }
+        .action-delete { background: #dc3545; color: white; }
+        .empty { text-align: center; padding: 40px; color: #666; }
         .detail-modal {
             display: none;
             position: fixed;
@@ -280,8 +351,44 @@
             cursor: pointer;
             width: 100%;
         }
-        .empty { text-align: center; padding: 40px; color: #666; }
-        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .bottom-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            z-index: 250;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        .bottom-sheet.show { display: block; }
+        .bottom-sheet-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 240;
+        }
+        .bottom-sheet-overlay.show { display: block; }
+        .sheet-item {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .sheet-item:active { background: #f0f0f0; }
+        .sheet-cancel {
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            color: #dc3545;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -362,6 +469,12 @@
         </div>
     </div>
 
+    <div id="bottomSheetOverlay" class="bottom-sheet-overlay" onclick="closeBottomSheet()"></div>
+    <div id="bottomSheet" class="bottom-sheet">
+        <div id="sheetContent"></div>
+        <div class="sheet-cancel" onclick="closeBottomSheet()">Скасувати</div>
+    </div>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
@@ -372,9 +485,11 @@
         let currentPage = 'home';
         let currentCategory = null;
         let goodsData = [];
+        let myGoodsData = [];
         let jobsData = [];
         let resumesData = [];
         let currentAddTab = 'goods';
+        let currentProfileTab = 'active';
         let currentJobsTab = 'jobs';
         let selectedPhotos = [];
         let currentUser = null;
@@ -440,6 +555,9 @@
                     <div class="photo-remove" onclick="removePhoto(${idx})">×</div>
                 </div>
             `).join('');
+            if (selectedPhotos.length < 15) {
+                container.innerHTML += `<div class="add-photo-btn" onclick="addPhotoInput()">+</div>`;
+            }
         }
         
         function removePhoto(idx) {
@@ -502,11 +620,39 @@
             } catch(e) { console.error(e); }
         }
         
+        async function loadMyGoods(status = 'active') {
+            const user = tg.initDataUnsafe.user || { id: 0 };
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/goods?select=*&user_id=eq.${user.id}&status=eq.${status}&order=created_at.desc`, {
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            });
+            myGoodsData = await response.json();
+            renderMyGoodsList();
+        }
+        
+        async function updateGoodsStatus(goodsId, newStatus) {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/goods?id=eq.${goodsId}`, {
+                method: 'PATCH',
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            return response.ok;
+        }
+        
+        async function deleteGoods(goodsId) {
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/goods?id=eq.${goodsId}`, {
+                method: 'PATCH',
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'deleted' })
+            });
+            return response.ok;
+        }
+        
         async function loadJobs() {
             const response = await fetch(`${SUPABASE_URL}/rest/v1/jobs?select=*&status=eq.open&order=created_at.desc`, {
                 headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
             });
             jobsData = await response.json();
+            if (currentPage === 'jobs' && currentJobsTab === 'jobs') renderJobsList();
         }
         
         async function loadResumes() {
@@ -514,6 +660,7 @@
                 headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
             });
             resumesData = await response.json();
+            if (currentPage === 'jobs' && currentJobsTab === 'resumes') renderJobsList();
         }
         
         async function addGoods(title, category, price, city, phone, description, photos) {
@@ -575,6 +722,35 @@
                         <div class="goods-price">💰 ${item.price} грн</div>
                         <div class="goods-category">📂 ${item.category || 'Без категорії'}</div>
                         <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
+                        <div class="goods-date">📅 ${new Date(item.created_at).toLocaleDateString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderMyGoodsList() {
+            const container = document.getElementById('myGoodsList');
+            if (!myGoodsData.length) {
+                container.innerHTML = '<div class="empty">📭 Немає оголошень</div>';
+                return;
+            }
+            container.innerHTML = myGoodsData.map(item => `
+                <div class="my-goods-card">
+                    <div class="my-goods-header">
+                        <div class="my-goods-image" style="background-image: url('${item.photos ? item.photos.split(',')[0] : ''}')"></div>
+                        <div class="my-goods-info">
+                            <div class="my-goods-title">${escapeHtml(item.title)}</div>
+                            <div class="my-goods-price">💰 ${item.price} грн</div>
+                            <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
+                            <div class="goods-date">📅 ${new Date(item.created_at).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                    <div class="my-goods-actions">
+                        <button class="action-btn action-view" onclick="openGoodsDetail(${item.id})">👁 Переглянути</button>
+                        <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
+                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="archiveGoods(${item.id})">📦 В архів</button>` : ''}
+                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="markAsSold(${item.id})">💰 Продано</button>` : ''}
+                        <button class="action-btn action-delete" onclick="deleteGoodsConfirm(${item.id})">🗑 Видалити</button>
                     </div>
                 </div>
             `).join('');
@@ -598,10 +774,10 @@
         
         function renderJobsList() {
             document.getElementById('app').innerHTML = `
-                <div class="header"><h2>💼 Робота</h2><button class="back-button" onclick="goBack()">←</button></div>
-                <div class="tab-buttons">
-                    <div class="tab-btn ${currentJobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
-                    <div class="tab-btn ${currentJobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
+                <div class="header"><h2>💼 Робота</h2><button class="back-button" onclick="goBack()">← Назад</button></div>
+                <div class="jobs-tabs">
+                    <div class="jobs-tab ${currentJobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
+                    <div class="jobs-tab ${currentJobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
                 </div>
                 <div id="jobsContent"></div>
                 <button class="btn-refresh" onclick="loadJobs()">🔄 Оновити</button>
@@ -610,17 +786,23 @@
             if (currentJobsTab === 'jobs') {
                 container.innerHTML = jobsData.map(job => `
                     <div class="job-card" onclick="openJobDetail(${job.id})">
-                        <div class="job-title">${escapeHtml(job.title)}</div>
-                        <div class="job-salary">💰 ${job.salary} грн</div>
-                        <div class="job-city">📍 ${job.city || 'не вказано'}</div>
+                        <div class="job-info">
+                            <div class="job-title">${escapeHtml(job.title)}</div>
+                            <div class="job-salary">💰 ${job.salary} грн</div>
+                            <div class="job-city">📍 ${job.city || 'не вказано'}</div>
+                            <div class="job-date">📅 ${new Date(job.created_at).toLocaleDateString()}</div>
+                        </div>
                     </div>
                 `).join('') || '<div class="empty">📭 Немає вакансій</div>';
             } else {
                 container.innerHTML = resumesData.map(resume => `
                     <div class="resume-card" onclick="openResumeDetail(${resume.id})">
-                        <div class="resume-specialty">${escapeHtml(resume.specialty)}</div>
-                        <div class="resume-salary">💰 ${resume.salary} грн</div>
-                        <div class="resume-city">📍 ${resume.city || 'не вказано'}</div>
+                        <div class="job-info">
+                            <div class="resume-specialty">${escapeHtml(resume.specialty)}</div>
+                            <div class="job-salary">💰 ${resume.salary} грн</div>
+                            <div class="job-city">📍 ${resume.city || 'не вказано'}</div>
+                            <div class="job-date">📅 ${new Date(resume.created_at).toLocaleDateString()}</div>
+                        </div>
                     </div>
                 `).join('') || '<div class="empty">📭 Немає резюме</div>';
             }
@@ -628,19 +810,35 @@
         
         function renderProfile() {
             const user = tg.initDataUnsafe.user || { first_name: 'Користувач', id: 0 };
+            const stats = {
+                active: myGoodsData.filter(i => i.status === 'active').length,
+                total: myGoodsData.length
+            };
             document.getElementById('app').innerHTML = `
                 <div class="header"><h2>👤 Профіль</h2></div>
-                <div class="profile-info">
+                <div class="profile-header">
                     <div class="profile-avatar">👤</div>
                     <div class="profile-name">${escapeHtml(user.first_name)}</div>
                     <div class="profile-id">ID: ${user.id}</div>
-                    <div class="profile-phone">
-                        <input type="tel" id="profilePhone" placeholder="+380XXXXXXXXX" value="${localStorage.getItem('userPhone') || ''}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
-                        <button class="btn-publish" style="margin-top:10px" onclick="savePhone()">💾 Зберегти номер</button>
-                    </div>
-                    <button class="btn-cancel" onclick="tg.close()">❌ Закрити</button>
                 </div>
+                <div class="profile-stats">
+                    <div class="stat-item"><div class="stat-number">${stats.active}</div><div class="stat-label">Активних</div></div>
+                    <div class="stat-item"><div class="stat-number">${stats.total}</div><div class="stat-label">Всього</div></div>
+                </div>
+                <div class="profile-phone">
+                    <input type="tel" id="profilePhone" placeholder="+380XXXXXXXXX" value="${localStorage.getItem('userPhone') || ''}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                    <button class="btn-publish" style="margin-top:10px" onclick="savePhone()">💾 Зберегти номер</button>
+                </div>
+                <div class="profile-tabs">
+                    <div class="profile-tab ${currentProfileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні</div>
+                    <div class="profile-tab ${currentProfileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів</div>
+                    <div class="profile-tab ${currentProfileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані</div>
+                    <div class="profile-tab ${currentProfileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">Видалені</div>
+                </div>
+                <div id="myGoodsList"></div>
+                <button class="btn-cancel" onclick="tg.close()">❌ Закрити</button>
             `;
+            loadMyGoods(currentProfileTab);
         }
         
         function savePhone() {
@@ -656,14 +854,20 @@
             return localStorage.getItem('userPhone') || '';
         }
         
-        function goToAllGoods() {
-            currentCategory = null;
-            currentPage = 'goods';
-            loadGoods();
+        function switchProfileTab(tab) {
+            currentProfileTab = tab;
+            renderProfile();
         }
         
-        function selectHomeCategory(category) {
-            currentCategory = category;
+        function switchJobsTab(tab) {
+            currentJobsTab = tab;
+            if (tab === 'jobs') loadJobs();
+            else loadResumes();
+            renderJobsList();
+        }
+        
+        function goToAllGoods() {
+            currentCategory = null;
             currentPage = 'goods';
             loadGoods();
         }
@@ -675,14 +879,10 @@
             renderJobsList();
         }
         
-        function selectCategory(category) {
+        function selectHomeCategory(category) {
             currentCategory = category;
+            currentPage = 'goods';
             loadGoods();
-        }
-        
-        function switchJobsTab(tab) {
-            currentJobsTab = tab;
-            renderJobsList();
         }
         
         function searchGoods() {
@@ -714,6 +914,54 @@
             } else {
                 currentPage = 'home';
                 renderHome();
+            }
+        }
+        
+        function openBottomSheet(actions) {
+            const sheet = document.getElementById('bottomSheet');
+            const overlay = document.getElementById('bottomSheetOverlay');
+            const content = document.getElementById('sheetContent');
+            content.innerHTML = actions.map(a => `<div class="sheet-item" onclick="${a.onclick}(); closeBottomSheet();">${a.text}</div>`).join('');
+            sheet.classList.add('show');
+            overlay.classList.add('show');
+        }
+        
+        function closeBottomSheet() {
+            document.getElementById('bottomSheet').classList.remove('show');
+            document.getElementById('bottomSheetOverlay').classList.remove('show');
+        }
+        
+        function editGoods(id) {
+            showMessage('✏️ Редагування в розробці');
+        }
+        
+        async function archiveGoods(id) {
+            if (await updateGoodsStatus(id, 'archived')) {
+                showMessage('📦 Переміщено в архів');
+                loadMyGoods(currentProfileTab);
+                loadGoods();
+            }
+        }
+        
+        async function markAsSold(id) {
+            if (await updateGoodsStatus(id, 'sold')) {
+                showMessage('💰 Позначено як продано');
+                loadMyGoods(currentProfileTab);
+                loadGoods();
+            }
+        }
+        
+        function deleteGoodsConfirm(id) {
+            openBottomSheet([
+                { text: '🗑 Видалити оголошення', onclick: `deleteGoodsItem(${id})` }
+            ]);
+        }
+        
+        async function deleteGoodsItem(id) {
+            if (await deleteGoods(id)) {
+                showMessage('🗑 Оголошення видалено');
+                loadMyGoods(currentProfileTab);
+                loadGoods();
             }
         }
         
@@ -888,8 +1136,8 @@
             const page = btn.dataset.page;
             if (page === 'home') { currentPage = 'home'; renderHome(); }
             else if (page === 'goods') { currentPage = 'goods'; currentCategory = null; loadGoods(); }
-            else if (page === 'profile') { currentPage = 'profile'; renderProfile(); }
             else if (page === 'jobs') { currentPage = 'jobs'; loadJobs(); loadResumes(); renderJobsList(); }
+            else if (page === 'profile') { currentPage = 'profile'; renderProfile(); }
         });
         
         loadUserProfile();
