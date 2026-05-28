@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Ukraine Market</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -71,13 +71,13 @@
             font-weight: 500;
         }
         
-        .goods-list {
+        .goods-list, .jobs-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
         
-        .goods-card {
+        .goods-card, .job-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
             border-radius: 12px;
             padding: 12px;
@@ -86,7 +86,7 @@
             cursor: pointer;
         }
         
-        .goods-card:active {
+        .goods-card:active, .job-card:active {
             transform: scale(0.98);
         }
         
@@ -99,24 +99,24 @@
             background-position: center;
         }
         
-        .goods-info {
+        .goods-info, .job-info {
             flex: 1;
         }
         
-        .goods-title {
+        .goods-title, .job-title {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 4px;
         }
         
-        .goods-price {
+        .goods-price, .job-salary {
             font-size: 18px;
             font-weight: 700;
             color: var(--tg-theme-button-color, #2aab6e);
             margin-bottom: 4px;
         }
         
-        .goods-city {
+        .goods-city, .job-city {
             font-size: 12px;
             color: var(--tg-theme-hint-color, #666);
         }
@@ -185,11 +185,84 @@
             padding: 40px;
             color: var(--tg-theme-hint-color, #666);
         }
+        
+        .add-button {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: var(--tg-theme-button-color, #2aab6e);
+            color: white;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--tg-theme-bg-color, #fff);
+            border-radius: 16px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .modal-content input, .modal-content select, .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .modal-content textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: var(--tg-theme-secondary-bg-color, #e0e0e0);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .tab-btn.active {
+            background: var(--tg-theme-button-color, #2aab6e);
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div id="app"></div>
-    
+    <div class="add-button" onclick="showAddModal()">+</div>
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-item" data-page="home">
             <div class="nav-icon">🏠</div>
@@ -197,11 +270,84 @@
         </div>
         <div class="nav-item" data-page="categories">
             <div class="nav-icon">📦</div>
-            <div class="nav-label">Категорії</div>
+            <div class="nav-label">Товари</div>
+        </div>
+        <div class="nav-item" data-page="jobs">
+            <div class="nav-icon">💼</div>
+            <div class="nav-label">Робота</div>
         </div>
         <div class="nav-item" data-page="profile">
             <div class="nav-icon">👤</div>
             <div class="nav-label">Профіль</div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для додавання -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="tab-buttons">
+                <div class="tab-btn active" onclick="switchAddTab('goods')">📦 Товар</div>
+                <div class="tab-btn" onclick="switchAddTab('job')">💼 Вакансія</div>
+                <div class="tab-btn" onclick="switchAddTab('resume')">📄 Резюме</div>
+            </div>
+            
+            <!-- Форма для товару -->
+            <div id="addGoodsForm">
+                <h3>➕ Додати товар</h3>
+                <input type="text" id="goodsTitle" placeholder="Назва товару">
+                <select id="goodsCategory">
+                    <option value="Електроніка">📱 Електроніка</option>
+                    <option value="Авто">🚗 Авто</option>
+                    <option value="Шини_Диски">🛞 Шини/Диски</option>
+                    <option value="Автозапчастини">🔧 Автозапчастини</option>
+                    <option value="Нерухомість">🏠 Нерухомість</option>
+                    <option value="Дім_і_сад">🏡 Дім і сад</option>
+                    <option value="Дитячий_світ">👶 Дитячий світ</option>
+                    <option value="Тварини">🐾 Тварини</option>
+                    <option value="Мода_і_стиль">👕 Мода і стиль</option>
+                    <option value="Книги">📚 Книги</option>
+                </select>
+                <input type="text" id="goodsPrice" placeholder="Ціна (грн)">
+                <input type="text" id="goodsCity" placeholder="Місто">
+                <textarea id="goodsDesc" placeholder="Опис товару"></textarea>
+                <button onclick="submitGoods()">Опублікувати</button>
+            </div>
+            
+            <!-- Форма для вакансії -->
+            <div id="addJobForm" style="display: none;">
+                <h3>➕ Додати вакансію</h3>
+                <input type="text" id="jobTitle" placeholder="Назва вакансії">
+                <select id="jobCategory">
+                    <option value="IT/Розробка">💻 IT/Розробка</option>
+                    <option value="Маркетинг">📊 Маркетинг</option>
+                    <option value="Фінанси">💰 Фінанси</option>
+                    <option value="Адміністрація">🏢 Адміністрація</option>
+                    <option value="Продажі">📞 Продажі</option>
+                    <option value="Доставка">🚚 Доставка</option>
+                    <option value="Виробництво">🏭 Виробництво</option>
+                    <option value="Освіта">🎓 Освіта</option>
+                    <option value="Медицина">⚕️ Медицина</option>
+                    <option value="Віддалена">🌍 Віддалена</option>
+                </select>
+                <input type="text" id="jobSalary" placeholder="Зарплата (грн)">
+                <input type="text" id="jobCity" placeholder="Місто">
+                <input type="text" id="jobSchedule" placeholder="Графік роботи">
+                <textarea id="jobDesc" placeholder="Опис вакансії"></textarea>
+                <button onclick="submitJob()">Опублікувати</button>
+            </div>
+            
+            <!-- Форма для резюме -->
+            <div id="addResumeForm" style="display: none;">
+                <h3>➕ Додати резюме</h3>
+                <input type="text" id="resumeSpecialty" placeholder="Спеціальність">
+                <input type="text" id="resumeExperience" placeholder="Досвід роботи">
+                <input type="text" id="resumeSkills" placeholder="Навички">
+                <input type="text" id="resumeCity" placeholder="Місто">
+                <input type="text" id="resumeSalary" placeholder="Очікувана зарплата">
+                <button onclick="submitResume()">Опублікувати</button>
+            </div>
+            
+            <button onclick="closeModal()" style="background: #dc3545; margin-top: 8px;">Скасувати</button>
         </div>
     </div>
 
@@ -213,10 +359,148 @@
         let currentPage = 'home';
         let currentCategory = null;
         let goodsData = [];
+        let jobsData = [];
+        let resumesData = [];
+        let currentAddTab = 'goods';
         
-        const BOT_TOKEN = '8935619238:AAG4rSiSWEsNM0NlX0fDivsZ6mWlhEN5ukg';
-        const BOT_API = `https://api.telegram.org/bot${BOT_TOKEN}`;
+        // ========== ПІДКЛЮЧЕННЯ ДО NEON ==========
+        const NEON_API = 'https://console.neon.tech/api/v2';
+        const PROJECT_ID = 'ukraine_market';
+        const BRANCH_ID = 'production';
+        const API_KEY = 'napi_zmddb6imwkn37c04s28h4ku4klh02emgpdtr63c96zr6e4vcb9kubmmklinrai48';
         
+        // ========== ТОВАРИ ==========
+        async function loadGoodsFromNeon(category = null) {
+            try {
+                const response = await fetch(`${NEON_API}/projects/${PROJECT_ID}/branches/${BRANCH_ID}/tables/goods/rows`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    let allGoods = data.rows || [];
+                    if (category && category !== 'Всі') {
+                        allGoods = allGoods.filter(item => item.category === category);
+                    }
+                    goodsData = allGoods;
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+            }
+        }
+        
+        async function addGoodsToNeon(title, category, price, city, description) {
+            const userId = tg.initDataUnsafe.user?.id || 0;
+            const newGood = {
+                user_id: userId,
+                title: title,
+                category: category,
+                price: price,
+                description: description,
+                city: city,
+                photos: '',
+                phone: '',
+                status: 'active',
+                created_at: new Date().toISOString()
+            };
+            
+            try {
+                const response = await fetch(`${NEON_API}/projects/${PROJECT_ID}/branches/${BRANCH_ID}/tables/goods/rows`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify([newGood])
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Помилка додавання:', error);
+                return false;
+            }
+        }
+        
+        // ========== ВАКАНСІЇ ==========
+        async function loadJobsFromNeon() {
+            try {
+                const response = await fetch(`${NEON_API}/projects/${PROJECT_ID}/branches/${BRANCH_ID}/tables/jobs/rows`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    jobsData = data.rows || [];
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+            }
+        }
+        
+        async function addJobToNeon(title, category, salary, city, schedule, description) {
+            const userId = tg.initDataUnsafe.user?.id || 0;
+            const newJob = {
+                user_id: userId,
+                title: title,
+                category: category,
+                salary: salary,
+                city: city,
+                schedule: schedule,
+                description: description,
+                status: 'open',
+                created_at: new Date().toISOString()
+            };
+            
+            try {
+                const response = await fetch(`${NEON_API}/projects/${PROJECT_ID}/branches/${BRANCH_ID}/tables/jobs/rows`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify([newJob])
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Помилка додавання:', error);
+                return false;
+            }
+        }
+        
+        // ========== РЕЗЮМЕ ==========
+        async function loadResumesFromNeon() {
+            try {
+                const response = await fetch(`${NEON_API}/projects/${PROJECT_ID}/branches/${BRANCH_ID}/tables/resumes/rows`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    resumesData = data.rows || [];
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+            }
+        }
+        
+        async function addResumeToNeon(specialty, experience, skills, city, salary) {
+            const userId = tg.initDataUnsafe.user?.id || 0;
+            const newResume = {
+                user_id: userId,
+                specialty: specialty,
+                experience: experience,
+                skills: skills,
+                city: city,
+                salary: salary,
+                status: 'active',
+                created_at: new Date().toISOString()
+            };
+            
+            try {
+                const response = await fetch(`${NEON_API}/projects/${PROJECT_ID}/branches/${BRANCH_ID}/tables/resumes/rows`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify([newResume])
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Помилка додавання:', error);
+                return false;
+            }
+        }
+        
+        // ========== КАТЕГОРІЇ ==========
         const categories = [
             { name: 'Електроніка', icon: '📱', id: 'Електроніка' },
             { name: 'Авто', icon: '🚗', id: 'Авто' },
@@ -227,51 +511,28 @@
             { name: 'Дитячий світ', icon: '👶', id: 'Дитячий_світ' },
             { name: 'Тварини', icon: '🐾', id: 'Тварини' },
             { name: 'Мода і стиль', icon: '👕', id: 'Мода_і_стиль' },
-            { name: 'Книги', icon: '📚', id: 'Книги' },
-            { name: 'Віддам безкоштовно', icon: '🎁', id: 'Віддам_безкоштовно' }
+            { name: 'Книги', icon: '📚', id: 'Книги' }
         ];
         
-        async function loadGoods(category = null) {
-            showLoading();
-            
-            try {
-                const url = category ? `https://raw.githubusercontent.com/ваш-username/ukraine-market-app/main/goods.json` : `https://raw.githubusercontent.com/ваш-username/ukraine-market-app/main/goods.json`;
-                const response = await fetch(url);
-                if (response.ok) {
-                    const data = await response.json();
-                    goodsData = category ? data.filter(item => item.category === category) : data;
-                    renderGoodsList();
-                } else {
-                    loadFromBot(category);
-                }
-            } catch (error) {
-                loadFromBot(category);
-            }
-        }
+        const jobCategories = [
+            'IT/Розробка', 'Маркетинг', 'Фінанси', 'Адміністрація',
+            'Продажі', 'Доставка', 'Виробництво', 'Освіта', 'Медицина', 'Віддалена'
+        ];
         
-        async function loadFromBot(category) {
-            const userId = tg.initDataUnsafe.user?.id || 0;
-            
-            try {
-                const response = await fetch(`${BOT_API}/getUpdates`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                
-                goodsData = [];
-                renderEmpty();
-            } catch (error) {
-                renderEmpty();
-            }
-        }
-        
+        // ========== ВІДОБРАЖЕННЯ ==========
         function showLoading() {
             document.getElementById('app').innerHTML = '<div class="loading">⏳ Завантаження...</div>';
         }
         
         function renderGoodsList() {
             if (goodsData.length === 0) {
-                renderEmpty();
+                document.getElementById('app').innerHTML = `
+                    <div class="empty">
+                        <div style="font-size: 48px;">📭</div>
+                        <div>Немає товарів</div>
+                        <button onclick="loadAllData()">🔄 Оновити</button>
+                    </div>
+                `;
                 return;
             }
             
@@ -280,11 +541,11 @@
                     <span>📦 ${currentCategory || 'Всі товари'}</span>
                     <button class="back-button" onclick="goBack()">← Назад</button>
                 </div>
-                <input type="text" class="search-bar" placeholder="🔍 Пошук..." id="searchInput" onkeyup="searchGoods()">
+                <input type="text" class="search-bar" placeholder="🔍 Пошук товарів..." id="searchInput" onkeyup="searchGoods()">
                 <div class="goods-list">
                     ${goodsData.map(item => `
                         <div class="goods-card" onclick="openGoods(${item.id})">
-                            <div class="goods-image" style="background-image: url('${item.image || ''}')"></div>
+                            <div class="goods-image"></div>
                             <div class="goods-info">
                                 <div class="goods-title">${escapeHtml(item.title)}</div>
                                 <div class="goods-price">💰 ${item.price} грн</div>
@@ -297,14 +558,59 @@
             document.getElementById('app').innerHTML = html;
         }
         
-        function renderEmpty() {
-            document.getElementById('app').innerHTML = `
-                <div class="empty">
-                    <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
-                    <div>Немає товарів</div>
-                    <button onclick="loadGoods(currentCategory)">🔄 Оновити</button>
+        function renderJobsList() {
+            if (jobsData.length === 0 && resumesData.length === 0) {
+                document.getElementById('app').innerHTML = `
+                    <div class="empty">
+                        <div style="font-size: 48px;">📭</div>
+                        <div>Немає вакансій та резюме</div>
+                        <button onclick="loadAllData()">🔄 Оновити</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const html = `
+                <div class="header">
+                    <span>💼 Робота</span>
+                    <button class="back-button" onclick="goBack()">← Назад</button>
                 </div>
+                <div class="category-grid">
+                    ${jobCategories.map(cat => `
+                        <div class="category-card" onclick="filterJobs('${cat}')">
+                            <div class="category-name">${cat}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="tab-buttons">
+                    <div class="tab-btn ${currentJobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
+                    <div class="tab-btn ${currentJobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
+                </div>
+                <div id="jobsContent"></div>
             `;
+            document.getElementById('app').innerHTML = html;
+            
+            if (currentJobsTab === 'jobs') {
+                document.getElementById('jobsContent').innerHTML = jobsData.map(job => `
+                    <div class="job-card" onclick="openJob(${job.id})">
+                        <div class="job-info">
+                            <div class="job-title">${escapeHtml(job.title)}</div>
+                            <div class="job-salary">💰 ${job.salary} грн</div>
+                            <div class="job-city">📍 ${job.city || 'не вказано'} | 🕐 ${job.schedule || 'не вказано'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('jobsContent').innerHTML = resumesData.map(resume => `
+                    <div class="job-card" onclick="openResume(${resume.id})">
+                        <div class="job-info">
+                            <div class="job-title">${escapeHtml(resume.specialty)}</div>
+                            <div class="job-salary">💰 ${resume.salary} грн</div>
+                            <div class="job-city">📍 ${resume.city || 'не вказано'} | 🛠️ ${resume.skills || ''}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
         
         function renderHome() {
@@ -321,18 +627,15 @@
                     `).join('')}
                 </div>
                 <button onclick="viewAllCategories()">📦 Всі категорії →</button>
+                <button onclick="goToJobs()">💼 Шукаю роботу →</button>
             `;
-        }
-        
-        function viewAllCategories() {
-            currentPage = 'categories';
-            renderCategories();
         }
         
         function renderCategories() {
             document.getElementById('app').innerHTML = `
                 <div class="header">
-                    <span>📦 Категорії</span>
+                    <span>📦 Категорії товарів</span>
+                    <button class="back-button" onclick="goBack()">← Назад</button>
                 </div>
                 <div class="category-grid">
                     ${categories.map(cat => `
@@ -342,7 +645,6 @@
                         </div>
                     `).join('')}
                 </div>
-                <button onclick="goBack()">◀️ Назад</button>
             `;
         }
         
@@ -357,20 +659,52 @@
                     <h2>${escapeHtml(user.first_name)}</h2>
                     <p>@${user.username || 'користувач'}</p>
                     <p>ID: ${user.id}</p>
-                    <p style="margin-top: 20px; color: var(--tg-theme-hint-color, #666);">
-                        💡 Ви можете додавати товари через бота
-                    </p>
-                    <button onclick="openBot()">📱 Відкрити бота</button>
-                    <button onclick="tg.close()" style="margin-top: 10px; background: #dc3545;">❌ Закрити</button>
+                    <button onclick="tg.close()">❌ Закрити</button>
                 </div>
             `;
             document.getElementById('app').innerHTML = html;
         }
         
+        // ========== ДОПОМІЖНІ ФУНКЦІЇ ==========
+        let currentJobsTab = 'jobs';
+        
+        async function loadAllData() {
+            showLoading();
+            await Promise.all([
+                loadGoodsFromNeon(currentCategory),
+                loadJobsFromNeon(),
+                loadResumesFromNeon()
+            ]);
+            
+            if (currentPage === 'goods' || currentPage === 'home' || currentPage === 'categories') {
+                renderGoodsList();
+            } else if (currentPage === 'jobs') {
+                renderJobsList();
+            }
+        }
+        
         function selectCategory(category) {
             currentCategory = category;
             currentPage = 'goods';
-            loadGoods(category);
+            loadGoodsFromNeon(category).then(() => renderGoodsList());
+        }
+        
+        function filterJobs(category) {
+            showLoading();
+            loadJobsFromNeon().then(() => {
+                jobsData = jobsData.filter(job => job.category === category);
+                renderJobsList();
+            });
+        }
+        
+        function switchJobsTab(tab) {
+            currentJobsTab = tab;
+            renderJobsList();
+        }
+        
+        function goToJobs() {
+            currentPage = 'jobs';
+            renderJobsList();
         }
         
         function goBack() {
@@ -378,6 +712,9 @@
                 currentPage = 'categories';
                 renderCategories();
             } else if (currentPage === 'categories') {
+                currentPage = 'home';
+                renderHome();
+            } else if (currentPage === 'jobs') {
                 currentPage = 'home';
                 renderHome();
             } else {
@@ -401,7 +738,7 @@
                 <div class="goods-list">
                     ${filtered.map(item => `
                         <div class="goods-card" onclick="openGoods(${item.id})">
-                            <div class="goods-image" style="background-image: url('${item.image || ''}')"></div>
+                            <div class="goods-image"></div>
                             <div class="goods-info">
                                 <div class="goods-title">${escapeHtml(item.title)}</div>
                                 <div class="goods-price">💰 ${item.price} грн</div>
@@ -425,8 +762,134 @@
             }
         }
         
-        function openBot() {
-            tg.openTelegramLink('https://t.me/UkraineMarketBot');
+        function openJob(id) {
+            const item = jobsData.find(j => j.id === id);
+            if (item) {
+                tg.showPopup({
+                    title: item.title,
+                    message: `💰 ${item.salary} грн\n📍 ${item.city}\n🕐 ${item.schedule}\n📝 ${item.description}`,
+                    buttons: [{ type: 'default', text: 'OK' }]
+                });
+            }
+        }
+        
+        function openResume(id) {
+            const item = resumesData.find(r => r.id === id);
+            if (item) {
+                tg.showPopup({
+                    title: item.specialty,
+                    message: `💰 ${item.salary} грн\n📍 ${item.city}\n📝 Досвід: ${item.experience}\n🛠️ Навички: ${item.skills}`,
+                    buttons: [{ type: 'default', text: 'OK' }]
+                });
+            }
+        }
+        
+        function viewAllCategories() {
+            currentPage = 'categories';
+            renderCategories();
+        }
+        
+        function showAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+        
+        function switchAddTab(tab) {
+            currentAddTab = tab;
+            document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
+            document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
+            document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
+            
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.remove('active');
+                if ((tab === 'goods' && i === 0) || (tab === 'job' && i === 1) || (tab === 'resume' && i === 2)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        async function submitGoods() {
+            const title = document.getElementById('goodsTitle').value;
+            const category = document.getElementById('goodsCategory').value;
+            const price = document.getElementById('goodsPrice').value;
+            const city = document.getElementById('goodsCity').value;
+            const description = document.getElementById('goodsDesc').value;
+            
+            if (!title || !price) {
+                tg.showAlert('Будь ласка, заповніть назву та ціну');
+                return;
+            }
+            
+            const success = await addGoodsToNeon(title, category, price, city, description);
+            if (success) {
+                tg.showAlert('✅ Оголошення опубліковано!');
+                closeModal();
+                loadAllData();
+                document.getElementById('goodsTitle').value = '';
+                document.getElementById('goodsPrice').value = '';
+                document.getElementById('goodsCity').value = '';
+                document.getElementById('goodsDesc').value = '';
+            } else {
+                tg.showAlert('❌ Помилка публікації');
+            }
+        }
+        
+        async function submitJob() {
+            const title = document.getElementById('jobTitle').value;
+            const category = document.getElementById('jobCategory').value;
+            const salary = document.getElementById('jobSalary').value;
+            const city = document.getElementById('jobCity').value;
+            const schedule = document.getElementById('jobSchedule').value;
+            const description = document.getElementById('jobDesc').value;
+            
+            if (!title) {
+                tg.showAlert('Будь ласка, заповніть назву вакансії');
+                return;
+            }
+            
+            const success = await addJobToNeon(title, category, salary, city, schedule, description);
+            if (success) {
+                tg.showAlert('✅ Вакансію опубліковано!');
+                closeModal();
+                loadAllData();
+                document.getElementById('jobTitle').value = '';
+                document.getElementById('jobSalary').value = '';
+                document.getElementById('jobCity').value = '';
+                document.getElementById('jobSchedule').value = '';
+                document.getElementById('jobDesc').value = '';
+            } else {
+                tg.showAlert('❌ Помилка публікації');
+            }
+        }
+        
+        async function submitResume() {
+            const specialty = document.getElementById('resumeSpecialty').value;
+            const experience = document.getElementById('resumeExperience').value;
+            const skills = document.getElementById('resumeSkills').value;
+            const city = document.getElementById('resumeCity').value;
+            const salary = document.getElementById('resumeSalary').value;
+            
+            if (!specialty) {
+                tg.showAlert('Будь ласка, заповніть спеціальність');
+                return;
+            }
+            
+            const success = await addResumeToNeon(specialty, experience, skills, city, salary);
+            if (success) {
+                tg.showAlert('✅ Резюме опубліковано!');
+                closeModal();
+                loadAllData();
+                document.getElementById('resumeSpecialty').value = '';
+                document.getElementById('resumeExperience').value = '';
+                document.getElementById('resumeSkills').value = '';
+                document.getElementById('resumeCity').value = '';
+                document.getElementById('resumeSalary').value = '';
+            } else {
+                tg.showAlert('❌ Помилка публікації');
+            }
         }
         
         function escapeHtml(text) {
@@ -450,15 +913,19 @@
             } else if (page === 'categories') {
                 currentPage = 'categories';
                 renderCategories();
+            } else if (page === 'jobs') {
+                currentPage = 'jobs';
+                renderJobsList();
             } else if (page === 'profile') {
                 currentPage = 'profile';
                 renderProfile();
             }
+            loadAllData();
         });
         
         renderHome();
         document.querySelector('.nav-item[data-page="home"]').classList.add('active');
-        loadGoods();
+        loadAllData();
     </script>
 </body>
 </html>
