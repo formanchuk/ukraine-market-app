@@ -26,12 +26,10 @@
         .search-bar {
             width: 100%;
             padding: 12px;
-            border: 1px solid var(--tg-theme-hint-color, #ccc);
+            border: 1px solid #ccc;
             border-radius: 10px;
             margin-bottom: 16px;
             font-size: 16px;
-            background: var(--tg-theme-bg-color, #fff);
-            color: var(--tg-theme-text-color, #000);
         }
         .category-grid {
             display: grid;
@@ -45,7 +43,6 @@
             border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.2s;
         }
         .category-card:active { transform: scale(0.98); }
         .category-icon { font-size: 32px; margin-bottom: 8px; }
@@ -59,19 +56,10 @@
             gap: 12px;
             cursor: pointer;
         }
-        .goods-card:active, .job-card:active { transform: scale(0.98); }
-        .goods-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            background: #ddd;
-            background-size: cover;
-            background-position: center;
-        }
         .goods-info, .job-info { flex: 1; }
         .goods-title, .job-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-        .goods-price, .job-salary { font-size: 18px; font-weight: 700; color: var(--tg-theme-button-color, #2aab6e); margin-bottom: 4px; }
-        .goods-city, .job-city { font-size: 12px; color: var(--tg-theme-hint-color, #666); }
+        .goods-price, .job-salary { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 4px; }
+        .goods-city, .job-city { font-size: 12px; color: #666; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -81,15 +69,15 @@
             justify-content: space-around;
             padding: 12px;
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-top: 1px solid var(--tg-theme-hint-color, #ccc);
+            border-top: 1px solid #ccc;
         }
         .nav-item { text-align: center; padding: 8px; cursor: pointer; border-radius: 8px; flex: 1; }
-        .nav-item.active { background: var(--tg-theme-button-color, #2aab6e); color: var(--tg-theme-button-text-color, #ffffff); }
+        .nav-item.active { background: #2aab6e; color: white; }
         .nav-icon { font-size: 24px; }
         .nav-label { font-size: 12px; margin-top: 4px; }
         button {
-            background: var(--tg-theme-button-color, #2aab6e);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            background: #2aab6e;
+            color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 10px;
@@ -98,9 +86,6 @@
             width: 100%;
             margin-top: 10px;
         }
-        .back-button { background: transparent; color: var(--tg-theme-text-color, #000); text-align: left; padding: 8px 0; width: auto; }
-        .loading { text-align: center; padding: 40px; }
-        .empty { text-align: center; padding: 40px; color: var(--tg-theme-hint-color, #666); }
         .add-button {
             position: fixed;
             bottom: 80px;
@@ -108,7 +93,7 @@
             width: 56px;
             height: 56px;
             border-radius: 28px;
-            background: var(--tg-theme-button-color, #2aab6e);
+            background: #2aab6e;
             color: white;
             font-size: 28px;
             display: flex;
@@ -131,7 +116,7 @@
             justify-content: center;
         }
         .modal-content {
-            background: var(--tg-theme-bg-color, #fff);
+            background: white;
             border-radius: 16px;
             padding: 20px;
             width: 90%;
@@ -147,8 +132,11 @@
         }
         .modal-content textarea { min-height: 80px; resize: vertical; }
         .tab-buttons { display: flex; gap: 10px; margin-bottom: 16px; }
-        .tab-btn { flex: 1; text-align: center; padding: 10px; background: var(--tg-theme-secondary-bg-color, #e0e0e0); border-radius: 8px; cursor: pointer; }
-        .tab-btn.active { background: var(--tg-theme-button-color, #2aab6e); color: white; }
+        .tab-btn { flex: 1; text-align: center; padding: 10px; background: #e0e0e0; border-radius: 8px; cursor: pointer; }
+        .tab-btn.active { background: #2aab6e; color: white; }
+        .back-button { background: transparent; color: #000; text-align: left; padding: 8px 0; width: auto; }
+        .loading { text-align: center; padding: 40px; }
+        .empty { text-align: center; padding: 40px; color: #666; }
     </style>
 </head>
 <body>
@@ -172,16 +160,14 @@
                 <h3>➕ Додати товар</h3>
                 <input type="text" id="goodsTitle" placeholder="Назва товару">
                 <select id="goodsCategory">
-                    <option value="Електроніка">📱 Електроніка</option>
-                    <option value="Авто">🚗 Авто</option>
-                    <option value="Шини_Диски">🛞 Шини/Диски</option>
-                    <option value="Автозапчастини">🔧 Автозапчастини</option>
-                    <option value="Нерухомість">🏠 Нерухомість</option>
-                    <option value="Дім_і_сад">🏡 Дім і сад</option>
-                    <option value="Дитячий_світ">👶 Дитячий світ</option>
-                    <option value="Тварини">🐾 Тварини</option>
-                    <option value="Мода_і_стиль">👕 Мода і стиль</option>
-                    <option value="Книги">📚 Книги</option>
+                    <option value="Електроніка">📱 Електроніка</option><option value="Авто">🚗 Авто</option>
+                    <option value="Шини_Диски">🛞 Шини/Диски</option><option value="Автозапчастини">🔧 Автозапчастини</option>
+                    <option value="Нерухомість">🏠 Нерухомість</option><option value="Дім_і_сад">🏡 Дім і сад</option>
+                    <option value="Дитячий_світ">👶 Дитячий світ</option><option value="Тварини">🐾 Тварини</option>
+                    <option value="Мода_і_стиль">👕 Мода і стиль</option><option value="Хобі_Відпочинок">🎮 Хобі/Відпочинок</option>
+                    <option value="Книги">📚 Книги</option><option value="Віддам_безкоштовно">🎁 Віддам безкоштовно</option>
+                    <option value="Обмін">🔄 Обмін</option><option value="Бізнес_Послуги">🏢 Бізнес/Послуги</option>
+                    <option value="Оренда_Прокат">🔑 Оренда/Прокат</option><option value="Житло_подобово">🏠 Житло подобово</option>
                 </select>
                 <input type="text" id="goodsPrice" placeholder="Ціна (грн)">
                 <input type="text" id="goodsCity" placeholder="Місто">
@@ -192,16 +178,12 @@
                 <h3>➕ Додати вакансію</h3>
                 <input type="text" id="jobTitle" placeholder="Назва вакансії">
                 <select id="jobCategory">
-                    <option value="IT/Розробка">💻 IT/Розробка</option>
-                    <option value="Маркетинг">📊 Маркетинг</option>
-                    <option value="Фінанси">💰 Фінанси</option>
-                    <option value="Адміністрація">🏢 Адміністрація</option>
-                    <option value="Продажі">📞 Продажі</option>
-                    <option value="Доставка">🚚 Доставка</option>
-                    <option value="Виробництво">🏭 Виробництво</option>
-                    <option value="Освіта">🎓 Освіта</option>
-                    <option value="Медицина">⚕️ Медицина</option>
-                    <option value="Віддалена">🌍 Віддалена</option>
+                    <option value="IT/Розробка">💻 IT/Розробка</option><option value="Маркетинг/PR">📊 Маркетинг/PR</option>
+                    <option value="Фінанси/Бухгалтерія">💰 Фінанси/Бухгалтерія</option><option value="Адміністрація/HR">🏢 Адміністрація/HR</option>
+                    <option value="Call центр/Продажі">📞 Call центр/Продажі</option><option value="Доставка/Логістика">🚚 Доставка/Логістика</option>
+                    <option value="Виробництво/Робочі">🏭 Виробництво/Робочі</option><option value="Домашній персонал">🏠 Домашній персонал</option>
+                    <option value="Освіта/Репетитори">🎓 Освіта/Репетитори</option><option value="Медицина/Краса">⚕️ Медицина/Краса</option>
+                    <option value="Віддалена робота">🌍 Віддалена робота</option>
                 </select>
                 <input type="text" id="jobSalary" placeholder="Зарплата (грн)">
                 <input type="text" id="jobCity" placeholder="Місто">
@@ -226,7 +208,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // ========== ПІДКЛЮЧЕННЯ ДО SUPABASE ==========
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
@@ -236,6 +217,7 @@
         let jobsData = [];
         let resumesData = [];
         let currentAddTab = 'goods';
+        let currentJobsTab = 'jobs';
         
         const categories = [
             { name: 'Електроніка', icon: '📱', id: 'Електроніка' },
@@ -247,12 +229,21 @@
             { name: 'Дитячий світ', icon: '👶', id: 'Дитячий_світ' },
             { name: 'Тварини', icon: '🐾', id: 'Тварини' },
             { name: 'Мода і стиль', icon: '👕', id: 'Мода_і_стиль' },
-            { name: 'Книги', icon: '📚', id: 'Книги' }
+            { name: 'Хобі/Відпочинок', icon: '🎮', id: 'Хобі_Відпочинок' },
+            { name: 'Книги', icon: '📚', id: 'Книги' },
+            { name: 'Віддам безкоштовно', icon: '🎁', id: 'Віддам_безкоштовно' },
+            { name: 'Обмін', icon: '🔄', id: 'Обмін' },
+            { name: 'Бізнес/Послуги', icon: '🏢', id: 'Бізнес_Послуги' },
+            { name: 'Оренда/Прокат', icon: '🔑', id: 'Оренда_Прокат' },
+            { name: 'Житло подобово', icon: '🏠', id: 'Житло_подобово' }
         ];
         
-        const jobCategories = ['IT/Розробка', 'Маркетинг', 'Фінанси', 'Адміністрація', 'Продажі', 'Доставка', 'Виробництво', 'Освіта', 'Медицина', 'Віддалена'];
+        const jobCategories = [
+            'IT/Розробка', 'Маркетинг/PR', 'Фінанси/Бухгалтерія', 'Адміністрація/HR',
+            'Call центр/Продажі', 'Доставка/Логістика', 'Виробництво/Робочі',
+            'Домашній персонал', 'Освіта/Репетитори', 'Медицина/Краса', 'Віддалена робота'
+        ];
         
-        // ========== SUPABASE ФУНКЦІЇ ==========
         async function loadGoods() {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/goods?select=*&status=eq.active&order=created_at.desc`, {
@@ -264,7 +255,7 @@
                 }
                 goodsData = data;
                 renderGoodsList();
-            } catch(e) { console.error(e); renderEmpty(); }
+            } catch(e) { renderEmpty(); }
         }
         
         async function loadJobs() {
@@ -320,16 +311,14 @@
             return response.ok;
         }
         
-        // ========== ВІДОБРАЖЕННЯ ==========
         function renderGoodsList() {
             if (!goodsData.length) { renderEmpty(); return; }
-            const html = `
-                <div class="header"><span>📦 ${currentCategory || 'Всі товари'}</span><button class="back-button" onclick="goBack()">← Назад</button></div>
+            document.getElementById('app').innerHTML = `
+                <div class="header"><span>📦 ${currentCategory || 'Всі товари'}</span><button class="back-button" onclick="goBack()">←</button></div>
                 <input type="text" class="search-bar" placeholder="🔍 Пошук..." id="searchInput" onkeyup="searchGoods()">
                 <div class="goods-list">
                     ${goodsData.map(item => `
                         <div class="goods-card" onclick="openGoods(${item.id})">
-                            <div class="goods-image"></div>
                             <div class="goods-info">
                                 <div class="goods-title">${escapeHtml(item.title)}</div>
                                 <div class="goods-price">💰 ${item.price} грн</div>
@@ -339,7 +328,6 @@
                     `).join('')}
                 </div>
             `;
-            document.getElementById('app').innerHTML = html;
         }
         
         function renderEmpty() {
@@ -407,12 +395,7 @@
             `;
         }
         
-        let currentJobsTab = 'jobs';
-        
-        async function loadAllData() {
-            await Promise.all([loadGoods(), loadJobs(), loadResumes()]);
-            if (currentPage === 'jobs') renderJobsList();
-        }
+        async function loadAllData() { await Promise.all([loadGoods(), loadJobs(), loadResumes()]); if (currentPage === 'jobs') renderJobsList(); }
         
         function selectCategory(category) { currentCategory = category; currentPage = 'goods'; loadGoods(); }
         function filterJobs(category) { loadJobs().then(() => { jobsData = jobsData.filter(j => j.category === category); renderJobsList(); }); }
@@ -436,9 +419,9 @@
             `;
         }
         
-        function openGoods(id) { const item = goodsData.find(g => g.id === id); tg.showAlert(`${item.title}\n💰 ${item.price} грн\n📍 ${item.city}\n📝 ${item.description || 'Без опису'}`); }
-        function openJob(id) { const item = jobsData.find(j => j.id === id); tg.showAlert(`${item.title}\n💰 ${item.salary} грн\n📍 ${item.city}\n📝 ${item.description}`); }
-        function openResume(id) { const item = resumesData.find(r => r.id === id); tg.showAlert(`${item.specialty}\n💰 ${item.salary} грн\n📍 ${item.city}\n📝 ${item.experience}`); }
+        function openGoods(id) { const item = goodsData.find(g => g.id === id); alert(`${item.title}\n💰 ${item.price} грн\n📍 ${item.city}\n📝 ${item.description || 'Без опису'}`); }
+        function openJob(id) { const item = jobsData.find(j => j.id === id); alert(`${item.title}\n💰 ${item.salary} грн\n📍 ${item.city}\n📝 ${item.description}`); }
+        function openResume(id) { const item = resumesData.find(r => r.id === id); alert(`${item.specialty}\n💰 ${item.salary} грн\n📍 ${item.city}\n📝 ${item.experience}`); }
         
         function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
         function closeModal() { document.getElementById('addModal').style.display = 'none'; }
@@ -448,7 +431,6 @@
             document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
             document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
             document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
-            document.querySelectorAll('.tab-btn').forEach((btn,i) => btn.classList.toggle('active', (tab === 'goods' && i===0) || (tab === 'job' && i===1) || (tab === 'resume' && i===2)));
         }
         
         async function submitGoods() {
@@ -457,9 +439,9 @@
             const price = document.getElementById('goodsPrice').value;
             const city = document.getElementById('goodsCity').value;
             const desc = document.getElementById('goodsDesc').value;
-            if (!title || !price) { tg.showAlert('Заповніть назву та ціну'); return; }
+            if (!title || !price) { alert('Заповніть назву та ціну'); return; }
             const ok = await addGoods(title, category, price, city, desc);
-            tg.showAlert(ok ? '✅ Опубліковано!' : '❌ Помилка');
+            alert(ok ? '✅ Опубліковано!' : '❌ Помилка');
             if (ok) { closeModal(); loadGoods(); }
         }
         
@@ -470,9 +452,9 @@
             const city = document.getElementById('jobCity').value;
             const schedule = document.getElementById('jobSchedule').value;
             const desc = document.getElementById('jobDesc').value;
-            if (!title) { tg.showAlert('Заповніть назву'); return; }
+            if (!title) { alert('Заповніть назву'); return; }
             const ok = await addJob(title, category, salary, city, schedule, desc);
-            tg.showAlert(ok ? '✅ Вакансію опубліковано!' : '❌ Помилка');
+            alert(ok ? '✅ Вакансію опубліковано!' : '❌ Помилка');
             if (ok) { closeModal(); loadJobs(); }
         }
         
@@ -482,9 +464,9 @@
             const skills = document.getElementById('resumeSkills').value;
             const city = document.getElementById('resumeCity').value;
             const salary = document.getElementById('resumeSalary').value;
-            if (!specialty) { tg.showAlert('Заповніть спеціальність'); return; }
+            if (!specialty) { alert('Заповніть спеціальність'); return; }
             const ok = await addResume(specialty, experience, skills, city, salary);
-            tg.showAlert(ok ? '✅ Резюме опубліковано!' : '❌ Помилка');
+            alert(ok ? '✅ Резюме опубліковано!' : '❌ Помилка');
             if (ok) { closeModal(); loadResumes(); }
         }
         
