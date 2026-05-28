@@ -24,7 +24,7 @@
             border-radius: 12px;
         }
         .header h2 { font-size: 18px; }
-        .back-button {
+        .back-button, .menu-button {
             background: transparent;
             color: var(--tg-theme-text-color, #000);
             border: none;
@@ -228,6 +228,8 @@
             border-radius: 20px;
             z-index: 300;
             display: none;
+            font-size: 14px;
+            white-space: nowrap;
         }
         .profile-header {
             text-align: center;
@@ -288,7 +290,19 @@
         .action-sold { background: #4caf50; color: white; }
         .action-delete { background: #dc3545; color: white; }
         .action-btn:active { transform: scale(0.96); }
-        .action-btn.loading { opacity: 0.6; cursor: wait; }
+        .action-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .empty { text-align: center; padding: 40px; color: #666; }
         .detail-modal {
             display: none;
@@ -382,17 +396,6 @@
             font-weight: 600;
             font-size: 16px;
         }
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
         .job-card, .resume-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
             border-radius: 12px;
@@ -403,6 +406,7 @@
         .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .job-city { font-size: 12px; color: #666; }
+        .loading-container { text-align: center; padding: 40px; }
     </style>
 </head>
 <body>
@@ -507,11 +511,12 @@
         function formatDate(dateStr) {
             if (!dateStr) return '';
             try {
-                return new Date(dateStr).toLocaleDateString('uk-UA');
+                const d = new Date(dateStr);
+                return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`;
             } catch(e) { return ''; }
         }
         
-        function showMessage(text, isError = false, duration = 2000) {
+        function showMessage(text, isError = false, duration = 2500) {
             const msgDiv = document.getElementById('message');
             msgDiv.textContent = text;
             msgDiv.style.backgroundColor = isError ? '#dc3545' : '#2aab6e';
@@ -520,60 +525,102 @@
         }
         
         function setButtonLoading(btn, isLoading) {
+            if (!btn) return;
             if (isLoading) {
                 btn.originalText = btn.innerHTML;
-                btn.innerHTML = '<span class="loading-spinner"></span> Завантаження...';
+                btn.innerHTML = '<span class="loading-spinner"></span>';
                 btn.disabled = true;
-                btn.classList.add('loading');
+                btn.classList.add('disabled');
             } else {
-                btn.innerHTML = btn.originalText;
+                btn.innerHTML = btn.originalText || '✅';
                 btn.disabled = false;
-                btn.classList.remove('loading');
+                btn.classList.remove('disabled');
             }
         }
         
+        // ========== API ==========
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
+        const api = {
+            async request(endpoint, options = {}) {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+                    ...options,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            },
+            
+            getGoods(category) {
+                let url = 'goods?select=*&status=eq.active&order=created_at.desc';
+                if (category && category !== 'Всі') url += `&category=eq.${category}`;
+                return this.request(url);
+            },
+            
+            getUserGoods(userId, status) {
+                return this.request(`goods?select=*&user_id=eq.${userId}&status=eq.${status}&order=created_at.desc`);
+            },
+            
+            createGoods(data) {
+                return this.request('goods', { method: 'POST', body: JSON.stringify(data) });
+            },
+            
+            updateGoodsStatus(id, status) {
+                return this.request(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status }) });
+            },
+            
+            getJobs() {
+                return this.request('jobs?select=*&status=eq.open&order=created_at.desc');
+            },
+            
+            createJob(data) {
+                return this.request('jobs', { method: 'POST', body: JSON.stringify(data) });
+            },
+            
+            getResumes() {
+                return this.request('resumes?select=*&status=eq.active&order=created_at.desc');
+            },
+            
+            createResume(data) {
+                return this.request('resumes', { method: 'POST', body: JSON.stringify(data) });
+            },
+            
+            getUser(id) {
+                return this.request(`users?id=eq.${id}&select=*`);
+            },
+            
+            createUser(data) {
+                return this.request('users', { method: 'POST', body: JSON.stringify(data) });
+            },
+            
+            updateUserPhone(id, phone) {
+                return this.request(`users?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ phone }) });
+            }
+        };
+        
         // ========== СТАН ==========
-        let currentPage = 'home';
-        let currentCategory = null;
-        let goodsData = [];
-        let myGoodsData = [];
-        let jobsData = [];
-        let resumesData = [];
-        let currentAddTab = 'goods';
-        let currentProfileTab = 'active';
-        let currentJobsTab = 'jobs';
-        let selectedPhotos = [];
-        let currentUser = null;
-        
-        const categories = [
-            { name: 'Електроніка', icon: '📱', id: 'Електроніка' },
-            { name: 'Авто', icon: '🚗', id: 'Авто' },
-            { name: 'Шини/Диски', icon: '🛞', id: 'Шини_Диски' },
-            { name: 'Автозапчастини', icon: '🔧', id: 'Автозапчастини' },
-            { name: 'Нерухомість', icon: '🏠', id: 'Нерухомість' },
-            { name: 'Дім і сад', icon: '🏡', id: 'Дім_і_сад' },
-            { name: 'Дитячий світ', icon: '👶', id: 'Дитячий_світ' },
-            { name: 'Тварини', icon: '🐾', id: 'Тварини' },
-            { name: 'Мода і стиль', icon: '👕', id: 'Мода_і_стиль' },
-            { name: 'Хобі/Відпочинок', icon: '🎮', id: 'Хобі_Відпочинок' },
-            { name: 'Книги', icon: '📚', id: 'Книги' },
-            { name: 'Віддам безкоштовно', icon: '🎁', id: 'Віддам_безкоштовно' },
-            { name: 'Обмін', icon: '🔄', id: 'Обмін' },
-            { name: 'Бізнес/Послуги', icon: '🏢', id: 'Бізнес_Послуги' },
-            { name: 'Оренда/Прокат', icon: '🔑', id: 'Оренда_Прокат' },
-            { name: 'Житло подобово', icon: '🏠', id: 'Житло_подобово' }
-        ];
-        
-        const jobCategories = [
-            'IT/Розробка', 'Маркетинг/PR', 'Фінанси/Бухгалтерія', 'Адміністрація/HR',
-            'Call центр/Продажі', 'Доставка/Логістика', 'Виробництво/Робочі',
-            'Домашній персонал', 'Освіта/Репетитори', 'Медицина/Краса', 'Віддалена робота'
-        ];
+        let state = {
+            currentPage: 'home',
+            currentCategory: null,
+            goods: [],
+            myGoods: { active: [], archived: [], sold: [], deleted: [] },
+            jobs: [],
+            resumes: [],
+            currentProfileTab: 'active',
+            currentJobsTab: 'jobs',
+            user: null,
+            isLoading: false
+        };
         
         // ========== ФОТО ==========
+        let selectedPhotos = [];
+        
         function addPhotoInput() {
             if (selectedPhotos.length >= 15) {
                 showMessage('Максимум 15 фото', true);
@@ -585,7 +632,7 @@
             input.onchange = (e) => {
                 if (e.target.files && e.target.files[0]) {
                     const reader = new FileReader();
-                    reader.onload = function(ev) {
+                    reader.onload = (ev) => {
                         selectedPhotos.push(ev.target.result);
                         renderPhotoList();
                     };
@@ -597,6 +644,7 @@
         
         function renderPhotoList() {
             const container = document.getElementById('photoList');
+            if (!container) return;
             container.innerHTML = selectedPhotos.map((photo, idx) => `
                 <div class="photo-item" style="background-image: url('${photo}')">
                     <div class="photo-remove" onclick="removePhoto(${idx})">×</div>
@@ -616,229 +664,131 @@
             const urls = [];
             for (const photo of selectedPhotos) {
                 try {
-                    const response = await fetch('https://api.imgur.com/3/image', {
+                    const res = await fetch('https://api.imgur.com/3/image', {
                         method: 'POST',
                         headers: { 'Authorization': 'Client-ID 46e2a4d6f0c5a9b' },
                         body: new URLSearchParams({ image: photo.split(',')[1] })
                     });
-                    const data = await response.json();
+                    const data = await res.json();
                     if (data.success) urls.push(data.data.link);
                 } catch(e) { console.error(e); }
             }
-            return urls.join(',');
+            return JSON.stringify(urls);
         }
         
-        // ========== API ==========
-        async function loadUserProfile() {
-            const user = tg.initDataUnsafe.user || { id: 0, first_name: 'Гість', username: null };
-            currentUser = user;
+        function getFirstPhoto(photos) {
+            if (!photos) return '';
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=*`, {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-                });
-                const data = await response.json();
-                if (!data.length) {
-                    await fetch(`${SUPABASE_URL}/rest/v1/users`, {
-                        method: 'POST',
-                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id: user.id, username: user.username, first_name: user.first_name, created_at: new Date().toISOString() })
+                const arr = JSON.parse(photos);
+                return arr[0] || '';
+            } catch(e) {
+                return photos.split(',')[0] || '';
+            }
+        }
+        
+        // ========== ОСНОВНІ ФУНКЦІЇ ==========
+        async function loadUser() {
+            const tgUser = tg.initDataUnsafe.user || { id: 0, first_name: 'Гість' };
+            try {
+                const users = await api.getUser(tgUser.id);
+                if (!users || !users.length) {
+                    await api.createUser({
+                        id: tgUser.id,
+                        username: tgUser.username,
+                        first_name: tgUser.first_name,
+                        created_at: new Date().toISOString()
                     });
                 }
+                state.user = tgUser;
+                state.user.phone = localStorage.getItem('userPhone') || '';
             } catch(e) { console.error(e); }
-        }
-        
-        async function updateUserPhone(phone) {
-            const user = tg.initDataUnsafe.user || { id: 0 };
-            await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}`, {
-                method: 'PATCH',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: phone })
-            });
         }
         
         async function loadGoods() {
+            state.isLoading = true;
             try {
-                let url = `${SUPABASE_URL}/rest/v1/goods?select=*&status=eq.active&order=created_at.desc`;
-                if (currentCategory && currentCategory !== 'Всі') {
-                    url += `&category=eq.${currentCategory}`;
-                }
-                const response = await fetch(url, {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-                });
-                goodsData = await response.json();
-                if (currentPage === 'goods') renderGoodsList();
-            } catch(e) { console.error(e); }
+                state.goods = await api.getGoods(state.currentCategory);
+                if (state.currentPage === 'goods') renderGoodsList();
+            } catch(e) { showMessage('Помилка завантаження', true); }
+            finally { state.isLoading = false; }
         }
         
-        async function loadMyGoods(status = 'active') {
-            const user = tg.initDataUnsafe.user || { id: 0 };
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/goods?select=*&user_id=eq.${user.id}&status=eq.${status}&order=created_at.desc`, {
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            });
-            myGoodsData = await response.json();
+        async function loadMyGoods() {
+            if (!state.user) return;
+            const statuses = ['active', 'archived', 'sold', 'deleted'];
+            for (const status of statuses) {
+                try {
+                    state.myGoods[status] = await api.getUserGoods(state.user.id, status);
+                } catch(e) { state.myGoods[status] = []; }
+            }
             renderMyGoodsList();
         }
         
-        async function updateGoodsStatus(goodsId, newStatus) {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/goods?id=eq.${goodsId}`, {
-                method: 'PATCH',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: newStatus })
-            });
-            return response.ok;
-        }
-        
-        async function deleteGoods(goodsId) {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/goods?id=eq.${goodsId}`, {
-                method: 'PATCH',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: 'deleted' })
-            });
-            return response.ok;
-        }
-        
         async function loadJobs() {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/jobs?select=*&status=eq.open&order=created_at.desc`, {
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            });
-            jobsData = await response.json();
-            if (currentPage === 'jobs' && currentJobsTab === 'jobs') renderJobsList();
+            try {
+                state.jobs = await api.getJobs();
+                if (state.currentPage === 'jobs' && state.currentJobsTab === 'jobs') renderJobsList();
+            } catch(e) { console.error(e); }
         }
         
         async function loadResumes() {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/resumes?select=*&status=eq.active&order=created_at.desc`, {
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            });
-            resumesData = await response.json();
-            if (currentPage === 'jobs' && currentJobsTab === 'resumes') renderJobsList();
-        }
-        
-        async function addGoods(title, category, price, city, phone, description, photos) {
-            const user = tg.initDataUnsafe.user || { id: 0 };
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/goods`, {
-                method: 'POST',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: user.id, title, category, price, description, city, phone, photos: photos,
-                    status: 'active', created_at: new Date().toISOString()
-                })
-            });
-            return response.ok;
-        }
-        
-        async function addJob(title, category, salary, city, phone, schedule, description) {
-            const user = tg.initDataUnsafe.user || { id: 0 };
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/jobs`, {
-                method: 'POST',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: user.id, title, category, salary, city, phone, schedule, description,
-                    status: 'open', created_at: new Date().toISOString()
-                })
-            });
-            return response.ok;
-        }
-        
-        async function addResume(specialty, experience, skills, city, salary, phone) {
-            const user = tg.initDataUnsafe.user || { id: 0 };
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/resumes`, {
-                method: 'POST',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_id: user.id, specialty, experience, skills, city, salary, phone,
-                    status: 'active', created_at: new Date().toISOString()
-                })
-            });
-            return response.ok;
-        }
-        
-        // ========== UI ACTIONS ==========
-        function showConfirmSheet(title, message, onConfirm) {
-            openBottomSheet([
-                { text: '✅ ' + title, onclick: `window.confirmedAction = true; window.pendingConfirm = () => { ${onConfirm} }; window.checkConfirm()`, danger: true }
-            ]);
-            window.pendingConfirmMessage = message;
-            showMessage(message, false, 3000);
-        }
-        
-        window.checkConfirm = function() {
-            if (window.confirmedAction && window.pendingConfirm) {
-                window.pendingConfirm();
-                window.confirmedAction = false;
-                window.pendingConfirm = null;
-            }
-        };
-        
-        async function deleteGoodsWithFeedback(id, btnElement) {
-            setButtonLoading(btnElement, true);
             try {
-                const success = await deleteGoods(id);
-                if (success) {
-                    showMessage('🗑 Оголошення видалено');
-                    await loadMyGoods(currentProfileTab);
-                    await loadGoods();
-                    const card = document.getElementById(`my-goods-${id}`);
-                    if (card) card.style.display = 'none';
-                } else {
-                    showMessage('❌ Помилка видалення', true);
-                }
-            } catch(e) {
-                showMessage('❌ Помилка', true);
-            } finally {
-                setButtonLoading(btnElement, false);
-            }
+                state.resumes = await api.getResumes();
+                if (state.currentPage === 'jobs' && state.currentJobsTab === 'resumes') renderJobsList();
+            } catch(e) { console.error(e); }
         }
         
-        async function archiveGoodsWithFeedback(id, btnElement) {
-            setButtonLoading(btnElement, true);
-            try {
-                const success = await updateGoodsStatus(id, 'archived');
-                if (success) {
-                    showMessage('📦 Переміщено в архів');
-                    await loadMyGoods(currentProfileTab);
-                    await loadGoods();
-                } else {
-                    showMessage('❌ Помилка', true);
-                }
-            } catch(e) {
-                showMessage('❌ Помилка', true);
-            } finally {
-                setButtonLoading(btnElement, false);
+        async function updateGoodsStatus(id, newStatus, actionName) {
+            const success = await api.updateGoodsStatus(id, newStatus);
+            if (success) {
+                showMessage(`✅ ${actionName}`);
+                await loadGoods();
+                await loadMyGoods();
+                return true;
             }
+            showMessage(`❌ Помилка ${actionName.toLowerCase()}`, true);
+            return false;
         }
         
-        async function markAsSoldWithFeedback(id, btnElement) {
-            setButtonLoading(btnElement, true);
-            try {
-                const success = await updateGoodsStatus(id, 'sold');
-                if (success) {
-                    showMessage('💰 Позначено як продано');
-                    await loadMyGoods(currentProfileTab);
-                    await loadGoods();
-                } else {
-                    showMessage('❌ Помилка', true);
-                }
-            } catch(e) {
-                showMessage('❌ Помилка', true);
-            } finally {
-                setButtonLoading(btnElement, false);
+        async function deleteGoodsItem(id) {
+            const success = await api.updateGoodsStatus(id, 'deleted');
+            if (success) {
+                showMessage('✅ Оголошення видалено');
+                await loadGoods();
+                await loadMyGoods();
+                return true;
             }
+            showMessage('❌ Помилка видалення', true);
+            return false;
         }
         
         // ========== RENDER ==========
         function renderGoodsList() {
-            if (!goodsData.length) {
-                document.getElementById('app').innerHTML = '<div class="empty">📭 Немає товарів</div>';
+            const container = document.getElementById('app');
+            if (!container) return;
+            
+            if (state.isLoading) {
+                container.innerHTML = '<div class="loading-container">⏳ Завантаження...</div>';
                 return;
             }
-            document.getElementById('app').innerHTML = `
-                <div class="header"><h2>📦 ${escapeHtml(currentCategory || 'Всі товари')}</h2><button class="back-button" onclick="goBack()">← Назад</button></div>
+            
+            if (!state.goods.length) {
+                container.innerHTML = '<div class="empty">📭 Немає товарів</div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="header">
+                    <h2>📦 ${escapeHtml(state.currentCategory || 'Всі товари')}</h2>
+                    <button class="back-button" onclick="goBack()">← Назад</button>
+                </div>
                 <input type="text" class="search-bar" placeholder="🔍 Пошук за назвою..." id="searchInput" onkeyup="searchGoods()">
                 <div class="goods-list" id="goodsList"></div>
                 <button class="btn-refresh" onclick="loadGoods()">🔄 Оновити</button>
             `;
-            const container = document.getElementById('goodsList');
-            container.innerHTML = goodsData.map(item => `
+            
+            const listContainer = document.getElementById('goodsList');
+            listContainer.innerHTML = state.goods.map(item => `
                 <div class="goods-card" onclick="openGoodsDetail(${item.id})">
                     <div class="goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
                     <div class="goods-info">
@@ -852,24 +802,17 @@
             `).join('');
         }
         
-        function getFirstPhoto(photos) {
-            if (!photos) return '';
-            if (photos.startsWith('[')) {
-                try {
-                    const arr = JSON.parse(photos);
-                    return arr[0] || '';
-                } catch(e) { return ''; }
-            }
-            return photos.split(',')[0] || '';
-        }
-        
         function renderMyGoodsList() {
             const container = document.getElementById('myGoodsList');
-            if (!myGoodsData.length) {
+            if (!container) return;
+            
+            const goods = state.myGoods[state.currentProfileTab] || [];
+            if (!goods.length) {
                 container.innerHTML = '<div class="empty">📭 Немає оголошень</div>';
                 return;
             }
-            container.innerHTML = myGoodsData.map(item => `
+            
+            container.innerHTML = goods.map(item => `
                 <div class="my-goods-card" id="my-goods-${item.id}">
                     <div class="my-goods-header">
                         <div class="my-goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
@@ -883,24 +826,25 @@
                     <div class="my-goods-actions">
                         <button class="action-btn action-view" onclick="openGoodsDetail(${item.id})">👁 Переглянути</button>
                         <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
-                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="archiveGoodsWithFeedback(${item.id}, this)">📦 В архів</button>` : ''}
-                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="markAsSoldWithFeedback(${item.id}, this)">💰 Продано</button>` : ''}
-                        <button class="action-btn action-delete" onclick="deleteGoodsWithFeedback(${item.id}, this)">🗑 Видалити</button>
+                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 В архів</button>` : ''}
+                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰 Продано</button>` : ''}
+                        <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>
                     </div>
                 </div>
             `).join('');
         }
         
         function renderHome() {
-            document.getElementById('app').innerHTML = `
+            const container = document.getElementById('app');
+            container.innerHTML = `
                 <div class="header"><h2>🏠 Ukraine Market</h2></div>
                 <div class="category-grid" id="homeCategories"></div>
                 <button class="btn-view" onclick="goToAllGoods()">📦 Всі товари →</button>
                 <button class="btn-view" onclick="goToJobs()">💼 Шукаю роботу →</button>
             `;
-            const container = document.getElementById('homeCategories');
-            container.innerHTML = categories.slice(0, 8).map(cat => `
-                <div class="category-card" onclick="selectHomeCategory('${escapeHtml(cat.id)}')">
+            const grid = document.getElementById('homeCategories');
+            grid.innerHTML = categories.slice(0, 8).map(cat => `
+                <div class="category-card" onclick="selectHomeCategory('${cat.id}')">
                     <div class="category-icon">${cat.icon}</div>
                     <div class="category-name">${escapeHtml(cat.name)}</div>
                 </div>
@@ -908,47 +852,43 @@
         }
         
         function renderJobsList() {
-            document.getElementById('app').innerHTML = `
+            const container = document.getElementById('app');
+            container.innerHTML = `
                 <div class="header"><h2>💼 Робота</h2><button class="back-button" onclick="goBack()">← Назад</button></div>
                 <div class="jobs-tabs">
-                    <div class="jobs-tab ${currentJobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
-                    <div class="jobs-tab ${currentJobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
+                    <div class="jobs-tab ${state.currentJobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
+                    <div class="jobs-tab ${state.currentJobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
                 </div>
                 <div id="jobsContent"></div>
                 <button class="btn-refresh" onclick="loadJobs()">🔄 Оновити</button>
             `;
-            const container = document.getElementById('jobsContent');
-            if (currentJobsTab === 'jobs') {
-                container.innerHTML = jobsData.map(job => `
+            const content = document.getElementById('jobsContent');
+            if (state.currentJobsTab === 'jobs') {
+                content.innerHTML = state.jobs.map(job => `
                     <div class="job-card" onclick="openJobDetail(${job.id})">
-                        <div class="job-info">
-                            <div class="job-title">${escapeHtml(job.title)}</div>
-                            <div class="job-salary">💰 ${escapeHtml(job.salary)} грн</div>
-                            <div class="job-city">📍 ${escapeHtml(job.city || 'не вказано')}</div>
-                            <div class="job-date">📅 ${formatDate(job.created_at)}</div>
-                        </div>
+                        <div class="job-title">${escapeHtml(job.title)}</div>
+                        <div class="job-salary">💰 ${escapeHtml(job.salary)} грн</div>
+                        <div class="job-city">📍 ${escapeHtml(job.city || 'не вказано')}</div>
                     </div>
                 `).join('') || '<div class="empty">📭 Немає вакансій</div>';
             } else {
-                container.innerHTML = resumesData.map(resume => `
+                content.innerHTML = state.resumes.map(resume => `
                     <div class="resume-card" onclick="openResumeDetail(${resume.id})">
-                        <div class="job-info">
-                            <div class="resume-specialty">${escapeHtml(resume.specialty)}</div>
-                            <div class="job-salary">💰 ${escapeHtml(resume.salary)} грн</div>
-                            <div class="job-city">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
-                            <div class="job-date">📅 ${formatDate(resume.created_at)}</div>
-                        </div>
+                        <div class="resume-specialty">${escapeHtml(resume.specialty)}</div>
+                        <div class="job-salary">💰 ${escapeHtml(resume.salary)} грн</div>
+                        <div class="job-city">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
                     </div>
                 `).join('') || '<div class="empty">📭 Немає резюме</div>';
             }
         }
         
         function renderProfile() {
-            const user = tg.initDataUnsafe.user || { first_name: 'Користувач', id: 0 };
             const stats = {
-                active: myGoodsData.filter(i => i.status === 'active').length,
-                total: myGoodsData.length
+                active: state.myGoods.active.length,
+                total: state.myGoods.active.length + state.myGoods.archived.length + state.myGoods.sold.length
             };
+            const user = state.user || { first_name: 'Користувач', id: 0 };
+            
             document.getElementById('app').innerHTML = `
                 <div class="header"><h2>👤 Профіль</h2></div>
                 <div class="profile-header">
@@ -962,68 +902,64 @@
                 </div>
                 <div class="profile-phone">
                     <input type="tel" id="profilePhone" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
-                    <button class="btn-publish" style="margin-top:10px" onclick="savePhone()">💾 Зберегти номер</button>
+                    <button class="btn-publish" onclick="savePhone()">💾 Зберегти номер</button>
                 </div>
                 <div class="profile-tabs">
-                    <div class="profile-tab ${currentProfileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні</div>
-                    <div class="profile-tab ${currentProfileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів</div>
-                    <div class="profile-tab ${currentProfileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані</div>
-                    <div class="profile-tab ${currentProfileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">Видалені</div>
+                    <div class="profile-tab ${state.currentProfileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні</div>
+                    <div class="profile-tab ${state.currentProfileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів</div>
+                    <div class="profile-tab ${state.currentProfileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані</div>
+                    <div class="profile-tab ${state.currentProfileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">Видалені</div>
                 </div>
                 <div id="myGoodsList"></div>
                 <button class="btn-cancel" onclick="tg.close()">❌ Закрити</button>
             `;
-            loadMyGoods(currentProfileTab);
+            renderMyGoodsList();
         }
         
         // ========== ДІЇ ==========
         function savePhone() {
-            const phone = document.getElementById('profilePhone').value;
-            if (phone) {
+            const phone = document.getElementById('profilePhone')?.value;
+            if (phone && state.user) {
                 localStorage.setItem('userPhone', phone);
-                updateUserPhone(phone);
+                api.updateUserPhone(state.user.id, phone);
                 showMessage('✅ Номер збережено');
             }
         }
         
-        function getPhone() {
-            return localStorage.getItem('userPhone') || '';
-        }
-        
         function switchProfileTab(tab) {
-            currentProfileTab = tab;
+            state.currentProfileTab = tab;
             renderProfile();
         }
         
         function switchJobsTab(tab) {
-            currentJobsTab = tab;
+            state.currentJobsTab = tab;
             if (tab === 'jobs') loadJobs();
             else loadResumes();
             renderJobsList();
         }
         
         function goToAllGoods() {
-            currentCategory = null;
-            currentPage = 'goods';
+            state.currentCategory = null;
+            state.currentPage = 'goods';
             loadGoods();
         }
         
         function goToJobs() {
-            currentPage = 'jobs';
+            state.currentPage = 'jobs';
             loadJobs();
             loadResumes();
             renderJobsList();
         }
         
         function selectHomeCategory(category) {
-            currentCategory = category;
-            currentPage = 'goods';
+            state.currentCategory = category;
+            state.currentPage = 'goods';
             loadGoods();
         }
         
         function searchGoods() {
             const query = document.getElementById('searchInput')?.value.toLowerCase() || '';
-            const filtered = goodsData.filter(item => item.title.toLowerCase().includes(query));
+            const filtered = state.goods.filter(item => item.title.toLowerCase().includes(query));
             const container = document.getElementById('goodsList');
             if (container) {
                 container.innerHTML = filtered.map(item => `
@@ -1041,14 +977,11 @@
         }
         
         function goBack() {
-            if (currentPage === 'goods') {
-                currentPage = 'home';
-                renderHome();
-            } else if (currentPage === 'jobs') {
-                currentPage = 'home';
+            if (state.currentPage === 'goods' || state.currentPage === 'jobs') {
+                state.currentPage = 'home';
                 renderHome();
             } else {
-                currentPage = 'home';
+                state.currentPage = 'home';
                 renderHome();
             }
         }
@@ -1067,24 +1000,40 @@
             document.getElementById('bottomSheetOverlay').classList.remove('show');
         }
         
+        function confirmDelete(id) {
+            openBottomSheet([
+                { text: '🗑 Так, видалити', onclick: `deleteGoodsItem(${id})` }
+            ]);
+        }
+        
+        function confirmArchive(id) {
+            openBottomSheet([
+                { text: '📦 Так, в архів', onclick: `updateGoodsStatus(${id}, 'archived', 'Переміщено в архів')` }
+            ]);
+        }
+        
+        function confirmSold(id) {
+            openBottomSheet([
+                { text: '💰 Так, позначити проданим', onclick: `updateGoodsStatus(${id}, 'sold', 'Позначено як продано')` }
+            ]);
+        }
+        
         function editGoods(id) {
-            showMessage('✏️ Редагування в розробці');
+            showMessage('✏️ Редагування буде доступне в наступній версії');
         }
         
         async function openGoodsDetail(id) {
-            const item = goodsData.find(g => g.id === id);
+            const item = state.goods.find(g => g.id === id);
             if (!item) return;
-            const user = await getUserById(item.user_id);
+            const users = await api.getUser(item.user_id);
+            const seller = users?.[0];
+            
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('detailContent');
             
-            let photosHtml = '';
-            const firstPhoto = getFirstPhoto(item.photos);
-            if (firstPhoto) {
-                photosHtml = `<div class="detail-photo" style="background-image: url('${escapeHtml(firstPhoto)}')"></div>`;
-            } else {
-                photosHtml = `<div class="detail-photo" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>`;
-            }
+            const photoUrl = getFirstPhoto(item.photos);
+            const photosHtml = photoUrl ? `<div class="detail-photo" style="background-image: url('${escapeHtml(photoUrl)}')"></div>` 
+                : '<div class="detail-photo" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>';
             
             content.innerHTML = `
                 ${photosHtml}
@@ -1093,16 +1042,18 @@
                 <div class="detail-category">📂 Категорія: ${escapeHtml(item.category || 'не вказано')}</div>
                 <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                 <div class="detail-desc">📝 ${escapeHtml(item.description || 'Без опису')}</div>
-                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || user?.phone || 'не вказано')}</div>
-                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || user?.phone)}')">💬 Зв'язатися</button>
+                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || seller?.phone || 'не вказано')}</div>
+                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || seller?.phone || '')}')">💬 Зв'язатися</button>
             `;
             modal.style.display = 'flex';
         }
         
         async function openJobDetail(id) {
-            const item = jobsData.find(j => j.id === id);
+            const item = state.jobs.find(j => j.id === id);
             if (!item) return;
-            const user = await getUserById(item.user_id);
+            const users = await api.getUser(item.user_id);
+            const employer = users?.[0];
+            
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('detailContent');
             content.innerHTML = `
@@ -1111,16 +1062,18 @@
                 <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                 <div class="detail-desc">🕐 Графік: ${escapeHtml(item.schedule || 'не вказано')}</div>
                 <div class="detail-desc">📝 ${escapeHtml(item.description || 'Без опису')}</div>
-                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || user?.phone || 'не вказано')}</div>
-                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || user?.phone)}')">💬 Відгукнутися</button>
+                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || employer?.phone || 'не вказано')}</div>
+                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || employer?.phone || '')}')">💬 Відгукнутися</button>
             `;
             modal.style.display = 'flex';
         }
         
         async function openResumeDetail(id) {
-            const item = resumesData.find(r => r.id === id);
+            const item = state.resumes.find(r => r.id === id);
             if (!item) return;
-            const user = await getUserById(item.user_id);
+            const users = await api.getUser(item.user_id);
+            const candidate = users?.[0];
+            
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('detailContent');
             content.innerHTML = `
@@ -1129,14 +1082,14 @@
                 <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                 <div class="detail-desc">📝 Досвід: ${escapeHtml(item.experience || 'не вказано')}</div>
                 <div class="detail-desc">🛠️ Навички: ${escapeHtml(item.skills || 'не вказано')}</div>
-                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || user?.phone || 'не вказано')}</div>
-                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || user?.phone)}')">💬 Запросити</button>
+                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || candidate?.phone || 'не вказано')}</div>
+                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || candidate?.phone || '')}')">💬 Запросити</button>
             `;
             modal.style.display = 'flex';
         }
         
         function contactSeller(phone) {
-            if (phone) {
+            if (phone && phone !== 'не вказано') {
                 tg.showPopup({
                     title: 'Контактні дані',
                     message: `Телефон: ${phone}`,
@@ -1151,16 +1104,6 @@
             document.getElementById('detailModal').style.display = 'none';
         }
         
-        async function getUserById(userId) {
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=*`, {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-                });
-                const data = await response.json();
-                return data[0] || null;
-            } catch(e) { return null; }
-        }
-        
         function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
         function closeModal() { 
             document.getElementById('addModal').style.display = 'none';
@@ -1169,68 +1112,117 @@
         }
         
         function switchAddTab(tab) {
-            currentAddTab = tab;
             document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
             document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
             document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
         }
         
+        function getPhone() {
+            return localStorage.getItem('userPhone') || '';
+        }
+        
         async function submitGoods() {
-            const title = document.getElementById('goodsTitle').value;
-            const category = document.getElementById('goodsCategory').value;
-            const price = document.getElementById('goodsPrice').value;
-            const city = document.getElementById('goodsCity').value;
-            const phone = document.getElementById('goodsPhone').value || getPhone();
-            const desc = document.getElementById('goodsDesc').value;
+            const title = document.getElementById('goodsTitle')?.value;
+            const category = document.getElementById('goodsCategory')?.value;
+            const price = document.getElementById('goodsPrice')?.value;
+            const city = document.getElementById('goodsCity')?.value;
+            const phone = document.getElementById('goodsPhone')?.value || getPhone();
+            const desc = document.getElementById('goodsDesc')?.value;
+            
             if (!title || !price) { showMessage('Заповніть назву та ціну', true); return; }
             if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
+            if (!state.user) { showMessage('Помилка авторизації', true); return; }
             
             const photoUrls = await uploadPhotos();
-            const ok = await addGoods(title, category, price, city, phone, desc, photoUrls);
+            const ok = await api.createGoods({
+                user_id: state.user.id,
+                title, category, price, description: desc, city, phone,
+                photos: photoUrls,
+                status: 'active',
+                created_at: new Date().toISOString()
+            });
+            
             if (ok) {
                 showMessage('✅ Опубліковано!');
                 closeModal();
                 loadGoods();
-                document.getElementById('goodsTitle').value = '';
-                document.getElementById('goodsPrice').value = '';
-                document.getElementById('goodsCity').value = '';
-                document.getElementById('goodsDesc').value = '';
-                document.getElementById('goodsPhone').value = '';
+                ['goodsTitle', 'goodsPrice', 'goodsCity', 'goodsDesc', 'goodsPhone'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
                 selectedPhotos = [];
                 renderPhotoList();
             } else {
-                showMessage('❌ Помилка', true);
+                showMessage('❌ Помилка публікації', true);
             }
         }
         
         async function submitJob() {
-            const title = document.getElementById('jobTitle').value;
-            const category = document.getElementById('jobCategory').value;
-            const salary = document.getElementById('jobSalary').value;
-            const city = document.getElementById('jobCity').value;
-            const phone = document.getElementById('jobPhone').value || getPhone();
-            const schedule = document.getElementById('jobSchedule').value;
-            const desc = document.getElementById('jobDesc').value;
-            if (!title) { showMessage('Заповніть назву', true); return; }
+            const title = document.getElementById('jobTitle')?.value;
+            const category = document.getElementById('jobCategory')?.value;
+            const salary = document.getElementById('jobSalary')?.value;
+            const city = document.getElementById('jobCity')?.value;
+            const phone = document.getElementById('jobPhone')?.value || getPhone();
+            const schedule = document.getElementById('jobSchedule')?.value;
+            const desc = document.getElementById('jobDesc')?.value;
+            
+            if (!title) { showMessage('Заповніть назву вакансії', true); return; }
             if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
-            const ok = await addJob(title, category, salary, city, phone, schedule, desc);
-            showMessage(ok ? '✅ Опубліковано!' : '❌ Помилка', !ok);
+            if (!state.user) { showMessage('Помилка авторизації', true); return; }
+            
+            const ok = await api.createJob({
+                user_id: state.user.id,
+                title, category, salary, city, phone, schedule, description: desc,
+                status: 'open',
+                created_at: new Date().toISOString()
+            });
+            
+            showMessage(ok ? '✅ Вакансію опубліковано!' : '❌ Помилка', !ok);
             if (ok) { closeModal(); loadJobs(); }
         }
         
         async function submitResume() {
-            const specialty = document.getElementById('resumeSpecialty').value;
-            const experience = document.getElementById('resumeExperience').value;
-            const skills = document.getElementById('resumeSkills').value;
-            const city = document.getElementById('resumeCity').value;
-            const salary = document.getElementById('resumeSalary').value;
-            const phone = document.getElementById('resumePhone').value || getPhone();
+            const specialty = document.getElementById('resumeSpecialty')?.value;
+            const experience = document.getElementById('resumeExperience')?.value;
+            const skills = document.getElementById('resumeSkills')?.value;
+            const city = document.getElementById('resumeCity')?.value;
+            const salary = document.getElementById('resumeSalary')?.value;
+            const phone = document.getElementById('resumePhone')?.value || getPhone();
+            
             if (!specialty) { showMessage('Заповніть спеціальність', true); return; }
             if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
-            const ok = await addResume(specialty, experience, skills, city, salary, phone);
-            showMessage(ok ? '✅ Опубліковано!' : '❌ Помилка', !ok);
+            if (!state.user) { showMessage('Помилка авторизації', true); return; }
+            
+            const ok = await api.createResume({
+                user_id: state.user.id,
+                specialty, experience, skills, city, salary, phone,
+                status: 'active',
+                created_at: new Date().toISOString()
+            });
+            
+            showMessage(ok ? '✅ Резюме опубліковано!' : '❌ Помилка', !ok);
             if (ok) { closeModal(); loadResumes(); }
         }
+        
+        // ========== КАТЕГОРІЇ ==========
+        const categories = [
+            { name: 'Електроніка', icon: '📱', id: 'Електроніка' },
+            { name: 'Авто', icon: '🚗', id: 'Авто' },
+            { name: 'Шини/Диски', icon: '🛞', id: 'Шини_Диски' },
+            { name: 'Автозапчастини', icon: '🔧', id: 'Автозапчастини' },
+            { name: 'Нерухомість', icon: '🏠', id: 'Нерухомість' },
+            { name: 'Дім і сад', icon: '🏡', id: 'Дім_і_сад' },
+            { name: 'Дитячий світ', icon: '👶', id: 'Дитячий_світ' },
+            { name: 'Тварини', icon: '🐾', id: 'Тварини' },
+            { name: 'Мода і стиль', icon: '👕', id: 'Мода_і_стиль' },
+            { name: 'Хобі/Відпочинок', icon: '🎮', id: 'Хобі_Відпочинок' },
+            { name: 'Книги', icon: '📚', id: 'Книги' },
+            { name: 'Віддам безкоштовно', icon: '🎁', id: 'Віддам_безкоштовно' },
+            { name: 'Обмін', icon: '🔄', id: 'Обмін' },
+            { name: 'Бізнес/Послуги', icon: '🏢', id: 'Бізнес_Послуги' },
+            { name: 'Оренда/Прокат', icon: '🔑', id: 'Оренда_Прокат' },
+            { name: 'Житло подобово', icon: '🏠', id: 'Житло_подобово' }
+        ];
         
         // ========== INIT ==========
         document.getElementById('bottomNav').addEventListener('click', (e) => {
@@ -1239,31 +1231,32 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             btn.classList.add('active');
             const page = btn.dataset.page;
-            if (page === 'home') { currentPage = 'home'; renderHome(); }
-            else if (page === 'goods') { currentPage = 'goods'; currentCategory = null; loadGoods(); }
-            else if (page === 'jobs') { currentPage = 'jobs'; loadJobs(); loadResumes(); renderJobsList(); }
-            else if (page === 'profile') { currentPage = 'profile'; renderProfile(); }
+            if (page === 'home') { state.currentPage = 'home'; renderHome(); }
+            else if (page === 'goods') { state.currentPage = 'goods'; state.currentCategory = null; loadGoods(); }
+            else if (page === 'jobs') { state.currentPage = 'jobs'; loadJobs(); loadResumes(); renderJobsList(); }
+            else if (page === 'profile') { state.currentPage = 'profile'; loadMyGoods(); renderProfile(); }
         });
         
-        loadUserProfile();
-        renderHome();
-        document.querySelector('.nav-item[data-page="home"]').classList.add('active');
-        loadGoods();
-        loadJobs();
-        loadResumes();
+        (async () => {
+            await loadUser();
+            renderHome();
+            document.querySelector('.nav-item[data-page="home"]').classList.add('active');
+            loadGoods();
+            loadJobs();
+            loadResumes();
+        })();
         
-        // Глобальні для onclick
-        window.deleteGoodsWithFeedback = deleteGoodsWithFeedback;
-        window.archiveGoodsWithFeedback = archiveGoodsWithFeedback;
-        window.markAsSoldWithFeedback = markAsSoldWithFeedback;
-        window.showAddModal = showAddModal;
-        window.closeDetailModal = closeDetailModal;
-        window.goBack = goBack;
+        window.deleteGoodsItem = deleteGoodsItem;
+        window.updateGoodsStatus = updateGoodsStatus;
+        window.confirmDelete = confirmDelete;
+        window.confirmArchive = confirmArchive;
+        window.confirmSold = confirmSold;
+        window.editGoods = editGoods;
         window.openGoodsDetail = openGoodsDetail;
         window.openJobDetail = openJobDetail;
         window.openResumeDetail = openResumeDetail;
         window.contactSeller = contactSeller;
-        window.editGoods = editGoods;
+        window.closeDetailModal = closeDetailModal;
         window.savePhone = savePhone;
         window.switchProfileTab = switchProfileTab;
         window.switchJobsTab = switchJobsTab;
@@ -1271,14 +1264,16 @@
         window.goToJobs = goToJobs;
         window.selectHomeCategory = selectHomeCategory;
         window.searchGoods = searchGoods;
+        window.goBack = goBack;
+        window.showAddModal = showAddModal;
+        window.closeModal = closeModal;
+        window.switchAddTab = switchAddTab;
         window.submitGoods = submitGoods;
         window.submitJob = submitJob;
         window.submitResume = submitResume;
-        window.switchAddTab = switchAddTab;
-        window.closeModal = closeModal;
-        window.closeBottomSheet = closeBottomSheet;
         window.addPhotoInput = addPhotoInput;
         window.removePhoto = removePhoto;
+        window.closeBottomSheet = closeBottomSheet;
     </script>
 </body>
 </html>
