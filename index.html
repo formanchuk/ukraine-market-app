@@ -691,4 +691,213 @@
             const container = document.getElementById('goodsList');
             if (container) {
                 container.innerHTML = filtered.map(item => `
-                    <
+                    <div class="goods-card" onclick="openGoodsDetail(${item.id})">
+                        <div class="goods-image" style="background-image: url('${item.photos ? item.photos.split(',')[0] : ''}')"></div>
+                        <div class="goods-info">
+                            <div class="goods-title">${escapeHtml(item.title)}</div>
+                            <div class="goods-price">💰 ${item.price} грн</div>
+                            <div class="goods-category">📂 ${item.category || 'Без категорії'}</div>
+                            <div class="goods-city">📍 ${item.city || 'не вказано'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function goBack() {
+            if (currentPage === 'goods') {
+                currentPage = 'home';
+                renderHome();
+            } else if (currentPage === 'jobs') {
+                currentPage = 'home';
+                renderHome();
+            } else {
+                currentPage = 'home';
+                renderHome();
+            }
+        }
+        
+        async function openGoodsDetail(id) {
+            const item = goodsData.find(g => g.id === id);
+            if (!item) return;
+            const user = await getUserById(item.user_id);
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            
+            let photosHtml = '';
+            if (item.photos) {
+                const photos = item.photos.split(',');
+                photosHtml = `<div class="detail-photo" style="background-image: url('${photos[0]}')"></div>`;
+            } else {
+                photosHtml = `<div class="detail-photo" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>`;
+            }
+            
+            content.innerHTML = `
+                ${photosHtml}
+                <div class="detail-title">${escapeHtml(item.title)}</div>
+                <div class="detail-price">💰 ${item.price} грн</div>
+                <div class="detail-category">📂 Категорія: ${item.category || 'не вказано'}</div>
+                <div class="detail-city">📍 ${item.city || 'не вказано'}</div>
+                <div class="detail-desc">📝 ${item.description || 'Без опису'}</div>
+                <div class="detail-phone">📱 Телефон: ${item.phone || user?.phone || 'не вказано'}</div>
+                <button class="contact-btn" onclick="contactSeller('${item.phone || user?.phone}')">💬 Зв'язатися</button>
+            `;
+            modal.style.display = 'flex';
+        }
+        
+        async function openJobDetail(id) {
+            const item = jobsData.find(j => j.id === id);
+            if (!item) return;
+            const user = await getUserById(item.user_id);
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            content.innerHTML = `
+                <div class="detail-title">${escapeHtml(item.title)}</div>
+                <div class="detail-price">💰 ${item.salary} грн</div>
+                <div class="detail-city">📍 ${item.city || 'не вказано'}</div>
+                <div class="detail-desc">🕐 Графік: ${item.schedule || 'не вказано'}</div>
+                <div class="detail-desc">📝 ${item.description || 'Без опису'}</div>
+                <div class="detail-phone">📱 Телефон: ${item.phone || user?.phone || 'не вказано'}</div>
+                <button class="contact-btn" onclick="contactSeller('${item.phone || user?.phone}')">💬 Відгукнутися</button>
+            `;
+            modal.style.display = 'flex';
+        }
+        
+        async function openResumeDetail(id) {
+            const item = resumesData.find(r => r.id === id);
+            if (!item) return;
+            const user = await getUserById(item.user_id);
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailContent');
+            content.innerHTML = `
+                <div class="detail-title">${escapeHtml(item.specialty)}</div>
+                <div class="detail-price">💰 ${item.salary} грн</div>
+                <div class="detail-city">📍 ${item.city || 'не вказано'}</div>
+                <div class="detail-desc">📝 Досвід: ${item.experience || 'не вказано'}</div>
+                <div class="detail-desc">🛠️ Навички: ${item.skills || 'не вказано'}</div>
+                <div class="detail-phone">📱 Телефон: ${item.phone || user?.phone || 'не вказано'}</div>
+                <button class="contact-btn" onclick="contactSeller('${item.phone || user?.phone}')">💬 Запросити</button>
+            `;
+            modal.style.display = 'flex';
+        }
+        
+        function contactSeller(phone) {
+            if (phone) {
+                tg.showPopup({
+                    title: 'Контактні дані',
+                    message: `Телефон: ${phone}`,
+                    buttons: [{ type: 'default', text: 'OK' }]
+                });
+            } else {
+                showMessage('Номер телефону не вказано', true);
+            }
+        }
+        
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+        
+        async function getUserById(userId) {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${userId}&select=*`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                const data = await response.json();
+                return data[0] || null;
+            } catch(e) { return null; }
+        }
+        
+        function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
+        function closeModal() { 
+            document.getElementById('addModal').style.display = 'none';
+            selectedPhotos = [];
+            renderPhotoList();
+        }
+        
+        function switchAddTab(tab) {
+            currentAddTab = tab;
+            document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
+            document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
+            document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
+        }
+        
+        async function submitGoods() {
+            const title = document.getElementById('goodsTitle').value;
+            const category = document.getElementById('goodsCategory').value;
+            const price = document.getElementById('goodsPrice').value;
+            const city = document.getElementById('goodsCity').value;
+            const phone = document.getElementById('goodsPhone').value || getPhone();
+            const desc = document.getElementById('goodsDesc').value;
+            if (!title || !price) { showMessage('Заповніть назву та ціну', true); return; }
+            if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
+            
+            const photoUrls = await uploadPhotos();
+            const ok = await addGoods(title, category, price, city, phone, desc, photoUrls);
+            if (ok) {
+                showMessage('✅ Опубліковано!');
+                closeModal();
+                loadGoods();
+                document.getElementById('goodsTitle').value = '';
+                document.getElementById('goodsPrice').value = '';
+                document.getElementById('goodsCity').value = '';
+                document.getElementById('goodsDesc').value = '';
+                document.getElementById('goodsPhone').value = '';
+                selectedPhotos = [];
+                renderPhotoList();
+            } else {
+                showMessage('❌ Помилка', true);
+            }
+        }
+        
+        async function submitJob() {
+            const title = document.getElementById('jobTitle').value;
+            const category = document.getElementById('jobCategory').value;
+            const salary = document.getElementById('jobSalary').value;
+            const city = document.getElementById('jobCity').value;
+            const phone = document.getElementById('jobPhone').value || getPhone();
+            const schedule = document.getElementById('jobSchedule').value;
+            const desc = document.getElementById('jobDesc').value;
+            if (!title) { showMessage('Заповніть назву', true); return; }
+            if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
+            const ok = await addJob(title, category, salary, city, phone, schedule, desc);
+            showMessage(ok ? '✅ Опубліковано!' : '❌ Помилка', !ok);
+            if (ok) { closeModal(); loadJobs(); }
+        }
+        
+        async function submitResume() {
+            const specialty = document.getElementById('resumeSpecialty').value;
+            const experience = document.getElementById('resumeExperience').value;
+            const skills = document.getElementById('resumeSkills').value;
+            const city = document.getElementById('resumeCity').value;
+            const salary = document.getElementById('resumeSalary').value;
+            const phone = document.getElementById('resumePhone').value || getPhone();
+            if (!specialty) { showMessage('Заповніть спеціальність', true); return; }
+            if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
+            const ok = await addResume(specialty, experience, skills, city, salary, phone);
+            showMessage(ok ? '✅ Опубліковано!' : '❌ Помилка', !ok);
+            if (ok) { closeModal(); loadResumes(); }
+        }
+        
+        function escapeHtml(text) { if (!text) return ''; return text; }
+        
+        document.getElementById('bottomNav').addEventListener('click', (e) => {
+            const btn = e.target.closest('.nav-item');
+            if (!btn) return;
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            btn.classList.add('active');
+            const page = btn.dataset.page;
+            if (page === 'home') { currentPage = 'home'; renderHome(); }
+            else if (page === 'goods') { currentPage = 'goods'; currentCategory = null; loadGoods(); }
+            else if (page === 'profile') { currentPage = 'profile'; renderProfile(); }
+            else if (page === 'jobs') { currentPage = 'jobs'; loadJobs(); loadResumes(); renderJobsList(); }
+        });
+        
+        loadUserProfile();
+        renderHome();
+        document.querySelector('.nav-item[data-page="home"]').classList.add('active');
+        loadGoods();
+        loadJobs();
+        loadResumes();
+    </script>
+</body>
+</html>
