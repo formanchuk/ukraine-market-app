@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ukraine Market</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -11,77 +11,100 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
+            min-height: 100vh;
+            padding: 0;
+            padding-bottom: 70px;
+        }
+        
+        /* Основні контейнери */
+        .app-container {
             padding: 16px;
             padding-bottom: 80px;
         }
+        
+        /* Хедер */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding: 12px;
+            padding: 12px 16px;
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
+            border-radius: 14px;
         }
-        .header h2 { font-size: 18px; }
-        .back-button, .menu-button {
+        .header h2 { font-size: 20px; font-weight: 600; }
+        .back-btn {
             background: transparent;
-            color: var(--tg-theme-text-color, #000);
             border: none;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
-            padding: 0;
-            width: auto;
-            margin: 0;
-        }
-        .search-bar {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
+            padding: 8px;
             border-radius: 10px;
+            transition: background 0.2s;
+        }
+        .back-btn:active { background: rgba(0,0,0,0.05); }
+        
+        /* Пошук */
+        .search-box {
+            width: 100%;
+            padding: 14px 16px;
+            border: none;
+            border-radius: 14px;
             margin-bottom: 16px;
             font-size: 16px;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000);
+            outline: none;
         }
-        .category-grid {
+        .search-box:focus { background: var(--tg-theme-bg-color, #fff); box-shadow: 0 0 0 2px #2aab6e; }
+        
+        /* Сітка категорій */
+        .categories-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
         }
-        .category-card {
+        .category-item {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-            padding: 12px;
-            border-radius: 12px;
+            padding: 16px 8px;
+            border-radius: 16px;
             text-align: center;
             cursor: pointer;
+            transition: transform 0.1s;
         }
-        .category-card:active { transform: scale(0.98); }
-        .category-icon { font-size: 28px; margin-bottom: 4px; }
+        .category-item:active { transform: scale(0.96); }
+        .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
         .category-name { font-size: 12px; font-weight: 500; }
+        
+        /* Картки товарів */
         .goods-list { display: flex; flex-direction: column; gap: 12px; }
         .goods-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 12px;
             display: flex;
-            gap: 12px;
+            gap: 14px;
             cursor: pointer;
-            position: relative;
+            transition: all 0.1s;
         }
+        .goods-card:active { transform: scale(0.98); background: var(--tg-theme-hint-color, #e0e0e0); }
         .goods-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
+            width: 90px;
+            height: 90px;
+            border-radius: 12px;
             background: #ddd;
             background-size: cover;
             background-position: center;
+            flex-shrink: 0;
         }
         .goods-info { flex: 1; }
-        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-        .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 2px; }
-        .goods-category { font-size: 12px; color: #888; margin-bottom: 2px; }
+        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+        .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 4px; }
+        .goods-meta { font-size: 12px; color: #888; margin-bottom: 2px; }
         .goods-city { font-size: 12px; color: #666; }
-        .goods-date { font-size: 10px; color: #999; margin-top: 4px; }
+        
+        /* Нижня навігація */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -89,15 +112,28 @@
             right: 0;
             display: flex;
             justify-content: space-around;
-            padding: 12px;
+            padding: 12px 16px 20px;
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-top: 1px solid #ccc;
+            border-top: 0.5px solid rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            z-index: 100;
         }
-        .nav-item { text-align: center; padding: 8px; cursor: pointer; border-radius: 8px; flex: 1; }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
         .nav-item.active { background: #2aab6e; color: white; }
         .nav-icon { font-size: 24px; }
-        .nav-label { font-size: 11px; margin-top: 4px; }
-        .add-button {
+        .nav-label { font-size: 11px; font-weight: 500; }
+        
+        /* Кнопка додавання */
+        .fab {
             position: fixed;
             bottom: 80px;
             right: 16px;
@@ -111,9 +147,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 100;
+            transition: transform 0.1s;
         }
+        .fab:active { transform: scale(0.94); }
+        
+        /* Модальні вікна */
         .modal {
             display: none;
             position: fixed;
@@ -127,183 +167,163 @@
             justify-content: center;
         }
         .modal-content {
-            background: white;
-            border-radius: 16px;
+            background: var(--tg-theme-bg-color, white);
+            border-radius: 20px;
             padding: 20px;
-            width: 95%;
+            width: 92%;
             max-width: 450px;
             max-height: 85vh;
             overflow-y: auto;
         }
-        .modal-content input, .modal-content select, .modal-content textarea {
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .modal-input, .modal-select, .modal-textarea {
             width: 100%;
-            padding: 10px;
+            padding: 14px;
             margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 15px;
+            background: var(--tg-theme-bg-color, #fff);
         }
-        .modal-content textarea { min-height: 80px; resize: vertical; }
-        .tab-buttons { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-        .tab-btn { 
-            flex: 1; text-align: center; padding: 10px; 
-            background: #e0e0e0; border-radius: 8px; cursor: pointer; 
+        .modal-textarea { min-height: 90px; resize: vertical; }
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
         }
-        .tab-btn.active { background: #2aab6e; color: white; }
-        .profile-tabs { display: flex; gap: 5px; margin-bottom: 16px; flex-wrap: wrap; }
+        .btn-primary { background: #2aab6e; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        
+        /* Вкладки профілю */
+        .profile-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
         .profile-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
+            padding: 10px 16px;
             background: #e0e0e0;
-            border-radius: 8px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 12px;
-        }
-        .profile-tab.active { background: #2aab6e; color: white; }
-        .jobs-tabs { display: flex; gap: 5px; margin-bottom: 16px; }
-        .jobs-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            background: #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .jobs-tab.active { background: #2aab6e; color: white; }
-        .photo-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .photo-item {
-            width: 70px;
-            height: 70px;
-            border-radius: 8px;
-            background: #f0f0f0;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            cursor: pointer;
-        }
-        .photo-remove {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: red;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .add-photo-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 8px;
-            background: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            cursor: pointer;
-        }
-        .btn-publish { background: #2aab6e; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-cancel { background: #dc3545; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 8px; }
-        .btn-view { background: #2196f3; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-refresh { background: #ff9800; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .message {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2aab6e;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            z-index: 300;
-            display: none;
-            font-size: 14px;
             white-space: nowrap;
         }
-        .profile-header {
-            text-align: center;
-            padding: 20px;
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-            border-radius: 16px;
-            margin-bottom: 20px;
-        }
-        .profile-avatar { font-size: 60px; margin-bottom: 8px; }
-        .profile-name { font-size: 20px; font-weight: 600; }
-        .profile-stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
-        .stat-item { text-align: center; }
-        .stat-number { font-size: 24px; font-weight: 700; color: #2aab6e; }
-        .stat-label { font-size: 12px; color: #666; }
+        .profile-tab.active { background: #2aab6e; color: white; }
+        
+        /* Картка в профілі */
         .my-goods-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 12px;
             margin-bottom: 12px;
-            position: relative;
         }
-        .my-goods-header {
-            display: flex;
-            gap: 12px;
-        }
+        .my-goods-header { display: flex; gap: 12px; }
         .my-goods-image {
             width: 70px;
             height: 70px;
-            border-radius: 8px;
+            border-radius: 12px;
             background: #ddd;
             background-size: cover;
             background-position: center;
+            flex-shrink: 0;
         }
         .my-goods-info { flex: 1; }
-        .my-goods-title { font-size: 15px; font-weight: 600; }
+        .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
         .my-goods-price { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .my-goods-actions {
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
             margin-top: 12px;
-            flex-wrap: wrap;
         }
         .action-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 8px 14px;
+            border-radius: 10px;
             font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
             border: none;
-            font-weight: 500;
+            flex: 1;
+            min-width: 70px;
         }
         .action-view { background: #2196f3; color: white; }
         .action-edit { background: #ff9800; color: white; }
         .action-archive { background: #9c27b0; color: white; }
         .action-sold { background: #4caf50; color: white; }
         .action-delete { background: #dc3545; color: white; }
-        .action-btn:active { transform: scale(0.96); }
-        .action-btn.disabled { opacity: 0.5; cursor: not-allowed; }
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
+        
+        /* Сторінка профілю */
+        .profile-header {
+            text-align: center;
+            padding: 24px;
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 20px;
+            margin-bottom: 20px;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .empty { text-align: center; padding: 40px; color: #666; }
+        .profile-avatar { font-size: 64px; margin-bottom: 12px; }
+        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 16px;
+        }
+        .stat-number { font-size: 28px; font-weight: 700; color: #2aab6e; }
+        .stat-label { font-size: 12px; color: #666; }
+        
+        /* Фото галерея */
+        .photo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .photo-preview {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: #f0f0f0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .photo-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .add-photo {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        
+        /* Детальний перегляд */
         .detail-modal {
             display: none;
             position: fixed;
@@ -316,46 +336,48 @@
             align-items: center;
             justify-content: center;
         }
-        .detail-content {
+        .detail-card {
             background: white;
-            border-radius: 16px;
+            border-radius: 24px;
             padding: 20px;
-            width: 90%;
+            width: 92%;
             max-width: 400px;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
         .detail-photo {
             width: 100%;
-            height: 200px;
-            border-radius: 12px;
+            height: 220px;
+            border-radius: 16px;
             background: #ddd;
             background-size: cover;
             background-position: center;
             margin-bottom: 16px;
         }
-        .detail-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-        .detail-price { font-size: 24px; font-weight: 700; color: #2aab6e; margin-bottom: 8px; }
-        .detail-category { font-size: 14px; color: #888; margin-bottom: 8px; }
-        .detail-city { font-size: 14px; color: #666; margin-bottom: 16px; }
-        .detail-desc { margin-bottom: 16px; line-height: 1.4; }
-        .detail-phone {
+        .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .detail-price { font-size: 28px; font-weight: 700; color: #2aab6e; margin-bottom: 12px; }
+        .detail-row { margin-bottom: 12px; font-size: 14px; }
+        .detail-label { color: #888; margin-right: 8px; }
+        .detail-phone-box {
             background: #f0f0f0;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 16px;
+            padding: 14px;
+            border-radius: 12px;
+            margin: 16px 0;
             text-align: center;
         }
-        .contact-btn {
+        .contact-seller {
+            width: 100%;
+            padding: 14px;
             background: #2aab6e;
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            width: 100%;
         }
+        
+        /* Bottom sheet */
         .bottom-sheet {
             display: none;
             position: fixed;
@@ -363,13 +385,12 @@
             left: 0;
             right: 0;
             background: white;
-            border-radius: 16px 16px 0 0;
+            border-radius: 20px 20px 0 0;
             padding: 20px;
             z-index: 250;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
         .bottom-sheet.show { display: block; }
-        .bottom-sheet-overlay {
+        .sheet-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -379,7 +400,7 @@
             background: rgba(0,0,0,0.5);
             z-index: 240;
         }
-        .bottom-sheet-overlay.show { display: block; }
+        .sheet-overlay.show { display: block; }
         .sheet-item {
             padding: 16px;
             text-align: center;
@@ -387,50 +408,81 @@
             cursor: pointer;
             font-size: 16px;
         }
-        .sheet-item:active { background: #f0f0f0; }
         .sheet-cancel {
             padding: 16px;
             text-align: center;
             cursor: pointer;
             color: #dc3545;
             font-weight: 600;
-            font-size: 16px;
         }
+        
+        .message-toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2aab6e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            z-index: 300;
+            display: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .empty-state { text-align: center; padding: 50px 20px; color: #999; }
+        .loading { text-align: center; padding: 50px; }
+        
+        /* Вкладки роботи */
+        .jobs-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .jobs-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: #e0e0e0;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .jobs-tab.active { background: #2aab6e; color: white; }
         .job-card, .resume-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: 16px;
+            padding: 14px;
             margin-bottom: 12px;
             cursor: pointer;
         }
-        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
-        .job-city { font-size: 12px; color: #666; }
-        .loading-container { text-align: center; padding: 40px; }
+        .job-city { font-size: 13px; color: #666; margin-top: 4px; }
     </style>
 </head>
 <body>
     <div id="app"></div>
-    <div class="add-button" onclick="showAddModal()">+</div>
+    <div class="fab" onclick="window.showAddModal && showAddModal()">+</div>
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-item" data-page="home"><div class="nav-icon">🏠</div><div class="nav-label">Головна</div></div>
         <div class="nav-item" data-page="goods"><div class="nav-icon">📦</div><div class="nav-label">Товари</div></div>
         <div class="nav-item" data-page="jobs"><div class="nav-icon">💼</div><div class="nav-label">Робота</div></div>
         <div class="nav-item" data-page="profile"><div class="nav-icon">👤</div><div class="nav-label">Профіль</div></div>
     </div>
-    <div id="message" class="message"></div>
+    <div id="message" class="message-toast"></div>
 
     <div id="addModal" class="modal">
         <div class="modal-content">
-            <div class="tab-buttons">
-                <div class="tab-btn active" onclick="switchAddTab('goods')">📦 Товар</div>
-                <div class="tab-btn" onclick="switchAddTab('job')">💼 Вакансія</div>
-                <div class="tab-btn" onclick="switchAddTab('resume')">📄 Резюме</div>
+            <div class="modal-title">➕ Додати оголошення</div>
+            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                <div class="profile-tab" style="flex:1; text-align:center; background:#2aab6e; color:white" onclick="switchAddTab('goods')">📦 Товар</div>
+                <div class="profile-tab" style="flex:1; text-align:center" onclick="switchAddTab('job')">💼 Вакансія</div>
+                <div class="profile-tab" style="flex:1; text-align:center" onclick="switchAddTab('resume')">📄 Резюме</div>
             </div>
             <div id="addGoodsForm">
-                <h3 style="margin-bottom:16px">➕ Додати товар</h3>
-                <input type="text" id="goodsTitle" placeholder="Назва товару *">
-                <select id="goodsCategory">
+                <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
+                <select id="goodsCategory" class="modal-select">
                     <option value="Електроніка">📱 Електроніка</option><option value="Авто">🚗 Авто</option>
                     <option value="Шини_Диски">🛞 Шини/Диски</option><option value="Автозапчастини">🔧 Автозапчастини</option>
                     <option value="Нерухомість">🏠 Нерухомість</option><option value="Дім_і_сад">🏡 Дім і сад</option>
@@ -440,18 +492,18 @@
                     <option value="Обмін">🔄 Обмін</option><option value="Бізнес_Послуги">🏢 Бізнес/Послуги</option>
                     <option value="Оренда_Прокат">🔑 Оренда/Прокат</option><option value="Житло_подобово">🏠 Житло подобово</option>
                 </select>
-                <input type="text" id="goodsPrice" placeholder="Ціна (грн) *">
-                <input type="text" id="goodsCity" placeholder="Місто">
-                <input type="tel" id="goodsPhone" placeholder="Телефон для зв'язку *">
-                <textarea id="goodsDesc" placeholder="Опис товару"></textarea>
-                <div class="photo-list" id="photoList"></div>
-                <div class="add-photo-btn" onclick="addPhotoInput()">+ Додати фото (до 15)</div>
-                <button class="btn-publish" onclick="submitGoods()">✅ Опублікувати</button>
+                <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
+                <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
+                <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
+                <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
+                <div class="photo-grid" id="photoList"></div>
+                <div class="add-photo" onclick="addPhotoInput()">+</div>
+                <button class="modal-btn btn-primary" onclick="submitGoods()">✅ Опублікувати</button>
+                <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
             <div id="addJobForm" style="display:none">
-                <h3 style="margin-bottom:16px">➕ Додати вакансію</h3>
-                <input type="text" id="jobTitle" placeholder="Назва вакансії *">
-                <select id="jobCategory">
+                <input type="text" id="jobTitle" class="modal-input" placeholder="Назва вакансії *">
+                <select id="jobCategory" class="modal-select">
                     <option value="IT/Розробка">💻 IT/Розробка</option><option value="Маркетинг/PR">📊 Маркетинг/PR</option>
                     <option value="Фінанси/Бухгалтерія">💰 Фінанси/Бухгалтерія</option><option value="Адміністрація/HR">🏢 Адміністрація/HR</option>
                     <option value="Call центр/Продажі">📞 Call центр/Продажі</option><option value="Доставка/Логістика">🚚 Доставка/Логістика</option>
@@ -459,35 +511,35 @@
                     <option value="Освіта/Репетитори">🎓 Освіта/Репетитори</option><option value="Медицина/Краса">⚕️ Медицина/Краса</option>
                     <option value="Віддалена робота">🌍 Віддалена робота</option>
                 </select>
-                <input type="text" id="jobSalary" placeholder="Зарплата (грн)">
-                <input type="text" id="jobCity" placeholder="Місто">
-                <input type="tel" id="jobPhone" placeholder="Телефон для зв'язку *">
-                <input type="text" id="jobSchedule" placeholder="Графік роботи">
-                <textarea id="jobDesc" placeholder="Опис вакансії"></textarea>
-                <button class="btn-publish" onclick="submitJob()">✅ Опублікувати</button>
+                <input type="text" id="jobSalary" class="modal-input" placeholder="Зарплата (грн)">
+                <input type="text" id="jobCity" class="modal-input" placeholder="Місто">
+                <input type="tel" id="jobPhone" class="modal-input" placeholder="Телефон для зв'язку *">
+                <input type="text" id="jobSchedule" class="modal-input" placeholder="Графік роботи">
+                <textarea id="jobDesc" class="modal-textarea" placeholder="Опис вакансії"></textarea>
+                <button class="modal-btn btn-primary" onclick="submitJob()">✅ Опублікувати</button>
+                <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
             <div id="addResumeForm" style="display:none">
-                <h3 style="margin-bottom:16px">➕ Додати резюме</h3>
-                <input type="text" id="resumeSpecialty" placeholder="Спеціальність *">
-                <input type="text" id="resumeExperience" placeholder="Досвід роботи">
-                <input type="text" id="resumeSkills" placeholder="Навички">
-                <input type="text" id="resumeCity" placeholder="Місто">
-                <input type="text" id="resumeSalary" placeholder="Очікувана зарплата">
-                <input type="tel" id="resumePhone" placeholder="Телефон для зв'язку *">
-                <button class="btn-publish" onclick="submitResume()">✅ Опублікувати</button>
+                <input type="text" id="resumeSpecialty" class="modal-input" placeholder="Спеціальність *">
+                <input type="text" id="resumeExperience" class="modal-input" placeholder="Досвід роботи">
+                <input type="text" id="resumeSkills" class="modal-input" placeholder="Навички">
+                <input type="text" id="resumeCity" class="modal-input" placeholder="Місто">
+                <input type="text" id="resumeSalary" class="modal-input" placeholder="Очікувана зарплата">
+                <input type="tel" id="resumePhone" class="modal-input" placeholder="Телефон для зв'язку *">
+                <button class="modal-btn btn-primary" onclick="submitResume()">✅ Опублікувати</button>
+                <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
-            <button class="btn-cancel" onclick="closeModal()">❌ Скасувати</button>
         </div>
     </div>
 
     <div id="detailModal" class="detail-modal">
-        <div class="detail-content">
+        <div class="detail-card">
             <div id="detailContent"></div>
-            <button class="btn-cancel" onclick="closeDetailModal()">Закрити</button>
+            <button class="contact-seller" style="background:#dc3545; margin-top:12px" onclick="closeDetailModal()">Закрити</button>
         </div>
     </div>
 
-    <div id="bottomSheetOverlay" class="bottom-sheet-overlay" onclick="closeBottomSheet()"></div>
+    <div id="sheetOverlay" class="sheet-overlay" onclick="closeBottomSheet()"></div>
     <div id="bottomSheet" class="bottom-sheet">
         <div id="sheetContent"></div>
         <div class="sheet-cancel" onclick="closeBottomSheet()">Скасувати</div>
@@ -497,145 +549,68 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
+        // ========== КОЛІРНА СХЕМА ==========
+        tg.setHeaderColor('bg_color');
+        tg.setBackgroundColor('bg_color');
+        
         // ========== БЕЗПЕКА ==========
-        function escapeHtml(text = '') {
+        function escapeHtml(text) {
             if (!text) return '';
-            return String(text)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+            return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
         
         function formatDate(dateStr) {
             if (!dateStr) return '';
-            try {
-                const d = new Date(dateStr);
-                return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`;
-            } catch(e) { return ''; }
+            try { return new Date(dateStr).toLocaleDateString('uk-UA'); } catch(e) { return ''; }
         }
         
-        function showMessage(text, isError = false, duration = 2500) {
-            const msgDiv = document.getElementById('message');
-            msgDiv.textContent = text;
-            msgDiv.style.backgroundColor = isError ? '#dc3545' : '#2aab6e';
-            msgDiv.style.display = 'block';
-            setTimeout(() => { msgDiv.style.display = 'none'; }, duration);
-        }
-        
-        function setButtonLoading(btn, isLoading) {
-            if (!btn) return;
-            if (isLoading) {
-                btn.originalText = btn.innerHTML;
-                btn.innerHTML = '<span class="loading-spinner"></span>';
-                btn.disabled = true;
-                btn.classList.add('disabled');
-            } else {
-                btn.innerHTML = btn.originalText || '✅';
-                btn.disabled = false;
-                btn.classList.remove('disabled');
-            }
+        function showMessage(text, isError = false) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.style.background = isError ? '#dc3545' : '#2aab6e';
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 2500);
         }
         
         // ========== API ==========
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
-        const api = {
-            async request(endpoint, options = {}) {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
-                    ...options,
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`,
-                        'Content-Type': 'application/json',
-                        ...options.headers
-                    }
-                });
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return response.json();
-            },
-            
-            getGoods(category) {
-                let url = 'goods?select=*&status=eq.active&order=created_at.desc';
-                if (category && category !== 'Всі') url += `&category=eq.${category}`;
-                return this.request(url);
-            },
-            
-            getUserGoods(userId, status) {
-                return this.request(`goods?select=*&user_id=eq.${userId}&status=eq.${status}&order=created_at.desc`);
-            },
-            
-            createGoods(data) {
-                return this.request('goods', { method: 'POST', body: JSON.stringify(data) });
-            },
-            
-            updateGoodsStatus(id, status) {
-                return this.request(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status }) });
-            },
-            
-            getJobs() {
-                return this.request('jobs?select=*&status=eq.open&order=created_at.desc');
-            },
-            
-            createJob(data) {
-                return this.request('jobs', { method: 'POST', body: JSON.stringify(data) });
-            },
-            
-            getResumes() {
-                return this.request('resumes?select=*&status=eq.active&order=created_at.desc');
-            },
-            
-            createResume(data) {
-                return this.request('resumes', { method: 'POST', body: JSON.stringify(data) });
-            },
-            
-            getUser(id) {
-                return this.request(`users?id=eq.${id}&select=*`);
-            },
-            
-            createUser(data) {
-                return this.request('users', { method: 'POST', body: JSON.stringify(data) });
-            },
-            
-            updateUserPhone(id, phone) {
-                return this.request(`users?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ phone }) });
-            }
-        };
+        async function apiRequest(endpoint, options = {}) {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+                ...options,
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', ...options.headers }
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        }
         
         // ========== СТАН ==========
         let state = {
-            currentPage: 'home',
-            currentCategory: null,
+            page: 'home',
+            category: null,
             goods: [],
             myGoods: { active: [], archived: [], sold: [], deleted: [] },
             jobs: [],
             resumes: [],
-            currentProfileTab: 'active',
-            currentJobsTab: 'jobs',
+            profileTab: 'active',
+            jobsTab: 'jobs',
             user: null,
-            isLoading: false
+            loading: false
         };
         
-        // ========== ФОТО ==========
         let selectedPhotos = [];
         
+        // ========== ФОТО ==========
         function addPhotoInput() {
-            if (selectedPhotos.length >= 15) {
-                showMessage('Максимум 15 фото', true);
-                return;
-            }
+            if (selectedPhotos.length >= 15) { showMessage('Максимум 15 фото', true); return; }
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.onchange = (e) => {
-                if (e.target.files && e.target.files[0]) {
+                if (e.target.files[0]) {
                     const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        selectedPhotos.push(ev.target.result);
-                        renderPhotoList();
-                    };
+                    reader.onload = (ev) => { selectedPhotos.push(ev.target.result); renderPhotoList(); };
                     reader.readAsDataURL(e.target.files[0]);
                 }
             };
@@ -645,20 +620,11 @@
         function renderPhotoList() {
             const container = document.getElementById('photoList');
             if (!container) return;
-            container.innerHTML = selectedPhotos.map((photo, idx) => `
-                <div class="photo-item" style="background-image: url('${photo}')">
-                    <div class="photo-remove" onclick="removePhoto(${idx})">×</div>
-                </div>
-            `).join('');
-            if (selectedPhotos.length < 15) {
-                container.innerHTML += `<div class="add-photo-btn" onclick="addPhotoInput()">+</div>`;
-            }
+            container.innerHTML = selectedPhotos.map((p, i) => `<div class="photo-preview" style="background-image: url('${p}')"><div class="photo-remove" onclick="removePhoto(${i})">×</div></div>`).join('');
+            container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
         }
         
-        function removePhoto(idx) {
-            selectedPhotos.splice(idx, 1);
-            renderPhotoList();
-        }
+        function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); }
         
         async function uploadPhotos() {
             const urls = [];
@@ -671,304 +637,199 @@
                     });
                     const data = await res.json();
                     if (data.success) urls.push(data.data.link);
-                } catch(e) { console.error(e); }
+                } catch(e) {}
             }
             return JSON.stringify(urls);
         }
         
         function getFirstPhoto(photos) {
             if (!photos) return '';
-            try {
-                const arr = JSON.parse(photos);
-                return arr[0] || '';
-            } catch(e) {
-                return photos.split(',')[0] || '';
-            }
+            try { const arr = JSON.parse(photos); return arr[0] || ''; } catch(e) { return photos.split(',')[0] || ''; }
         }
         
-        // ========== ОСНОВНІ ФУНКЦІЇ ==========
+        // ========== ДАНІ ==========
         async function loadUser() {
-            const tgUser = tg.initDataUnsafe.user || { id: 0, first_name: 'Гість' };
+            const tgUser = tg.initDataUnsafe.user || { id: 0, first_name: 'Користувач' };
             try {
-                const users = await api.getUser(tgUser.id);
-                if (!users || !users.length) {
-                    await api.createUser({
-                        id: tgUser.id,
-                        username: tgUser.username,
-                        first_name: tgUser.first_name,
-                        created_at: new Date().toISOString()
-                    });
+                const users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
+                if (!users.length) {
+                    await apiRequest('users', { method: 'POST', body: JSON.stringify({ id: tgUser.id, username: tgUser.username, first_name: tgUser.first_name, created_at: new Date().toISOString() }) });
                 }
                 state.user = tgUser;
                 state.user.phone = localStorage.getItem('userPhone') || '';
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         }
         
         async function loadGoods() {
-            state.isLoading = true;
+            state.loading = true;
             try {
-                state.goods = await api.getGoods(state.currentCategory);
-                if (state.currentPage === 'goods') renderGoodsList();
+                let url = `goods?select=*&status=eq.active&order=created_at.desc`;
+                if (state.category && state.category !== 'Всі') url += `&category=eq.${state.category}`;
+                state.goods = await apiRequest(url);
+                if (state.page === 'goods') renderGoodsPage();
             } catch(e) { showMessage('Помилка завантаження', true); }
-            finally { state.isLoading = false; }
+            finally { state.loading = false; }
         }
         
         async function loadMyGoods() {
             if (!state.user) return;
-            const statuses = ['active', 'archived', 'sold', 'deleted'];
-            for (const status of statuses) {
-                try {
-                    state.myGoods[status] = await api.getUserGoods(state.user.id, status);
-                } catch(e) { state.myGoods[status] = []; }
+            for (const status of ['active', 'archived', 'sold', 'deleted']) {
+                state.myGoods[status] = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&status=eq.${status}&order=created_at.desc`);
             }
-            renderMyGoodsList();
+            if (state.page === 'profile') renderProfilePage();
         }
         
         async function loadJobs() {
-            try {
-                state.jobs = await api.getJobs();
-                if (state.currentPage === 'jobs' && state.currentJobsTab === 'jobs') renderJobsList();
-            } catch(e) { console.error(e); }
+            state.jobs = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc');
+            if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
         }
         
         async function loadResumes() {
-            try {
-                state.resumes = await api.getResumes();
-                if (state.currentPage === 'jobs' && state.currentJobsTab === 'resumes') renderJobsList();
-            } catch(e) { console.error(e); }
+            state.resumes = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc');
+            if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
         }
         
-        async function updateGoodsStatus(id, newStatus, actionName) {
-            const success = await api.updateGoodsStatus(id, newStatus);
-            if (success) {
-                showMessage(`✅ ${actionName}`);
-                await loadGoods();
-                await loadMyGoods();
-                return true;
-            }
-            showMessage(`❌ Помилка ${actionName.toLowerCase()}`, true);
-            return false;
+        async function updateStatus(id, newStatus, msg) {
+            const ok = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) });
+            if (ok) { showMessage(msg); await loadGoods(); await loadMyGoods(); return true; }
+            showMessage(`❌ Помилка`, true); return false;
         }
         
-        async function deleteGoodsItem(id) {
-            const success = await api.updateGoodsStatus(id, 'deleted');
-            if (success) {
-                showMessage('✅ Оголошення видалено');
-                await loadGoods();
-                await loadMyGoods();
-                return true;
-            }
-            showMessage('❌ Помилка видалення', true);
-            return false;
+        async function deleteItem(id) {
+            const ok = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
+            if (ok) { showMessage('✅ Видалено'); await loadGoods(); await loadMyGoods(); return true; }
+            showMessage('❌ Помилка видалення', true); return false;
         }
         
         // ========== RENDER ==========
-        function renderGoodsList() {
-            const container = document.getElementById('app');
-            if (!container) return;
-            
-            if (state.isLoading) {
-                container.innerHTML = '<div class="loading-container">⏳ Завантаження...</div>';
-                return;
-            }
-            
-            if (!state.goods.length) {
-                container.innerHTML = '<div class="empty">📭 Немає товарів</div>';
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="header">
-                    <h2>📦 ${escapeHtml(state.currentCategory || 'Всі товари')}</h2>
-                    <button class="back-button" onclick="goBack()">← Назад</button>
+        function renderHomePage() {
+            const categories = [
+                { icon: '📱', name: 'Електроніка', id: 'Електроніка' }, { icon: '🚗', name: 'Авто', id: 'Авто' },
+                { icon: '🛞', name: 'Шини/Диски', id: 'Шини_Диски' }, { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
+                { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' }, { icon: '🏡', name: 'Дім і сад', id: 'Дім_і_сад' },
+                { icon: '👶', name: 'Дитячий світ', id: 'Дитячий_світ' }, { icon: '🐾', name: 'Тварини', id: 'Тварини' }
+            ];
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="header"><h2>🏠 Ukraine Market</h2></div>
+                    <div class="categories-grid">${categories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
+                    <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
+                    <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Шукаю роботу →</button>
                 </div>
-                <input type="text" class="search-bar" placeholder="🔍 Пошук за назвою..." id="searchInput" onkeyup="searchGoods()">
-                <div class="goods-list" id="goodsList"></div>
-                <button class="btn-refresh" onclick="loadGoods()">🔄 Оновити</button>
             `;
-            
-            const listContainer = document.getElementById('goodsList');
-            listContainer.innerHTML = state.goods.map(item => `
+        }
+        
+        function renderGoodsPage() {
+            if (state.loading) { document.getElementById('app').innerHTML = '<div class="loading">⏳ Завантаження...</div>'; return; }
+            if (!state.goods.length) { document.getElementById('app').innerHTML = '<div class="empty-state">📭 Немає товарів</div>'; return; }
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="header"><h2>📦 ${state.category || 'Всі товари'}</h2><button class="back-btn" onclick="goBack()">←</button></div>
+                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()">
+                    <div class="goods-list" id="goodsList"></div>
+                </div>
+            `;
+            const container = document.getElementById('goodsList');
+            container.innerHTML = state.goods.map(item => `
                 <div class="goods-card" onclick="openGoodsDetail(${item.id})">
-                    <div class="goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
+                    <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                     <div class="goods-info">
                         <div class="goods-title">${escapeHtml(item.title)}</div>
                         <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                        <div class="goods-category">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                        <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
                         <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                        <div class="goods-date">📅 ${formatDate(item.created_at)}</div>
                     </div>
                 </div>
             `).join('');
         }
         
-        function renderMyGoodsList() {
-            const container = document.getElementById('myGoodsList');
-            if (!container) return;
-            
-            const goods = state.myGoods[state.currentProfileTab] || [];
-            if (!goods.length) {
-                container.innerHTML = '<div class="empty">📭 Немає оголошень</div>';
-                return;
-            }
-            
-            container.innerHTML = goods.map(item => `
-                <div class="my-goods-card" id="my-goods-${item.id}">
+        function renderProfilePage() {
+            const user = state.user || { first_name: 'Користувач', id: 0 };
+            const activeCount = state.myGoods.active.length;
+            const totalCount = state.myGoods.active.length + state.myGoods.archived.length + state.myGoods.sold.length;
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">👤</div>
+                        <div class="profile-name">${escapeHtml(user.first_name)}</div>
+                        <div class="profile-stats">
+                            <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
+                            <div><div class="stat-number">${totalCount}</div><div class="stat-label">Всього</div></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:16px">
+                        <input type="tel" id="profilePhone" class="modal-input" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}">
+                        <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
+                    </div>
+                    <div class="profile-tabs">
+                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні</div>
+                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів</div>
+                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані</div>
+                        <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">Видалені</div>
+                    </div>
+                    <div id="myGoodsList"></div>
+                </div>
+            `;
+            const list = document.getElementById('myGoodsList');
+            const goods = state.myGoods[state.profileTab] || [];
+            if (!goods.length) { list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>'; return; }
+            list.innerHTML = goods.map(item => `
+                <div class="my-goods-card">
                     <div class="my-goods-header">
-                        <div class="my-goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
+                        <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                         <div class="my-goods-info">
                             <div class="my-goods-title">${escapeHtml(item.title)}</div>
                             <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                            <div class="goods-date">📅 ${formatDate(item.created_at)}</div>
+                            <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                         </div>
                     </div>
                     <div class="my-goods-actions">
-                        <button class="action-btn action-view" onclick="openGoodsDetail(${item.id})">👁 Переглянути</button>
-                        <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
-                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 В архів</button>` : ''}
-                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰 Продано</button>` : ''}
-                        <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>
+                        <button class="action-btn action-view" onclick="openGoodsDetail(${item.id})">👁</button>
+                        <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️</button>
+                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦</button>` : ''}
+                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰</button>` : ''}
+                        <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑</button>
                     </div>
                 </div>
             `).join('');
         }
         
-        function renderHome() {
-            const container = document.getElementById('app');
-            container.innerHTML = `
-                <div class="header"><h2>🏠 Ukraine Market</h2></div>
-                <div class="category-grid" id="homeCategories"></div>
-                <button class="btn-view" onclick="goToAllGoods()">📦 Всі товари →</button>
-                <button class="btn-view" onclick="goToJobs()">💼 Шукаю роботу →</button>
-            `;
-            const grid = document.getElementById('homeCategories');
-            grid.innerHTML = categories.slice(0, 8).map(cat => `
-                <div class="category-card" onclick="selectHomeCategory('${cat.id}')">
-                    <div class="category-icon">${cat.icon}</div>
-                    <div class="category-name">${escapeHtml(cat.name)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function renderJobsList() {
-            const container = document.getElementById('app');
-            container.innerHTML = `
-                <div class="header"><h2>💼 Робота</h2><button class="back-button" onclick="goBack()">← Назад</button></div>
-                <div class="jobs-tabs">
-                    <div class="jobs-tab ${state.currentJobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
-                    <div class="jobs-tab ${state.currentJobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
-                </div>
-                <div id="jobsContent"></div>
-                <button class="btn-refresh" onclick="loadJobs()">🔄 Оновити</button>
-            `;
-            const content = document.getElementById('jobsContent');
-            if (state.currentJobsTab === 'jobs') {
-                content.innerHTML = state.jobs.map(job => `
-                    <div class="job-card" onclick="openJobDetail(${job.id})">
-                        <div class="job-title">${escapeHtml(job.title)}</div>
-                        <div class="job-salary">💰 ${escapeHtml(job.salary)} грн</div>
-                        <div class="job-city">📍 ${escapeHtml(job.city || 'не вказано')}</div>
-                    </div>
-                `).join('') || '<div class="empty">📭 Немає вакансій</div>';
-            } else {
-                content.innerHTML = state.resumes.map(resume => `
-                    <div class="resume-card" onclick="openResumeDetail(${resume.id})">
-                        <div class="resume-specialty">${escapeHtml(resume.specialty)}</div>
-                        <div class="job-salary">💰 ${escapeHtml(resume.salary)} грн</div>
-                        <div class="job-city">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
-                    </div>
-                `).join('') || '<div class="empty">📭 Немає резюме</div>';
-            }
-        }
-        
-        function renderProfile() {
-            const stats = {
-                active: state.myGoods.active.length,
-                total: state.myGoods.active.length + state.myGoods.archived.length + state.myGoods.sold.length
-            };
-            const user = state.user || { first_name: 'Користувач', id: 0 };
-            
+        function renderJobsPage() {
             document.getElementById('app').innerHTML = `
-                <div class="header"><h2>👤 Профіль</h2></div>
-                <div class="profile-header">
-                    <div class="profile-avatar">👤</div>
-                    <div class="profile-name">${escapeHtml(user.first_name)}</div>
-                    <div class="profile-id">ID: ${user.id}</div>
+                <div class="app-container">
+                    <div class="header"><h2>💼 Робота</h2><button class="back-btn" onclick="goBack()">←</button></div>
+                    <div class="jobs-tabs">
+                        <div class="jobs-tab ${state.jobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
+                        <div class="jobs-tab ${state.jobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
+                    </div>
+                    <div id="jobsContent"></div>
                 </div>
-                <div class="profile-stats">
-                    <div class="stat-item"><div class="stat-number">${stats.active}</div><div class="stat-label">Активних</div></div>
-                    <div class="stat-item"><div class="stat-number">${stats.total}</div><div class="stat-label">Всього</div></div>
-                </div>
-                <div class="profile-phone">
-                    <input type="tel" id="profilePhone" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
-                    <button class="btn-publish" onclick="savePhone()">💾 Зберегти номер</button>
-                </div>
-                <div class="profile-tabs">
-                    <div class="profile-tab ${state.currentProfileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні</div>
-                    <div class="profile-tab ${state.currentProfileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів</div>
-                    <div class="profile-tab ${state.currentProfileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані</div>
-                    <div class="profile-tab ${state.currentProfileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">Видалені</div>
-                </div>
-                <div id="myGoodsList"></div>
-                <button class="btn-cancel" onclick="tg.close()">❌ Закрити</button>
             `;
-            renderMyGoodsList();
-        }
-        
-        // ========== ДІЇ ==========
-        function savePhone() {
-            const phone = document.getElementById('profilePhone')?.value;
-            if (phone && state.user) {
-                localStorage.setItem('userPhone', phone);
-                api.updateUserPhone(state.user.id, phone);
-                showMessage('✅ Номер збережено');
+            const container = document.getElementById('jobsContent');
+            if (state.jobsTab === 'jobs') {
+                container.innerHTML = state.jobs.map(job => `<div class="job-card" onclick="openJobDetail(${job.id})"><div class="job-title">${escapeHtml(job.title)}</div><div class="job-salary">💰 ${escapeHtml(job.salary)} грн</div><div class="job-city">📍 ${escapeHtml(job.city || 'не вказано')}</div></div>`).join('') || '<div class="empty-state">📭 Немає вакансій</div>';
+            } else {
+                container.innerHTML = state.resumes.map(resume => `<div class="resume-card" onclick="openResumeDetail(${resume.id})"><div class="resume-specialty">${escapeHtml(resume.specialty)}</div><div class="job-salary">💰 ${escapeHtml(resume.salary)} грн</div><div class="job-city">📍 ${escapeHtml(resume.city || 'не вказано')}</div></div>`).join('') || '<div class="empty-state">📭 Немає резюме</div>';
             }
         }
         
-        function switchProfileTab(tab) {
-            state.currentProfileTab = tab;
-            renderProfile();
-        }
-        
-        function switchJobsTab(tab) {
-            state.currentJobsTab = tab;
-            if (tab === 'jobs') loadJobs();
-            else loadResumes();
-            renderJobsList();
-        }
-        
-        function goToAllGoods() {
-            state.currentCategory = null;
-            state.currentPage = 'goods';
-            loadGoods();
-        }
-        
-        function goToJobs() {
-            state.currentPage = 'jobs';
-            loadJobs();
-            loadResumes();
-            renderJobsList();
-        }
-        
-        function selectHomeCategory(category) {
-            state.currentCategory = category;
-            state.currentPage = 'goods';
-            loadGoods();
-        }
-        
+        // ========== НАВІГАЦІЯ ==========
+        function goBack() { state.page = 'home'; renderHomePage(); }
+        function goToGoodsPage() { state.page = 'goods'; loadGoods(); }
+        function goToJobsPage() { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
+        function selectCategory(cat) { state.category = cat; state.page = 'goods'; loadGoods(); }
         function searchGoods() {
-            const query = document.getElementById('searchInput')?.value.toLowerCase() || '';
-            const filtered = state.goods.filter(item => item.title.toLowerCase().includes(query));
+            const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            const filtered = state.goods.filter(i => i.title.toLowerCase().includes(q));
             const container = document.getElementById('goodsList');
             if (container) {
                 container.innerHTML = filtered.map(item => `
                     <div class="goods-card" onclick="openGoodsDetail(${item.id})">
-                        <div class="goods-image" style="background-image: url('${escapeHtml(getFirstPhoto(item.photos))}')"></div>
+                        <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                         <div class="goods-info">
                             <div class="goods-title">${escapeHtml(item.title)}</div>
                             <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                            <div class="goods-category">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                            <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
                             <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                         </div>
                     </div>
@@ -976,149 +837,91 @@
             }
         }
         
-        function goBack() {
-            if (state.currentPage === 'goods' || state.currentPage === 'jobs') {
-                state.currentPage = 'home';
-                renderHome();
-            } else {
-                state.currentPage = 'home';
-                renderHome();
-            }
+        function switchProfileTab(tab) { state.profileTab = tab; renderProfilePage(); }
+        function switchJobsTab(tab) { state.jobsTab = tab; if (tab === 'jobs') loadJobs(); else loadResumes(); renderJobsPage(); }
+        function savePhone() {
+            const phone = document.getElementById('profilePhone')?.value;
+            if (phone && state.user) { localStorage.setItem('userPhone', phone); apiRequest(`users?id=eq.${state.user.id}`, { method: 'PATCH', body: JSON.stringify({ phone }) }); showMessage('✅ Номер збережено'); }
         }
         
+        // ========== ДІЇ ==========
         function openBottomSheet(actions) {
-            const sheet = document.getElementById('bottomSheet');
-            const overlay = document.getElementById('bottomSheetOverlay');
-            const content = document.getElementById('sheetContent');
-            content.innerHTML = actions.map(a => `<div class="sheet-item" onclick="${a.onclick}(); closeBottomSheet();">${escapeHtml(a.text)}</div>`).join('');
-            sheet.classList.add('show');
-            overlay.classList.add('show');
+            document.getElementById('sheetContent').innerHTML = actions.map(a => `<div class="sheet-item" onclick="${a.onclick}(); closeBottomSheet();">${a.text}</div>`).join('');
+            document.getElementById('bottomSheet').classList.add('show');
+            document.getElementById('sheetOverlay').classList.add('show');
         }
+        function closeBottomSheet() { document.getElementById('bottomSheet').classList.remove('show'); document.getElementById('sheetOverlay').classList.remove('show'); }
         
-        function closeBottomSheet() {
-            document.getElementById('bottomSheet').classList.remove('show');
-            document.getElementById('bottomSheetOverlay').classList.remove('show');
-        }
-        
-        function confirmDelete(id) {
-            openBottomSheet([
-                { text: '🗑 Так, видалити', onclick: `deleteGoodsItem(${id})` }
-            ]);
-        }
-        
-        function confirmArchive(id) {
-            openBottomSheet([
-                { text: '📦 Так, в архів', onclick: `updateGoodsStatus(${id}, 'archived', 'Переміщено в архів')` }
-            ]);
-        }
-        
-        function confirmSold(id) {
-            openBottomSheet([
-                { text: '💰 Так, позначити проданим', onclick: `updateGoodsStatus(${id}, 'sold', 'Позначено як продано')` }
-            ]);
-        }
-        
-        function editGoods(id) {
-            showMessage('✏️ Редагування буде доступне в наступній версії');
-        }
+        function confirmDelete(id) { openBottomSheet([{ text: '🗑 Так, видалити', onclick: `deleteItem(${id})` }]); }
+        function confirmArchive(id) { openBottomSheet([{ text: '📦 Так, в архів', onclick: `updateStatus(${id}, 'archived', '📦 Переміщено в архів')` }]); }
+        function confirmSold(id) { openBottomSheet([{ text: '💰 Так, продано', onclick: `updateStatus(${id}, 'sold', '💰 Позначено як продано')` }]); }
+        function editGoods(id) { showMessage('✏️ Редагування буде доступне пізніше'); }
         
         async function openGoodsDetail(id) {
             const item = state.goods.find(g => g.id === id);
             if (!item) return;
-            const users = await api.getUser(item.user_id);
+            const users = await apiRequest(`users?id=eq.${item.user_id}&select=*`);
             const seller = users?.[0];
-            
-            const modal = document.getElementById('detailModal');
-            const content = document.getElementById('detailContent');
-            
-            const photoUrl = getFirstPhoto(item.photos);
-            const photosHtml = photoUrl ? `<div class="detail-photo" style="background-image: url('${escapeHtml(photoUrl)}')"></div>` 
-                : '<div class="detail-photo" style="background:#f0f0f0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>';
-            
-            content.innerHTML = `
-                ${photosHtml}
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-photo" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                 <div class="detail-title">${escapeHtml(item.title)}</div>
                 <div class="detail-price">💰 ${escapeHtml(item.price)} грн</div>
-                <div class="detail-category">📂 Категорія: ${escapeHtml(item.category || 'не вказано')}</div>
-                <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                <div class="detail-desc">📝 ${escapeHtml(item.description || 'Без опису')}</div>
-                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || seller?.phone || 'не вказано')}</div>
-                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || seller?.phone || '')}')">💬 Зв'язатися</button>
+                <div class="detail-row"><span class="detail-label">📂 Категорія:</span> ${escapeHtml(item.category || 'не вказано')}</div>
+                <div class="detail-row"><span class="detail-label">📍 Місто:</span> ${escapeHtml(item.city || 'не вказано')}</div>
+                <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description || 'Без опису')}</div>
+                <div class="detail-phone-box">📱 ${escapeHtml(item.phone || seller?.phone || 'не вказано')}</div>
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || seller?.phone || '')}')">💬 Зв'язатися</button>
             `;
-            modal.style.display = 'flex';
+            document.getElementById('detailModal').style.display = 'flex';
         }
         
         async function openJobDetail(id) {
-            const item = state.jobs.find(j => j.id === id);
-            if (!item) return;
-            const users = await api.getUser(item.user_id);
+            const job = state.jobs.find(j => j.id === id);
+            if (!job) return;
+            const users = await apiRequest(`users?id=eq.${job.user_id}&select=*`);
             const employer = users?.[0];
-            
-            const modal = document.getElementById('detailModal');
-            const content = document.getElementById('detailContent');
-            content.innerHTML = `
-                <div class="detail-title">${escapeHtml(item.title)}</div>
-                <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
-                <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                <div class="detail-desc">🕐 Графік: ${escapeHtml(item.schedule || 'не вказано')}</div>
-                <div class="detail-desc">📝 ${escapeHtml(item.description || 'Без опису')}</div>
-                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || employer?.phone || 'не вказано')}</div>
-                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || employer?.phone || '')}')">💬 Відгукнутися</button>
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-title">${escapeHtml(job.title)}</div>
+                <div class="detail-price">💰 ${escapeHtml(job.salary)} грн</div>
+                <div class="detail-row">📍 ${escapeHtml(job.city || 'не вказано')}</div>
+                <div class="detail-row">🕐 ${escapeHtml(job.schedule || 'не вказано')}</div>
+                <div class="detail-row">📝 ${escapeHtml(job.description || 'Без опису')}</div>
+                <div class="detail-phone-box">📱 ${escapeHtml(job.phone || employer?.phone || 'не вказано')}</div>
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(job.phone || employer?.phone || '')}')">💬 Відгукнутися</button>
             `;
-            modal.style.display = 'flex';
+            document.getElementById('detailModal').style.display = 'flex';
         }
         
         async function openResumeDetail(id) {
-            const item = state.resumes.find(r => r.id === id);
-            if (!item) return;
-            const users = await api.getUser(item.user_id);
+            const resume = state.resumes.find(r => r.id === id);
+            if (!resume) return;
+            const users = await apiRequest(`users?id=eq.${resume.user_id}&select=*`);
             const candidate = users?.[0];
-            
-            const modal = document.getElementById('detailModal');
-            const content = document.getElementById('detailContent');
-            content.innerHTML = `
-                <div class="detail-title">${escapeHtml(item.specialty)}</div>
-                <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
-                <div class="detail-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                <div class="detail-desc">📝 Досвід: ${escapeHtml(item.experience || 'не вказано')}</div>
-                <div class="detail-desc">🛠️ Навички: ${escapeHtml(item.skills || 'не вказано')}</div>
-                <div class="detail-phone">📱 Телефон: ${escapeHtml(item.phone || candidate?.phone || 'не вказано')}</div>
-                <button class="contact-btn" onclick="contactSeller('${escapeHtml(item.phone || candidate?.phone || '')}')">💬 Запросити</button>
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-title">${escapeHtml(resume.specialty)}</div>
+                <div class="detail-price">💰 ${escapeHtml(resume.salary)} грн</div>
+                <div class="detail-row">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
+                <div class="detail-row">📝 Досвід: ${escapeHtml(resume.experience || 'не вказано')}</div>
+                <div class="detail-row">🛠️ Навички: ${escapeHtml(resume.skills || 'не вказано')}</div>
+                <div class="detail-phone-box">📱 ${escapeHtml(resume.phone || candidate?.phone || 'не вказано')}</div>
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(resume.phone || candidate?.phone || '')}')">💬 Запросити</button>
             `;
-            modal.style.display = 'flex';
+            document.getElementById('detailModal').style.display = 'flex';
         }
         
         function contactSeller(phone) {
-            if (phone && phone !== 'не вказано') {
-                tg.showPopup({
-                    title: 'Контактні дані',
-                    message: `Телефон: ${phone}`,
-                    buttons: [{ type: 'default', text: 'OK' }]
-                });
-            } else {
-                showMessage('Номер телефону не вказано', true);
-            }
+            if (phone && phone !== 'не вказано') tg.showPopup({ title: 'Контактні дані', message: `Телефон: ${phone}`, buttons: [{ type: 'default', text: 'OK' }] });
+            else showMessage('Номер телефону не вказано', true);
         }
+        function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
         
-        function closeDetailModal() {
-            document.getElementById('detailModal').style.display = 'none';
-        }
-        
+        // ========== МОДАЛЬНІ ВІКНА ==========
         function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
-        function closeModal() { 
-            document.getElementById('addModal').style.display = 'none';
-            selectedPhotos = [];
-            renderPhotoList();
-        }
-        
+        function closeModal() { document.getElementById('addModal').style.display = 'none'; selectedPhotos = []; renderPhotoList(); }
         function switchAddTab(tab) {
             document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
             document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
             document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
-        }
-        
-        function getPhone() {
-            return localStorage.getItem('userPhone') || '';
         }
         
         async function submitGoods() {
@@ -1126,35 +929,17 @@
             const category = document.getElementById('goodsCategory')?.value;
             const price = document.getElementById('goodsPrice')?.value;
             const city = document.getElementById('goodsCity')?.value;
-            const phone = document.getElementById('goodsPhone')?.value || getPhone();
+            const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
-            
             if (!title || !price) { showMessage('Заповніть назву та ціну', true); return; }
-            if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
-            if (!state.user) { showMessage('Помилка авторизації', true); return; }
-            
-            const photoUrls = await uploadPhotos();
-            const ok = await api.createGoods({
-                user_id: state.user.id,
-                title, category, price, description: desc, city, phone,
-                photos: photoUrls,
-                status: 'active',
-                created_at: new Date().toISOString()
+            if (!phone) { showMessage('Введіть телефон', true); return; }
+            const photos = await uploadPhotos();
+            const ok = await apiRequest('goods', {
+                method: 'POST',
+                body: JSON.stringify({ user_id: state.user.id, title, category, price, description: desc, city, phone, photos, status: 'active', created_at: new Date().toISOString() })
             });
-            
-            if (ok) {
-                showMessage('✅ Опубліковано!');
-                closeModal();
-                loadGoods();
-                ['goodsTitle', 'goodsPrice', 'goodsCity', 'goodsDesc', 'goodsPhone'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.value = '';
-                });
-                selectedPhotos = [];
-                renderPhotoList();
-            } else {
-                showMessage('❌ Помилка публікації', true);
-            }
+            if (ok) { showMessage('✅ Опубліковано!'); closeModal(); loadGoods(); }
+            else showMessage('❌ Помилка', true);
         }
         
         async function submitJob() {
@@ -1162,23 +947,17 @@
             const category = document.getElementById('jobCategory')?.value;
             const salary = document.getElementById('jobSalary')?.value;
             const city = document.getElementById('jobCity')?.value;
-            const phone = document.getElementById('jobPhone')?.value || getPhone();
+            const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
             const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
-            
-            if (!title) { showMessage('Заповніть назву вакансії', true); return; }
-            if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
-            if (!state.user) { showMessage('Помилка авторизації', true); return; }
-            
-            const ok = await api.createJob({
-                user_id: state.user.id,
-                title, category, salary, city, phone, schedule, description: desc,
-                status: 'open',
-                created_at: new Date().toISOString()
+            if (!title) { showMessage('Заповніть назву', true); return; }
+            if (!phone) { showMessage('Введіть телефон', true); return; }
+            const ok = await apiRequest('jobs', {
+                method: 'POST',
+                body: JSON.stringify({ user_id: state.user.id, title, category, salary, city, phone, schedule, description: desc, status: 'open', created_at: new Date().toISOString() })
             });
-            
-            showMessage(ok ? '✅ Вакансію опубліковано!' : '❌ Помилка', !ok);
-            if (ok) { closeModal(); loadJobs(); }
+            showMessage(ok ? '✅ Опубліковано!' : '❌ Помилка', !ok);
+            if (ok) closeModal();
         }
         
         async function submitResume() {
@@ -1187,84 +966,50 @@
             const skills = document.getElementById('resumeSkills')?.value;
             const city = document.getElementById('resumeCity')?.value;
             const salary = document.getElementById('resumeSalary')?.value;
-            const phone = document.getElementById('resumePhone')?.value || getPhone();
-            
+            const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
             if (!specialty) { showMessage('Заповніть спеціальність', true); return; }
-            if (!phone) { showMessage('Введіть телефон для зв\'язку', true); return; }
-            if (!state.user) { showMessage('Помилка авторизації', true); return; }
-            
-            const ok = await api.createResume({
-                user_id: state.user.id,
-                specialty, experience, skills, city, salary, phone,
-                status: 'active',
-                created_at: new Date().toISOString()
+            if (!phone) { showMessage('Введіть телефон', true); return; }
+            const ok = await apiRequest('resumes', {
+                method: 'POST',
+                body: JSON.stringify({ user_id: state.user.id, specialty, experience, skills, city, salary, phone, status: 'active', created_at: new Date().toISOString() })
             });
-            
-            showMessage(ok ? '✅ Резюме опубліковано!' : '❌ Помилка', !ok);
-            if (ok) { closeModal(); loadResumes(); }
+            showMessage(ok ? '✅ Опубліковано!' : '❌ Помилка', !ok);
+            if (ok) closeModal();
         }
         
-        // ========== КАТЕГОРІЇ ==========
-        const categories = [
-            { name: 'Електроніка', icon: '📱', id: 'Електроніка' },
-            { name: 'Авто', icon: '🚗', id: 'Авто' },
-            { name: 'Шини/Диски', icon: '🛞', id: 'Шини_Диски' },
-            { name: 'Автозапчастини', icon: '🔧', id: 'Автозапчастини' },
-            { name: 'Нерухомість', icon: '🏠', id: 'Нерухомість' },
-            { name: 'Дім і сад', icon: '🏡', id: 'Дім_і_сад' },
-            { name: 'Дитячий світ', icon: '👶', id: 'Дитячий_світ' },
-            { name: 'Тварини', icon: '🐾', id: 'Тварини' },
-            { name: 'Мода і стиль', icon: '👕', id: 'Мода_і_стиль' },
-            { name: 'Хобі/Відпочинок', icon: '🎮', id: 'Хобі_Відпочинок' },
-            { name: 'Книги', icon: '📚', id: 'Книги' },
-            { name: 'Віддам безкоштовно', icon: '🎁', id: 'Віддам_безкоштовно' },
-            { name: 'Обмін', icon: '🔄', id: 'Обмін' },
-            { name: 'Бізнес/Послуги', icon: '🏢', id: 'Бізнес_Послуги' },
-            { name: 'Оренда/Прокат', icon: '🔑', id: 'Оренда_Прокат' },
-            { name: 'Житло подобово', icon: '🏠', id: 'Житло_подобово' }
-        ];
-        
-        // ========== INIT ==========
+        // ========== ІНІЦІАЛІЗАЦІЯ ==========
         document.getElementById('bottomNav').addEventListener('click', (e) => {
             const btn = e.target.closest('.nav-item');
             if (!btn) return;
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             btn.classList.add('active');
             const page = btn.dataset.page;
-            if (page === 'home') { state.currentPage = 'home'; renderHome(); }
-            else if (page === 'goods') { state.currentPage = 'goods'; state.currentCategory = null; loadGoods(); }
-            else if (page === 'jobs') { state.currentPage = 'jobs'; loadJobs(); loadResumes(); renderJobsList(); }
-            else if (page === 'profile') { state.currentPage = 'profile'; loadMyGoods(); renderProfile(); }
+            if (page === 'home') { state.page = 'home'; renderHomePage(); }
+            else if (page === 'goods') { state.page = 'goods'; loadGoods(); }
+            else if (page === 'jobs') { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
+            else if (page === 'profile') { state.page = 'profile'; loadMyGoods(); renderProfilePage(); }
         });
         
         (async () => {
             await loadUser();
-            renderHome();
+            renderHomePage();
             document.querySelector('.nav-item[data-page="home"]').classList.add('active');
             loadGoods();
-            loadJobs();
-            loadResumes();
         })();
         
-        window.deleteGoodsItem = deleteGoodsItem;
-        window.updateGoodsStatus = updateGoodsStatus;
-        window.confirmDelete = confirmDelete;
-        window.confirmArchive = confirmArchive;
-        window.confirmSold = confirmSold;
-        window.editGoods = editGoods;
+        window.selectCategory = selectCategory;
+        window.goToGoodsPage = goToGoodsPage;
+        window.goToJobsPage = goToJobsPage;
+        window.goBack = goBack;
+        window.searchGoods = searchGoods;
         window.openGoodsDetail = openGoodsDetail;
         window.openJobDetail = openJobDetail;
         window.openResumeDetail = openResumeDetail;
         window.contactSeller = contactSeller;
         window.closeDetailModal = closeDetailModal;
-        window.savePhone = savePhone;
         window.switchProfileTab = switchProfileTab;
         window.switchJobsTab = switchJobsTab;
-        window.goToAllGoods = goToAllGoods;
-        window.goToJobs = goToJobs;
-        window.selectHomeCategory = selectHomeCategory;
-        window.searchGoods = searchGoods;
-        window.goBack = goBack;
+        window.savePhone = savePhone;
         window.showAddModal = showAddModal;
         window.closeModal = closeModal;
         window.switchAddTab = switchAddTab;
@@ -1274,6 +1019,12 @@
         window.addPhotoInput = addPhotoInput;
         window.removePhoto = removePhoto;
         window.closeBottomSheet = closeBottomSheet;
+        window.updateStatus = updateStatus;
+        window.deleteItem = deleteItem;
+        window.confirmDelete = confirmDelete;
+        window.confirmArchive = confirmArchive;
+        window.confirmSold = confirmSold;
+        window.editGoods = editGoods;
     </script>
 </body>
 </html>
