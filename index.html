@@ -1029,13 +1029,16 @@
             document.getElementById('detailModal').style.display = 'flex';
         }
         
-        // ========== ВИПРАВЛЕНА ФУНКЦІЯ contactSeller (без showPopup) ==========
+        // ========== ЗАКРИТТЯ МОДАЛКИ (ВИПРАВЛЕНО) ==========
+        function closeDetailModal() { 
+            document.getElementById('detailModal').style.display = 'none'; 
+        }
+        
+        // ========== КОНТАКТ (ВИПРАВЛЕНО) ==========
         function contactSeller(phone) {
             if (phone && phone !== 'не вказано' && phone !== '') {
-                // Показуємо номер через showMessage
                 showMessage(`📞 Телефон: ${phone}`);
                 
-                // Копіюємо номер в буфер обміну
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(phone).then(() => {
                         setTimeout(() => {
@@ -1046,10 +1049,6 @@
             } else {
                 showMessage('❌ Номер телефону не вказано', true);
             }
-        }
-        
-        function closeDetailModal() { 
-            document.getElementById('detailModal').style.display = 'none'; 
         }
         
         // ========== НАВІГАЦІЯ ==========
@@ -1325,6 +1324,30 @@
             });
         }
         
+        // ========== РОБИМО ФУНКЦІЇ ГЛОБАЛЬНИМИ ==========
+        window.showAddModal = showAddModal;
+        window.switchAddTab = switchAddTab;
+        window.submitGoods = submitGoods;
+        window.submitJob = submitJob;
+        window.submitResume = submitResume;
+        window.addPhotoInput = addPhotoInput;
+        window.removePhoto = removePhoto;
+        window.closeModal = closeModal;
+        window.closeDetailModal = closeDetailModal;
+        window.contactSeller = contactSeller;
+        window.selectCategory = selectCategory;
+        window.goToGoodsPage = goToGoodsPage;
+        window.goToJobsPage = goToJobsPage;
+        window.goBack = goBack;
+        window.searchGoods = searchGoods;
+        window.openDetail = openDetail;
+        window.switchProfileTab = switchProfileTab;
+        window.switchJobsTab = switchJobsTab;
+        window.savePhone = savePhone;
+        window.closeBottomSheet = closeBottomSheet;
+        window.deleteItem = deleteItem;
+        window.confirmDelete = confirmDelete;
+        
         // ЗАПУСК
         (async () => {
             await loadUser();
@@ -1335,30 +1358,6 @@
             renderHomePage();
             initNavigation();
         })();
-        
-        // Глобальні функції
-        window.selectCategory = selectCategory;
-        window.goToGoodsPage = goToGoodsPage;
-        window.goToJobsPage = goToJobsPage;
-        window.goBack = goBack;
-        window.searchGoods = searchGoods;
-        window.openDetail = openDetail;
-        window.contactSeller = contactSeller;
-        window.closeDetailModal = closeDetailModal;
-        window.switchProfileTab = switchProfileTab;
-        window.switchJobsTab = switchJobsTab;
-        window.savePhone = savePhone;
-        window.showAddModal = showAddModal;
-        window.closeModal = closeModal;
-        window.switchAddTab = switchAddTab;
-        window.submitGoods = submitGoods;
-        window.submitJob = submitJob;
-        window.submitResume = submitResume;
-        window.addPhotoInput = addPhotoInput;
-        window.removePhoto = removePhoto;
-        window.closeBottomSheet = closeBottomSheet;
-        window.deleteItem = deleteItem;
-        window.confirmDelete = confirmDelete;
     </script>
 </body>
 </html>
