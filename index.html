@@ -66,8 +66,8 @@
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
         .category-name { font-size: 12px; font-weight: 500; }
         
-        .goods-list, .jobs-list, .resumes-list { display: flex; flex-direction: column; gap: 12px; }
-        .goods-card, .my-goods-card, .job-card, .resume-card {
+        .goods-list { display: flex; flex-direction: column; gap: 12px; }
+        .goods-card, .my-goods-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
             border-radius: 16px;
             padding: 12px;
@@ -236,9 +236,6 @@
             color: white;
         }
         .action-view { background: #2196f3; }
-        .action-edit { background: #ff9800; }
-        .action-archive { background: #9c27b0; }
-        .action-sold { background: #4caf50; }
         .action-delete { background: #dc3545; }
         
         .profile-header {
@@ -388,6 +385,20 @@
         .empty-state { text-align: center; padding: 50px 20px; color: #999; }
         .loading { text-align: center; padding: 50px; }
         
+        .add-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #e0e0e0;
+            color: #000;
+        }
+        .add-tab.active {
+            background: #2aab6e;
+            color: white;
+        }
+        
         .jobs-tabs {
             display: flex;
             gap: 8px;
@@ -404,24 +415,16 @@
             color: #000;
         }
         .jobs-tab.active { background: #2aab6e; color: white; }
+        .job-card, .resume-card {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
         .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .job-city { font-size: 13px; color: #666; margin-top: 4px; }
-        .job-card, .resume-card { margin-bottom: 12px; }
-        
-        .add-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            background: #e0e0e0;
-            color: #000;
-        }
-        .add-tab.active {
-            background: #2aab6e;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -446,38 +449,25 @@
             <div id="addGoodsForm">
                 <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
                 <select id="goodsCategory" class="modal-select">
-                    <option value="Електроніка">📱 Електроніка</option><option value="Авто">🚗 Авто</option>
-                    <option value="Шини_Диски">🛞 Шини/Диски</option><option value="Автозапчастини">🔧 Автозапчастини</option>
-                    <option value="Нерухомість">🏠 Нерухомість</option><option value="Дім_і_сад">🏡 Дім і сад</option>
-                    <option value="Дитячий_світ">👶 Дитячий світ</option><option value="Тварини">🐾 Тварини</option>
-                    <option value="Мода_і_стиль">👕 Мода і стиль</option><option value="Хобі_Відпочинок">🎮 Хобі/Відпочинок</option>
-                    <option value="Книги">📚 Книги</option><option value="Віддам_безкоштовно">🎁 Віддам безкоштовно</option>
-                    <option value="Обмін">🔄 Обмін</option><option value="Бізнес_Послуги">🏢 Бізнес/Послуги</option>
-                    <option value="Оренда_Прокат">🔑 Оренда/Прокат</option><option value="Житло_подобово">🏠 Житло подобово</option>
+                    <option value="Електроніка">📱 Електроніка</option>
+                    <option value="Авто">🚗 Авто</option>
+                    <option value="Нерухомість">🏠 Нерухомість</option>
+                    <option value="Дім_і_сад">🏡 Дім і сад</option>
                 </select>
                 <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
                 <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
                 <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
                 <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
                 <div class="photo-grid" id="photoList"></div>
-                <div class="add-photo" onclick="addPhotoInput()">+</div>
+                <div class="add-photo" onclick="addPhotoInput()">📷 Додати фото</div>
                 <button class="modal-btn btn-primary" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
             <div id="addJobForm" style="display:none">
                 <input type="text" id="jobTitle" class="modal-input" placeholder="Назва вакансії *">
-                <select id="jobCategory" class="modal-select">
-                    <option value="IT/Розробка">💻 IT/Розробка</option><option value="Маркетинг/PR">📊 Маркетинг/PR</option>
-                    <option value="Фінанси/Бухгалтерія">💰 Фінанси/Бухгалтерія</option><option value="Адміністрація/HR">🏢 Адміністрація/HR</option>
-                    <option value="Call центр/Продажі">📞 Call центр/Продажі</option><option value="Доставка/Логістика">🚚 Доставка/Логістика</option>
-                    <option value="Виробництво/Робочі">🏭 Виробництво/Робочі</option><option value="Домашній персонал">🏠 Домашній персонал</option>
-                    <option value="Освіта/Репетитори">🎓 Освіта/Репетитори</option><option value="Медицина/Краса">⚕️ Медицина/Краса</option>
-                    <option value="Віддалена робота">🌍 Віддалена робота</option>
-                </select>
                 <input type="text" id="jobSalary" class="modal-input" placeholder="Зарплата (грн)">
                 <input type="text" id="jobCity" class="modal-input" placeholder="Місто">
                 <input type="tel" id="jobPhone" class="modal-input" placeholder="Телефон для зв'язку *">
-                <input type="text" id="jobSchedule" class="modal-input" placeholder="Графік роботи">
                 <textarea id="jobDesc" class="modal-textarea" placeholder="Опис вакансії"></textarea>
                 <button class="modal-btn btn-primary" onclick="submitJob()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
@@ -485,7 +475,6 @@
             <div id="addResumeForm" style="display:none">
                 <input type="text" id="resumeSpecialty" class="modal-input" placeholder="Спеціальність *">
                 <input type="text" id="resumeExperience" class="modal-input" placeholder="Досвід роботи">
-                <input type="text" id="resumeSkills" class="modal-input" placeholder="Навички">
                 <input type="text" id="resumeCity" class="modal-input" placeholder="Місто">
                 <input type="text" id="resumeSalary" class="modal-input" placeholder="Очікувана зарплата">
                 <input type="tel" id="resumePhone" class="modal-input" placeholder="Телефон для зв'язку *">
@@ -498,7 +487,7 @@
     <div id="detailModal" class="detail-modal">
         <div class="detail-card">
             <div id="detailContent"></div>
-            <button class="contact-seller" style="background:#dc3545; margin-top:12px" onclick="closeDetailModal()">Закрити</button>
+            <button style="width:100%; padding:14px; background:#dc3545; color:white; border:none; border-radius:12px; margin-top:12px; cursor:pointer;" onclick="closeDetailModal()">Закрити</button>
         </div>
     </div>
 
@@ -512,7 +501,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // ========== ПРАВИЛЬНІ КЛЮЧІ SUPABASE ==========
+        // ========== КЛЮЧІ SUPABASE ==========
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
@@ -529,7 +518,8 @@
                 });
                 
                 if (!response.ok) {
-                    console.error(`API Error ${response.status}:`, await response.text());
+                    const errorText = await response.text();
+                    console.error(`API Error ${response.status}:`, errorText);
                     return null;
                 }
                 
@@ -540,7 +530,7 @@
             }
         }
         
-        // Стан додатку
+        // ========== СТАН ==========
         let state = {
             page: 'home',
             category: null,
@@ -548,15 +538,13 @@
             myGoods: { active: [], archived: [], sold: [], deleted: [] },
             jobs: [],
             resumes: [],
-            myJobs: [],
-            myResumes: [],
             profileTab: 'active',
             jobsTab: 'jobs',
             user: null,
             loading: false
         };
         
-        let selectedPhotos = [];
+        let selectedPhotos = []; // Зберігаємо base64 фото
         
         function showMessage(text, isError = false) {
             const msg = document.getElementById('message');
@@ -573,7 +561,6 @@
                 if (Array.isArray(arr) && arr.length > 0 && arr[0]) return arr[0];
                 return '';
             } catch(e) {
-                if (typeof photos === 'string' && photos.length > 5 && photos.startsWith('http')) return photos;
                 return '';
             }
         }
@@ -586,7 +573,51 @@
             if (active) active.classList.add('active');
         }
         
-        // Завантаження даних
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // ========== ФОТО (ЗБЕРІГАЄМО ЯК BASE64) ==========
+        function addPhotoInput() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => { 
+                        selectedPhotos.push(ev.target.result); 
+                        renderPhotoList(); 
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            };
+            input.click();
+        }
+        
+        function renderPhotoList() {
+            const container = document.getElementById('photoList');
+            if (!container) return;
+            container.innerHTML = selectedPhotos.map((p, i) => 
+                `<div class="photo-preview" style="background-image: url('${p}')">
+                    <div class="photo-remove" onclick="removePhoto(${i})">×</div>
+                </div>`
+            ).join('');
+            container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
+        }
+        
+        function removePhoto(i) { 
+            selectedPhotos.splice(i, 1); 
+            renderPhotoList(); 
+        }
+        
+        // ========== ЗАВАНТАЖЕННЯ ДАНИХ ==========
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
             try {
@@ -624,7 +655,6 @@
                 if (state.page === 'goods') renderGoodsPage();
             } catch(e) {
                 console.error('Load goods error:', e);
-                showMessage('Помилка завантаження', true);
             }
             state.loading = false;
         }
@@ -632,11 +662,14 @@
         async function loadMyGoods() {
             if (!state.user) return;
             try {
-                for (const status of ['active', 'archived', 'sold', 'deleted']) {
-                    const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&status=eq.${status}&order=created_at.desc`);
-                    if (data) state.myGoods[status] = data;
+                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (data) {
+                    state.myGoods.active = data.filter(item => item.status === 'active');
+                    state.myGoods.archived = data.filter(item => item.status === 'archived');
+                    state.myGoods.sold = data.filter(item => item.status === 'sold');
+                    state.myGoods.deleted = data.filter(item => item.status === 'deleted');
+                    console.log('My goods loaded:', data.length);
                 }
-                console.log('My goods loaded:', state.myGoods.active.length);
                 if (state.page === 'profile') renderProfilePage();
             } catch(e) {
                 console.error('Load my goods error:', e);
@@ -669,27 +702,6 @@
             }
         }
         
-        async function updateStatus(id, newStatus, msg) {
-            try {
-                const result = await apiRequest(`goods?id=eq.${id}`, { 
-                    method: 'PATCH', 
-                    body: JSON.stringify({ status: newStatus }) 
-                });
-                if (result !== null) {
-                    showMessage(msg);
-                    await loadGoods();
-                    await loadMyGoods();
-                    return true;
-                }
-                showMessage(`❌ Помилка`, true);
-                return false;
-            } catch(e) {
-                console.error('Update status error:', e);
-                showMessage('Помилка оновлення', true);
-                return false;
-            }
-        }
-        
         async function deleteItem(id) {
             try {
                 const result = await apiRequest(`goods?id=eq.${id}`, { 
@@ -711,93 +723,15 @@
             }
         }
         
-        // Категорії
+        // ========== КАТЕГОРІЇ ==========
         const allCategories = [
             { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
             { icon: '🚗', name: 'Авто', id: 'Авто' },
-            { icon: '🛞', name: 'Шини/Диски', id: 'Шини_Диски' },
-            { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
             { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' },
-            { icon: '🏡', name: 'Дім і сад', id: 'Дім_і_сад' },
-            { icon: '👶', name: 'Дитячий світ', id: 'Дитячий_світ' },
-            { icon: '🐾', name: 'Тварини', id: 'Тварини' },
-            { icon: '👕', name: 'Мода і стиль', id: 'Мода_і_стиль' }
+            { icon: '🏡', name: 'Дім і сад', id: 'Дім_і_сад' }
         ];
         
-        // Фото функції
-        function addPhotoInput() {
-            if (selectedPhotos.length >= 15) { 
-                showMessage('Максимум 15 фото', true); 
-                return; 
-            }
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = (e) => {
-                if (e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => { 
-                        selectedPhotos.push(ev.target.result); 
-                        renderPhotoList(); 
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
-                }
-            };
-            input.click();
-        }
-        
-        function renderPhotoList() {
-            const container = document.getElementById('photoList');
-            if (!container) return;
-            container.innerHTML = selectedPhotos.map((p, i) => 
-                `<div class="photo-preview" style="background-image: url('${p}')">
-                    <div class="photo-remove" onclick="removePhoto(${i})">×</div>
-                </div>`
-            ).join('');
-            if (selectedPhotos.length < 15) {
-                container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
-            }
-        }
-        
-        function removePhoto(i) { 
-            selectedPhotos.splice(i, 1); 
-            renderPhotoList(); 
-        }
-        
-        async function uploadPhotos() {
-            const urls = [];
-            for (const photo of selectedPhotos) {
-                try {
-                    const blob = await fetch(photo).then(r => r.blob());
-                    const formData = new FormData();
-                    formData.append('file', blob);
-                    const res = await fetch('https://telegra.ph/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await res.json();
-                    if (data && data[0] && data[0].src) {
-                        urls.push('https://telegra.ph' + data[0].src);
-                    }
-                } catch(e) { 
-                    console.log('Upload error:', e);
-                    urls.push(photo);
-                }
-            }
-            return JSON.stringify(urls);
-        }
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-        
-        // Рендер сторінок
+        // ========== РЕНДЕР СТОРІНОК ==========
         function renderHomePage() {
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
@@ -826,7 +760,7 @@
             `;
             const container = document.getElementById('goodsList');
             if (!state.goods || state.goods.length === 0) {
-                container.innerHTML = '<div class="empty-state">📭 Немає товарів</div>';
+                container.innerHTML = '<div class="empty-state">📭 Немає товарів<br><br>Натисніть "+" щоб додати перше оголошення</div>';
             } else {
                 container.innerHTML = state.goods.map(item => `
                     <div class="goods-card" onclick="openGoodsDetail(${item.id})">
@@ -864,10 +798,9 @@
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
-                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні</div>
-                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів</div>
-                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані</div>
-                        <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">Видалені</div>
+                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні (${state.myGoods.active ? state.myGoods.active.length : 0})</div>
+                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів (${state.myGoods.archived ? state.myGoods.archived.length : 0})</div>
+                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані (${state.myGoods.sold ? state.myGoods.sold.length : 0})</div>
                     </div>
                     <div id="myGoodsList"></div>
                 </div>
@@ -890,9 +823,6 @@
                     </div>
                     <div class="my-goods-actions">
                         <button class="action-btn action-view" onclick="openGoodsDetail(${item.id})">👁 Переглянути</button>
-                        <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
-                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 В архів</button>` : ''}
-                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰 Продано</button>` : ''}
                         <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>
                     </div>
                 </div>
@@ -905,8 +835,8 @@
                 <div class="app-container">
                     <div class="header"><h2>💼 Робота</h2><button class="back-btn" onclick="goBack()">←</button></div>
                     <div class="jobs-tabs">
-                        <div class="jobs-tab ${state.jobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії</div>
-                        <div class="jobs-tab ${state.jobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме</div>
+                        <div class="jobs-tab ${state.jobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії (${state.jobs.length})</div>
+                        <div class="jobs-tab ${state.jobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме (${state.resumes.length})</div>
                     </div>
                     <div id="jobsContent"></div>
                 </div>
@@ -940,7 +870,7 @@
             setActiveNav('jobs');
         }
         
-        // Навігація
+        // ========== НАВІГАЦІЯ ==========
         function goBack() { 
             state.page = 'home'; 
             renderHomePage(); 
@@ -1003,17 +933,11 @@
             const phone = document.getElementById('profilePhone')?.value;
             if (phone && state.user) { 
                 localStorage.setItem('userPhone', phone); 
-                if (state.user.phone !== phone) {
-                    apiRequest(`users?id=eq.${state.user.id}`, { 
-                        method: 'PATCH', 
-                        body: JSON.stringify({ phone }) 
-                    });
-                }
                 showMessage('✅ Номер збережено'); 
             }
         }
         
-        // Дії з оголошеннями
+        // ========== ДІЇ ==========
         function openBottomSheet(actions) {
             const sheet = document.getElementById('bottomSheet');
             const overlay = document.getElementById('sheetOverlay');
@@ -1032,35 +956,18 @@
             openBottomSheet([{ text: '🗑 Так, видалити', onclick: `deleteItem(${id})` }]); 
         }
         
-        function confirmArchive(id) { 
-            openBottomSheet([{ text: '📦 Так, в архів', onclick: `updateStatus(${id}, 'archived', '📦 Переміщено в архів')` }]); 
-        }
-        
-        function confirmSold(id) { 
-            openBottomSheet([{ text: '💰 Так, продано', onclick: `updateStatus(${id}, 'sold', '💰 Позначено як продано')` }]); 
-        }
-        
-        function editGoods(id) { 
-            showMessage('✏️ Редагування буде доступне пізніше'); 
-        }
-        
         async function openGoodsDetail(id) {
-            const item = state.goods.find(g => g.id === id) || 
-                        state.myGoods.active.find(g => g.id === id) ||
-                        state.myGoods.archived.find(g => g.id === id);
+            const item = state.goods.find(g => g.id === id);
             if (!item) return;
             
-            const users = await apiRequest(`users?id=eq.${item.user_id}&select=*`);
-            const seller = users?.[0];
             document.getElementById('detailContent').innerHTML = `
                 <div class="detail-photo" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                 <div class="detail-title">${escapeHtml(item.title)}</div>
                 <div class="detail-price">💰 ${escapeHtml(item.price)} грн</div>
-                <div class="detail-row"><span class="detail-label">📂 Категорія:</span> ${escapeHtml(item.category || 'не вказано')}</div>
                 <div class="detail-row"><span class="detail-label">📍 Місто:</span> ${escapeHtml(item.city || 'не вказано')}</div>
                 <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description || 'Без опису')}</div>
-                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || seller?.phone || 'не вказано')}</div>
-                <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || seller?.phone || '')}')">💬 Зв'язатися</button>
+                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Зв'язатися</button>
             `;
             document.getElementById('detailModal').style.display = 'flex';
         }
@@ -1068,16 +975,13 @@
         async function openJobDetail(id) {
             const job = state.jobs.find(j => j.id === id);
             if (!job) return;
-            const users = await apiRequest(`users?id=eq.${job.user_id}&select=*`);
-            const employer = users?.[0];
             document.getElementById('detailContent').innerHTML = `
                 <div class="detail-title">${escapeHtml(job.title)}</div>
                 <div class="detail-price">💰 ${escapeHtml(job.salary)} грн</div>
                 <div class="detail-row">📍 ${escapeHtml(job.city || 'не вказано')}</div>
-                <div class="detail-row">🕐 ${escapeHtml(job.schedule || 'не вказано')}</div>
                 <div class="detail-row">📝 ${escapeHtml(job.description || 'Без опису')}</div>
-                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(job.phone || employer?.phone || 'не вказано')}</div>
-                <button class="contact-seller" onclick="contactSeller('${escapeHtml(job.phone || employer?.phone || '')}')">💬 Відгукнутися</button>
+                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(job.phone || 'не вказано')}</div>
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(job.phone || '')}')">💬 Відгукнутися</button>
             `;
             document.getElementById('detailModal').style.display = 'flex';
         }
@@ -1085,22 +989,19 @@
         async function openResumeDetail(id) {
             const resume = state.resumes.find(r => r.id === id);
             if (!resume) return;
-            const users = await apiRequest(`users?id=eq.${resume.user_id}&select=*`);
-            const candidate = users?.[0];
             document.getElementById('detailContent').innerHTML = `
                 <div class="detail-title">${escapeHtml(resume.specialty)}</div>
                 <div class="detail-price">💰 ${escapeHtml(resume.salary)} грн</div>
                 <div class="detail-row">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
                 <div class="detail-row">📝 Досвід: ${escapeHtml(resume.experience || 'не вказано')}</div>
-                <div class="detail-row">🛠️ Навички: ${escapeHtml(resume.skills || 'не вказано')}</div>
-                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(resume.phone || candidate?.phone || 'не вказано')}</div>
-                <button class="contact-seller" onclick="contactSeller('${escapeHtml(resume.phone || candidate?.phone || '')}')">💬 Запросити</button>
+                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(resume.phone || 'не вказано')}</div>
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(resume.phone || '')}')">💬 Запросити</button>
             `;
             document.getElementById('detailModal').style.display = 'flex';
         }
         
         function contactSeller(phone) {
-            if (phone && phone !== 'не вказано') {
+            if (phone && phone !== 'не вказано' && phone !== '') {
                 if (tg.showPopup) {
                     tg.showPopup({ 
                         title: 'Контактні дані', 
@@ -1119,7 +1020,7 @@
             document.getElementById('detailModal').style.display = 'none'; 
         }
         
-        // Модальні вікна
+        // ========== МОДАЛЬНІ ВІКНА ==========
         function showAddModal() { 
             document.getElementById('addModal').style.display = 'flex'; 
         }
@@ -1157,8 +1058,10 @@
                 return; 
             }
             
-            showMessage('⏳ Завантаження фото...');
-            const photos = await uploadPhotos();
+            showMessage('⏳ Публікація...');
+            
+            // Зберігаємо фото як JSON масив base64
+            const photosJson = JSON.stringify(selectedPhotos);
             
             const result = await apiRequest('goods', {
                 method: 'POST',
@@ -1170,7 +1073,7 @@
                     description: desc, 
                     city, 
                     phone, 
-                    photos, 
+                    photos: photosJson, 
                     status: 'active', 
                     created_at: new Date().toISOString() 
                 })
@@ -1179,20 +1082,19 @@
             if (result !== null) { 
                 showMessage('✅ Опубліковано!'); 
                 closeModal(); 
+                selectedPhotos = [];
                 await loadGoods(); 
-                if (state.user) await loadMyGoods();
+                await loadMyGoods();
             } else {
-                showMessage('❌ Помилка публікації', true);
+                showMessage('❌ Помилка публікації. Перевірте консоль', true);
             }
         }
         
         async function submitJob() {
             const title = document.getElementById('jobTitle')?.value;
-            const category = document.getElementById('jobCategory')?.value;
             const salary = document.getElementById('jobSalary')?.value;
             const city = document.getElementById('jobCity')?.value;
             const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
-            const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
             
             if (!title) { 
@@ -1204,16 +1106,16 @@
                 return; 
             }
             
+            showMessage('⏳ Публікація...');
+            
             const result = await apiRequest('jobs', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     user_id: state.user.id, 
                     title, 
-                    category, 
                     salary, 
                     city, 
                     phone, 
-                    schedule, 
                     description: desc, 
                     status: 'open', 
                     created_at: new Date().toISOString() 
@@ -1232,7 +1134,6 @@
         async function submitResume() {
             const specialty = document.getElementById('resumeSpecialty')?.value;
             const experience = document.getElementById('resumeExperience')?.value;
-            const skills = document.getElementById('resumeSkills')?.value;
             const city = document.getElementById('resumeCity')?.value;
             const salary = document.getElementById('resumeSalary')?.value;
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
@@ -1246,13 +1147,14 @@
                 return; 
             }
             
+            showMessage('⏳ Публікація...');
+            
             const result = await apiRequest('resumes', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     user_id: state.user.id, 
                     specialty, 
                     experience, 
-                    skills, 
                     city, 
                     salary, 
                     phone, 
@@ -1270,7 +1172,7 @@
             }
         }
         
-        // Ініціалізація навігації
+        // ========== ІНІЦІАЛІЗАЦІЯ ==========
         function initNavigation() {
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.addEventListener('click', async () => {
@@ -1295,7 +1197,7 @@
             });
         }
         
-        // Запуск
+        // ЗАПУСК
         (async () => {
             await loadUser();
             renderHomePage();
@@ -1303,7 +1205,7 @@
             await loadGoods();
             await loadJobs();
             await loadResumes();
-            if (state.user) await loadMyGoods();
+            await loadMyGoods();
         })();
         
         // Глобальні функції
@@ -1329,12 +1231,8 @@
         window.addPhotoInput = addPhotoInput;
         window.removePhoto = removePhoto;
         window.closeBottomSheet = closeBottomSheet;
-        window.updateStatus = updateStatus;
         window.deleteItem = deleteItem;
         window.confirmDelete = confirmDelete;
-        window.confirmArchive = confirmArchive;
-        window.confirmSold = confirmSold;
-        window.editGoods = editGoods;
     </script>
 </body>
 </html>
