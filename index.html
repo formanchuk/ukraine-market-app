@@ -512,21 +512,20 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // Конфігурація Supabase
+        // ========== ПРАВИЛЬНІ КЛЮЧІ SUPABASE ==========
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnbm9uZ2NkbXFpZnVrcHFmZXZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQwMDAwMDAsImV4cCI6MjAyMDAwMDAwMH0.demo';
+        const SUPABASE_ANON_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
         async function apiRequest(endpoint, options = {}) {
             try {
-                const headers = {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`,
-                    'Content-Type': 'application/json'
-                };
-                
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
                     ...options,
-                    headers: { ...headers, ...options.headers }
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
                 });
                 
                 if (!response.ok) {
@@ -605,6 +604,7 @@
                 }
                 state.user = tgUser;
                 state.user.phone = localStorage.getItem('userPhone') || '';
+                console.log('User loaded:', state.user);
             } catch(e) {
                 console.error('Load user error:', e);
                 state.user = tgUser;
@@ -617,7 +617,10 @@
                 let url = `goods?select=*&status=eq.active&order=created_at.desc`;
                 if (state.category && state.category !== 'Всі') url += `&category=eq.${state.category}`;
                 const data = await apiRequest(url);
-                if (data) state.goods = data;
+                if (data) {
+                    state.goods = data;
+                    console.log('Goods loaded:', data.length);
+                }
                 if (state.page === 'goods') renderGoodsPage();
             } catch(e) {
                 console.error('Load goods error:', e);
@@ -633,6 +636,7 @@
                     const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&status=eq.${status}&order=created_at.desc`);
                     if (data) state.myGoods[status] = data;
                 }
+                console.log('My goods loaded:', state.myGoods.active.length);
                 if (state.page === 'profile') renderProfilePage();
             } catch(e) {
                 console.error('Load my goods error:', e);
@@ -642,7 +646,10 @@
         async function loadJobs() {
             try {
                 const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc');
-                if (data) state.jobs = data;
+                if (data) {
+                    state.jobs = data;
+                    console.log('Jobs loaded:', data.length);
+                }
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
             } catch(e) {
                 console.error('Load jobs error:', e);
@@ -652,7 +659,10 @@
         async function loadResumes() {
             try {
                 const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc');
-                if (data) state.resumes = data;
+                if (data) {
+                    state.resumes = data;
+                    console.log('Resumes loaded:', data.length);
+                }
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
             } catch(e) {
                 console.error('Load resumes error:', e);
@@ -777,6 +787,16 @@
             return JSON.stringify(urls);
         }
         
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
         // Рендер сторінок
         function renderHomePage() {
             document.getElementById('app').innerHTML = `
@@ -805,7 +825,7 @@
                 </div>
             `;
             const container = document.getElementById('goodsList');
-            if (state.goods.length === 0) {
+            if (!state.goods || state.goods.length === 0) {
                 container.innerHTML = '<div class="empty-state">📭 Немає товарів</div>';
             } else {
                 container.innerHTML = state.goods.map(item => `
@@ -825,8 +845,10 @@
         
         function renderProfilePage() {
             const user = state.user || { first_name: 'Користувач', id: 0 };
-            const activeCount = state.myGoods.active.length;
-            const totalCount = state.myGoods.active.length + state.myGoods.archived.length + state.myGoods.sold.length;
+            const activeCount = state.myGoods.active ? state.myGoods.active.length : 0;
+            const totalCount = (state.myGoods.active ? state.myGoods.active.length : 0) + 
+                              (state.myGoods.archived ? state.myGoods.archived.length : 0) + 
+                              (state.myGoods.sold ? state.myGoods.sold.length : 0);
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="profile-header">
@@ -891,7 +913,7 @@
             `;
             const container = document.getElementById('jobsContent');
             if (state.jobsTab === 'jobs') {
-                if (state.jobs.length === 0) {
+                if (!state.jobs || state.jobs.length === 0) {
                     container.innerHTML = '<div class="empty-state">📭 Немає вакансій</div>';
                 } else {
                     container.innerHTML = state.jobs.map(job => `
@@ -903,7 +925,7 @@
                     `).join('');
                 }
             } else {
-                if (state.resumes.length === 0) {
+                if (!state.resumes || state.resumes.length === 0) {
                     container.innerHTML = '<div class="empty-state">📭 Немає резюме</div>';
                 } else {
                     container.innerHTML = state.resumes.map(resume => `
@@ -916,16 +938,6 @@
                 }
             }
             setActiveNav('jobs');
-        }
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
         }
         
         // Навігація
