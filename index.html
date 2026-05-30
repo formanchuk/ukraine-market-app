@@ -16,11 +16,6 @@
         }
         .app-container { padding: 16px; padding-bottom: 80px; }
         
-        /* Автоматичне прокручування при фокусі */
-        html, body {
-            scroll-behavior: smooth;
-        }
-        
         .header {
             display: flex;
             justify-content: space-between;
@@ -178,7 +173,6 @@
         }
         .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
         
-        /* Поля з автопрокруткою */
         .modal-input, .modal-select, .modal-textarea {
             width: 100%;
             padding: 14px;
@@ -208,6 +202,9 @@
         .btn-primary { background: #2aab6e; color: white; }
         .btn-danger { background: #dc3545; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
+        .btn-warning { background: #ff9800; color: white; }
+        .btn-info { background: #2196f3; color: white; }
+        .btn-purple { background: #9c27b0; color: white; }
         
         .profile-tabs {
             display: flex;
@@ -240,18 +237,24 @@
             margin-top: 12px;
         }
         .action-btn {
-            padding: 10px 12px;
+            padding: 8px 12px;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
             border: none;
             flex: 1;
-            min-width: 70px;
+            min-width: 65px;
             color: white;
+            transition: opacity 0.2s;
         }
+        .action-btn:active { opacity: 0.8; }
         .action-view { background: #2196f3; }
+        .action-edit { background: #ff9800; }
+        .action-archive { background: #9c27b0; }
+        .action-sold { background: #4caf50; }
         .action-delete { background: #dc3545; }
+        .action-restore { background: #607d8b; }
         
         .profile-header {
             text-align: center;
@@ -375,6 +378,7 @@
             cursor: pointer;
             font-size: 16px;
         }
+        .sheet-item:active { background: #f0f0f0; }
         .sheet-cancel {
             padding: 16px;
             text-align: center;
@@ -448,13 +452,25 @@
             color: #2aab6e;
         }
         
-        /* Підказки */
         .hint-text {
             font-size: 12px;
             color: #888;
             margin-top: -8px;
             margin-bottom: 12px;
         }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .status-active { background: #4caf50; color: white; }
+        .status-archived { background: #9c27b0; color: white; }
+        .status-sold { background: #ff9800; color: white; }
+        .status-deleted { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
@@ -477,9 +493,7 @@
                 <div class="add-tab" data-add-tab="resume" onclick="switchAddTab('resume')">📄 Резюме</div>
             </div>
             <div id="addGoodsForm">
-                <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *" autocomplete="off">
-                <div class="hint-text">📝 Наприклад: "iPhone 13 128GB"</div>
-                
+                <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
                 <select id="goodsCategory" class="modal-select">
                     <option value="Електроніка">📱 Електроніка</option>
                     <option value="Авто">🚗 Авто</option>
@@ -498,16 +512,12 @@
                     <option value="Оренда_Прокат">🔑 Оренда/Прокат</option>
                     <option value="Житло_подобово">🏠 Житло подобово</option>
                 </select>
-                
-                <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *" autocomplete="off">
-                <div class="hint-text">💰 Вкажіть ціну в гривнях</div>
-                
-                <input type="text" id="goodsCity" class="modal-input" placeholder="Місто" autocomplete="off">
-                <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *" autocomplete="off">
+                <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
+                <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
+                <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
                 <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
                 <div class="photo-grid" id="photoList"></div>
-                <div class="add-photo" onclick="addPhotoInput()">📷 Додати фото (до 15 шт)</div>
-                <div class="hint-text">📸 Фото зберігаються автоматично</div>
+                <div class="add-photo" onclick="addPhotoInput()">📷 Додати фото</div>
                 <button class="modal-btn btn-primary" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
@@ -564,18 +574,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // ========== АВТОМАТИЧНЕ ПРОКРУЧУВАННЯ ==========
-        function setupAutoScroll() {
-            const inputs = document.querySelectorAll('.modal-input, .modal-select, .modal-textarea');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    setTimeout(() => {
-                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                });
-            });
-        }
-        
         // ========== КЛЮЧІ SUPABASE ==========
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
@@ -595,14 +593,12 @@
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error(`API Error ${response.status}:`, errorText);
-                    showMessage(`Помилка ${response.status}`, true);
                     return null;
                 }
                 
                 return await response.json();
             } catch(e) {
                 console.error('Fetch error:', e);
-                showMessage('Помилка з\'єднання', true);
                 return null;
             }
         }
@@ -630,7 +626,7 @@
             msg.style.display = 'block';
             setTimeout(() => {
                 msg.style.display = 'none';
-            }, 3000);
+            }, 2500);
         }
         
         function getFirstPhoto(photos) {
@@ -662,7 +658,17 @@
             });
         }
         
-        // ========== ФОТО (ТЕПЕР ПРАЦЮЄ З КІЛЬКОМА ФОТО) ==========
+        function getStatusBadge(status) {
+            const statusMap = {
+                'active': '<span class="status-badge status-active">✓ Активне</span>',
+                'archived': '<span class="status-badge status-archived">📦 В архіві</span>',
+                'sold': '<span class="status-badge status-sold">💰 Продано</span>',
+                'deleted': '<span class="status-badge status-deleted">🗑 Видалено</span>'
+            };
+            return statusMap[status] || '';
+        }
+        
+        // ========== ФОТО ==========
         function addPhotoInput() {
             if (selectedPhotos.length >= 15) { 
                 showMessage('Максимум 15 фото', true); 
@@ -722,9 +728,9 @@
                 }
                 state.user = tgUser;
                 state.user.phone = localStorage.getItem('userPhone') || '';
-                console.log('Користувач завантажений:', state.user.first_name);
+                console.log('Користувач:', state.user.first_name);
             } catch(e) {
-                console.error('Помилка завантаження користувача:', e);
+                console.error('Помилка:', e);
                 state.user = tgUser;
             }
         }
@@ -736,12 +742,12 @@
                 const data = await apiRequest(url);
                 if (data) {
                     state.goods = data;
-                    console.log(`Завантажено товарів: ${data.length}`);
+                    console.log(`Товарів: ${data.length}`);
                 }
                 if (state.page === 'goods') renderGoodsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Помилка завантаження товарів:', e);
+                console.error('Помилка:', e);
             }
         }
         
@@ -751,11 +757,11 @@
                 const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=100`);
                 if (data) {
                     state.myGoods = data;
-                    console.log(`Завантажено моїх товарів: ${data.length}`);
+                    console.log(`Моїх товарів: ${data.length}`);
                 }
                 if (state.page === 'profile') renderProfilePage();
             } catch(e) {
-                console.error('Помилка завантаження моїх товарів:', e);
+                console.error('Помилка:', e);
             }
         }
         
@@ -764,12 +770,12 @@
                 const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
                 if (data) {
                     state.jobs = data;
-                    console.log(`Завантажено вакансій: ${data.length}`);
+                    console.log(`Вакансій: ${data.length}`);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Помилка завантаження вакансій:', e);
+                console.error('Помилка:', e);
             }
         }
         
@@ -778,35 +784,52 @@
                 const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
                 if (data) {
                     state.resumes = data;
-                    console.log(`Завантажено резюме: ${data.length}`);
+                    console.log(`Резюме: ${data.length}`);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Помилка завантаження резюме:', e);
+                console.error('Помилка:', e);
             }
         }
         
-        async function deleteItem(id) {
+        // ========== ОПЕРАЦІЇ З ТОВАРАМИ ==========
+        async function updateItemStatus(id, newStatus, successMessage) {
             try {
                 const result = await apiRequest(`goods?id=eq.${id}`, { 
                     method: 'PATCH', 
-                    body: JSON.stringify({ status: 'deleted' }) 
+                    body: JSON.stringify({ status: newStatus }) 
                 });
                 if (result !== null) {
-                    showMessage('✅ Товар видалено');
+                    showMessage(successMessage);
                     await loadGoods();
                     await loadMyGoods();
                     if (state.page === 'profile') renderProfilePage();
                     return true;
                 }
-                showMessage('❌ Помилка видалення', true);
+                showMessage('❌ Помилка', true);
                 return false;
             } catch(e) {
-                console.error('Помилка видалення:', e);
-                showMessage('Помилка видалення', true);
+                console.error('Помилка:', e);
+                showMessage('Помилка', true);
                 return false;
             }
+        }
+        
+        async function deleteItem(id) {
+            return updateItemStatus(id, 'deleted', '🗑 Товар видалено');
+        }
+        
+        async function archiveItem(id) {
+            return updateItemStatus(id, 'archived', '📦 Товар переміщено в архів');
+        }
+        
+        async function markAsSold(id) {
+            return updateItemStatus(id, 'sold', '💰 Товар позначено як проданий');
+        }
+        
+        async function restoreItem(id) {
+            return updateItemStatus(id, 'active', '✅ Товар відновлено');
         }
         
         // ========== ВСІ КАТЕГОРІЇ ==========
@@ -944,6 +967,7 @@
             const activeCount = state.myGoods.filter(i => i.status === 'active').length;
             const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
             const soldCount = state.myGoods.filter(i => i.status === 'sold').length;
+            const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
             
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
@@ -961,9 +985,10 @@
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
-                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні (${activeCount})</div>
-                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів (${archivedCount})</div>
-                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані (${soldCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">💰 Продані (${soldCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
                     </div>
                     <div id="myGoodsList"></div>
                 </div>
@@ -973,29 +998,41 @@
             let filtered = [];
             if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
             else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
-            else filtered = state.myGoods.filter(i => i.status === 'sold');
+            else if (state.profileTab === 'sold') filtered = state.myGoods.filter(i => i.status === 'sold');
+            else filtered = state.myGoods.filter(i => i.status === 'deleted');
             
             if (filtered.length === 0) { 
                 list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>'; 
                 return; 
             }
             
-            list.innerHTML = filtered.map(item => `
+            list.innerHTML = filtered.map(item => {
+                const isActive = item.status === 'active';
+                const isArchived = item.status === 'archived';
+                const isSold = item.status === 'sold';
+                const isDeleted = item.status === 'deleted';
+                
+                return `
                 <div class="my-goods-card">
                     <div class="my-goods-header">
                         <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                         <div class="my-goods-info">
-                            <div class="my-goods-title">${escapeHtml(item.title)}</div>
+                            <div class="my-goods-title">${escapeHtml(item.title)} ${getStatusBadge(item.status)}</div>
                             <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
                             <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                            <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
                         </div>
                     </div>
                     <div class="my-goods-actions">
                         <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
-                        <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>
+                        ${!isDeleted ? `<button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>` : ''}
+                        ${isActive ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 В архів</button>` : ''}
+                        ${isActive ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰 Продано</button>` : ''}
+                        ${isArchived ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
+                        ${!isDeleted ? `<button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>` : ''}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
             setActiveNav('profile');
         }
         
@@ -1042,7 +1079,7 @@
         // ========== ВІДКРИТТЯ ДЕТАЛЕЙ ==========
         async function openDetail(id, type) {
             let item;
-            if (type === 'goods') item = state.goods.find(g => g.id === id);
+            if (type === 'goods') item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
             else if (type === 'job') item = state.jobs.find(j => j.id === id);
             else item = state.resumes.find(r => r.id === id);
             
@@ -1098,6 +1135,10 @@
             } else {
                 showMessage('❌ Номер телефону не вказано', true);
             }
+        }
+        
+        function editGoods(id) {
+            showMessage('✏️ Редагування буде доступне найближчим часом');
         }
         
         // ========== НАВІГАЦІЯ ==========
@@ -1167,7 +1208,7 @@
             }
         }
         
-        // ========== ДІЇ ==========
+        // ========== ПІДТВЕРДЖЕННЯ ==========
         function openBottomSheet(actions) {
             const sheet = document.getElementById('bottomSheet');
             const overlay = document.getElementById('sheetOverlay');
@@ -1183,13 +1224,24 @@
         }
         
         function confirmDelete(id) { 
-            openBottomSheet([{ text: '🗑 Так, видалити', onclick: `deleteItem(${id})` }]); 
+            openBottomSheet([{ text: '🗑 Так, видалити безповоротно', onclick: `deleteItem(${id})` }]); 
+        }
+        
+        function confirmArchive(id) { 
+            openBottomSheet([{ text: '📦 Так, перемістити в архів', onclick: `archiveItem(${id})` }]); 
+        }
+        
+        function confirmSold(id) { 
+            openBottomSheet([{ text: '💰 Так, позначити як продане', onclick: `markAsSold(${id})` }]); 
+        }
+        
+        function confirmRestore(id) { 
+            openBottomSheet([{ text: '🔄 Так, відновити оголошення', onclick: `restoreItem(${id})` }]); 
         }
         
         // ========== МОДАЛЬНІ ВІКНА ==========
         function showAddModal() { 
             document.getElementById('addModal').style.display = 'flex'; 
-            setTimeout(setupAutoScroll, 100);
         }
         
         function closeModal() { 
@@ -1206,7 +1258,6 @@
             document.querySelectorAll('.add-tab').forEach(el => el.classList.remove('active'));
             const activeTab = document.querySelector(`.add-tab[data-add-tab="${tab}"]`);
             if (activeTab) activeTab.classList.add('active');
-            setTimeout(setupAutoScroll, 100);
         }
         
         async function submitGoods() {
@@ -1217,26 +1268,21 @@
             const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
             
-            // Перевірка обов'язкових полів
             if (!title || !title.trim()) { 
                 showMessage('❌ Введіть назву товару', true); 
-                document.getElementById('goodsTitle').focus();
                 return; 
             }
             if (!price || !price.trim()) { 
                 showMessage('❌ Введіть ціну', true); 
-                document.getElementById('goodsPrice').focus();
                 return; 
             }
             if (!phone || !phone.trim()) { 
                 showMessage('❌ Введіть телефон для зв\'язку', true); 
-                document.getElementById('goodsPhone').focus();
                 return; 
             }
             
             showMessage('⏳ Публікація...');
             
-            // Зберігаємо фото як JSON (навіть якщо фото немає)
             const photosJson = selectedPhotos.length > 0 ? JSON.stringify(selectedPhotos) : '[]';
             
             const result = await apiRequest('goods', {
@@ -1261,30 +1307,27 @@
                 selectedPhotos = [];
                 await loadGoods(); 
                 await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'home') renderHomePage();
                 if (state.page === 'goods') renderGoodsPage();
             } else {
-                showMessage('❌ Помилка публікації. Спробуйте ще раз', true);
+                showMessage('❌ Помилка публікації', true);
             }
         }
         
         async function submitJob() {
             const title = document.getElementById('jobTitle')?.value;
-            const category = document.getElementById('jobCategory')?.value;
             const salary = document.getElementById('jobSalary')?.value;
             const city = document.getElementById('jobCity')?.value;
             const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
-            const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
             
             if (!title || !title.trim()) { 
                 showMessage('❌ Введіть назву вакансії', true); 
-                document.getElementById('jobTitle').focus();
                 return; 
             }
             if (!phone || !phone.trim()) { 
                 showMessage('❌ Введіть телефон для зв\'язку', true); 
-                document.getElementById('jobPhone').focus();
                 return; 
             }
             
@@ -1295,11 +1338,9 @@
                 body: JSON.stringify({ 
                     user_id: state.user.id, 
                     title: title.trim(), 
-                    category, 
                     salary: salary || '', 
                     city: city || '', 
                     phone: phone.trim(), 
-                    schedule: schedule || '', 
                     description: desc || '', 
                     status: 'open', 
                     created_at: new Date().toISOString() 
@@ -1326,12 +1367,10 @@
             
             if (!specialty || !specialty.trim()) { 
                 showMessage('❌ Введіть спеціальність', true); 
-                document.getElementById('resumeSpecialty').focus();
                 return; 
             }
             if (!phone || !phone.trim()) { 
                 showMessage('❌ Введіть телефон для зв\'язку', true); 
-                document.getElementById('resumePhone').focus();
                 return; 
             }
             
@@ -1412,7 +1451,14 @@
         window.savePhone = savePhone;
         window.closeBottomSheet = closeBottomSheet;
         window.deleteItem = deleteItem;
+        window.archiveItem = archiveItem;
+        window.markAsSold = markAsSold;
+        window.restoreItem = restoreItem;
         window.confirmDelete = confirmDelete;
+        window.confirmArchive = confirmArchive;
+        window.confirmSold = confirmSold;
+        window.confirmRestore = confirmRestore;
+        window.editGoods = editGoods;
         
         // ЗАПУСК
         (async () => {
