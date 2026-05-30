@@ -1035,24 +1035,24 @@
         }
         
         function contactSeller(phone) {
-            if (phone && phone !== 'не вказано' && phone !== '') {
-                if (tg.showPopup) {
-                    tg.showPopup({ 
-                        title: 'Контактні дані', 
-                        message: `Телефон: ${phone}`, 
-                        buttons: [{ type: 'default', text: 'OK' }] 
-                    });
-                } else {
-                    alert(`Телефон: ${phone}`);
-                }
-            } else {
-                showMessage('Номер телефону не вказано', true);
-            }
-        }
+    if (phone && phone !== 'не вказано' && phone !== '') {
+        // Показуємо номер через showMessage
+        showMessage(`📞 Телефон: ${phone}`);
         
-        function closeDetailModal() { 
-            document.getElementById('detailModal').style.display = 'none'; 
+        // Копіюємо номер в буфер обміну
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(phone).then(() => {
+                setTimeout(() => {
+                    showMessage(`✅ Номер скопійовано!`);
+                }, 1500);
+            }).catch(() => {
+                // Якщо не вийшло скопіювати - ігноруємо
+            });
         }
+    } else {
+        showMessage('❌ Номер телефону не вказано', true);
+    }
+}
         
         // ========== НАВІГАЦІЯ ==========
         function goBack() { 
