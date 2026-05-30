@@ -66,8 +66,8 @@
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
         .category-name { font-size: 12px; font-weight: 500; }
         
-        .goods-list { display: flex; flex-direction: column; gap: 12px; }
-        .goods-card, .my-goods-card {
+        .goods-list, .fresh-list { display: flex; flex-direction: column; gap: 12px; }
+        .goods-card, .my-goods-card, .fresh-card {
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
             border-radius: 16px;
             padding: 12px;
@@ -75,8 +75,8 @@
             transition: all 0.1s;
             box-shadow: 0 2px 10px rgba(0,0,0,0.06);
         }
-        .goods-card { display: flex; gap: 14px; }
-        .goods-image, .my-goods-image {
+        .goods-card, .fresh-card { display: flex; gap: 14px; }
+        .goods-image, .my-goods-image, .fresh-image {
             width: 90px;
             height: 90px;
             border-radius: 12px;
@@ -87,6 +87,7 @@
             flex-shrink: 0;
         }
         .my-goods-image { width: 70px; height: 70px; }
+        .fresh-image { width: 80px; height: 80px; }
         .goods-info { flex: 1; }
         .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
         .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 4px; }
@@ -425,6 +426,13 @@
         .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .job-city { font-size: 13px; color: #666; margin-top: 4px; }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 20px 0 12px 0;
+            color: #2aab6e;
+        }
     </style>
 </head>
 <body>
@@ -451,8 +459,20 @@
                 <select id="goodsCategory" class="modal-select">
                     <option value="Електроніка">📱 Електроніка</option>
                     <option value="Авто">🚗 Авто</option>
+                    <option value="Шини_Диски">🛞 Шини/Диски</option>
+                    <option value="Автозапчастини">🔧 Автозапчастини</option>
                     <option value="Нерухомість">🏠 Нерухомість</option>
                     <option value="Дім_і_сад">🏡 Дім і сад</option>
+                    <option value="Дитячий_світ">👶 Дитячий світ</option>
+                    <option value="Тварини">🐾 Тварини</option>
+                    <option value="Мода_і_стиль">👕 Мода і стиль</option>
+                    <option value="Хобі_Відпочинок">🎮 Хобі/Відпочинок</option>
+                    <option value="Книги">📚 Книги</option>
+                    <option value="Віддам_безкоштовно">🎁 Віддам безкоштовно</option>
+                    <option value="Обмін">🔄 Обмін</option>
+                    <option value="Бізнес_Послуги">🏢 Бізнес/Послуги</option>
+                    <option value="Оренда_Прокат">🔑 Оренда/Прокат</option>
+                    <option value="Житло_подобово">🏠 Житло подобово</option>
                 </select>
                 <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
                 <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
@@ -465,9 +485,23 @@
             </div>
             <div id="addJobForm" style="display:none">
                 <input type="text" id="jobTitle" class="modal-input" placeholder="Назва вакансії *">
+                <select id="jobCategory" class="modal-select">
+                    <option value="IT/Розробка">💻 IT/Розробка</option>
+                    <option value="Маркетинг/PR">📊 Маркетинг/PR</option>
+                    <option value="Фінанси/Бухгалтерія">💰 Фінанси/Бухгалтерія</option>
+                    <option value="Адміністрація/HR">🏢 Адміністрація/HR</option>
+                    <option value="Call центр/Продажі">📞 Call центр/Продажі</option>
+                    <option value="Доставка/Логістика">🚚 Доставка/Логістика</option>
+                    <option value="Виробництво/Робочі">🏭 Виробництво/Робочі</option>
+                    <option value="Домашній персонал">🏠 Домашній персонал</option>
+                    <option value="Освіта/Репетитори">🎓 Освіта/Репетитори</option>
+                    <option value="Медицина/Краса">⚕️ Медицина/Краса</option>
+                    <option value="Віддалена робота">🌍 Віддалена робота</option>
+                </select>
                 <input type="text" id="jobSalary" class="modal-input" placeholder="Зарплата (грн)">
                 <input type="text" id="jobCity" class="modal-input" placeholder="Місто">
                 <input type="tel" id="jobPhone" class="modal-input" placeholder="Телефон для зв'язку *">
+                <input type="text" id="jobSchedule" class="modal-input" placeholder="Графік роботи">
                 <textarea id="jobDesc" class="modal-textarea" placeholder="Опис вакансії"></textarea>
                 <button class="modal-btn btn-primary" onclick="submitJob()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
@@ -475,6 +509,7 @@
             <div id="addResumeForm" style="display:none">
                 <input type="text" id="resumeSpecialty" class="modal-input" placeholder="Спеціальність *">
                 <input type="text" id="resumeExperience" class="modal-input" placeholder="Досвід роботи">
+                <input type="text" id="resumeSkills" class="modal-input" placeholder="Навички">
                 <input type="text" id="resumeCity" class="modal-input" placeholder="Місто">
                 <input type="text" id="resumeSalary" class="modal-input" placeholder="Очікувана зарплата">
                 <input type="tel" id="resumePhone" class="modal-input" placeholder="Телефон для зв'язку *">
@@ -535,7 +570,7 @@
             page: 'home',
             category: null,
             goods: [],
-            myGoods: { active: [], archived: [], sold: [], deleted: [] },
+            myGoods: [],
             jobs: [],
             resumes: [],
             profileTab: 'active',
@@ -544,7 +579,7 @@
             loading: false
         };
         
-        let selectedPhotos = []; // Зберігаємо base64 фото
+        let selectedPhotos = [];
         
         function showMessage(text, isError = false) {
             const msg = document.getElementById('message');
@@ -583,7 +618,7 @@
             });
         }
         
-        // ========== ФОТО (ЗБЕРІГАЄМО ЯК BASE64) ==========
+        // ========== ФОТО ==========
         function addPhotoInput() {
             const input = document.createElement('input');
             input.type = 'file';
@@ -643,7 +678,6 @@
         }
         
         async function loadGoods() {
-            state.loading = true;
             try {
                 let url = `goods?select=*&status=eq.active&order=created_at.desc`;
                 if (state.category && state.category !== 'Всі') url += `&category=eq.${state.category}`;
@@ -653,10 +687,10 @@
                     console.log('Goods loaded:', data.length);
                 }
                 if (state.page === 'goods') renderGoodsPage();
+                if (state.page === 'home') renderHomePage();
             } catch(e) {
                 console.error('Load goods error:', e);
             }
-            state.loading = false;
         }
         
         async function loadMyGoods() {
@@ -664,10 +698,7 @@
             try {
                 const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (data) {
-                    state.myGoods.active = data.filter(item => item.status === 'active');
-                    state.myGoods.archived = data.filter(item => item.status === 'archived');
-                    state.myGoods.sold = data.filter(item => item.status === 'sold');
-                    state.myGoods.deleted = data.filter(item => item.status === 'deleted');
+                    state.myGoods = data;
                     console.log('My goods loaded:', data.length);
                 }
                 if (state.page === 'profile') renderProfilePage();
@@ -684,6 +715,7 @@
                     console.log('Jobs loaded:', data.length);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
+                if (state.page === 'home') renderHomePage();
             } catch(e) {
                 console.error('Load jobs error:', e);
             }
@@ -697,6 +729,7 @@
                     console.log('Resumes loaded:', data.length);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
+                if (state.page === 'home') renderHomePage();
             } catch(e) {
                 console.error('Load resumes error:', e);
             }
@@ -723,34 +756,115 @@
             }
         }
         
-        // ========== КАТЕГОРІЇ ==========
+        // ========== ВСІ КАТЕГОРІЇ (ПОВНИЙ СПИСОК) ==========
         const allCategories = [
             { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
             { icon: '🚗', name: 'Авто', id: 'Авто' },
+            { icon: '🛞', name: 'Шини/Диски', id: 'Шини_Диски' },
+            { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
             { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' },
-            { icon: '🏡', name: 'Дім і сад', id: 'Дім_і_сад' }
+            { icon: '🏡', name: 'Дім і сад', id: 'Дім_і_сад' },
+            { icon: '👶', name: 'Дитячий світ', id: 'Дитячий_світ' },
+            { icon: '🐾', name: 'Тварини', id: 'Тварини' },
+            { icon: '👕', name: 'Мода і стиль', id: 'Мода_і_стиль' },
+            { icon: '🎮', name: 'Хобі/Відпочинок', id: 'Хобі_Відпочинок' },
+            { icon: '📚', name: 'Книги', id: 'Книги' },
+            { icon: '🎁', name: 'Віддам безкоштовно', id: 'Віддам_безкоштовно' },
+            { icon: '🔄', name: 'Обмін', id: 'Обмін' },
+            { icon: '🏢', name: 'Бізнес/Послуги', id: 'Бізнес_Послуги' },
+            { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда_Прокат' },
+            { icon: '🏠', name: 'Житло подобово', id: 'Житло_подобово' }
         ];
         
         // ========== РЕНДЕР СТОРІНОК ==========
         function renderHomePage() {
+            // Збираємо всі оголошення (товари + вакансії + резюме)
+            const allItems = [];
+            
+            // Додаємо товари
+            state.goods.forEach(item => {
+                allItems.push({
+                    id: item.id,
+                    type: 'goods',
+                    title: item.title,
+                    price: item.price,
+                    city: item.city,
+                    photo: getFirstPhoto(item.photos),
+                    category: item.category,
+                    created_at: item.created_at
+                });
+            });
+            
+            // Додаємо вакансії
+            state.jobs.forEach(item => {
+                allItems.push({
+                    id: item.id,
+                    type: 'job',
+                    title: item.title,
+                    price: item.salary,
+                    city: item.city,
+                    photo: '',
+                    category: 'Вакансія',
+                    created_at: item.created_at
+                });
+            });
+            
+            // Додаємо резюме
+            state.resumes.forEach(item => {
+                allItems.push({
+                    id: item.id,
+                    type: 'resume',
+                    title: item.specialty,
+                    price: item.salary,
+                    city: item.city,
+                    photo: '',
+                    category: 'Резюме',
+                    created_at: item.created_at
+                });
+            });
+            
+            // Сортуємо за датою (нові спочатку)
+            allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const recentItems = allItems.slice(0, 10); // Останні 10 оголошень
+            
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="header"><h2>🏠 Ukraine Market</h2></div>
+                    
+                    <div class="section-title">📂 Категорії</div>
                     <div class="categories-grid">
                         ${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}
                     </div>
+                    
+                    <div class="section-title">🆕 Свіжі оголошення</div>
+                    <div class="goods-list" id="freshList"></div>
+                    
                     <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
-                    <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Шукаю роботу →</button>
+                    <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Всі вакансії →</button>
                 </div>
             `;
+            
+            const freshContainer = document.getElementById('freshList');
+            if (recentItems.length === 0) {
+                freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>Натисніть "+" щоб додати перше</div>';
+            } else {
+                freshContainer.innerHTML = recentItems.map(item => `
+                    <div class="fresh-card" onclick="openDetail(${item.id}, '${item.type}')">
+                        <div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div>
+                        <div class="goods-info">
+                            <div class="goods-title">${escapeHtml(item.title)}</div>
+                            <div class="goods-price">💰 ${escapeHtml(item.price)} ${item.type === 'goods' ? 'грн' : 'грн'}</div>
+                            <div class="goods-meta">📂 ${escapeHtml(item.category)}</div>
+                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
             setActiveNav('home');
         }
         
         function renderGoodsPage() {
-            if (state.loading) { 
-                document.getElementById('app').innerHTML = '<div class="loading">⏳ Завантаження...</div>'; 
-                return; 
-            }
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="header"><h2>📦 ${state.category || 'Всі товари'}</h2><button class="back-btn" onclick="goBack()">←</button></div>
@@ -763,7 +877,7 @@
                 container.innerHTML = '<div class="empty-state">📭 Немає товарів<br><br>Натисніть "+" щоб додати перше оголошення</div>';
             } else {
                 container.innerHTML = state.goods.map(item => `
-                    <div class="goods-card" onclick="openGoodsDetail(${item.id})">
+                    <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
                         <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                         <div class="goods-info">
                             <div class="goods-title">${escapeHtml(item.title)}</div>
@@ -779,10 +893,10 @@
         
         function renderProfilePage() {
             const user = state.user || { first_name: 'Користувач', id: 0 };
-            const activeCount = state.myGoods.active ? state.myGoods.active.length : 0;
-            const totalCount = (state.myGoods.active ? state.myGoods.active.length : 0) + 
-                              (state.myGoods.archived ? state.myGoods.archived.length : 0) + 
-                              (state.myGoods.sold ? state.myGoods.sold.length : 0);
+            const activeCount = state.myGoods.filter(i => i.status === 'active').length;
+            const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
+            const soldCount = state.myGoods.filter(i => i.status === 'sold').length;
+            
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="profile-header">
@@ -790,7 +904,7 @@
                         <div class="profile-name">${escapeHtml(user.first_name)}</div>
                         <div class="profile-stats">
                             <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
-                            <div><div class="stat-number">${totalCount}</div><div class="stat-label">Всього</div></div>
+                            <div><div class="stat-number">${state.myGoods.length}</div><div class="stat-label">Всього</div></div>
                         </div>
                     </div>
                     <div style="margin-bottom:16px">
@@ -798,20 +912,26 @@
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
-                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні (${state.myGoods.active ? state.myGoods.active.length : 0})</div>
-                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів (${state.myGoods.archived ? state.myGoods.archived.length : 0})</div>
-                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані (${state.myGoods.sold ? state.myGoods.sold.length : 0})</div>
+                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">Активні (${activeCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">Архів (${archivedCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">Продані (${soldCount})</div>
                     </div>
                     <div id="myGoodsList"></div>
                 </div>
             `;
+            
             const list = document.getElementById('myGoodsList');
-            const goods = state.myGoods[state.profileTab] || [];
-            if (!goods.length) { 
+            let filtered = [];
+            if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
+            else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
+            else filtered = state.myGoods.filter(i => i.status === 'sold');
+            
+            if (filtered.length === 0) { 
                 list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>'; 
                 return; 
             }
-            list.innerHTML = goods.map(item => `
+            
+            list.innerHTML = filtered.map(item => `
                 <div class="my-goods-card">
                     <div class="my-goods-header">
                         <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
@@ -822,7 +942,7 @@
                         </div>
                     </div>
                     <div class="my-goods-actions">
-                        <button class="action-btn action-view" onclick="openGoodsDetail(${item.id})">👁 Переглянути</button>
+                        <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
                         <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>
                     </div>
                 </div>
@@ -843,11 +963,11 @@
             `;
             const container = document.getElementById('jobsContent');
             if (state.jobsTab === 'jobs') {
-                if (!state.jobs || state.jobs.length === 0) {
+                if (state.jobs.length === 0) {
                     container.innerHTML = '<div class="empty-state">📭 Немає вакансій</div>';
                 } else {
                     container.innerHTML = state.jobs.map(job => `
-                        <div class="job-card" onclick="openJobDetail(${job.id})">
+                        <div class="job-card" onclick="openDetail(${job.id}, 'job')">
                             <div class="job-title">${escapeHtml(job.title)}</div>
                             <div class="job-salary">💰 ${escapeHtml(job.salary)} грн</div>
                             <div class="job-city">📍 ${escapeHtml(job.city || 'не вказано')}</div>
@@ -855,11 +975,11 @@
                     `).join('');
                 }
             } else {
-                if (!state.resumes || state.resumes.length === 0) {
+                if (state.resumes.length === 0) {
                     container.innerHTML = '<div class="empty-state">📭 Немає резюме</div>';
                 } else {
                     container.innerHTML = state.resumes.map(resume => `
-                        <div class="resume-card" onclick="openResumeDetail(${resume.id})">
+                        <div class="resume-card" onclick="openDetail(${resume.id}, 'resume')">
                             <div class="resume-specialty">${escapeHtml(resume.specialty)}</div>
                             <div class="job-salary">💰 ${escapeHtml(resume.salary)} грн</div>
                             <div class="job-city">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
@@ -868,6 +988,70 @@
                 }
             }
             setActiveNav('jobs');
+        }
+        
+        // ========== ВІДКРИТТЯ ДЕТАЛЕЙ ==========
+        async function openDetail(id, type) {
+            let item;
+            if (type === 'goods') item = state.goods.find(g => g.id === id);
+            else if (type === 'job') item = state.jobs.find(j => j.id === id);
+            else item = state.resumes.find(r => r.id === id);
+            
+            if (!item) return;
+            
+            if (type === 'goods') {
+                document.getElementById('detailContent').innerHTML = `
+                    <div class="detail-photo" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                    <div class="detail-title">${escapeHtml(item.title)}</div>
+                    <div class="detail-price">💰 ${escapeHtml(item.price)} грн</div>
+                    <div class="detail-row"><span class="detail-label">📂 Категорія:</span> ${escapeHtml(item.category || 'не вказано')}</div>
+                    <div class="detail-row"><span class="detail-label">📍 Місто:</span> ${escapeHtml(item.city || 'не вказано')}</div>
+                    <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description || 'Без опису')}</div>
+                    <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
+                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Зв'язатися</button>
+                `;
+            } else if (type === 'job') {
+                document.getElementById('detailContent').innerHTML = `
+                    <div class="detail-title">${escapeHtml(item.title)}</div>
+                    <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
+                    <div class="detail-row">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                    <div class="detail-row">🕐 ${escapeHtml(item.schedule || 'не вказано')}</div>
+                    <div class="detail-row">📝 ${escapeHtml(item.description || 'Без опису')}</div>
+                    <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
+                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Відгукнутися</button>
+                `;
+            } else {
+                document.getElementById('detailContent').innerHTML = `
+                    <div class="detail-title">${escapeHtml(item.specialty)}</div>
+                    <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
+                    <div class="detail-row">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                    <div class="detail-row">📝 Досвід: ${escapeHtml(item.experience || 'не вказано')}</div>
+                    <div class="detail-row">🛠️ Навички: ${escapeHtml(item.skills || 'не вказано')}</div>
+                    <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
+                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Запросити</button>
+                `;
+            }
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+        
+        function contactSeller(phone) {
+            if (phone && phone !== 'не вказано' && phone !== '') {
+                if (tg.showPopup) {
+                    tg.showPopup({ 
+                        title: 'Контактні дані', 
+                        message: `Телефон: ${phone}`, 
+                        buttons: [{ type: 'default', text: 'OK' }] 
+                    });
+                } else {
+                    alert(`Телефон: ${phone}`);
+                }
+            } else {
+                showMessage('Номер телефону не вказано', true);
+            }
+        }
+        
+        function closeDetailModal() { 
+            document.getElementById('detailModal').style.display = 'none'; 
         }
         
         // ========== НАВІГАЦІЯ ==========
@@ -903,7 +1087,7 @@
                     container.innerHTML = '<div class="empty-state">📭 Нічого не знайдено</div>';
                 } else {
                     container.innerHTML = filtered.map(item => `
-                        <div class="goods-card" onclick="openGoodsDetail(${item.id})">
+                        <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
                             <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                             <div class="goods-info">
                                 <div class="goods-title">${escapeHtml(item.title)}</div>
@@ -956,70 +1140,6 @@
             openBottomSheet([{ text: '🗑 Так, видалити', onclick: `deleteItem(${id})` }]); 
         }
         
-        async function openGoodsDetail(id) {
-            const item = state.goods.find(g => g.id === id);
-            if (!item) return;
-            
-            document.getElementById('detailContent').innerHTML = `
-                <div class="detail-photo" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                <div class="detail-title">${escapeHtml(item.title)}</div>
-                <div class="detail-price">💰 ${escapeHtml(item.price)} грн</div>
-                <div class="detail-row"><span class="detail-label">📍 Місто:</span> ${escapeHtml(item.city || 'не вказано')}</div>
-                <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description || 'Без опису')}</div>
-                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
-                <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Зв'язатися</button>
-            `;
-            document.getElementById('detailModal').style.display = 'flex';
-        }
-        
-        async function openJobDetail(id) {
-            const job = state.jobs.find(j => j.id === id);
-            if (!job) return;
-            document.getElementById('detailContent').innerHTML = `
-                <div class="detail-title">${escapeHtml(job.title)}</div>
-                <div class="detail-price">💰 ${escapeHtml(job.salary)} грн</div>
-                <div class="detail-row">📍 ${escapeHtml(job.city || 'не вказано')}</div>
-                <div class="detail-row">📝 ${escapeHtml(job.description || 'Без опису')}</div>
-                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(job.phone || 'не вказано')}</div>
-                <button class="contact-seller" onclick="contactSeller('${escapeHtml(job.phone || '')}')">💬 Відгукнутися</button>
-            `;
-            document.getElementById('detailModal').style.display = 'flex';
-        }
-        
-        async function openResumeDetail(id) {
-            const resume = state.resumes.find(r => r.id === id);
-            if (!resume) return;
-            document.getElementById('detailContent').innerHTML = `
-                <div class="detail-title">${escapeHtml(resume.specialty)}</div>
-                <div class="detail-price">💰 ${escapeHtml(resume.salary)} грн</div>
-                <div class="detail-row">📍 ${escapeHtml(resume.city || 'не вказано')}</div>
-                <div class="detail-row">📝 Досвід: ${escapeHtml(resume.experience || 'не вказано')}</div>
-                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(resume.phone || 'не вказано')}</div>
-                <button class="contact-seller" onclick="contactSeller('${escapeHtml(resume.phone || '')}')">💬 Запросити</button>
-            `;
-            document.getElementById('detailModal').style.display = 'flex';
-        }
-        
-        function contactSeller(phone) {
-            if (phone && phone !== 'не вказано' && phone !== '') {
-                if (tg.showPopup) {
-                    tg.showPopup({ 
-                        title: 'Контактні дані', 
-                        message: `Телефон: ${phone}`, 
-                        buttons: [{ type: 'default', text: 'OK' }] 
-                    });
-                } else {
-                    alert(`Телефон: ${phone}`);
-                }
-            } else {
-                showMessage('Номер телефону не вказано', true);
-            }
-        }
-        
-        function closeDetailModal() { 
-            document.getElementById('detailModal').style.display = 'none'; 
-        }
-        
         // ========== МОДАЛЬНІ ВІКНА ==========
         function showAddModal() { 
             document.getElementById('addModal').style.display = 'flex'; 
@@ -1059,8 +1179,6 @@
             }
             
             showMessage('⏳ Публікація...');
-            
-            // Зберігаємо фото як JSON масив base64
             const photosJson = JSON.stringify(selectedPhotos);
             
             const result = await apiRequest('goods', {
@@ -1085,16 +1203,19 @@
                 selectedPhotos = [];
                 await loadGoods(); 
                 await loadMyGoods();
+                if (state.page === 'home') renderHomePage();
             } else {
-                showMessage('❌ Помилка публікації. Перевірте консоль', true);
+                showMessage('❌ Помилка публікації', true);
             }
         }
         
         async function submitJob() {
             const title = document.getElementById('jobTitle')?.value;
+            const category = document.getElementById('jobCategory')?.value;
             const salary = document.getElementById('jobSalary')?.value;
             const city = document.getElementById('jobCity')?.value;
             const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
+            const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
             
             if (!title) { 
@@ -1113,9 +1234,11 @@
                 body: JSON.stringify({ 
                     user_id: state.user.id, 
                     title, 
+                    category, 
                     salary, 
                     city, 
                     phone, 
+                    schedule, 
                     description: desc, 
                     status: 'open', 
                     created_at: new Date().toISOString() 
@@ -1126,6 +1249,7 @@
                 showMessage('✅ Вакансію опубліковано!'); 
                 closeModal(); 
                 await loadJobs(); 
+                if (state.page === 'home') renderHomePage();
             } else {
                 showMessage('❌ Помилка публікації', true);
             }
@@ -1134,6 +1258,7 @@
         async function submitResume() {
             const specialty = document.getElementById('resumeSpecialty')?.value;
             const experience = document.getElementById('resumeExperience')?.value;
+            const skills = document.getElementById('resumeSkills')?.value;
             const city = document.getElementById('resumeCity')?.value;
             const salary = document.getElementById('resumeSalary')?.value;
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
@@ -1155,6 +1280,7 @@
                     user_id: state.user.id, 
                     specialty, 
                     experience, 
+                    skills, 
                     city, 
                     salary, 
                     phone, 
@@ -1167,6 +1293,7 @@
                 showMessage('✅ Резюме опубліковано!'); 
                 closeModal(); 
                 await loadResumes(); 
+                if (state.page === 'home') renderHomePage();
             } else {
                 showMessage('❌ Помилка публікації', true);
             }
@@ -1179,6 +1306,9 @@
                     const page = btn.dataset.page;
                     if (page === 'home') { 
                         state.page = 'home'; 
+                        await loadGoods();
+                        await loadJobs();
+                        await loadResumes();
                         renderHomePage(); 
                     } else if (page === 'goods') { 
                         state.page = 'goods'; 
@@ -1200,12 +1330,12 @@
         // ЗАПУСК
         (async () => {
             await loadUser();
-            renderHomePage();
-            initNavigation();
             await loadGoods();
             await loadJobs();
             await loadResumes();
             await loadMyGoods();
+            renderHomePage();
+            initNavigation();
         })();
         
         // Глобальні функції
@@ -1214,9 +1344,7 @@
         window.goToJobsPage = goToJobsPage;
         window.goBack = goBack;
         window.searchGoods = searchGoods;
-        window.openGoodsDetail = openGoodsDetail;
-        window.openJobDetail = openJobDetail;
-        window.openResumeDetail = openResumeDetail;
+        window.openDetail = openDetail;
         window.contactSeller = contactSeller;
         window.closeDetailModal = closeDetailModal;
         window.switchProfileTab = switchProfileTab;
