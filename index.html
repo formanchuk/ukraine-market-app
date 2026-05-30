@@ -180,14 +180,7 @@
             border: 1px solid #ddd;
             border-radius: 12px;
             font-size: 15px;
-            transition: all 0.2s;
         }
-        .modal-input:focus, .modal-select:focus, .modal-textarea:focus {
-            border-color: #2aab6e;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(42,171,110,0.2);
-        }
-        
         .modal-textarea { min-height: 90px; resize: vertical; }
         .modal-btn {
             width: 100%;
@@ -202,9 +195,6 @@
         .btn-primary { background: #2aab6e; color: white; }
         .btn-danger { background: #dc3545; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
-        .btn-warning { background: #ff9800; color: white; }
-        .btn-info { background: #2196f3; color: white; }
-        .btn-purple { background: #9c27b0; color: white; }
         
         .profile-tabs {
             display: flex;
@@ -237,18 +227,16 @@
             margin-top: 12px;
         }
         .action-btn {
-            padding: 8px 12px;
+            padding: 10px 12px;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             border: none;
             flex: 1;
-            min-width: 65px;
+            min-width: 70px;
             color: white;
-            transition: opacity 0.2s;
         }
-        .action-btn:active { opacity: 0.8; }
         .action-view { background: #2196f3; }
         .action-edit { background: #ff9800; }
         .action-archive { background: #9c27b0; }
@@ -348,44 +336,52 @@
             cursor: pointer;
         }
         
-        .bottom-sheet {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            z-index: 250;
-        }
-        .bottom-sheet.show { display: block; }
-        .sheet-overlay {
-            display: none;
+        /* Стилі для діалогу підтвердження */
+        .confirm-dialog {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background: rgba(0,0,0,0.5);
-            z-index: 240;
+            z-index: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .sheet-overlay.show { display: block; }
-        .sheet-item {
-            padding: 16px;
+        .confirm-content {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: 85%;
+            max-width: 300px;
             text-align: center;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            font-size: 16px;
         }
-        .sheet-item:active { background: #f0f0f0; }
-        .sheet-cancel {
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            color: #dc3545;
+        .confirm-title {
+            font-size: 18px;
             font-weight: 600;
+            margin-bottom: 8px;
         }
+        .confirm-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .confirm-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .confirm-yes { background: #2aab6e; color: white; }
+        .confirm-no { background: #dc3545; color: white; }
         
         .message-toast {
             position: fixed;
@@ -564,11 +560,7 @@
         </div>
     </div>
 
-    <div id="sheetOverlay" class="sheet-overlay" onclick="closeBottomSheet()"></div>
-    <div id="bottomSheet" class="bottom-sheet">
-        <div id="sheetContent"></div>
-        <div class="sheet-cancel" onclick="closeBottomSheet()">Скасувати</div>
-    </div>
+    <div id="confirmDialog" style="display:none;"></div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -595,7 +587,6 @@
                     console.error(`API Error ${response.status}:`, errorText);
                     return null;
                 }
-                
                 return await response.json();
             } catch(e) {
                 console.error('Fetch error:', e);
@@ -613,8 +604,7 @@
             resumes: [],
             profileTab: 'active',
             jobsTab: 'jobs',
-            user: null,
-            loading: false
+            user: null
         };
         
         let selectedPhotos = [];
@@ -624,9 +614,34 @@
             msg.textContent = text;
             msg.style.background = isError ? '#dc3545' : '#2aab6e';
             msg.style.display = 'block';
-            setTimeout(() => {
-                msg.style.display = 'none';
-            }, 2500);
+            setTimeout(() => msg.style.display = 'none', 2500);
+        }
+        
+        // ========== ДІАЛОГ ПІДТВЕРДЖЕННЯ ==========
+        function confirmAction(title, message, onYes) {
+            const dialogDiv = document.getElementById('confirmDialog');
+            dialogDiv.innerHTML = `
+                <div class="confirm-dialog">
+                    <div class="confirm-content">
+                        <div class="confirm-title">${title}</div>
+                        <div class="confirm-message">${message}</div>
+                        <div class="confirm-buttons">
+                            <button class="confirm-btn confirm-yes" id="confirmYesBtn">Так</button>
+                            <button class="confirm-btn confirm-no" id="confirmNoBtn">Ні</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            dialogDiv.style.display = 'block';
+            
+            document.getElementById('confirmYesBtn').onclick = () => {
+                dialogDiv.style.display = 'none';
+                onYes();
+            };
+            document.getElementById('confirmNoBtn').onclick = () => {
+                dialogDiv.style.display = 'none';
+                showMessage('❌ Скасовано');
+            };
         }
         
         function getFirstPhoto(photos) {
@@ -683,7 +698,6 @@
                     reader.onload = (ev) => { 
                         selectedPhotos.push(ev.target.result); 
                         renderPhotoList(); 
-                        showMessage(`📸 Додано фото (${selectedPhotos.length}/15)`);
                     };
                     reader.readAsDataURL(e.target.files[0]);
                 }
@@ -707,32 +721,14 @@
         function removePhoto(i) { 
             selectedPhotos.splice(i, 1); 
             renderPhotoList(); 
-            showMessage(`Фото видалено (залишилось ${selectedPhotos.length})`);
         }
         
         // ========== ЗАВАНТАЖЕННЯ ДАНИХ ==========
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
-            try {
-                const users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
-                if (!users || users.length === 0) {
-                    await apiRequest('users', { 
-                        method: 'POST', 
-                        body: JSON.stringify({ 
-                            id: tgUser.id, 
-                            username: tgUser.username || '', 
-                            first_name: tgUser.first_name,
-                            created_at: new Date().toISOString()
-                        }) 
-                    });
-                }
-                state.user = tgUser;
-                state.user.phone = localStorage.getItem('userPhone') || '';
-                console.log('Користувач:', state.user.first_name);
-            } catch(e) {
-                console.error('Помилка:', e);
-                state.user = tgUser;
-            }
+            state.user = tgUser;
+            state.user.phone = localStorage.getItem('userPhone') || '';
+            console.log('Користувач:', state.user.first_name);
         }
         
         async function loadGoods() {
@@ -740,96 +736,81 @@
                 let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
                 if (state.category && state.category !== 'Всі') url += `&category=eq.${state.category}`;
                 const data = await apiRequest(url);
-                if (data) {
-                    state.goods = data;
-                    console.log(`Товарів: ${data.length}`);
-                }
+                if (data) state.goods = data;
                 if (state.page === 'goods') renderGoodsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Помилка:', e);
+                console.error(e);
             }
         }
         
         async function loadMyGoods() {
             if (!state.user) return;
             try {
-                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=100`);
+                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (data) {
                     state.myGoods = data;
-                    console.log(`Моїх товарів: ${data.length}`);
+                    console.log('Моїх товарів:', data.length);
                 }
                 if (state.page === 'profile') renderProfilePage();
             } catch(e) {
-                console.error('Помилка:', e);
+                console.error(e);
             }
         }
         
         async function loadJobs() {
             try {
                 const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
-                if (data) {
-                    state.jobs = data;
-                    console.log(`Вакансій: ${data.length}`);
-                }
+                if (data) state.jobs = data;
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Помилка:', e);
+                console.error(e);
             }
         }
         
         async function loadResumes() {
             try {
                 const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
-                if (data) {
-                    state.resumes = data;
-                    console.log(`Резюме: ${data.length}`);
-                }
+                if (data) state.resumes = data;
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Помилка:', e);
+                console.error(e);
             }
         }
         
         // ========== ОПЕРАЦІЇ З ТОВАРАМИ ==========
         async function updateItemStatus(id, newStatus, successMessage) {
-            try {
-                const result = await apiRequest(`goods?id=eq.${id}`, { 
-                    method: 'PATCH', 
-                    body: JSON.stringify({ status: newStatus }) 
-                });
-                if (result !== null) {
-                    showMessage(successMessage);
-                    await loadGoods();
-                    await loadMyGoods();
-                    if (state.page === 'profile') renderProfilePage();
-                    return true;
-                }
-                showMessage('❌ Помилка', true);
-                return false;
-            } catch(e) {
-                console.error('Помилка:', e);
-                showMessage('Помилка', true);
-                return false;
+            const result = await apiRequest(`goods?id=eq.${id}`, { 
+                method: 'PATCH', 
+                body: JSON.stringify({ status: newStatus }) 
+            });
+            if (result !== null) {
+                showMessage(successMessage);
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+                return true;
             }
+            showMessage('❌ Помилка', true);
+            return false;
         }
         
         async function deleteItem(id) {
-            return updateItemStatus(id, 'deleted', '🗑 Товар видалено');
+            await updateItemStatus(id, 'deleted', '🗑 Товар видалено');
         }
         
         async function archiveItem(id) {
-            return updateItemStatus(id, 'archived', '📦 Товар переміщено в архів');
+            await updateItemStatus(id, 'archived', '📦 Товар переміщено в архів');
         }
         
         async function markAsSold(id) {
-            return updateItemStatus(id, 'sold', '💰 Товар позначено як проданий');
+            await updateItemStatus(id, 'sold', '💰 Товар позначено як проданий');
         }
         
         async function restoreItem(id) {
-            return updateItemStatus(id, 'active', '✅ Товар відновлено');
+            await updateItemStatus(id, 'active', '✅ Товар відновлено');
         }
         
         // ========== ВСІ КАТЕГОРІЇ ==========
@@ -855,66 +836,38 @@
         // ========== РЕНДЕР СТОРІНОК ==========
         function renderHomePage() {
             const allItems = [];
-            
             state.goods.forEach(item => {
                 allItems.push({
-                    id: item.id,
-                    type: 'goods',
-                    title: item.title,
-                    price: item.price,
-                    city: item.city,
-                    photo: getFirstPhoto(item.photos),
-                    category: item.category,
-                    created_at: item.created_at
+                    id: item.id, type: 'goods', title: item.title, price: item.price,
+                    city: item.city, photo: getFirstPhoto(item.photos), category: item.category, created_at: item.created_at
                 });
             });
-            
             state.jobs.forEach(item => {
                 allItems.push({
-                    id: item.id,
-                    type: 'job',
-                    title: item.title,
-                    price: item.salary,
-                    city: item.city,
-                    photo: '',
-                    category: '💼 Вакансія',
-                    created_at: item.created_at
+                    id: item.id, type: 'job', title: item.title, price: item.salary,
+                    city: item.city, photo: '', category: '💼 Вакансія', created_at: item.created_at
                 });
             });
-            
             state.resumes.forEach(item => {
                 allItems.push({
-                    id: item.id,
-                    type: 'resume',
-                    title: item.specialty,
-                    price: item.salary,
-                    city: item.city,
-                    photo: '',
-                    category: '📄 Резюме',
-                    created_at: item.created_at
+                    id: item.id, type: 'resume', title: item.specialty, price: item.salary,
+                    city: item.city, photo: '', category: '📄 Резюме', created_at: item.created_at
                 });
             });
-            
             allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             const recentItems = allItems.slice(0, 10);
             
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="header"><h2>🏠 Ukraine Market</h2></div>
-                    
                     <div class="section-title">📂 Категорії</div>
-                    <div class="categories-grid">
-                        ${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}
-                    </div>
-                    
+                    <div class="categories-grid">${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
                     <div class="section-title">🆕 Свіжі оголошення</div>
                     <div class="goods-list" id="freshList"></div>
-                    
                     <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
                     <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Всі вакансії →</button>
                 </div>
             `;
-            
             const freshContainer = document.getElementById('freshList');
             if (recentItems.length === 0) {
                 freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>📱 Натисніть "+" щоб додати перше</div>';
@@ -924,14 +877,13 @@
                         <div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div>
                         <div class="goods-info">
                             <div class="goods-title">${escapeHtml(item.title)}</div>
-                            <div class="goods-price">💰 ${escapeHtml(item.price)} ${item.type === 'goods' ? 'грн' : 'грн'}</div>
+                            <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
                             <div class="goods-meta">📂 ${escapeHtml(item.category)}</div>
                             <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                         </div>
                     </div>
                 `).join('');
             }
-            
             setActiveNav('home');
         }
         
@@ -981,7 +933,6 @@
                     </div>
                     <div style="margin-bottom:16px">
                         <input type="tel" id="profilePhone" class="modal-input" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}">
-                        <div class="hint-text">📞 Номер буде видно покупцям</div>
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
@@ -1006,13 +957,7 @@
                 return; 
             }
             
-            list.innerHTML = filtered.map(item => {
-                const isActive = item.status === 'active';
-                const isArchived = item.status === 'archived';
-                const isSold = item.status === 'sold';
-                const isDeleted = item.status === 'deleted';
-                
-                return `
+            list.innerHTML = filtered.map(item => `
                 <div class="my-goods-card">
                     <div class="my-goods-header">
                         <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
@@ -1020,19 +965,17 @@
                             <div class="my-goods-title">${escapeHtml(item.title)} ${getStatusBadge(item.status)}</div>
                             <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
                             <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                            <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
                         </div>
                     </div>
                     <div class="my-goods-actions">
                         <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
-                        ${!isDeleted ? `<button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>` : ''}
-                        ${isActive ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 В архів</button>` : ''}
-                        ${isActive ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰 Продано</button>` : ''}
-                        ${isArchived ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
-                        ${!isDeleted ? `<button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>` : ''}
+                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 В архів</button>` : ''}
+                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰 Продано</button>` : ''}
+                        ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
+                        ${item.status !== 'deleted' ? `<button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>` : ''}
                     </div>
                 </div>
-            `}).join('');
+            `).join('');
             setActiveNav('profile');
         }
         
@@ -1082,7 +1025,6 @@
             if (type === 'goods') item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
             else if (type === 'job') item = state.jobs.find(j => j.id === id);
             else item = state.resumes.find(r => r.id === id);
-            
             if (!item) return;
             
             if (type === 'goods') {
@@ -1101,7 +1043,6 @@
                     <div class="detail-title">${escapeHtml(item.title)}</div>
                     <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
                     <div class="detail-row">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                    <div class="detail-row">🕐 ${escapeHtml(item.schedule || 'не вказано')}</div>
                     <div class="detail-row">📝 ${escapeHtml(item.description || 'Без опису')}</div>
                     <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
                     <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Відгукнутися</button>
@@ -1111,8 +1052,7 @@
                     <div class="detail-title">${escapeHtml(item.specialty)}</div>
                     <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
                     <div class="detail-row">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                    <div class="detail-row">📝 Досвід: ${escapeHtml(item.experience || 'не вказано')}</div>
-                    <div class="detail-row">🛠️ Навички: ${escapeHtml(item.skills || 'не вказано')}</div>
+                    <div class="detail-row">📝 ${escapeHtml(item.experience || 'не вказано')}</div>
                     <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
                     <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Запросити</button>
                 `;
@@ -1127,7 +1067,7 @@
         function contactSeller(phone) {
             if (phone && phone !== 'не вказано' && phone !== '') {
                 showMessage(`📞 Телефон: ${phone}`);
-                if (navigator.clipboard && navigator.clipboard.writeText) {
+                if (navigator.clipboard) {
                     navigator.clipboard.writeText(phone).then(() => {
                         setTimeout(() => showMessage(`✅ Номер скопійовано!`), 1500);
                     }).catch(() => {});
@@ -1137,33 +1077,11 @@
             }
         }
         
-        function editGoods(id) {
-            showMessage('✏️ Редагування буде доступне найближчим часом');
-        }
-        
         // ========== НАВІГАЦІЯ ==========
-        function goBack() { 
-            state.page = 'home'; 
-            renderHomePage(); 
-        }
-        
-        function goToGoodsPage() { 
-            state.page = 'goods'; 
-            loadGoods(); 
-        }
-        
-        function goToJobsPage() { 
-            state.page = 'jobs'; 
-            loadJobs(); 
-            loadResumes(); 
-            renderJobsPage(); 
-        }
-        
-        function selectCategory(cat) { 
-            state.category = cat; 
-            state.page = 'goods'; 
-            loadGoods(); 
-        }
+        function goBack() { state.page = 'home'; renderHomePage(); }
+        function goToGoodsPage() { state.page = 'goods'; loadGoods(); }
+        function goToJobsPage() { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
+        function selectCategory(cat) { state.category = cat; state.page = 'goods'; loadGoods(); }
         
         function searchGoods() {
             const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
@@ -1188,17 +1106,8 @@
             }
         }
         
-        function switchProfileTab(tab) { 
-            state.profileTab = tab; 
-            renderProfilePage(); 
-        }
-        
-        function switchJobsTab(tab) { 
-            state.jobsTab = tab; 
-            if (tab === 'jobs') loadJobs(); 
-            else loadResumes(); 
-            renderJobsPage(); 
-        }
+        function switchProfileTab(tab) { state.profileTab = tab; renderProfilePage(); }
+        function switchJobsTab(tab) { state.jobsTab = tab; if (tab === 'jobs') loadJobs(); else loadResumes(); renderJobsPage(); }
         
         function savePhone() {
             const phone = document.getElementById('profilePhone')?.value;
@@ -1208,41 +1117,14 @@
             }
         }
         
-        // ========== ПІДТВЕРДЖЕННЯ ==========
-        function openBottomSheet(actions) {
-            const sheet = document.getElementById('bottomSheet');
-            const overlay = document.getElementById('sheetOverlay');
-            const content = document.getElementById('sheetContent');
-            content.innerHTML = actions.map(a => `<div class="sheet-item" onclick="${a.onclick}; closeBottomSheet();">${a.text}</div>`).join('');
-            sheet.classList.add('show');
-            overlay.classList.add('show');
-        }
-        
-        function closeBottomSheet() { 
-            document.getElementById('bottomSheet').classList.remove('show'); 
-            document.getElementById('sheetOverlay').classList.remove('show'); 
-        }
-        
-        function confirmDelete(id) { 
-            openBottomSheet([{ text: '🗑 Так, видалити безповоротно', onclick: `deleteItem(${id})` }]); 
-        }
-        
-        function confirmArchive(id) { 
-            openBottomSheet([{ text: '📦 Так, перемістити в архів', onclick: `archiveItem(${id})` }]); 
-        }
-        
-        function confirmSold(id) { 
-            openBottomSheet([{ text: '💰 Так, позначити як продане', onclick: `markAsSold(${id})` }]); 
-        }
-        
-        function confirmRestore(id) { 
-            openBottomSheet([{ text: '🔄 Так, відновити оголошення', onclick: `restoreItem(${id})` }]); 
-        }
+        // ========== ПІДТВЕРДЖЕННЯ ДІЙ ==========
+        function confirmDelete(id) { confirmAction('🗑 Видалення', 'Ви впевнені, що хочете видалити це оголошення?', () => deleteItem(id)); }
+        function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити оголошення в архів?', () => archiveItem(id)); }
+        function confirmSold(id) { confirmAction('💰 Продано', 'Позначити оголошення як продане?', () => markAsSold(id)); }
+        function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити оголошення?', () => restoreItem(id)); }
         
         // ========== МОДАЛЬНІ ВІКНА ==========
-        function showAddModal() { 
-            document.getElementById('addModal').style.display = 'flex'; 
-        }
+        function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
         
         function closeModal() { 
             document.getElementById('addModal').style.display = 'none'; 
@@ -1254,7 +1136,6 @@
             document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
             document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
             document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
-            
             document.querySelectorAll('.add-tab').forEach(el => el.classList.remove('active'));
             const activeTab = document.querySelector(`.add-tab[data-add-tab="${tab}"]`);
             if (activeTab) activeTab.classList.add('active');
@@ -1268,21 +1149,11 @@
             const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
             
-            if (!title || !title.trim()) { 
-                showMessage('❌ Введіть назву товару', true); 
-                return; 
-            }
-            if (!price || !price.trim()) { 
-                showMessage('❌ Введіть ціну', true); 
-                return; 
-            }
-            if (!phone || !phone.trim()) { 
-                showMessage('❌ Введіть телефон для зв\'язку', true); 
-                return; 
-            }
+            if (!title || !title.trim()) { showMessage('❌ Введіть назву товару', true); return; }
+            if (!price || !price.trim()) { showMessage('❌ Введіть ціну', true); return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
             
             showMessage('⏳ Публікація...');
-            
             const photosJson = selectedPhotos.length > 0 ? JSON.stringify(selectedPhotos) : '[]';
             
             const result = await apiRequest('goods', {
@@ -1302,8 +1173,8 @@
             });
             
             if (result !== null) { 
-                showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`); 
-                closeModal(); 
+                showMessage(`✅ Опубліковано!`); 
+                closeModal();
                 selectedPhotos = [];
                 await loadGoods(); 
                 await loadMyGoods();
@@ -1322,17 +1193,10 @@
             const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('jobDesc')?.value;
             
-            if (!title || !title.trim()) { 
-                showMessage('❌ Введіть назву вакансії', true); 
-                return; 
-            }
-            if (!phone || !phone.trim()) { 
-                showMessage('❌ Введіть телефон для зв\'язку', true); 
-                return; 
-            }
+            if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
             
             showMessage('⏳ Публікація...');
-            
             const result = await apiRequest('jobs', {
                 method: 'POST',
                 body: JSON.stringify({ 
@@ -1365,17 +1229,10 @@
             const salary = document.getElementById('resumeSalary')?.value;
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
             
-            if (!specialty || !specialty.trim()) { 
-                showMessage('❌ Введіть спеціальність', true); 
-                return; 
-            }
-            if (!phone || !phone.trim()) { 
-                showMessage('❌ Введіть телефон для зв\'язку', true); 
-                return; 
-            }
+            if (!specialty || !specialty.trim()) { showMessage('❌ Введіть спеціальність', true); return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
             
             showMessage('⏳ Публікація...');
-            
             const result = await apiRequest('resumes', {
                 method: 'POST',
                 body: JSON.stringify({ 
@@ -1406,30 +1263,15 @@
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const page = btn.dataset.page;
-                    if (page === 'home') { 
-                        state.page = 'home'; 
-                        await loadGoods();
-                        await loadJobs();
-                        await loadResumes();
-                        renderHomePage(); 
-                    } else if (page === 'goods') { 
-                        state.page = 'goods'; 
-                        await loadGoods(); 
-                    } else if (page === 'jobs') { 
-                        state.page = 'jobs'; 
-                        await loadJobs(); 
-                        await loadResumes(); 
-                        renderJobsPage(); 
-                    } else if (page === 'profile') { 
-                        state.page = 'profile'; 
-                        await loadMyGoods(); 
-                        renderProfilePage(); 
-                    }
+                    if (page === 'home') { state.page = 'home'; await loadGoods(); await loadJobs(); await loadResumes(); renderHomePage(); }
+                    else if (page === 'goods') { state.page = 'goods'; await loadGoods(); }
+                    else if (page === 'jobs') { state.page = 'jobs'; await loadJobs(); await loadResumes(); renderJobsPage(); }
+                    else if (page === 'profile') { state.page = 'profile'; await loadMyGoods(); renderProfilePage(); }
                 });
             });
         }
         
-        // ========== ГЛОБАЛЬНІ ФУНКЦІЇ ==========
+        // Глобальні функції
         window.showAddModal = showAddModal;
         window.switchAddTab = switchAddTab;
         window.submitGoods = submitGoods;
@@ -1449,18 +1291,12 @@
         window.switchProfileTab = switchProfileTab;
         window.switchJobsTab = switchJobsTab;
         window.savePhone = savePhone;
-        window.closeBottomSheet = closeBottomSheet;
-        window.deleteItem = deleteItem;
-        window.archiveItem = archiveItem;
-        window.markAsSold = markAsSold;
-        window.restoreItem = restoreItem;
         window.confirmDelete = confirmDelete;
         window.confirmArchive = confirmArchive;
         window.confirmSold = confirmSold;
         window.confirmRestore = confirmRestore;
-        window.editGoods = editGoods;
         
-        // ЗАПУСК
+        // Запуск
         (async () => {
             await loadUser();
             await loadGoods();
