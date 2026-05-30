@@ -16,6 +16,11 @@
         }
         .app-container { padding: 16px; padding-bottom: 80px; }
         
+        /* Автоматичне прокручування при фокусі */
+        html, body {
+            scroll-behavior: smooth;
+        }
+        
         .header {
             display: flex;
             justify-content: space-between;
@@ -172,6 +177,8 @@
             overflow-y: auto;
         }
         .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        
+        /* Поля з автопрокруткою */
         .modal-input, .modal-select, .modal-textarea {
             width: 100%;
             padding: 14px;
@@ -179,7 +186,14 @@
             border: 1px solid #ddd;
             border-radius: 12px;
             font-size: 15px;
+            transition: all 0.2s;
         }
+        .modal-input:focus, .modal-select:focus, .modal-textarea:focus {
+            border-color: #2aab6e;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(42,171,110,0.2);
+        }
+        
         .modal-textarea { min-height: 90px; resize: vertical; }
         .modal-btn {
             width: 100%;
@@ -433,6 +447,14 @@
             margin: 20px 0 12px 0;
             color: #2aab6e;
         }
+        
+        /* Підказки */
+        .hint-text {
+            font-size: 12px;
+            color: #888;
+            margin-top: -8px;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -455,7 +477,9 @@
                 <div class="add-tab" data-add-tab="resume" onclick="switchAddTab('resume')">📄 Резюме</div>
             </div>
             <div id="addGoodsForm">
-                <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
+                <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *" autocomplete="off">
+                <div class="hint-text">📝 Наприклад: "iPhone 13 128GB"</div>
+                
                 <select id="goodsCategory" class="modal-select">
                     <option value="Електроніка">📱 Електроніка</option>
                     <option value="Авто">🚗 Авто</option>
@@ -474,12 +498,16 @@
                     <option value="Оренда_Прокат">🔑 Оренда/Прокат</option>
                     <option value="Житло_подобово">🏠 Житло подобово</option>
                 </select>
-                <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
-                <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
-                <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
+                
+                <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *" autocomplete="off">
+                <div class="hint-text">💰 Вкажіть ціну в гривнях</div>
+                
+                <input type="text" id="goodsCity" class="modal-input" placeholder="Місто" autocomplete="off">
+                <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *" autocomplete="off">
                 <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
                 <div class="photo-grid" id="photoList"></div>
-                <div class="add-photo" onclick="addPhotoInput()">📷 Додати фото</div>
+                <div class="add-photo" onclick="addPhotoInput()">📷 Додати фото (до 15 шт)</div>
+                <div class="hint-text">📸 Фото зберігаються автоматично</div>
                 <button class="modal-btn btn-primary" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
@@ -536,6 +564,18 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
+        // ========== АВТОМАТИЧНЕ ПРОКРУЧУВАННЯ ==========
+        function setupAutoScroll() {
+            const inputs = document.querySelectorAll('.modal-input, .modal-select, .modal-textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                });
+            });
+        }
+        
         // ========== КЛЮЧІ SUPABASE ==========
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
@@ -555,12 +595,14 @@
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error(`API Error ${response.status}:`, errorText);
+                    showMessage(`Помилка ${response.status}`, true);
                     return null;
                 }
                 
                 return await response.json();
             } catch(e) {
                 console.error('Fetch error:', e);
+                showMessage('Помилка з\'єднання', true);
                 return null;
             }
         }
@@ -586,7 +628,9 @@
             msg.textContent = text;
             msg.style.background = isError ? '#dc3545' : '#2aab6e';
             msg.style.display = 'block';
-            setTimeout(() => msg.style.display = 'none', 2500);
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
         }
         
         function getFirstPhoto(photos) {
@@ -618,8 +662,12 @@
             });
         }
         
-        // ========== ФОТО ==========
+        // ========== ФОТО (ТЕПЕР ПРАЦЮЄ З КІЛЬКОМА ФОТО) ==========
         function addPhotoInput() {
+            if (selectedPhotos.length >= 15) { 
+                showMessage('Максимум 15 фото', true); 
+                return; 
+            }
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
@@ -629,6 +677,7 @@
                     reader.onload = (ev) => { 
                         selectedPhotos.push(ev.target.result); 
                         renderPhotoList(); 
+                        showMessage(`📸 Додано фото (${selectedPhotos.length}/15)`);
                     };
                     reader.readAsDataURL(e.target.files[0]);
                 }
@@ -644,12 +693,15 @@
                     <div class="photo-remove" onclick="removePhoto(${i})">×</div>
                 </div>`
             ).join('');
-            container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
+            if (selectedPhotos.length < 15) {
+                container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
+            }
         }
         
         function removePhoto(i) { 
             selectedPhotos.splice(i, 1); 
             renderPhotoList(); 
+            showMessage(`Фото видалено (залишилось ${selectedPhotos.length})`);
         }
         
         // ========== ЗАВАНТАЖЕННЯ ДАНИХ ==========
@@ -670,68 +722,68 @@
                 }
                 state.user = tgUser;
                 state.user.phone = localStorage.getItem('userPhone') || '';
-                console.log('User loaded:', state.user);
+                console.log('Користувач завантажений:', state.user.first_name);
             } catch(e) {
-                console.error('Load user error:', e);
+                console.error('Помилка завантаження користувача:', e);
                 state.user = tgUser;
             }
         }
         
         async function loadGoods() {
             try {
-                let url = `goods?select=*&status=eq.active&order=created_at.desc`;
+                let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
                 if (state.category && state.category !== 'Всі') url += `&category=eq.${state.category}`;
                 const data = await apiRequest(url);
                 if (data) {
                     state.goods = data;
-                    console.log('Goods loaded:', data.length);
+                    console.log(`Завантажено товарів: ${data.length}`);
                 }
                 if (state.page === 'goods') renderGoodsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Load goods error:', e);
+                console.error('Помилка завантаження товарів:', e);
             }
         }
         
         async function loadMyGoods() {
             if (!state.user) return;
             try {
-                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=100`);
                 if (data) {
                     state.myGoods = data;
-                    console.log('My goods loaded:', data.length);
+                    console.log(`Завантажено моїх товарів: ${data.length}`);
                 }
                 if (state.page === 'profile') renderProfilePage();
             } catch(e) {
-                console.error('Load my goods error:', e);
+                console.error('Помилка завантаження моїх товарів:', e);
             }
         }
         
         async function loadJobs() {
             try {
-                const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc');
+                const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
                 if (data) {
                     state.jobs = data;
-                    console.log('Jobs loaded:', data.length);
+                    console.log(`Завантажено вакансій: ${data.length}`);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Load jobs error:', e);
+                console.error('Помилка завантаження вакансій:', e);
             }
         }
         
         async function loadResumes() {
             try {
-                const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc');
+                const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
                 if (data) {
                     state.resumes = data;
-                    console.log('Resumes loaded:', data.length);
+                    console.log(`Завантажено резюме: ${data.length}`);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) {
-                console.error('Load resumes error:', e);
+                console.error('Помилка завантаження резюме:', e);
             }
         }
         
@@ -742,15 +794,16 @@
                     body: JSON.stringify({ status: 'deleted' }) 
                 });
                 if (result !== null) {
-                    showMessage('✅ Видалено');
+                    showMessage('✅ Товар видалено');
                     await loadGoods();
                     await loadMyGoods();
+                    if (state.page === 'profile') renderProfilePage();
                     return true;
                 }
                 showMessage('❌ Помилка видалення', true);
                 return false;
             } catch(e) {
-                console.error('Delete error:', e);
+                console.error('Помилка видалення:', e);
                 showMessage('Помилка видалення', true);
                 return false;
             }
@@ -801,7 +854,7 @@
                     price: item.salary,
                     city: item.city,
                     photo: '',
-                    category: 'Вакансія',
+                    category: '💼 Вакансія',
                     created_at: item.created_at
                 });
             });
@@ -814,7 +867,7 @@
                     price: item.salary,
                     city: item.city,
                     photo: '',
-                    category: 'Резюме',
+                    category: '📄 Резюме',
                     created_at: item.created_at
                 });
             });
@@ -841,7 +894,7 @@
             
             const freshContainer = document.getElementById('freshList');
             if (recentItems.length === 0) {
-                freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>Натисніть "+" щоб додати перше</div>';
+                freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>📱 Натисніть "+" щоб додати перше</div>';
             } else {
                 freshContainer.innerHTML = recentItems.map(item => `
                     <div class="fresh-card" onclick="openDetail(${item.id}, '${item.type}')">
@@ -869,7 +922,7 @@
             `;
             const container = document.getElementById('goodsList');
             if (!state.goods || state.goods.length === 0) {
-                container.innerHTML = '<div class="empty-state">📭 Немає товарів<br><br>Натисніть "+" щоб додати перше оголошення</div>';
+                container.innerHTML = '<div class="empty-state">📭 Немає товарів<br><br>📱 Натисніть "+" щоб додати перше оголошення</div>';
             } else {
                 container.innerHTML = state.goods.map(item => `
                     <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
@@ -904,6 +957,7 @@
                     </div>
                     <div style="margin-bottom:16px">
                         <input type="tel" id="profilePhone" class="modal-input" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}">
+                        <div class="hint-text">📞 Номер буде видно покупцям</div>
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
@@ -1029,21 +1083,16 @@
             document.getElementById('detailModal').style.display = 'flex';
         }
         
-        // ========== ЗАКРИТТЯ МОДАЛКИ (ВИПРАВЛЕНО) ==========
         function closeDetailModal() { 
             document.getElementById('detailModal').style.display = 'none'; 
         }
         
-        // ========== КОНТАКТ (ВИПРАВЛЕНО) ==========
         function contactSeller(phone) {
             if (phone && phone !== 'не вказано' && phone !== '') {
                 showMessage(`📞 Телефон: ${phone}`);
-                
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(phone).then(() => {
-                        setTimeout(() => {
-                            showMessage(`✅ Номер скопійовано!`);
-                        }, 1500);
+                        setTimeout(() => showMessage(`✅ Номер скопійовано!`), 1500);
                     }).catch(() => {});
                 }
             } else {
@@ -1081,7 +1130,7 @@
             const container = document.getElementById('goodsList');
             if (container) {
                 if (filtered.length === 0) {
-                    container.innerHTML = '<div class="empty-state">📭 Нічого не знайдено</div>';
+                    container.innerHTML = '<div class="empty-state">🔍 Нічого не знайдено</div>';
                 } else {
                     container.innerHTML = filtered.map(item => `
                         <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
@@ -1140,6 +1189,7 @@
         // ========== МОДАЛЬНІ ВІКНА ==========
         function showAddModal() { 
             document.getElementById('addModal').style.display = 'flex'; 
+            setTimeout(setupAutoScroll, 100);
         }
         
         function closeModal() { 
@@ -1156,6 +1206,7 @@
             document.querySelectorAll('.add-tab').forEach(el => el.classList.remove('active'));
             const activeTab = document.querySelector(`.add-tab[data-add-tab="${tab}"]`);
             if (activeTab) activeTab.classList.add('active');
+            setTimeout(setupAutoScroll, 100);
         }
         
         async function submitGoods() {
@@ -1166,28 +1217,38 @@
             const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
             
-            if (!title || !price) { 
-                showMessage('Заповніть назву та ціну', true); 
+            // Перевірка обов'язкових полів
+            if (!title || !title.trim()) { 
+                showMessage('❌ Введіть назву товару', true); 
+                document.getElementById('goodsTitle').focus();
                 return; 
             }
-            if (!phone) { 
-                showMessage('Введіть телефон для зв\'язку', true); 
+            if (!price || !price.trim()) { 
+                showMessage('❌ Введіть ціну', true); 
+                document.getElementById('goodsPrice').focus();
+                return; 
+            }
+            if (!phone || !phone.trim()) { 
+                showMessage('❌ Введіть телефон для зв\'язку', true); 
+                document.getElementById('goodsPhone').focus();
                 return; 
             }
             
             showMessage('⏳ Публікація...');
-            const photosJson = JSON.stringify(selectedPhotos);
+            
+            // Зберігаємо фото як JSON (навіть якщо фото немає)
+            const photosJson = selectedPhotos.length > 0 ? JSON.stringify(selectedPhotos) : '[]';
             
             const result = await apiRequest('goods', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     user_id: state.user.id, 
-                    title, 
+                    title: title.trim(), 
                     category, 
-                    price, 
-                    description: desc, 
-                    city, 
-                    phone, 
+                    price: price.trim(), 
+                    description: desc || '', 
+                    city: city || '', 
+                    phone: phone.trim(), 
                     photos: photosJson, 
                     status: 'active', 
                     created_at: new Date().toISOString() 
@@ -1195,14 +1256,15 @@
             });
             
             if (result !== null) { 
-                showMessage('✅ Опубліковано!'); 
+                showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`); 
                 closeModal(); 
                 selectedPhotos = [];
                 await loadGoods(); 
                 await loadMyGoods();
                 if (state.page === 'home') renderHomePage();
+                if (state.page === 'goods') renderGoodsPage();
             } else {
-                showMessage('❌ Помилка публікації', true);
+                showMessage('❌ Помилка публікації. Спробуйте ще раз', true);
             }
         }
         
@@ -1215,12 +1277,14 @@
             const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
             
-            if (!title) { 
-                showMessage('Заповніть назву вакансії', true); 
+            if (!title || !title.trim()) { 
+                showMessage('❌ Введіть назву вакансії', true); 
+                document.getElementById('jobTitle').focus();
                 return; 
             }
-            if (!phone) { 
-                showMessage('Введіть телефон для зв\'язку', true); 
+            if (!phone || !phone.trim()) { 
+                showMessage('❌ Введіть телефон для зв\'язку', true); 
+                document.getElementById('jobPhone').focus();
                 return; 
             }
             
@@ -1230,13 +1294,13 @@
                 method: 'POST',
                 body: JSON.stringify({ 
                     user_id: state.user.id, 
-                    title, 
+                    title: title.trim(), 
                     category, 
-                    salary, 
-                    city, 
-                    phone, 
-                    schedule, 
-                    description: desc, 
+                    salary: salary || '', 
+                    city: city || '', 
+                    phone: phone.trim(), 
+                    schedule: schedule || '', 
+                    description: desc || '', 
                     status: 'open', 
                     created_at: new Date().toISOString() 
                 })
@@ -1260,12 +1324,14 @@
             const salary = document.getElementById('resumeSalary')?.value;
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
             
-            if (!specialty) { 
-                showMessage('Заповніть спеціальність', true); 
+            if (!specialty || !specialty.trim()) { 
+                showMessage('❌ Введіть спеціальність', true); 
+                document.getElementById('resumeSpecialty').focus();
                 return; 
             }
-            if (!phone) { 
-                showMessage('Введіть телефон для зв\'язку', true); 
+            if (!phone || !phone.trim()) { 
+                showMessage('❌ Введіть телефон для зв\'язку', true); 
+                document.getElementById('resumePhone').focus();
                 return; 
             }
             
@@ -1275,12 +1341,12 @@
                 method: 'POST',
                 body: JSON.stringify({ 
                     user_id: state.user.id, 
-                    specialty, 
-                    experience, 
-                    skills, 
-                    city, 
-                    salary, 
-                    phone, 
+                    specialty: specialty.trim(), 
+                    experience: experience || '', 
+                    skills: skills || '', 
+                    city: city || '', 
+                    salary: salary || '', 
+                    phone: phone.trim(), 
                     status: 'active', 
                     created_at: new Date().toISOString() 
                 })
@@ -1324,7 +1390,7 @@
             });
         }
         
-        // ========== РОБИМО ФУНКЦІЇ ГЛОБАЛЬНИМИ ==========
+        // ========== ГЛОБАЛЬНІ ФУНКЦІЇ ==========
         window.showAddModal = showAddModal;
         window.switchAddTab = switchAddTab;
         window.submitGoods = submitGoods;
