@@ -756,7 +756,7 @@
             }
         }
         
-        // ========== ВСІ КАТЕГОРІЇ (ПОВНИЙ СПИСОК) ==========
+        // ========== ВСІ КАТЕГОРІЇ ==========
         const allCategories = [
             { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
             { icon: '🚗', name: 'Авто', id: 'Авто' },
@@ -778,10 +778,8 @@
         
         // ========== РЕНДЕР СТОРІНОК ==========
         function renderHomePage() {
-            // Збираємо всі оголошення (товари + вакансії + резюме)
             const allItems = [];
             
-            // Додаємо товари
             state.goods.forEach(item => {
                 allItems.push({
                     id: item.id,
@@ -795,7 +793,6 @@
                 });
             });
             
-            // Додаємо вакансії
             state.jobs.forEach(item => {
                 allItems.push({
                     id: item.id,
@@ -809,7 +806,6 @@
                 });
             });
             
-            // Додаємо резюме
             state.resumes.forEach(item => {
                 allItems.push({
                     id: item.id,
@@ -823,9 +819,8 @@
                 });
             });
             
-            // Сортуємо за датою (нові спочатку)
             allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            const recentItems = allItems.slice(0, 10); // Останні 10 оголошень
+            const recentItems = allItems.slice(0, 10);
             
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
@@ -1034,25 +1029,28 @@
             document.getElementById('detailModal').style.display = 'flex';
         }
         
+        // ========== ВИПРАВЛЕНА ФУНКЦІЯ contactSeller (без showPopup) ==========
         function contactSeller(phone) {
-    if (phone && phone !== 'не вказано' && phone !== '') {
-        // Показуємо номер через showMessage
-        showMessage(`📞 Телефон: ${phone}`);
-        
-        // Копіюємо номер в буфер обміну
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(phone).then(() => {
-                setTimeout(() => {
-                    showMessage(`✅ Номер скопійовано!`);
-                }, 1500);
-            }).catch(() => {
-                // Якщо не вийшло скопіювати - ігноруємо
-            });
+            if (phone && phone !== 'не вказано' && phone !== '') {
+                // Показуємо номер через showMessage
+                showMessage(`📞 Телефон: ${phone}`);
+                
+                // Копіюємо номер в буфер обміну
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(phone).then(() => {
+                        setTimeout(() => {
+                            showMessage(`✅ Номер скопійовано!`);
+                        }, 1500);
+                    }).catch(() => {});
+                }
+            } else {
+                showMessage('❌ Номер телефону не вказано', true);
+            }
         }
-    } else {
-        showMessage('❌ Номер телефону не вказано', true);
-    }
-}
+        
+        function closeDetailModal() { 
+            document.getElementById('detailModal').style.display = 'none'; 
+        }
         
         // ========== НАВІГАЦІЯ ==========
         function goBack() { 
