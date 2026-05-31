@@ -35,6 +35,76 @@
             border-radius: 10px;
         }
         
+        /* Стилі для галереї */
+        .detail-photo-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            background: #e0e0e0;
+        }
+        .photo-swipe-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            height: 100%;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .photo-swipe-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+        .photo-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        .photo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            transition: all 0.2s;
+        }
+        .photo-dot.active {
+            background: white;
+            width: 20px;
+            border-radius: 4px;
+        }
+        .photo-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .photo-arrow.left { left: 10px; }
+        .photo-arrow.right { right: 10px; }
+        
         .search-box {
             width: 100%;
             padding: 14px 16px;
@@ -304,15 +374,6 @@
             cursor: pointer;
         }
         
-        .detail-photo {
-            width: 100%;
-            height: 220px;
-            border-radius: 16px;
-            background-size: cover;
-            background-position: center;
-            background-color: #e0e0e0;
-            margin-bottom: 16px;
-        }
         .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
         .detail-price { font-size: 28px; font-weight: 700; color: #2aab6e; margin-bottom: 12px; }
         .detail-row { margin-bottom: 12px; font-size: 14px; }
@@ -474,7 +535,6 @@
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-item" data-page="home"><div class="nav-icon">🏠</div><div class="nav-label">Головна</div></div>
         <div class="nav-item" data-page="goods"><div class="nav-icon">📦</div><div class="nav-label">Товари</div></div>
-        <div class="nav-item" data-page="jobs"><div class="nav-icon">💼</div><div class="nav-label">Робота</div></div>
         <div class="nav-item" data-page="profile"><div class="nav-icon">👤</div><div class="nav-label">Профіль</div></div>
     </div>
     <div id="message" class="message-toast"></div>
@@ -484,8 +544,6 @@
             <div class="modal-title">➕ Додати оголошення</div>
             <div style="display: flex; gap: 8px; margin-bottom: 16px;">
                 <div class="add-tab active" data-add-tab="goods" onclick="switchAddTab('goods')">📦 Товар</div>
-                <div class="add-tab" data-add-tab="job" onclick="switchAddTab('job')">💼 Вакансія</div>
-                <div class="add-tab" data-add-tab="resume" onclick="switchAddTab('resume')">📄 Резюме</div>
             </div>
             <div id="addGoodsForm">
                 <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
@@ -516,39 +574,6 @@
                 <button class="modal-btn btn-primary" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
-            <div id="addJobForm" style="display:none">
-                <input type="text" id="jobTitle" class="modal-input" placeholder="Назва вакансії *">
-                <select id="jobCategory" class="modal-select">
-                    <option value="IT/Розробка">💻 IT/Розробка</option>
-                    <option value="Маркетинг/PR">📊 Маркетинг/PR</option>
-                    <option value="Фінанси/Бухгалтерія">💰 Фінанси/Бухгалтерія</option>
-                    <option value="Адміністрація/HR">🏢 Адміністрація/HR</option>
-                    <option value="Call центр/Продажі">📞 Call центр/Продажі</option>
-                    <option value="Доставка/Логістика">🚚 Доставка/Логістика</option>
-                    <option value="Виробництво/Робочі">🏭 Виробництво/Робочі</option>
-                    <option value="Домашній персонал">🏠 Домашній персонал</option>
-                    <option value="Освіта/Репетитори">🎓 Освіта/Репетитори</option>
-                    <option value="Медицина/Краса">⚕️ Медицина/Краса</option>
-                    <option value="Віддалена робота">🌍 Віддалена робота</option>
-                </select>
-                <input type="text" id="jobSalary" class="modal-input" placeholder="Зарплата (грн)">
-                <input type="text" id="jobCity" class="modal-input" placeholder="Місто">
-                <input type="tel" id="jobPhone" class="modal-input" placeholder="Телефон для зв'язку *">
-                <input type="text" id="jobSchedule" class="modal-input" placeholder="Графік роботи">
-                <textarea id="jobDesc" class="modal-textarea" placeholder="Опис вакансії"></textarea>
-                <button class="modal-btn btn-primary" onclick="submitJob()">✅ Опублікувати</button>
-                <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
-            </div>
-            <div id="addResumeForm" style="display:none">
-                <input type="text" id="resumeSpecialty" class="modal-input" placeholder="Спеціальність *">
-                <input type="text" id="resumeExperience" class="modal-input" placeholder="Досвід роботи">
-                <input type="text" id="resumeSkills" class="modal-input" placeholder="Навички">
-                <input type="text" id="resumeCity" class="modal-input" placeholder="Місто">
-                <input type="text" id="resumeSalary" class="modal-input" placeholder="Очікувана зарплата">
-                <input type="tel" id="resumePhone" class="modal-input" placeholder="Телефон для зв'язку *">
-                <button class="modal-btn btn-primary" onclick="submitResume()">✅ Опублікувати</button>
-                <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
-            </div>
         </div>
     </div>
 
@@ -568,7 +593,9 @@
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
-        // ========== ВИПРАВЛЕНА API ФУНКЦІЯ ==========
+        let currentPhotoIndex = 0;
+        let currentPhotos = [];
+        
         async function apiRequest(endpoint, options = {}) {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
@@ -581,40 +608,130 @@
                     }
                 });
                 
-                // 204 No Content, 201 Created, 200 OK - все успішно
-                if (response.status === 204) {
-                    return { success: true, data: [] };
-                }
-                
+                if (response.status === 204) return { success: true, data: [] };
                 if (response.status === 201) {
                     const text = await response.text();
-                    try {
-                        return { success: true, data: text ? JSON.parse(text) : [] };
-                    } catch(e) {
-                        return { success: true, data: [] };
-                    }
+                    try { return { success: true, data: text ? JSON.parse(text) : [] }; }
+                    catch(e) { return { success: true, data: [] }; }
                 }
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error(`API Error ${response.status}:`, errorText);
-                    return { success: false, error: errorText };
-                }
+                if (!response.ok) return { success: false };
                 
                 const text = await response.text();
                 if (text && text.length > 0) {
-                    try {
-                        return { success: true, data: JSON.parse(text) };
-                    } catch(e) {
-                        return { success: true, data: text };
-                    }
+                    try { return { success: true, data: JSON.parse(text) }; }
+                    catch(e) { return { success: true, data: text }; }
                 }
-                
                 return { success: true, data: [] };
             } catch(e) {
-                console.error('Fetch error:', e);
                 return { success: false, error: e.message };
             }
+        }
+        
+        function getPhotosArray(photos) {
+            if (!photos) return [];
+            try {
+                if (typeof photos === 'string') {
+                    if (photos.startsWith('[')) {
+                        return JSON.parse(photos);
+                    } else if (photos.includes(',')) {
+                        return photos.split(',');
+                    } else {
+                        return [photos];
+                    }
+                }
+                if (Array.isArray(photos)) return photos;
+                return [];
+            } catch(e) {
+                return [photos];
+            }
+        }
+        
+        function getFirstPhoto(photos) {
+            const arr = getPhotosArray(photos);
+            return arr.length > 0 ? arr[0] : '';
+        }
+        
+        // Функція для створення галереї
+        function createPhotoGallery(photos, containerId) {
+            const photosArray = getPhotosArray(photos);
+            if (photosArray.length === 0) {
+                return `<div class="detail-photo-container" style="background:#e0e0e0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>`;
+            }
+            
+            if (photosArray.length === 1) {
+                return `<div class="detail-photo-container" style="background-image: url('${photosArray[0]}'); background-size: cover; background-position: center;"></div>`;
+            }
+            
+            // Галерея з декількома фото
+            let html = `
+                <div class="detail-photo-container" id="${containerId}">
+                    <div class="photo-arrow left" onclick="changePhoto(-1)">‹</div>
+                    <div class="photo-swipe-container" id="swipeContainer">
+                        ${photosArray.map(photo => `<img src="${photo}" onclick="event.stopPropagation()">`).join('')}
+                    </div>
+                    <div class="photo-arrow right" onclick="changePhoto(1)">›</div>
+                    <div class="photo-nav" id="photoNav">
+                        ${photosArray.map((_, i) => `<div class="photo-dot ${i === 0 ? 'active' : ''}" onclick="goToPhoto(${i})"></div>`).join('')}
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+        
+        // Глобальні функції для гортання фото
+        window.changePhoto = function(direction) {
+            if (!currentPhotos.length) return;
+            currentPhotoIndex += direction;
+            if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotos.length - 1;
+            if (currentPhotoIndex >= currentPhotos.length) currentPhotoIndex = 0;
+            
+            const container = document.getElementById('swipeContainer');
+            if (container) {
+                container.scrollTo({ left: container.clientWidth * currentPhotoIndex, behavior: 'smooth' });
+            }
+            updateDots();
+        }
+        
+        window.goToPhoto = function(index) {
+            currentPhotoIndex = index;
+            const container = document.getElementById('swipeContainer');
+            if (container) {
+                container.scrollTo({ left: container.clientWidth * currentPhotoIndex, behavior: 'smooth' });
+            }
+            updateDots();
+        }
+        
+        function updateDots() {
+            document.querySelectorAll('.photo-dot').forEach((dot, i) => {
+                if (i === currentPhotoIndex) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+        
+        function setupSwipeListener() {
+            const container = document.getElementById('swipeContainer');
+            if (!container) return;
+            
+            let startX = 0;
+            container.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+            container.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                const diff = endX - startX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) changePhoto(-1);
+                    else changePhoto(1);
+                }
+            });
+            
+            container.addEventListener('scroll', () => {
+                const newIndex = Math.round(container.scrollLeft / container.clientWidth);
+                if (newIndex !== currentPhotoIndex) {
+                    currentPhotoIndex = newIndex;
+                    updateDots();
+                }
+            });
         }
         
         // ========== СТАН ==========
@@ -623,10 +740,7 @@
             category: null,
             goods: [],
             myGoods: [],
-            jobs: [],
-            resumes: [],
             profileTab: 'active',
-            jobsTab: 'jobs',
             user: null
         };
         
@@ -638,42 +752,6 @@
             msg.style.background = isError ? '#dc3545' : '#2aab6e';
             msg.style.display = 'block';
             setTimeout(() => msg.style.display = 'none', 2500);
-        }
-        
-        function confirmAction(title, message, onYes) {
-            const dialogDiv = document.getElementById('confirmDialog');
-            dialogDiv.innerHTML = `
-                <div class="confirm-dialog">
-                    <div class="confirm-content">
-                        <div class="confirm-title">${title}</div>
-                        <div class="confirm-message">${message}</div>
-                        <div class="confirm-buttons">
-                            <button class="confirm-btn confirm-yes" id="confirmYesBtn">Так</button>
-                            <button class="confirm-btn confirm-no" id="confirmNoBtn">Ні</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            dialogDiv.style.display = 'block';
-            document.getElementById('confirmYesBtn').onclick = () => {
-                dialogDiv.style.display = 'none';
-                onYes();
-            };
-            document.getElementById('confirmNoBtn').onclick = () => {
-                dialogDiv.style.display = 'none';
-                showMessage('❌ Скасовано');
-            };
-        }
-        
-        function getFirstPhoto(photos) {
-            if (!photos) return '';
-            try {
-                const arr = JSON.parse(photos);
-                if (Array.isArray(arr) && arr.length > 0 && arr[0]) return arr[0];
-                return '';
-            } catch(e) {
-                return '';
-            }
         }
         
         function setActiveNav(page) {
@@ -744,24 +822,6 @@
             } catch(e) { console.error(e); }
         }
         
-        async function loadJobs() {
-            try {
-                const res = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
-                if (res.success) state.jobs = res.data;
-                if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
-                if (state.page === 'home') renderHomePage();
-            } catch(e) { console.error(e); }
-        }
-        
-        async function loadResumes() {
-            try {
-                const res = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
-                if (res.success) state.resumes = res.data;
-                if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
-                if (state.page === 'home') renderHomePage();
-            } catch(e) { console.error(e); }
-        }
-        
         async function updateItemStatus(id, newStatus, successMessage) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) });
             if (res.success) {
@@ -795,9 +855,12 @@
         // ========== РЕНДЕР ==========
         function renderHomePage() {
             const allItems = [];
-            state.goods.forEach(item => allItems.push({ id: item.id, type: 'goods', title: item.title, price: item.price, city: item.city, photo: getFirstPhoto(item.photos), category: item.category, created_at: item.created_at }));
-            state.jobs.forEach(item => allItems.push({ id: item.id, type: 'job', title: item.title, price: item.salary, city: item.city, photo: '', category: '💼 Вакансія', created_at: item.created_at }));
-            state.resumes.forEach(item => allItems.push({ id: item.id, type: 'resume', title: item.specialty, price: item.salary, city: item.city, photo: '', category: '📄 Резюме', created_at: item.created_at }));
+            state.goods.forEach(item => {
+                allItems.push({
+                    id: item.id, type: 'goods', title: item.title, price: item.price,
+                    city: item.city, photo: getFirstPhoto(item.photos), category: item.category, created_at: item.created_at
+                });
+            });
             allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             const recentItems = allItems.slice(0, 10);
             
@@ -809,12 +872,21 @@
                     <div class="section-title">🆕 Свіжі оголошення</div>
                     <div class="goods-list" id="freshList"></div>
                     <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
-                    <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Всі вакансії →</button>
                 </div>
             `;
             const freshContainer = document.getElementById('freshList');
             if (recentItems.length === 0) freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>📱 Натисніть "+" щоб додати перше</div>';
-            else freshContainer.innerHTML = recentItems.map(item => `<div class="fresh-card" onclick="openDetail(${item.id}, '${item.type}')"><div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div><div class="goods-info"><div class="goods-title">${escapeHtml(item.title)}</div><div class="goods-price">💰 ${escapeHtml(item.price)} грн</div><div class="goods-meta">📂 ${escapeHtml(item.category)}</div><div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div></div></div>`).join('');
+            else freshContainer.innerHTML = recentItems.map(item => `
+                <div class="fresh-card" onclick="openDetail(${item.id}, 'goods')">
+                    <div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div>
+                    <div class="goods-info">
+                        <div class="goods-title">${escapeHtml(item.title)}</div>
+                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                        <div class="goods-meta">📂 ${escapeHtml(item.category)}</div>
+                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                    </div>
+                </div>
+            `).join('');
             setActiveNav('home');
         }
         
@@ -828,7 +900,17 @@
             `;
             const container = document.getElementById('goodsList');
             if (!state.goods || state.goods.length === 0) container.innerHTML = '<div class="empty-state">📭 Немає товарів<br><br>📱 Натисніть "+" щоб додати перше оголошення</div>';
-            else container.innerHTML = state.goods.map(item => `<div class="goods-card" onclick="openDetail(${item.id}, 'goods')"><div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div><div class="goods-info"><div class="goods-title">${escapeHtml(item.title)}</div><div class="goods-price">💰 ${escapeHtml(item.price)} грн</div><div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div><div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div></div></div>`).join('');
+            else container.innerHTML = state.goods.map(item => `
+                <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
+                    <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                    <div class="goods-info">
+                        <div class="goods-title">${escapeHtml(item.title)}</div>
+                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                        <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                    </div>
+                </div>
+            `).join('');
             setActiveNav('goods');
         }
         
@@ -894,66 +976,51 @@
             setActiveNav('profile');
         }
         
-        function renderJobsPage() {
-            document.getElementById('app').innerHTML = `
-                <div class="app-container">
-                    <div class="header"><h2>💼 Робота</h2><button class="back-btn" onclick="goBack()">←</button></div>
-                    <div class="jobs-tabs">
-                        <div class="jobs-tab ${state.jobsTab === 'jobs' ? 'active' : ''}" onclick="switchJobsTab('jobs')">📋 Вакансії (${state.jobs.length})</div>
-                        <div class="jobs-tab ${state.jobsTab === 'resumes' ? 'active' : ''}" onclick="switchJobsTab('resumes')">📄 Резюме (${state.resumes.length})</div>
-                    </div>
-                    <div id="jobsContent"></div>
-                </div>
-            `;
-            const container = document.getElementById('jobsContent');
-            if (state.jobsTab === 'jobs') {
-                if (state.jobs.length === 0) container.innerHTML = '<div class="empty-state">📭 Немає вакансій</div>';
-                else container.innerHTML = state.jobs.map(job => `<div class="job-card" onclick="openDetail(${job.id}, 'job')"><div class="job-title">${escapeHtml(job.title)}</div><div class="job-salary">💰 ${escapeHtml(job.salary)} грн</div><div class="job-city">📍 ${escapeHtml(job.city || 'не вказано')}</div></div>`).join('');
-            } else {
-                if (state.resumes.length === 0) container.innerHTML = '<div class="empty-state">📭 Немає резюме</div>';
-                else container.innerHTML = state.resumes.map(resume => `<div class="resume-card" onclick="openDetail(${resume.id}, 'resume')"><div class="resume-specialty">${escapeHtml(resume.specialty)}</div><div class="job-salary">💰 ${escapeHtml(resume.salary)} грн</div><div class="job-city">📍 ${escapeHtml(resume.city || 'не вказано')}</div></div>`).join('');
-            }
-            setActiveNav('jobs');
-        }
-        
         async function openDetail(id, type) {
-            let item;
-            if (type === 'goods') item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
-            else if (type === 'job') item = state.jobs.find(j => j.id === id);
-            else item = state.resumes.find(r => r.id === id);
+            let item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
             if (!item) return;
             
-            if (type === 'goods') {
-                document.getElementById('detailContent').innerHTML = `
-                    <div class="detail-photo" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                    <div class="detail-title">${escapeHtml(item.title)}</div>
-                    <div class="detail-price">💰 ${escapeHtml(item.price)} грн</div>
-                    <div class="detail-row"><span class="detail-label">📂 Категорія:</span> ${escapeHtml(item.category || 'не вказано')}</div>
-                    <div class="detail-row"><span class="detail-label">📍 Місто:</span> ${escapeHtml(item.city || 'не вказано')}</div>
-                    <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description || 'Без опису')}</div>
-                    <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
-                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Зв'язатися</button>
-                `;
-            } else if (type === 'job') {
-                document.getElementById('detailContent').innerHTML = `
-                    <div class="detail-title">${escapeHtml(item.title)}</div>
-                    <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
-                    <div class="detail-row">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                    <div class="detail-row">📝 ${escapeHtml(item.description || 'Без опису')}</div>
-                    <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
-                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Відгукнутися</button>
-                `;
+            const photosArray = getPhotosArray(item.photos);
+            currentPhotos = photosArray;
+            currentPhotoIndex = 0;
+            
+            let galleryHtml = '';
+            if (photosArray.length === 0) {
+                galleryHtml = `<div class="detail-photo-container" style="background:#e0e0e0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>`;
+            } else if (photosArray.length === 1) {
+                galleryHtml = `<div class="detail-photo-container" style="background-image: url('${photosArray[0]}'); background-size: cover; background-position: center; height: 250px; border-radius: 16px;"></div>`;
             } else {
-                document.getElementById('detailContent').innerHTML = `
-                    <div class="detail-title">${escapeHtml(item.specialty)}</div>
-                    <div class="detail-price">💰 ${escapeHtml(item.salary)} грн</div>
-                    <div class="detail-row">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                    <div class="detail-row">📝 ${escapeHtml(item.experience || 'не вказано')}</div>
-                    <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
-                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Запросити</button>
+                galleryHtml = `
+                    <div class="detail-photo-container" id="photoGallery">
+                        <div class="photo-arrow left" onclick="changePhoto(-1)">‹</div>
+                        <div class="photo-swipe-container" id="swipeContainer">
+                            ${photosArray.map(photo => `<img src="${photo}" onclick="event.stopPropagation()">`).join('')}
+                        </div>
+                        <div class="photo-arrow right" onclick="changePhoto(1)">›</div>
+                        <div class="photo-nav" id="photoNav">
+                            ${photosArray.map((_, i) => `<div class="photo-dot ${i === 0 ? 'active' : ''}" onclick="goToPhoto(${i})"></div>`).join('')}
+                        </div>
+                    </div>
                 `;
             }
+            
+            document.getElementById('detailContent').innerHTML = `
+                ${galleryHtml}
+                <div class="detail-title">${escapeHtml(item.title)}</div>
+                <div class="detail-price">💰 ${escapeHtml(item.price)} грн</div>
+                <div class="detail-row"><span class="detail-label">📂 Категорія:</span> ${escapeHtml(item.category || 'не вказано')}</div>
+                <div class="detail-row"><span class="detail-label">📍 Місто:</span> ${escapeHtml(item.city || 'не вказано')}</div>
+                <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description || 'Без опису')}</div>
+                <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Зв'язатися</button>
+            `;
             document.getElementById('detailModal').style.display = 'flex';
+            
+            if (photosArray.length > 1) {
+                setTimeout(() => {
+                    setupSwipeListener();
+                }, 100);
+            }
         }
         
         function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
@@ -967,7 +1034,6 @@
         
         function goBack() { state.page = 'home'; renderHomePage(); }
         function goToGoodsPage() { state.page = 'goods'; loadGoods(); }
-        function goToJobsPage() { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
         function selectCategory(cat) { state.category = cat; state.page = 'goods'; loadGoods(); }
         
         function searchGoods() {
@@ -976,16 +1042,50 @@
             const container = document.getElementById('goodsList');
             if (container) {
                 if (filtered.length === 0) container.innerHTML = '<div class="empty-state">🔍 Нічого не знайдено</div>';
-                else container.innerHTML = filtered.map(item => `<div class="goods-card" onclick="openDetail(${item.id}, 'goods')"><div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div><div class="goods-info"><div class="goods-title">${escapeHtml(item.title)}</div><div class="goods-price">💰 ${escapeHtml(item.price)} грн</div><div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div><div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div></div></div>`).join('');
+                else container.innerHTML = filtered.map(item => `
+                    <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
+                        <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                        <div class="goods-info">
+                            <div class="goods-title">${escapeHtml(item.title)}</div>
+                            <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                            <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                        </div>
+                    </div>
+                `).join('');
             }
         }
         
         function switchProfileTab(tab) { state.profileTab = tab; renderProfilePage(); }
-        function switchJobsTab(tab) { state.jobsTab = tab; if (tab === 'jobs') loadJobs(); else loadResumes(); renderJobsPage(); }
         
         function savePhone() {
             const phone = document.getElementById('profilePhone')?.value;
             if (phone && state.user) { localStorage.setItem('userPhone', phone); showMessage('✅ Номер збережено'); }
+        }
+        
+        function confirmAction(title, message, onYes) {
+            const dialogDiv = document.getElementById('confirmDialog');
+            dialogDiv.innerHTML = `
+                <div class="confirm-dialog">
+                    <div class="confirm-content">
+                        <div class="confirm-title">${title}</div>
+                        <div class="confirm-message">${message}</div>
+                        <div class="confirm-buttons">
+                            <button class="confirm-btn confirm-yes" id="confirmYesBtn">Так</button>
+                            <button class="confirm-btn confirm-no" id="confirmNoBtn">Ні</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            dialogDiv.style.display = 'block';
+            document.getElementById('confirmYesBtn').onclick = () => {
+                dialogDiv.style.display = 'none';
+                onYes();
+            };
+            document.getElementById('confirmNoBtn').onclick = () => {
+                dialogDiv.style.display = 'none';
+                showMessage('❌ Скасовано');
+            };
         }
         
         function confirmDelete(id) { confirmAction('🗑 Видалення', 'Ви впевнені, що хочете видалити це оголошення?', () => deleteItem(id)); }
@@ -998,8 +1098,6 @@
         
         function switchAddTab(tab) {
             document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
-            document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
-            document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
             document.querySelectorAll('.add-tab').forEach(el => el.classList.remove('active'));
             const activeTab = document.querySelector(`.add-tab[data-add-tab="${tab}"]`);
             if (activeTab) activeTab.classList.add('active');
@@ -1018,7 +1116,7 @@
             if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
             
             showMessage('⏳ Публікація...');
-            const photosJson = selectedPhotos.length > 0 ? JSON.stringify(selectedPhotos) : '[]';
+            const photosJson = JSON.stringify(selectedPhotos);
             
             const res = await apiRequest('goods', {
                 method: 'POST',
@@ -1026,7 +1124,7 @@
             });
             
             if (res.success) {
-                showMessage(`✅ Опубліковано!`);
+                showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
                 selectedPhotos = [];
                 await loadGoods();
@@ -1037,52 +1135,21 @@
             } else showMessage('❌ Помилка публікації', true);
         }
         
-        async function submitJob() {
-            const title = document.getElementById('jobTitle')?.value;
-            const salary = document.getElementById('jobSalary')?.value;
-            const city = document.getElementById('jobCity')?.value;
-            const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
-            const desc = document.getElementById('jobDesc')?.value;
-            if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
-            showMessage('⏳ Публікація...');
-            const res = await apiRequest('jobs', { method: 'POST', body: JSON.stringify({ user_id: state.user.id, title: title.trim(), salary: salary || '', city: city || '', phone: phone.trim(), description: desc || '', status: 'open', created_at: new Date().toISOString() }) });
-            if (res.success) { showMessage('✅ Вакансію опубліковано!'); closeModal(); await loadJobs(); if (state.page === 'home') renderHomePage(); }
-            else showMessage('❌ Помилка публікації', true);
-        }
-        
-        async function submitResume() {
-            const specialty = document.getElementById('resumeSpecialty')?.value;
-            const experience = document.getElementById('resumeExperience')?.value;
-            const skills = document.getElementById('resumeSkills')?.value;
-            const city = document.getElementById('resumeCity')?.value;
-            const salary = document.getElementById('resumeSalary')?.value;
-            const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
-            if (!specialty || !specialty.trim()) { showMessage('❌ Введіть спеціальність', true); return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
-            showMessage('⏳ Публікація...');
-            const res = await apiRequest('resumes', { method: 'POST', body: JSON.stringify({ user_id: state.user.id, specialty: specialty.trim(), experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim(), status: 'active', created_at: new Date().toISOString() }) });
-            if (res.success) { showMessage('✅ Резюме опубліковано!'); closeModal(); await loadResumes(); if (state.page === 'home') renderHomePage(); }
-            else showMessage('❌ Помилка публікації', true);
-        }
-        
         function initNavigation() {
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const page = btn.dataset.page;
-                    if (page === 'home') { state.page = 'home'; await loadGoods(); await loadJobs(); await loadResumes(); renderHomePage(); }
+                    if (page === 'home') { state.page = 'home'; await loadGoods(); renderHomePage(); }
                     else if (page === 'goods') { state.page = 'goods'; await loadGoods(); }
-                    else if (page === 'jobs') { state.page = 'jobs'; await loadJobs(); await loadResumes(); renderJobsPage(); }
                     else if (page === 'profile') { state.page = 'profile'; await loadMyGoods(); renderProfilePage(); }
                 });
             });
         }
         
+        // Глобальні функції
         window.showAddModal = showAddModal;
         window.switchAddTab = switchAddTab;
         window.submitGoods = submitGoods;
-        window.submitJob = submitJob;
-        window.submitResume = submitResume;
         window.addPhotoInput = addPhotoInput;
         window.removePhoto = removePhoto;
         window.closeModal = closeModal;
@@ -1090,23 +1157,21 @@
         window.contactSeller = contactSeller;
         window.selectCategory = selectCategory;
         window.goToGoodsPage = goToGoodsPage;
-        window.goToJobsPage = goToJobsPage;
         window.goBack = goBack;
         window.searchGoods = searchGoods;
         window.openDetail = openDetail;
         window.switchProfileTab = switchProfileTab;
-        window.switchJobsTab = switchJobsTab;
         window.savePhone = savePhone;
         window.confirmDelete = confirmDelete;
         window.confirmArchive = confirmArchive;
         window.confirmSold = confirmSold;
         window.confirmRestore = confirmRestore;
+        window.changePhoto = changePhoto;
+        window.goToPhoto = goToPhoto;
         
         (async () => {
             await loadUser();
             await loadGoods();
-            await loadJobs();
-            await loadResumes();
             await loadMyGoods();
             renderHomePage();
             initNavigation();
