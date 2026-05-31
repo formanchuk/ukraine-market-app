@@ -1097,38 +1097,70 @@
             setActiveNav('jobs');
         }
         
-        async function openDetail(id, type) {
-            let item;
-            if (type === 'goods') item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
-            else if (type === 'job') item = state.jobs.find(j => j.id === id);
-            else item = state.resumes.find(r => r.id === id);
-            if (!item) { showMessage('Оголошення не знайдено', true); return; }
-            
-            const photosArray = getPhotosArray(item.photos);
-            currentPhotos = photosArray;
-            currentPhotoIndex = 0;
-            
-            let galleryHtml = '';
-            if (type === 'goods') {
-                if (photosArray.length === 0) {
-                    galleryHtml = `<div class="detail-photo-container" style="background:#e0e0e0; display:flex; align-items:center; justify-content:center;">📷 Немає фото</div>`;
-                } else if (photosArray.length === 1) {
-                    galleryHtml = `<div class="detail-photo-container" style="background-image: url('${photosArray[0]}'); background-size: cover; background-position: center; height: 250px; border-radius: 16px;"></div>`;
-                } else {
-                    galleryHtml = `
-                        <div class="detail-photo-container" id="photoGallery">
-                            <div class="photo-arrow left" onclick="changePhoto(-1)">‹</div>
-                            <div class="photo-swipe-container" id="swipeContainer">
-                                ${photosArray.map(photo => `<img src="${photo}" onclick="event.stopPropagation()">`).join('')}
-                            </div>
-                            <div class="photo-arrow right" onclick="changePhoto(1)">›</div>
-                            <div class="photo-nav" id="photoNav">
-                                ${photosArray.map((_, i) => `<div class="photo-dot ${i === 0 ? 'active' : ''}" onclick="goToPhoto(${i})"></div>`).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-            }
+async function submitJob() {
+    if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
+    isSubmitting = true;
+    
+    const title = document.getElementById('jobTitle')?.value;
+    const category = document.getElementById('jobCategory')?.value;
+    const salary = document.getElementById('jobSalary')?.value;
+    const city = document.getElementById('jobCity')?.value;
+    const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
+    const schedule = document.getElementById('jobSchedule')?.value;
+    const desc = document.getElementById('jobDesc')?.value;
+    
+    if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); isSubmitting = false; return; }
+    if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
+    
+    showMessage('⏳ Публікація...');
+    
+    const jobData = {
+        user_id: state.user.id,
+        title: title.trim(),
+        salary: salary || '',
+        city: city || '',
+        schedule: schedule || '',
+        description: desc || '',
+        category: category || 'Інше',
+        phone: phone.trim(),
+        status: 'open',
+        created_at: new Date().toISOString()
+    };
+    
+    console.log('📤 Відправляємо вакансію:', jobData);
+    
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/jobs`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify(jobData)
+        });
+        
+        console.log('📥 Статус відповіді:', response.status);
+        
+        if (response.ok) {
+            showMessage('✅ Вакансію опубліковано!');
+            closeModal();
+            await loadJobs();
+            if (state.page === 'home') renderHomePage();
+            if (state.page === 'jobs') renderJobsPage();
+        } else {
+            const errorText = await response.text();
+            console.error('❌ Помилка:', errorText);
+            showMessage(`❌ Помилка: ${response.status}`, true);
+        }
+    } catch(e) {
+        console.error('❌ Помилка з\'єднання:', e);
+        showMessage('❌ Помилка з\'єднання', true);
+    } finally {
+        isSubmitting = false;
+    }
+}
             
             if (type === 'goods') {
                 document.getElementById('detailContent').innerHTML = `
