@@ -541,6 +541,7 @@
                 <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
                 <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
                 <div class="photo-grid" id="photoList"></div>
+                <div class="add-photo" onclick="addPhotoInput()">+ Додати фото</div>
                 <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
@@ -719,9 +720,6 @@
                     <div class="photo-remove" onclick="removePhoto(${i})">×</div>
                 </div>`
             ).join('');
-            if (selectedPhotos.length < 15) {
-                container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
-            }
         }
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
