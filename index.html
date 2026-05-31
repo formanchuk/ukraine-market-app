@@ -10,7 +10,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            color: #000000;
             min-height: 100vh;
             padding-bottom: 70px;
         }
@@ -25,7 +25,7 @@
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
             border-radius: 14px;
         }
-        .header h2 { font-size: 20px; font-weight: 600; }
+        .header h2 { font-size: 20px; font-weight: 600; color: #000000; }
         .back-btn {
             background: transparent;
             border: none;
@@ -43,7 +43,7 @@
             margin-bottom: 16px;
             font-size: 16px;
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            color: var(--tg-theme-text-color, #000);
+            color: #000000;
             outline: none;
         }
         .search-box:focus { background: var(--tg-theme-bg-color, #fff); box-shadow: 0 0 0 2px #2aab6e; }
@@ -64,7 +64,7 @@
         }
         .category-item:active { transform: scale(0.96); }
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
-        .category-name { font-size: 12px; font-weight: 500; }
+        .category-name { font-size: 12px; font-weight: 500; color: #000000; }
         
         .goods-list, .fresh-list, .jobs-list, .resumes-list { display: flex; flex-direction: column; gap: 12px; }
         .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card {
@@ -74,6 +74,7 @@
             cursor: pointer;
             transition: all 0.1s;
             box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 8px;
         }
         .goods-card, .fresh-card { display: flex; gap: 14px; }
         .goods-image, .my-goods-image, .fresh-image {
@@ -89,14 +90,14 @@
         .my-goods-image { width: 70px; height: 70px; }
         .fresh-image { width: 80px; height: 80px; }
         .goods-info { flex: 1; }
-        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; }
+        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #000000; }
         .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 4px; }
-        .goods-meta { font-size: 12px; color: #888; margin-bottom: 2px; }
-        .goods-city { font-size: 12px; color: #666; }
+        .goods-meta { font-size: 12px; color: #666666; margin-bottom: 2px; }
+        .goods-city { font-size: 12px; color: #666666; }
         
-        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #000000; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
-        .job-city { font-size: 13px; color: #666; margin-top: 4px; }
+        .job-city { font-size: 13px; color: #666666; margin-top: 4px; }
         
         .bottom-nav {
             position: fixed;
@@ -175,7 +176,7 @@
             max-height: 85vh;
             overflow-y: auto;
         }
-        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: #000000; }
         
         .modal-input, .modal-select, .modal-textarea {
             width: 100%;
@@ -184,6 +185,8 @@
             border: 1px solid #ddd;
             border-radius: 12px;
             font-size: 15px;
+            color: #000000;
+            background: white;
         }
         .modal-textarea { min-height: 90px; resize: vertical; }
         .modal-btn {
@@ -215,7 +218,7 @@
             font-weight: 500;
             cursor: pointer;
             white-space: nowrap;
-            color: #000;
+            color: #000000;
         }
         .profile-tab.active { background: #2aab6e; color: white; }
         
@@ -232,7 +235,7 @@
             margin-bottom: 12px;
         }
         .my-goods-info { flex: 1; }
-        .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: #000000; }
         .my-goods-price { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .my-goods-actions {
             display: grid;
@@ -266,7 +269,7 @@
             margin-bottom: 20px;
         }
         .profile-avatar { font-size: 64px; margin-bottom: 12px; }
-        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #000000; }
         .profile-stats {
             display: flex;
             justify-content: center;
@@ -274,7 +277,7 @@
             margin-top: 16px;
         }
         .stat-number { font-size: 28px; font-weight: 700; color: #2aab6e; }
-        .stat-label { font-size: 12px; color: #666; }
+        .stat-label { font-size: 12px; color: #666666; }
         
         .photo-grid {
             display: flex;
@@ -387,16 +390,17 @@
         .photo-arrow.left { left: 10px; }
         .photo-arrow.right { right: 10px; }
         
-        .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: #000000; }
         .detail-price { font-size: 28px; font-weight: 700; color: #2aab6e; margin-bottom: 12px; }
-        .detail-row { margin-bottom: 12px; font-size: 14px; }
-        .detail-label { color: #888; margin-right: 8px; }
+        .detail-row { margin-bottom: 12px; font-size: 14px; color: #000000; }
+        .detail-label { color: #888888; margin-right: 8px; }
         .detail-phone-box {
             background: #f0f0f0;
             padding: 14px;
             border-radius: 12px;
             margin: 16px 0;
             text-align: center;
+            color: #000000;
         }
         .contact-seller {
             width: 100%;
@@ -423,7 +427,7 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: 500;
-            color: #000;
+            color: #000000;
         }
         .jobs-tab.active { background: #2aab6e; color: white; }
         
@@ -451,10 +455,11 @@
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 8px;
+            color: #000000;
         }
         .confirm-message {
             font-size: 14px;
-            color: #666;
+            color: #666666;
             margin-bottom: 20px;
         }
         .confirm-buttons {
@@ -487,7 +492,7 @@
             font-size: 14px;
             white-space: nowrap;
         }
-        .empty-state { text-align: center; padding: 50px 20px; color: #999; }
+        .empty-state { text-align: center; padding: 50px 20px; color: #999999; }
         .loading { text-align: center; padding: 50px; }
         
         .add-tab {
@@ -497,7 +502,7 @@
             border-radius: 12px;
             cursor: pointer;
             background: #e0e0e0;
-            color: #000;
+            color: #000000;
         }
         .add-tab.active {
             background: #2aab6e;
@@ -685,6 +690,8 @@
             myGoods: [],
             jobs: [],
             resumes: [],
+            myJobs: [],
+            myResumes: [],
             profileTab: 'active',
             jobsTab: 'jobs',
             user: null
@@ -791,21 +798,41 @@
             } catch(e) { console.error(e); }
         }
         
-        async function deleteItem(id) {
+        async function loadMyJobs() {
+            if (!state.user) return;
+            try {
+                const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (res.success && res.data) state.myJobs = res.data;
+                else state.myJobs = [];
+                if (state.page === 'profile') renderProfilePage();
+            } catch(e) { console.error(e); state.myJobs = []; }
+        }
+        
+        async function loadMyResumes() {
+            if (!state.user) return;
+            try {
+                const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (res.success && res.data) state.myResumes = res.data;
+                else state.myResumes = [];
+                if (state.page === 'profile') renderProfilePage();
+            } catch(e) { console.error(e); state.myResumes = []; }
+        }
+        
+        // Дії з товарами
+        async function deleteGoodsItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res.success) {
-                showMessage('🗑 Оголошення переміщено у видалені');
+                showMessage('🗑 Товар переміщено у видалені');
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
-                if (state.page === 'goods') renderGoodsPage();
                 return true;
             }
             showMessage('❌ Помилка', true);
             return false;
         }
         
-        async function archiveItem(id) {
+        async function archiveGoodsItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
             if (res.success) {
                 showMessage('📦 Товар переміщено в архів');
@@ -818,10 +845,10 @@
             return false;
         }
         
-        async function restoreItem(id) {
+        async function restoreGoodsItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
             if (res.success) {
-                showMessage('✅ Товар відновлено з архіву');
+                showMessage('✅ Товар відновлено');
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
@@ -831,29 +858,33 @@
             return false;
         }
         
-        async function undeleteItem(id) {
-            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
+        // Дії з вакансіями
+        async function deleteJobItem(id) {
+            const res = await apiRequest(`jobs?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
-                showMessage('✅ Оголошення повернуто! Воно знову активне');
-                await loadGoods();
-                await loadMyGoods();
+                showMessage('✅ Вакансію видалено');
+                await loadJobs();
+                await loadMyJobs();
                 if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'jobs') renderJobsPage();
                 return true;
             }
-            showMessage('❌ Помилка', true);
+            showMessage('❌ Помилка видалення', true);
             return false;
         }
         
-        async function permanentDeleteItem(id) {
-            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
+        // Дії з резюме
+        async function deleteResumeItem(id) {
+            const res = await apiRequest(`resumes?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
-                showMessage('🗑 Оголошення видалено назавжди');
-                await loadGoods();
-                await loadMyGoods();
+                showMessage('✅ Резюме видалено');
+                await loadResumes();
+                await loadMyResumes();
                 if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'jobs') renderJobsPage();
                 return true;
             }
-            showMessage('❌ Помилка', true);
+            showMessage('❌ Помилка видалення', true);
             return false;
         }
         
@@ -992,6 +1023,8 @@
             const activeCount = state.myGoods.filter(i => i.status === 'active').length;
             const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
             const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
+            const myJobsCount = state.myJobs.length;
+            const myResumesCount = state.myResumes.length;
             
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
@@ -999,9 +1032,9 @@
                         <div class="profile-avatar">👤</div>
                         <div class="profile-name">${escapeHtml(user.first_name)}</div>
                         <div class="profile-stats">
-                            <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
-                            <div><div class="stat-number">${archivedCount}</div><div class="stat-label">В архіві</div></div>
-                            <div><div class="stat-number">${deletedCount}</div><div class="stat-label">Видалених</div></div>
+                            <div><div class="stat-number">${activeCount}</div><div class="stat-label">Товарів</div></div>
+                            <div><div class="stat-number">${myJobsCount}</div><div class="stat-label">Вакансій</div></div>
+                            <div><div class="stat-number">${myResumesCount}</div><div class="stat-label">Резюме</div></div>
                         </div>
                     </div>
                     <div style="margin-bottom:16px">
@@ -1009,9 +1042,11 @@
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
-                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Товари (${activeCount})</div>
                         <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
                         <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'jobs' ? 'active' : ''}" onclick="switchProfileTab('jobs')">💼 Мої вакансії (${myJobsCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'resumes' ? 'active' : ''}" onclick="switchProfileTab('resumes')">📄 Мої резюме (${myResumesCount})</div>
                     </div>
                     <div id="myGoodsList"></div>
                 </div>
@@ -1019,38 +1054,77 @@
             
             const list = document.getElementById('myGoodsList');
             let filtered = [];
+            
             if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
             else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
-            else filtered = state.myGoods.filter(i => i.status === 'deleted');
+            else if (state.profileTab === 'deleted') filtered = state.myGoods.filter(i => i.status === 'deleted');
+            else if (state.profileTab === 'jobs') filtered = state.myJobs;
+            else if (state.profileTab === 'resumes') filtered = state.myResumes;
             
             if (filtered.length === 0) { 
-                list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>'; 
+                if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
+                else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
+                else list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>';
                 setActiveNav('profile');
                 return; 
             }
             
-            list.innerHTML = filtered.map(item => `
-                <div class="my-goods-card">
-                    <div class="my-goods-header">
-                        <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                        <div class="my-goods-info">
-                            <div class="my-goods-title">${escapeHtml(item.title)} ${getStatusBadge(item.status)}</div>
-                            <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                            <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                            <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+            if (state.profileTab === 'jobs') {
+                list.innerHTML = filtered.map(item => `
+                    <div class="my-goods-card">
+                        <div class="my-goods-header">
+                            <div class="my-goods-info">
+                                <div class="my-goods-title">${escapeHtml(item.title)}</div>
+                                <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
+                                <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                                <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                            </div>
+                        </div>
+                        <div class="my-goods-actions">
+                            <button class="action-btn action-view" onclick="openDetail(${item.id}, 'job')">👁 Переглянути</button>
+                            <button class="action-btn action-delete" onclick="confirmDeleteJob(${item.id})">🗑 Видалити</button>
                         </div>
                     </div>
-                    <div class="my-goods-actions">
-                        <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
-                        ${item.status === 'active' ? `<button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>` : ''}
-                        ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
-                        ${item.status === 'archived' ? `<button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>` : ''}
-                        ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
-                        ${item.status === 'deleted' ? `<button class="action-btn action-restore" onclick="confirmUndelete(${item.id})">🔄 Повернути</button>` : ''}
-                        <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 ${item.status === 'deleted' ? 'Видалити назавжди' : 'Видалити'}</button>
+                `).join('');
+            } else if (state.profileTab === 'resumes') {
+                list.innerHTML = filtered.map(item => `
+                    <div class="my-goods-card">
+                        <div class="my-goods-header">
+                            <div class="my-goods-info">
+                                <div class="my-goods-title">${escapeHtml(item.specialty)}</div>
+                                <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
+                                <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                                <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                            </div>
+                        </div>
+                        <div class="my-goods-actions">
+                            <button class="action-btn action-view" onclick="openDetail(${item.id}, 'resume')">👁 Переглянути</button>
+                            <button class="action-btn action-delete" onclick="confirmDeleteResume(${item.id})">🗑 Видалити</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } else {
+                list.innerHTML = filtered.map(item => `
+                    <div class="my-goods-card">
+                        <div class="my-goods-header">
+                            <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                            <div class="my-goods-info">
+                                <div class="my-goods-title">${escapeHtml(item.title)} ${getStatusBadge(item.status)}</div>
+                                <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                                <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                                <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                            </div>
+                        </div>
+                        <div class="my-goods-actions">
+                            <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
+                            <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
+                            ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
+                            ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
+                            <button class="action-btn action-delete" onclick="confirmDeleteGoods(${item.id})">🗑 Видалити</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
             setActiveNav('profile');
         }
         
@@ -1091,8 +1165,8 @@
         async function openDetail(id, type) {
             let item;
             if (type === 'goods') item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
-            else if (type === 'job') item = state.jobs.find(j => j.id === id);
-            else item = state.resumes.find(r => r.id === id);
+            else if (type === 'job') item = state.jobs.find(j => j.id === id) || state.myJobs.find(j => j.id === id);
+            else item = state.resumes.find(r => r.id === id) || state.myResumes.find(r => r.id === id);
             if (!item) { showMessage('Оголошення не знайдено', true); return; }
             
             const photosArray = getPhotosArray(item.photos);
@@ -1265,18 +1339,11 @@
             document.getElementById('confirmNoBtn').onclick = () => { dialogDiv.style.display = 'none'; showMessage('❌ Скасовано'); };
         }
         
-        function confirmDelete(id) { 
-            const item = state.myGoods.find(i => i.id === id);
-            if (item?.status === 'deleted') {
-                confirmAction('🗑 ПОВНЕ ВИДАЛЕННЯ', 'Оголошення буде видалено назавжди без можливості відновлення. Ви впевнені?', () => permanentDeleteItem(id));
-            } else {
-                confirmAction('🗑 Видалення', 'Перемістити оголошення у видалені? Ви зможете його повернути пізніше.', () => deleteItem(id));
-            }
-        }
-        
-        function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити оголошення в архів?', () => archiveItem(id)); }
-        function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити оголошення з архіву?', () => restoreItem(id)); }
-        function confirmUndelete(id) { confirmAction('🔄 Повернення', 'Повернути оголошення? Воно стане активним', () => undeleteItem(id)); }
+        function confirmDeleteGoods(id) { confirmAction('🗑 Видалення', 'Перемістити товар у видалені?', () => deleteGoodsItem(id)); }
+        function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити товар в архів?', () => archiveGoodsItem(id)); }
+        function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити товар з архіву?', () => restoreGoodsItem(id)); }
+        function confirmDeleteJob(id) { confirmAction('🗑 Видалення', 'Видалити вакансію назавжди?', () => deleteJobItem(id)); }
+        function confirmDeleteResume(id) { confirmAction('🗑 Видалення', 'Видалити резюме назавжди?', () => deleteResumeItem(id)); }
         
         function showAddModal() { 
             document.getElementById('goodsTitle').value = '';
@@ -1384,8 +1451,10 @@
                 showMessage('✅ Вакансію опубліковано!');
                 closeModal();
                 await loadJobs();
+                await loadMyJobs();
                 if (state.page === 'home') renderHomePage();
                 if (state.page === 'jobs') renderJobsPage();
+                if (state.page === 'profile') renderProfilePage();
             } else {
                 showMessage('❌ Помилка публікації вакансії', true);
                 console.error('Job publish error:', res);
@@ -1428,8 +1497,10 @@
                 showMessage('✅ Резюме опубліковано!');
                 closeModal();
                 await loadResumes();
+                await loadMyResumes();
                 if (state.page === 'home') renderHomePage();
                 if (state.page === 'jobs') renderJobsPage();
+                if (state.page === 'profile') renderProfilePage();
             } else {
                 showMessage('❌ Помилка публікації резюме', true);
                 console.error('Resume publish error:', res);
@@ -1443,7 +1514,7 @@
                     if (page === 'home') { state.page = 'home'; state.category = null; await loadGoods(); await loadJobs(); await loadResumes(); renderHomePage(); }
                     else if (page === 'goods') { state.page = 'goods'; await loadGoods(); }
                     else if (page === 'jobs') { state.page = 'jobs'; await loadJobs(); await loadResumes(); renderJobsPage(); }
-                    else if (page === 'profile') { state.page = 'profile'; await loadMyGoods(); renderProfilePage(); }
+                    else if (page === 'profile') { state.page = 'profile'; await loadMyGoods(); await loadMyJobs(); await loadMyResumes(); renderProfilePage(); }
                 });
             });
         }
@@ -1467,10 +1538,11 @@
         window.switchProfileTab = switchProfileTab;
         window.switchJobsTab = switchJobsTab;
         window.savePhone = savePhone;
-        window.confirmDelete = confirmDelete;
+        window.confirmDeleteGoods = confirmDeleteGoods;
         window.confirmArchive = confirmArchive;
         window.confirmRestore = confirmRestore;
-        window.confirmUndelete = confirmUndelete;
+        window.confirmDeleteJob = confirmDeleteJob;
+        window.confirmDeleteResume = confirmDeleteResume;
         window.editGoods = editGoods;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
@@ -1481,6 +1553,8 @@
             await loadJobs();
             await loadResumes();
             await loadMyGoods();
+            await loadMyJobs();
+            await loadMyResumes();
             renderHomePage();
             initNavigation();
         })();
