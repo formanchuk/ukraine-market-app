@@ -540,8 +540,11 @@
                 <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
                 <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
                 <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
-                <div class="photo-grid" id="photoList"></div>
-                <button type="button" class="modal-btn btn-secondary" onclick="addPhotoInput()" style="margin-bottom:12px;">📷 Додати фото</button>
+               <div class="photo-grid" id="photoList"></div>
+<div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;">
+    <div class="add-photo" onclick="addPhotoInput()" style="width: 70px; height: 70px; background: #0f3460; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer;">+</div>
+    <span style="font-size: 12px; color: #aaaaaa; margin-top: 4px;">Додати фото</span>
+</div>
                 <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
