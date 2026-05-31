@@ -521,6 +521,7 @@
         }
         .status-active { background: #4caf50; color: white; }
         .status-archived { background: #9c27b0; color: white; }
+        .status-deleted { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
@@ -713,6 +714,7 @@
         function getStatusBadge(status) {
             if (status === 'active') return '<span class="status-badge status-active">✓ Активне</span>';
             if (status === 'archived') return '<span class="status-badge status-archived">📦 В архіві</span>';
+            if (status === 'deleted') return '<span class="status-badge status-deleted">🗑 Видалено</span>';
             return '';
         }
         
@@ -789,11 +791,14 @@
             } catch(e) { console.error(e); }
         }
         
-        // ПОВНЕ ВИДАЛЕННЯ (DELETE з БД)
-        async function permanentDeleteItem(id) {
-            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
+        // ВИДАЛЕННЯ (переміщує в deleted)
+        async function deleteItem(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { 
+                method: 'PATCH', 
+                body: JSON.stringify({ status: 'deleted' }) 
+            });
             if (res.success) {
-                showMessage('🗑 Оголошення повністю видалено');
+                showMessage('🗑 Оголошення переміщено у видалені');
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
@@ -801,10 +806,11 @@
                 if (state.page === 'home') renderHomePage();
                 return true;
             }
-            showMessage('❌ Помилка видалення', true);
+            showMessage('❌ Помилка', true);
             return false;
         }
         
+        // АРХІВАЦІЯ
         async function archiveItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
             if (res.success) {
@@ -818,10 +824,39 @@
             return false;
         }
         
+        // ВІДНОВЛЕННЯ З АРХІВУ В АКТИВНІ
         async function restoreItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
             if (res.success) {
                 showMessage('✅ Товар відновлено з архіву');
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+                return true;
+            }
+            showMessage('❌ Помилка', true);
+            return false;
+        }
+        
+        // ПОВЕРНЕННЯ З ВИДАЛЕНИХ В АКТИВНІ
+        async function undeleteItem(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
+            if (res.success) {
+                showMessage('✅ Оголошення повернуто! Воно знову активне');
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+                return true;
+            }
+            showMessage('❌ Помилка', true);
+            return false;
+        }
+        
+        // ПОВНЕ ВИДАЛЕННЯ З БД (тільки для видалених)
+        async function permanentDeleteItem(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
+            if (res.success) {
+                showMessage('🗑 Оголошення видалено назавжди');
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
@@ -965,6 +1000,7 @@
             const user = state.user || { first_name: 'Користувач', id: 0 };
             const activeCount = state.myGoods.filter(i => i.status === 'active').length;
             const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
+            const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
             
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
@@ -974,7 +1010,7 @@
                         <div class="profile-stats">
                             <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
                             <div><div class="stat-number">${archivedCount}</div><div class="stat-label">В архіві</div></div>
-                            <div><div class="stat-number">${state.myGoods.length}</div><div class="stat-label">Всього</div></div>
+                            <div><div class="stat-number">${deletedCount}</div><div class="stat-label">Видалених</div></div>
                         </div>
                     </div>
                     <div style="margin-bottom:16px">
@@ -984,6 +1020,7 @@
                     <div class="profile-tabs">
                         <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
                         <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
                     </div>
                     <div id="myGoodsList"></div>
                 </div>
@@ -992,10 +1029,11 @@
             const list = document.getElementById('myGoodsList');
             let filtered = [];
             if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
-            else filtered = state.myGoods.filter(i => i.status === 'archived');
+            else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
+            else filtered = state.myGoods.filter(i => i.status === 'deleted');
             
             if (filtered.length === 0) { 
-                list.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>Додайте своє перше оголошення через кнопку "+"</div>'; 
+                list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>'; 
                 setActiveNav('profile');
                 return; 
             }
@@ -1013,10 +1051,12 @@
                     </div>
                     <div class="my-goods-actions">
                         <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
-                        <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
+                        ${item.status === 'active' ? `<button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>` : ''}
                         ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
+                        ${item.status === 'archived' ? `<button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>` : ''}
                         ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
-                        <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>
+                        ${item.status === 'deleted' ? `<button class="action-btn action-restore" onclick="confirmUndelete(${item.id})">🔄 Повернути</button>` : ''}
+                        <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 ${item.status === 'deleted' ? 'Видалити назавжди' : 'Видалити'}</button>
                     </div>
                 </div>
             `).join('');
@@ -1234,9 +1274,18 @@
             document.getElementById('confirmNoBtn').onclick = () => { dialogDiv.style.display = 'none'; showMessage('❌ Скасовано'); };
         }
         
-        function confirmDelete(id) { confirmAction('🗑 ПОВНЕ ВИДАЛЕННЯ', 'Оголошення буде видалено назавжди без можливості відновлення. Ви впевнені?', () => permanentDeleteItem(id)); }
+        function confirmDelete(id) { 
+            const item = state.myGoods.find(i => i.id === id);
+            if (item?.status === 'deleted') {
+                confirmAction('🗑 ПОВНЕ ВИДАЛЕННЯ', 'Оголошення буде видалено назавжди без можливості відновлення. Ви впевнені?', () => permanentDeleteItem(id));
+            } else {
+                confirmAction('🗑 Видалення', 'Перемістити оголошення у видалені? Ви зможете його повернути пізніше.', () => deleteItem(id));
+            }
+        }
+        
         function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити оголошення в архів?', () => archiveItem(id)); }
         function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити оголошення з архіву?', () => restoreItem(id)); }
+        function confirmUndelete(id) { confirmAction('🔄 Повернення', 'Повернути оголошення? Воно стане активним', () => undeleteItem(id)); }
         
         function showAddModal() { 
             document.getElementById('goodsTitle').value = '';
@@ -1408,6 +1457,7 @@
         window.confirmDelete = confirmDelete;
         window.confirmArchive = confirmArchive;
         window.confirmRestore = confirmRestore;
+        window.confirmUndelete = confirmUndelete;
         window.editGoods = editGoods;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
