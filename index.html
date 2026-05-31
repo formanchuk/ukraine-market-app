@@ -219,7 +219,6 @@
         }
         .profile-tab.active { background: #2aab6e; color: white; }
         
-        /* Стиль для картки в профілі - 4 кнопки в ряд */
         .my-goods-card {
             margin-bottom: 16px;
             background: var(--tg-theme-secondary-bg-color, #f5f5f5);
@@ -237,7 +236,7 @@
         .my-goods-price { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .my-goods-actions {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             margin-top: 12px;
         }
@@ -256,7 +255,6 @@
         .action-view { background: #2196f3; }
         .action-edit { background: #ff9800; }
         .action-archive { background: #9c27b0; }
-        .action-sold { background: #4caf50; }
         .action-delete { background: #dc3545; }
         .action-restore { background: #607d8b; }
         
@@ -523,8 +521,13 @@
         }
         .status-active { background: #4caf50; color: white; }
         .status-archived { background: #9c27b0; color: white; }
-        .status-sold { background: #ff9800; color: white; }
         .status-deleted { background: #dc3545; color: white; }
+        
+        /* Блокування кнопки після натискання */
+        .btn-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -572,7 +575,7 @@
                 <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
                 <div class="photo-grid" id="photoList"></div>
                 <div class="add-photo" onclick="addPhotoInput()">📷 Додати фото</div>
-                <button class="modal-btn btn-primary" onclick="submitGoods()">✅ Опублікувати</button>
+                <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
             <div id="addJobForm" style="display:none">
@@ -595,7 +598,7 @@
                 <input type="tel" id="jobPhone" class="modal-input" placeholder="Телефон для зв'язку *">
                 <input type="text" id="jobSchedule" class="modal-input" placeholder="Графік роботи">
                 <textarea id="jobDesc" class="modal-textarea" placeholder="Опис вакансії"></textarea>
-                <button class="modal-btn btn-primary" onclick="submitJob()">✅ Опублікувати</button>
+                <button class="modal-btn btn-primary" id="submitJobBtn" onclick="submitJob()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
             <div id="addResumeForm" style="display:none">
@@ -605,7 +608,7 @@
                 <input type="text" id="resumeCity" class="modal-input" placeholder="Місто">
                 <input type="text" id="resumeSalary" class="modal-input" placeholder="Очікувана зарплата">
                 <input type="tel" id="resumePhone" class="modal-input" placeholder="Телефон для зв'язку *">
-                <button class="modal-btn btn-primary" onclick="submitResume()">✅ Опублікувати</button>
+                <button class="modal-btn btn-primary" id="submitResumeBtn" onclick="submitResume()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
         </div>
@@ -629,6 +632,7 @@
         
         let currentPhotoIndex = 0;
         let currentPhotos = [];
+        let isSubmitting = false; // Блокування повторних натискань
         
         async function apiRequest(endpoint, options = {}) {
             try {
@@ -687,7 +691,6 @@
             return arr.length > 0 ? arr[0] : '';
         }
         
-        // ========== СТАН ==========
         let state = {
             page: 'home',
             category: null,
@@ -725,7 +728,6 @@
             const map = { 
                 'active': '<span class="status-badge status-active">✓ Активне</span>', 
                 'archived': '<span class="status-badge status-archived">📦 В архіві</span>', 
-                'sold': '<span class="status-badge status-sold">💰 Продано</span>', 
                 'deleted': '<span class="status-badge status-deleted">🗑 Видалено</span>' 
             };
             return map[status] || '';
@@ -765,7 +767,7 @@
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
             state.user = tgUser;
             state.user.phone = localStorage.getItem('userPhone') || '';
-            console.log('Користувач:', state.user.id, state.user.first_name);
+            console.log('Користувач:', state.user.id);
         }
         
         async function loadGoods() {
@@ -775,11 +777,11 @@
                 const res = await apiRequest(url);
                 if (res.success && res.data) {
                     state.goods = res.data;
-                    console.log(`Товарів завантажено: ${state.goods.length}`);
+                    console.log(`Товарів: ${state.goods.length}`);
                 }
                 if (state.page === 'goods') renderGoodsPage();
                 if (state.page === 'home') renderHomePage();
-            } catch(e) { console.error('loadGoods error:', e); }
+            } catch(e) { console.error(e); }
         }
         
         async function loadMyGoods() {
@@ -793,7 +795,7 @@
                     state.myGoods = [];
                 }
                 if (state.page === 'profile') renderProfilePage();
-            } catch(e) { console.error('loadMyGoods error:', e); state.myGoods = []; }
+            } catch(e) { console.error(e); state.myGoods = []; }
         }
         
         async function loadJobs() {
@@ -837,8 +839,72 @@
         
         async function deleteItem(id) { await updateItemStatus(id, 'deleted', '🗑 Товар видалено'); }
         async function archiveItem(id) { await updateItemStatus(id, 'archived', '📦 Товар переміщено в архів'); }
-        async function markAsSold(id) { await updateItemStatus(id, 'sold', '💰 Товар позначено як проданий'); }
         async function restoreItem(id) { await updateItemStatus(id, 'active', '✅ Товар відновлено'); }
+        
+        // ========== РЕДАГУВАННЯ ==========
+        async function editGoods(id) {
+            const item = state.myGoods.find(g => g.id === id);
+            if (!item) return;
+            
+            // Відкриваємо модалку з заповненими даними
+            document.getElementById('goodsTitle').value = item.title;
+            document.getElementById('goodsCategory').value = item.category;
+            document.getElementById('goodsPrice').value = item.price;
+            document.getElementById('goodsCity').value = item.city || '';
+            document.getElementById('goodsPhone').value = item.phone || '';
+            document.getElementById('goodsDesc').value = item.description || '';
+            selectedPhotos = getPhotosArray(item.photos);
+            renderPhotoList();
+            
+            // Змінюємо кнопку публікації на оновлення
+            const submitBtn = document.getElementById('submitGoodsBtn');
+            const oldOnclick = submitBtn.onclick;
+            submitBtn.textContent = '✏️ Оновити';
+            submitBtn.onclick = () => updateGoods(id);
+            
+            document.getElementById('addModal').style.display = 'flex';
+        }
+        
+        async function updateGoods(id) {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            
+            const title = document.getElementById('goodsTitle')?.value;
+            const category = document.getElementById('goodsCategory')?.value;
+            const price = document.getElementById('goodsPrice')?.value;
+            const city = document.getElementById('goodsCity')?.value;
+            const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
+            const desc = document.getElementById('goodsDesc')?.value;
+            
+            if (!title || !price) { showMessage('Заповніть назву та ціну', true); isSubmitting = false; return; }
+            
+            showMessage('⏳ Оновлення...');
+            const photosJson = JSON.stringify(selectedPhotos);
+            
+            const res = await apiRequest(`goods?id=eq.${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ 
+                    title: title.trim(), 
+                    category, 
+                    price: price.trim(), 
+                    description: desc || '', 
+                    city: city || '', 
+                    phone: phone.trim(), 
+                    photos: photosJson
+                })
+            });
+            
+            isSubmitting = false;
+            if (res.success) {
+                showMessage('✅ Оновлено!');
+                closeModal();
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+            } else {
+                showMessage('❌ Помилка оновлення', true);
+            }
+        }
         
         // ========== КАТЕГОРІЇ ==========
         const allCategories = [
@@ -919,7 +985,6 @@
             const user = state.user || { first_name: 'Користувач', id: 0 };
             const activeCount = state.myGoods.filter(i => i.status === 'active').length;
             const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
-            const soldCount = state.myGoods.filter(i => i.status === 'sold').length;
             const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
             
             document.getElementById('app').innerHTML = `
@@ -939,7 +1004,6 @@
                     <div class="profile-tabs">
                         <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
                         <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
-                        <div class="profile-tab ${state.profileTab === 'sold' ? 'active' : ''}" onclick="switchProfileTab('sold')">💰 Продані (${soldCount})</div>
                         <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
                     </div>
                     <div id="myGoodsList"></div>
@@ -950,7 +1014,6 @@
             let filtered = [];
             if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
             else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
-            else if (state.profileTab === 'sold') filtered = state.myGoods.filter(i => i.status === 'sold');
             else filtered = state.myGoods.filter(i => i.status === 'deleted');
             
             if (filtered.length === 0) { 
@@ -972,8 +1035,8 @@
                     </div>
                     <div class="my-goods-actions">
                         <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
+                        <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
                         ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
-                        ${item.status === 'active' ? `<button class="action-btn action-sold" onclick="confirmSold(${item.id})">💰 Продано</button>` : ''}
                         ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
                         <button class="action-btn action-delete" onclick="confirmDelete(${item.id})">🗑 Видалити</button>
                     </div>
@@ -1212,11 +1275,32 @@
         
         function confirmDelete(id) { confirmAction('🗑 Видалення', 'Ви впевнені, що хочете видалити це оголошення?', () => deleteItem(id)); }
         function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити оголошення в архів?', () => archiveItem(id)); }
-        function confirmSold(id) { confirmAction('💰 Продано', 'Позначити оголошення як продане?', () => markAsSold(id)); }
         function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити оголошення?', () => restoreItem(id)); }
         
-        function showAddModal() { document.getElementById('addModal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('addModal').style.display = 'none'; selectedPhotos = []; renderPhotoList(); }
+        function showAddModal() { 
+            // Скидаємо форму до початкового стану
+            document.getElementById('goodsTitle').value = '';
+            document.getElementById('goodsPrice').value = '';
+            document.getElementById('goodsCity').value = '';
+            document.getElementById('goodsPhone').value = '';
+            document.getElementById('goodsDesc').value = '';
+            selectedPhotos = [];
+            renderPhotoList();
+            
+            // Повертаємо кнопку в початковий стан
+            const submitBtn = document.getElementById('submitGoodsBtn');
+            submitBtn.textContent = '✅ Опублікувати';
+            submitBtn.onclick = submitGoods;
+            
+            document.getElementById('addModal').style.display = 'flex'; 
+        }
+        
+        function closeModal() { 
+            document.getElementById('addModal').style.display = 'none'; 
+            selectedPhotos = []; 
+            renderPhotoList(); 
+            isSubmitting = false;
+        }
         
         function switchAddTab(tab) {
             document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
@@ -1228,6 +1312,12 @@
         }
         
         async function submitGoods() {
+            if (isSubmitting) {
+                showMessage('⏳ Зачекайте, публікація вже виконується...', true);
+                return;
+            }
+            isSubmitting = true;
+            
             const title = document.getElementById('goodsTitle')?.value;
             const category = document.getElementById('goodsCategory')?.value;
             const price = document.getElementById('goodsPrice')?.value;
@@ -1235,9 +1325,9 @@
             const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
             
-            if (!title || !title.trim()) { showMessage('❌ Введіть назву товару', true); return; }
-            if (!price || !price.trim()) { showMessage('❌ Введіть ціну', true); return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
+            if (!title || !title.trim()) { showMessage('❌ Введіть назву товару', true); isSubmitting = false; return; }
+            if (!price || !price.trim()) { showMessage('❌ Введіть ціну', true); isSubmitting = false; return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); isSubmitting = false; return; }
             
             showMessage('⏳ Публікація...');
             const photosJson = JSON.stringify(selectedPhotos);
@@ -1258,6 +1348,7 @@
                 })
             });
             
+            isSubmitting = false;
             if (res.success) {
                 showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
@@ -1274,6 +1365,9 @@
         }
         
         async function submitJob() {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            
             const title = document.getElementById('jobTitle')?.value;
             const category = document.getElementById('jobCategory')?.value;
             const salary = document.getElementById('jobSalary')?.value;
@@ -1282,8 +1376,8 @@
             const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
             
-            if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
+            if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); isSubmitting = false; return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); isSubmitting = false; return; }
             
             showMessage('⏳ Публікація...');
             const res = await apiRequest('jobs', {
@@ -1302,6 +1396,7 @@
                 })
             });
             
+            isSubmitting = false;
             if (res.success) {
                 showMessage('✅ Вакансію опубліковано!');
                 closeModal();
@@ -1312,6 +1407,9 @@
         }
         
         async function submitResume() {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            
             const specialty = document.getElementById('resumeSpecialty')?.value;
             const experience = document.getElementById('resumeExperience')?.value;
             const skills = document.getElementById('resumeSkills')?.value;
@@ -1319,8 +1417,8 @@
             const salary = document.getElementById('resumeSalary')?.value;
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
             
-            if (!specialty || !specialty.trim()) { showMessage('❌ Введіть спеціальність', true); return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); return; }
+            if (!specialty || !specialty.trim()) { showMessage('❌ Введіть спеціальність', true); isSubmitting = false; return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); isSubmitting = false; return; }
             
             showMessage('⏳ Публікація...');
             const res = await apiRequest('resumes', {
@@ -1338,6 +1436,7 @@
                 })
             });
             
+            isSubmitting = false;
             if (res.success) {
                 showMessage('✅ Резюме опубліковано!');
                 closeModal();
@@ -1400,10 +1499,10 @@
         window.savePhone = savePhone;
         window.confirmDelete = confirmDelete;
         window.confirmArchive = confirmArchive;
-        window.confirmSold = confirmSold;
         window.confirmRestore = confirmRestore;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
+        window.editGoods = editGoods;
         
         // Запуск
         (async () => {
