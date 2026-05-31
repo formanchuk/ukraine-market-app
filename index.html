@@ -553,34 +553,34 @@
                 <div class="add-tab" data-add-tab="job" onclick="switchAddTab('job')">💼 Вакансія</div>
                 <div class="add-tab" data-add-tab="resume" onclick="switchAddTab('resume')">📄 Резюме</div>
             </div>
-            <div id="addGoodsForm">
-                <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
-                <select id="goodsCategory" class="modal-select">
-                    <option value="Електроніка">📱 Електроніка</option>
-                    <option value="Авто">🚗 Авто</option>
-                    <option value="Шини_Диски">🛞 Шини/Диски</option>
-                    <option value="Автозапчастини">🔧 Автозапчастини</option>
-                    <option value="Нерухомість">🏠 Нерухомість</option>
-                    <option value="Дім_і_сад">🏡 Дім і сад</option>
-                    <option value="Дитячий_світ">👶 Дитячий світ</option>
-                    <option value="Тварини">🐾 Тварини</option>
-                    <option value="Мода_і_стиль">👕 Мода і стиль</option>
-                    <option value="Хобі_Відпочинок">🎮 Хобі/Відпочинок</option>
-                    <option value="Книги">📚 Книги</option>
-                    <option value="Віддам_безкоштовно">🎁 Віддам безкоштовно</option>
-                    <option value="Обмін">🔄 Обмін</option>
-                    <option value="Бізнес_Послуги">🏢 Бізнес/Послуги</option>
-                    <option value="Оренда_Прокат">🔑 Оренда/Прокат</option>
-                    <option value="Житло_подобово">🏠 Житло подобово</option>
-                </select>
-                <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
-                <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
-                <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
-                <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
-                <div class="photo-grid" id="photoList"></div> 
-                <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">✅ Опублікувати</button>
-                <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
-            </div>
+<div id="addGoodsForm">
+    <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
+    <select id="goodsCategory" class="modal-select">
+        <option value="Електроніка">📱 Електроніка</option>
+        <option value="Авто">🚗 Авто</option>
+        <option value="Шини_Диски">🛞 Шини/Диски</option>
+        <option value="Автозапчастини">🔧 Автозапчастини</option>
+        <option value="Нерухомість">🏠 Нерухомість</option>
+        <option value="Дім_і_сад">🏡 Дім і сад</option>
+        <option value="Дитячий_світ">👶 Дитячий світ</option>
+        <option value="Тварини">🐾 Тварини</option>
+        <option value="Мода_і_стиль">👕 Мода і стиль</option>
+        <option value="Хобі_Відпочинок">🎮 Хобі/Відпочинок</option>
+        <option value="Книги">📚 Книги</option>
+        <option value="Віддам_безкоштовно">🎁 Віддам безкоштовно</option>
+        <option value="Обмін">🔄 Обмін</option>
+        <option value="Бізнес_Послуги">🏢 Бізнес/Послуги</option>
+        <option value="Оренда_Прокат">🔑 Оренда/Прокат</option>
+        <option value="Житло_подобово">🏠 Житло подобово</option>
+    </select>
+    <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
+    <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
+    <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
+    <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
+    <div class="photo-grid" id="photoList"></div>
+    <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">✅ Опублікувати</button>
+    <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
+</div>
             <div id="addJobForm" style="display:none">
                 <input type="text" id="jobTitle" class="modal-input" placeholder="Назва вакансії *">
                 <select id="jobCategory" class="modal-select">
