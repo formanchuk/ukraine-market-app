@@ -256,7 +256,7 @@
         .action-edit { background: #ff9800; }
         .action-archive { background: #9c27b0; }
         .action-delete { background: #dc3545; }
-        .action-restore { background: #607d8b; }
+        .action-restore { background: #4caf50; }
         
         .profile-header {
             text-align: center;
@@ -521,13 +521,6 @@
         }
         .status-active { background: #4caf50; color: white; }
         .status-archived { background: #9c27b0; color: white; }
-        .status-deleted { background: #dc3545; color: white; }
-        
-        /* Блокування кнопки після натискання */
-        .btn-disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
@@ -632,7 +625,7 @@
         
         let currentPhotoIndex = 0;
         let currentPhotos = [];
-        let isSubmitting = false; // Блокування повторних натискань
+        let isSubmitting = false;
         
         async function apiRequest(endpoint, options = {}) {
             try {
@@ -652,7 +645,7 @@
                     try { return { success: true, data: text ? JSON.parse(text) : [] }; }
                     catch(e) { return { success: true, data: [] }; }
                 }
-                if (!response.ok) return { success: false, status: response.status };
+                if (!response.ok) return { success: false };
                 
                 const text = await response.text();
                 if (text && text.length > 0) {
@@ -669,21 +662,14 @@
             if (!photos) return [];
             try {
                 if (typeof photos === 'string') {
-                    if (photos.startsWith('[')) {
-                        return JSON.parse(photos);
-                    } else if (photos.includes(',')) {
-                        return photos.split(',');
-                    } else if (photos.startsWith('http')) {
-                        return [photos];
-                    } else {
-                        return [];
-                    }
+                    if (photos.startsWith('[')) return JSON.parse(photos);
+                    else if (photos.includes(',')) return photos.split(',');
+                    else if (photos.startsWith('http')) return [photos];
+                    else return [];
                 }
                 if (Array.isArray(photos)) return photos;
                 return [];
-            } catch(e) {
-                return [];
-            }
+            } catch(e) { return []; }
         }
         
         function getFirstPhoto(photos) {
@@ -725,15 +711,11 @@
         }
         
         function getStatusBadge(status) {
-            const map = { 
-                'active': '<span class="status-badge status-active">✓ Активне</span>', 
-                'archived': '<span class="status-badge status-archived">📦 В архіві</span>', 
-                'deleted': '<span class="status-badge status-deleted">🗑 Видалено</span>' 
-            };
-            return map[status] || '';
+            if (status === 'active') return '<span class="status-badge status-active">✓ Активне</span>';
+            if (status === 'archived') return '<span class="status-badge status-archived">📦 В архіві</span>';
+            return '';
         }
         
-        // ========== ФОТО ==========
         function addPhotoInput() {
             if (selectedPhotos.length >= 15) { showMessage('Максимум 15 фото', true); return; }
             const input = document.createElement('input');
@@ -762,12 +744,10 @@
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
         
-        // ========== ЗАВАНТАЖЕННЯ ДАНИХ ==========
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
             state.user = tgUser;
             state.user.phone = localStorage.getItem('userPhone') || '';
-            console.log('Користувач:', state.user.id);
         }
         
         async function loadGoods() {
@@ -775,10 +755,7 @@
                 let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
                 if (state.category && state.category !== 'Всі') url += `&category=eq.${state.category}`;
                 const res = await apiRequest(url);
-                if (res.success && res.data) {
-                    state.goods = res.data;
-                    console.log(`Товарів: ${state.goods.length}`);
-                }
+                if (res.success && res.data) state.goods = res.data;
                 if (state.page === 'goods') renderGoodsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) { console.error(e); }
@@ -788,12 +765,8 @@
             if (!state.user) return;
             try {
                 const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) {
-                    state.myGoods = res.data;
-                    console.log(`Моїх товарів: ${state.myGoods.length}`);
-                } else {
-                    state.myGoods = [];
-                }
+                if (res.success && res.data) state.myGoods = res.data;
+                else state.myGoods = [];
                 if (state.page === 'profile') renderProfilePage();
             } catch(e) { console.error(e); state.myGoods = []; }
         }
@@ -801,10 +774,7 @@
         async function loadJobs() {
             try {
                 const res = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
-                if (res.success && res.data) {
-                    state.jobs = res.data;
-                    console.log(`Вакансій: ${state.jobs.length}`);
-                }
+                if (res.success && res.data) state.jobs = res.data;
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) { console.error(e); }
@@ -813,19 +783,17 @@
         async function loadResumes() {
             try {
                 const res = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
-                if (res.success && res.data) {
-                    state.resumes = res.data;
-                    console.log(`Резюме: ${state.resumes.length}`);
-                }
+                if (res.success && res.data) state.resumes = res.data;
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) { console.error(e); }
         }
         
-        async function updateItemStatus(id, newStatus, successMessage) {
-            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) });
+        // ПОВНЕ ВИДАЛЕННЯ (DELETE з БД)
+        async function permanentDeleteItem(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
-                showMessage(successMessage);
+                showMessage('🗑 Оголошення повністю видалено');
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
@@ -833,20 +801,40 @@
                 if (state.page === 'home') renderHomePage();
                 return true;
             }
+            showMessage('❌ Помилка видалення', true);
+            return false;
+        }
+        
+        async function archiveItem(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
+            if (res.success) {
+                showMessage('📦 Товар переміщено в архів');
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+                return true;
+            }
             showMessage('❌ Помилка', true);
             return false;
         }
         
-        async function deleteItem(id) { await updateItemStatus(id, 'deleted', '🗑 Товар видалено'); }
-        async function archiveItem(id) { await updateItemStatus(id, 'archived', '📦 Товар переміщено в архів'); }
-        async function restoreItem(id) { await updateItemStatus(id, 'active', '✅ Товар відновлено'); }
+        async function restoreItem(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
+            if (res.success) {
+                showMessage('✅ Товар відновлено з архіву');
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+                return true;
+            }
+            showMessage('❌ Помилка', true);
+            return false;
+        }
         
-        // ========== РЕДАГУВАННЯ ==========
         async function editGoods(id) {
             const item = state.myGoods.find(g => g.id === id);
             if (!item) return;
             
-            // Відкриваємо модалку з заповненими даними
             document.getElementById('goodsTitle').value = item.title;
             document.getElementById('goodsCategory').value = item.category;
             document.getElementById('goodsPrice').value = item.price;
@@ -856,9 +844,7 @@
             selectedPhotos = getPhotosArray(item.photos);
             renderPhotoList();
             
-            // Змінюємо кнопку публікації на оновлення
             const submitBtn = document.getElementById('submitGoodsBtn');
-            const oldOnclick = submitBtn.onclick;
             submitBtn.textContent = '✏️ Оновити';
             submitBtn.onclick = () => updateGoods(id);
             
@@ -884,12 +870,8 @@
             const res = await apiRequest(`goods?id=eq.${id}`, {
                 method: 'PATCH',
                 body: JSON.stringify({ 
-                    title: title.trim(), 
-                    category, 
-                    price: price.trim(), 
-                    description: desc || '', 
-                    city: city || '', 
-                    phone: phone.trim(), 
+                    title: title.trim(), category, price: price.trim(), 
+                    description: desc || '', city: city || '', phone: phone.trim(), 
                     photos: photosJson
                 })
             });
@@ -906,7 +888,6 @@
             }
         }
         
-        // ========== КАТЕГОРІЇ ==========
         const allCategories = [
             { icon: '📱', name: 'Електроніка', id: 'Електроніка' }, { icon: '🚗', name: 'Авто', id: 'Авто' },
             { icon: '🛞', name: 'Шини/Диски', id: 'Шини_Диски' }, { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
@@ -918,7 +899,6 @@
             { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда_Прокат' }, { icon: '🏠', name: 'Житло подобово', id: 'Житло_подобово' }
         ];
         
-        // ========== РЕНДЕР ==========
         function renderHomePage() {
             const allItems = [];
             state.goods.forEach(item => {
@@ -985,7 +965,6 @@
             const user = state.user || { first_name: 'Користувач', id: 0 };
             const activeCount = state.myGoods.filter(i => i.status === 'active').length;
             const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
-            const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
             
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
@@ -994,6 +973,7 @@
                         <div class="profile-name">${escapeHtml(user.first_name)}</div>
                         <div class="profile-stats">
                             <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
+                            <div><div class="stat-number">${archivedCount}</div><div class="stat-label">В архіві</div></div>
                             <div><div class="stat-number">${state.myGoods.length}</div><div class="stat-label">Всього</div></div>
                         </div>
                     </div>
@@ -1004,7 +984,6 @@
                     <div class="profile-tabs">
                         <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
                         <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
-                        <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
                     </div>
                     <div id="myGoodsList"></div>
                 </div>
@@ -1013,8 +992,7 @@
             const list = document.getElementById('myGoodsList');
             let filtered = [];
             if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
-            else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
-            else filtered = state.myGoods.filter(i => i.status === 'deleted');
+            else filtered = state.myGoods.filter(i => i.status === 'archived');
             
             if (filtered.length === 0) { 
                 list.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>Додайте своє перше оголошення через кнопку "+"</div>'; 
@@ -1084,10 +1062,7 @@
             if (type === 'goods') item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
             else if (type === 'job') item = state.jobs.find(j => j.id === id);
             else item = state.resumes.find(r => r.id === id);
-            if (!item) {
-                showMessage('Оголошення не знайдено', true);
-                return;
-            }
+            if (!item) { showMessage('Оголошення не знайдено', true); return; }
             
             const photosArray = getPhotosArray(item.photos);
             currentPhotos = photosArray;
@@ -1208,14 +1183,7 @@
             } else showMessage('❌ Номер телефону не вказано', true);
         }
         
-        function goBack() { 
-            state.category = null;
-            state.page = 'home'; 
-            loadGoods();
-            loadJobs();
-            loadResumes();
-            renderHomePage(); 
-        }
+        function goBack() { state.category = null; state.page = 'home'; loadGoods(); loadJobs(); loadResumes(); renderHomePage(); }
         function goToGoodsPage() { state.page = 'goods'; loadGoods(); }
         function goToJobsPage() { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
         function selectCategory(cat) { state.category = cat; state.page = 'goods'; loadGoods(); }
@@ -1242,7 +1210,6 @@
         
         function switchProfileTab(tab) { state.profileTab = tab; renderProfilePage(); }
         function switchJobsTab(tab) { state.jobsTab = tab; if (tab === 'jobs') loadJobs(); else loadResumes(); renderJobsPage(); }
-        
         function savePhone() {
             const phone = document.getElementById('profilePhone')?.value;
             if (phone && state.user) { localStorage.setItem('userPhone', phone); showMessage('✅ Номер збережено'); }
@@ -1263,22 +1230,15 @@
                 </div>
             `;
             dialogDiv.style.display = 'block';
-            document.getElementById('confirmYesBtn').onclick = () => {
-                dialogDiv.style.display = 'none';
-                onYes();
-            };
-            document.getElementById('confirmNoBtn').onclick = () => {
-                dialogDiv.style.display = 'none';
-                showMessage('❌ Скасовано');
-            };
+            document.getElementById('confirmYesBtn').onclick = () => { dialogDiv.style.display = 'none'; onYes(); };
+            document.getElementById('confirmNoBtn').onclick = () => { dialogDiv.style.display = 'none'; showMessage('❌ Скасовано'); };
         }
         
-        function confirmDelete(id) { confirmAction('🗑 Видалення', 'Ви впевнені, що хочете видалити це оголошення?', () => deleteItem(id)); }
+        function confirmDelete(id) { confirmAction('🗑 ПОВНЕ ВИДАЛЕННЯ', 'Оголошення буде видалено назавжди без можливості відновлення. Ви впевнені?', () => permanentDeleteItem(id)); }
         function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити оголошення в архів?', () => archiveItem(id)); }
-        function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити оголошення?', () => restoreItem(id)); }
+        function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити оголошення з архіву?', () => restoreItem(id)); }
         
         function showAddModal() { 
-            // Скидаємо форму до початкового стану
             document.getElementById('goodsTitle').value = '';
             document.getElementById('goodsPrice').value = '';
             document.getElementById('goodsCity').value = '';
@@ -1286,21 +1246,13 @@
             document.getElementById('goodsDesc').value = '';
             selectedPhotos = [];
             renderPhotoList();
-            
-            // Повертаємо кнопку в початковий стан
             const submitBtn = document.getElementById('submitGoodsBtn');
             submitBtn.textContent = '✅ Опублікувати';
             submitBtn.onclick = submitGoods;
-            
             document.getElementById('addModal').style.display = 'flex'; 
         }
         
-        function closeModal() { 
-            document.getElementById('addModal').style.display = 'none'; 
-            selectedPhotos = []; 
-            renderPhotoList(); 
-            isSubmitting = false;
-        }
+        function closeModal() { document.getElementById('addModal').style.display = 'none'; selectedPhotos = []; renderPhotoList(); isSubmitting = false; }
         
         function switchAddTab(tab) {
             document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
@@ -1312,10 +1264,7 @@
         }
         
         async function submitGoods() {
-            if (isSubmitting) {
-                showMessage('⏳ Зачекайте, публікація вже виконується...', true);
-                return;
-            }
+            if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
             isSubmitting = true;
             
             const title = document.getElementById('goodsTitle')?.value;
@@ -1325,9 +1274,9 @@
             const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
             
-            if (!title || !title.trim()) { showMessage('❌ Введіть назву товару', true); isSubmitting = false; return; }
+            if (!title || !title.trim()) { showMessage('❌ Введіть назву', true); isSubmitting = false; return; }
             if (!price || !price.trim()) { showMessage('❌ Введіть ціну', true); isSubmitting = false; return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); isSubmitting = false; return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
             
             showMessage('⏳ Публікація...');
             const photosJson = JSON.stringify(selectedPhotos);
@@ -1335,16 +1284,9 @@
             const res = await apiRequest('goods', {
                 method: 'POST',
                 body: JSON.stringify({ 
-                    user_id: state.user.id, 
-                    title: title.trim(), 
-                    category, 
-                    price: price.trim(), 
-                    description: desc || '', 
-                    city: city || '', 
-                    phone: phone.trim(), 
-                    photos: photosJson, 
-                    status: 'active', 
-                    created_at: new Date().toISOString() 
+                    user_id: state.user.id, title: title.trim(), category, price: price.trim(), 
+                    description: desc || '', city: city || '', phone: phone.trim(), 
+                    photos: photosJson, status: 'active', created_at: new Date().toISOString() 
                 })
             });
             
@@ -1359,8 +1301,7 @@
                 if (state.page === 'home') renderHomePage();
                 if (state.page === 'goods') renderGoodsPage();
             } else {
-                showMessage('❌ Помилка публікації. Спробуйте ще раз', true);
-                console.error('Submit error:', res);
+                showMessage('❌ Помилка публікації', true);
             }
         }
         
@@ -1377,22 +1318,15 @@
             const desc = document.getElementById('jobDesc')?.value;
             
             if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); isSubmitting = false; return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); isSubmitting = false; return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
             
             showMessage('⏳ Публікація...');
             const res = await apiRequest('jobs', {
                 method: 'POST',
                 body: JSON.stringify({ 
-                    user_id: state.user.id, 
-                    title: title.trim(), 
-                    category, 
-                    salary: salary || '', 
-                    city: city || '', 
-                    phone: phone.trim(), 
-                    schedule: schedule || '', 
-                    description: desc || '', 
-                    status: 'open', 
-                    created_at: new Date().toISOString() 
+                    user_id: state.user.id, title: title.trim(), category, salary: salary || '', 
+                    city: city || '', phone: phone.trim(), schedule: schedule || '', 
+                    description: desc || '', status: 'open', created_at: new Date().toISOString() 
                 })
             });
             
@@ -1418,21 +1352,15 @@
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
             
             if (!specialty || !specialty.trim()) { showMessage('❌ Введіть спеціальність', true); isSubmitting = false; return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон для зв\'язку', true); isSubmitting = false; return; }
+            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
             
             showMessage('⏳ Публікація...');
             const res = await apiRequest('resumes', {
                 method: 'POST',
                 body: JSON.stringify({ 
-                    user_id: state.user.id, 
-                    specialty: specialty.trim(), 
-                    experience: experience || '', 
-                    skills: skills || '', 
-                    city: city || '', 
-                    salary: salary || '', 
-                    phone: phone.trim(), 
-                    status: 'active', 
-                    created_at: new Date().toISOString() 
+                    user_id: state.user.id, specialty: specialty.trim(), experience: experience || '', 
+                    skills: skills || '', city: city || '', salary: salary || '', 
+                    phone: phone.trim(), status: 'active', created_at: new Date().toISOString() 
                 })
             });
             
@@ -1450,34 +1378,14 @@
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const page = btn.dataset.page;
-                    if (page === 'home') { 
-                        state.page = 'home'; 
-                        state.category = null;
-                        await loadGoods(); 
-                        await loadJobs(); 
-                        await loadResumes(); 
-                        renderHomePage(); 
-                    }
-                    else if (page === 'goods') { 
-                        state.page = 'goods'; 
-                        await loadGoods(); 
-                    }
-                    else if (page === 'jobs') { 
-                        state.page = 'jobs'; 
-                        await loadJobs(); 
-                        await loadResumes(); 
-                        renderJobsPage(); 
-                    }
-                    else if (page === 'profile') { 
-                        state.page = 'profile'; 
-                        await loadMyGoods(); 
-                        renderProfilePage(); 
-                    }
+                    if (page === 'home') { state.page = 'home'; state.category = null; await loadGoods(); await loadJobs(); await loadResumes(); renderHomePage(); }
+                    else if (page === 'goods') { state.page = 'goods'; await loadGoods(); }
+                    else if (page === 'jobs') { state.page = 'jobs'; await loadJobs(); await loadResumes(); renderJobsPage(); }
+                    else if (page === 'profile') { state.page = 'profile'; await loadMyGoods(); renderProfilePage(); }
                 });
             });
         }
         
-        // Глобальні функції
         window.showAddModal = showAddModal;
         window.switchAddTab = switchAddTab;
         window.submitGoods = submitGoods;
@@ -1500,11 +1408,10 @@
         window.confirmDelete = confirmDelete;
         window.confirmArchive = confirmArchive;
         window.confirmRestore = confirmRestore;
+        window.editGoods = editGoods;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
-        window.editGoods = editGoods;
         
-        // Запуск
         (async () => {
             await loadUser();
             await loadGoods();
