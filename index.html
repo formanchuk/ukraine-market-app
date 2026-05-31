@@ -1386,86 +1386,64 @@ async function submitJob() {
             }
         }
         
-        async function submitJob() {
-            if (isSubmitting) return;
-            isSubmitting = true;
-            
-            const title = document.getElementById('jobTitle')?.value;
-            const category = document.getElementById('jobCategory')?.value;
-            const salary = document.getElementById('jobSalary')?.value;
-            const city = document.getElementById('jobCity')?.value;
-            const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
-            const schedule = document.getElementById('jobSchedule')?.value;
-            const desc = document.getElementById('jobDesc')?.value;
-            
-            if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); isSubmitting = false; return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
-            
-            showMessage('⏳ Публікація...');
-            const res = await apiRequest('jobs', {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    user_id: state.user.id, title: title.trim(), category, salary: salary || '', 
-                    city: city || '', phone: phone.trim(), schedule: schedule || '', 
-                    description: desc || '', status: 'open', created_at: new Date().toISOString() 
-                })
-            });
-            
-            isSubmitting = false;
-            if (res.success) {
-                showMessage('✅ Вакансію опубліковано!');
-                closeModal();
-                await loadJobs();
-                if (state.page === 'home') renderHomePage();
-                if (state.page === 'jobs') renderJobsPage();
-            } else showMessage('❌ Помилка публікації', true);
-        }
+async function submitJob() {
+    if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
+    isSubmitting = true;
+    
+    const title = document.getElementById('jobTitle')?.value;
+    const category = document.getElementById('jobCategory')?.value;
+    const salary = document.getElementById('jobSalary')?.value;
+    const city = document.getElementById('jobCity')?.value;
+    const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
+    const schedule = document.getElementById('jobSchedule')?.value;
+    const desc = document.getElementById('jobDesc')?.value;
+    
+    if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); isSubmitting = false; return; }
+    if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
+    
+    showMessage('⏳ Публікація...');
+    
+    // Пробуємо прямий fetch замість apiRequest
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/jobs`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                user_id: state.user.id, 
+                title: title.trim(), 
+                category: category || 'Інше',
+                salary: salary || '', 
+                city: city || '', 
+                phone: phone.trim(), 
+                schedule: schedule || '', 
+                description: desc || '', 
+                status: 'open', 
+                created_at: new Date().toISOString() 
+            })
+        });
         
-        async function submitResume() {
-            if (isSubmitting) return;
-            isSubmitting = true;
-            
-            const specialty = document.getElementById('resumeSpecialty')?.value;
-            const experience = document.getElementById('resumeExperience')?.value;
-            const skills = document.getElementById('resumeSkills')?.value;
-            const city = document.getElementById('resumeCity')?.value;
-            const salary = document.getElementById('resumeSalary')?.value;
-            const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
-            
-            if (!specialty || !specialty.trim()) { showMessage('❌ Введіть спеціальність', true); isSubmitting = false; return; }
-            if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
-            
-            showMessage('⏳ Публікація...');
-            const res = await apiRequest('resumes', {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    user_id: state.user.id, specialty: specialty.trim(), experience: experience || '', 
-                    skills: skills || '', city: city || '', salary: salary || '', 
-                    phone: phone.trim(), status: 'active', created_at: new Date().toISOString() 
-                })
-            });
-            
-            isSubmitting = false;
-            if (res.success) {
-                showMessage('✅ Резюме опубліковано!');
-                closeModal();
-                await loadResumes();
-                if (state.page === 'home') renderHomePage();
-                if (state.page === 'jobs') renderJobsPage();
-            } else showMessage('❌ Помилка публікації', true);
+        if (response.ok) {
+            showMessage('✅ Вакансію опубліковано!');
+            closeModal();
+            await loadJobs();
+            if (state.page === 'home') renderHomePage();
+            if (state.page === 'jobs') renderJobsPage();
+        } else {
+            const errorText = await response.text();
+            console.error('Помилка:', errorText);
+            showMessage(`❌ Помилка: ${response.status}`, true);
         }
-        
-        function initNavigation() {
-            document.querySelectorAll('.nav-item').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const page = btn.dataset.page;
-                    if (page === 'home') { state.page = 'home'; state.category = null; await loadGoods(); await loadJobs(); await loadResumes(); renderHomePage(); }
-                    else if (page === 'goods') { state.page = 'goods'; await loadGoods(); }
-                    else if (page === 'jobs') { state.page = 'jobs'; await loadJobs(); await loadResumes(); renderJobsPage(); }
-                    else if (page === 'profile') { state.page = 'profile'; await loadMyGoods(); renderProfilePage(); }
-                });
-            });
-        }
+    } catch(e) {
+        console.error('Помилка:', e);
+        showMessage('❌ Помилка з\'єднання', true);
+    } finally {
+        isSubmitting = false;
+    }
+}
         
         window.showAddModal = showAddModal;
         window.switchAddTab = switchAddTab;
