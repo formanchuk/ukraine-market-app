@@ -729,9 +729,7 @@
                     <div class="photo-remove" onclick="removePhoto(${i})">×</div>
                 </div>`
             ).join('');
-            if (selectedPhotos.length < 15) {
-                container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
-            }
+            // Без автоматичного додавання плюсика
         }
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
@@ -1447,7 +1445,6 @@
             const submitBtn = document.getElementById('submitGoodsBtn');
             submitBtn.textContent = '✅ Опублікувати';
             submitBtn.onclick = submitGoods;
-            // Скидаємо кнопки інших типів
             const submitJobBtn = document.getElementById('submitJobBtn');
             submitJobBtn.textContent = '✅ Опублікувати';
             submitJobBtn.onclick = submitJob;
