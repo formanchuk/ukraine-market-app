@@ -506,7 +506,6 @@
         }
         .status-active { background: #4caf50; color: white; }
         .status-archived { background: #9c27b0; color: white; }
-        .status-deleted { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
@@ -804,7 +803,6 @@
         
         // ========== ОСНОВНІ ДІЇ ==========
         
-        // Видалення товару в кошик (status='deleted')
         async function deleteToTrash(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res.success) {
@@ -818,7 +816,6 @@
             return false;
         }
         
-        // ПОВНЕ ВИДАЛЕННЯ з БД
         async function permanentDeleteItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
@@ -886,6 +883,8 @@
             return false;
         }
         
+        // ========== РЕДАГУВАННЯ ==========
+        
         async function editGoods(id) {
             const item = state.myGoods.find(g => g.id === id);
             if (!item) return;
@@ -900,9 +899,10 @@
             renderPhotoList();
             
             const submitBtn = document.getElementById('submitGoodsBtn');
-            submitBtn.textContent = '✏️ Оновити';
+            submitBtn.textContent = '✏️ Оновити товар';
             submitBtn.onclick = () => updateGoods(id);
             
+            switchAddTab('goods');
             document.getElementById('addModal').style.display = 'flex';
         }
         
@@ -933,11 +933,70 @@
             
             isSubmitting = false;
             if (res.success) {
-                showMessage('✅ Оновлено!');
+                showMessage('✅ Товар оновлено!');
                 closeModal();
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
+            } else {
+                showMessage('❌ Помилка оновлення', true);
+            }
+        }
+        
+        async function editResume(id) {
+            const item = state.myResumes.find(r => r.id === id);
+            if (!item) return;
+            
+            document.getElementById('resumeSpecialty').value = item.specialty;
+            document.getElementById('resumeExperience').value = item.experience || '';
+            document.getElementById('resumeSkills').value = item.skills || '';
+            document.getElementById('resumeCity').value = item.city || '';
+            document.getElementById('resumeSalary').value = item.salary || '';
+            document.getElementById('resumePhone').value = item.phone || '';
+            
+            const submitBtn = document.getElementById('submitResumeBtn');
+            submitBtn.textContent = '✏️ Оновити резюме';
+            submitBtn.onclick = () => updateResume(id);
+            
+            switchAddTab('resume');
+            document.getElementById('addModal').style.display = 'flex';
+        }
+        
+        async function updateResume(id) {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            
+            const specialty = document.getElementById('resumeSpecialty')?.value;
+            const experience = document.getElementById('resumeExperience')?.value;
+            const skills = document.getElementById('resumeSkills')?.value;
+            const city = document.getElementById('resumeCity')?.value;
+            const salary = document.getElementById('resumeSalary')?.value;
+            const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
+            
+            if (!specialty) { showMessage('Введіть спеціальність', true); isSubmitting = false; return; }
+            
+            showMessage('⏳ Оновлення...');
+            
+            const res = await apiRequest(`resumes?id=eq.${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ 
+                    specialty: specialty.trim(), 
+                    experience: experience || '', 
+                    skills: skills || '', 
+                    city: city || '', 
+                    salary: salary || '', 
+                    phone: phone.trim()
+                })
+            });
+            
+            isSubmitting = false;
+            if (res.success) {
+                showMessage('✅ Резюме оновлено!');
+                closeModal();
+                await loadResumes();
+                await loadMyResumes();
+                if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'jobs') renderJobsPage();
             } else {
                 showMessage('❌ Помилка оновлення', true);
             }
@@ -1024,134 +1083,141 @@
             setActiveNav('goods');
         }
         
-function renderProfilePage() {
-    const user = state.user || { first_name: 'Користувач', id: 0 };
-    const activeCount = state.myGoods.filter(i => i.status === 'active').length;
-    const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
-    const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
-    const myJobsCount = state.myJobs.length;
-    const myResumesCount = state.myResumes.length;
-    
-    document.getElementById('app').innerHTML = `
-        <div class="app-container">
-            <div class="profile-header">
-                <div class="profile-avatar">👤</div>
-                <div class="profile-name">${escapeHtml(user.first_name)}</div>
-                <div class="profile-stats">
-                    <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
-                    <div><div class="stat-number">${archivedCount}</div><div class="stat-label">В архіві</div></div>
-                    <div><div class="stat-number">${deletedCount}</div><div class="stat-label">Видалених</div></div>
-                    <div><div class="stat-number">${myJobsCount}</div><div class="stat-label">Вакансій</div></div>
-                    <div><div class="stat-number">${myResumesCount}</div><div class="stat-label">Резюме</div></div>
-                </div>
-            </div>
-            <div style="margin-bottom:16px">
-                <input type="tel" id="profilePhone" class="modal-input" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}">
-                <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
-            </div>
-            <div class="profile-tabs">
-                <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
-                <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
-                <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
-                <div class="profile-tab ${state.profileTab === 'jobs' ? 'active' : ''}" onclick="switchProfileTab('jobs')">💼 Мої вакансії (${myJobsCount})</div>
-                <div class="profile-tab ${state.profileTab === 'resumes' ? 'active' : ''}" onclick="switchProfileTab('resumes')">📄 Мої резюме (${myResumesCount})</div>
-            </div>
-            <div id="myGoodsList"></div>
-        </div>
-    `;
-    
-    const list = document.getElementById('myGoodsList');
-    let filtered = [];
-    
-    if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
-    else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
-    else if (state.profileTab === 'deleted') filtered = state.myGoods.filter(i => i.status === 'deleted');
-    else if (state.profileTab === 'jobs') filtered = state.myJobs;
-    else if (state.profileTab === 'resumes') filtered = state.myResumes;
-    
-    if (filtered.length === 0) { 
-        if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
-        else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
-        else list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>';
-        return; 
-    }
-    
-    if (state.profileTab === 'jobs') {
-        list.innerHTML = filtered.map(item => `
-            <div class="my-goods-card">
-                <div class="my-goods-header">
-                    <div class="my-goods-info">
-                        <div class="my-goods-title">${escapeHtml(item.title)}</div>
-                        <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
-                        <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                        <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+        function renderProfilePage() {
+            const user = state.user || { first_name: 'Користувач', id: 0 };
+            const activeCount = state.myGoods.filter(i => i.status === 'active').length;
+            const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
+            const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
+            const myJobsCount = state.myJobs.length;
+            const myResumesCount = state.myResumes.length;
+            
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">👤</div>
+                        <div class="profile-name">${escapeHtml(user.first_name)}</div>
+                        <div class="profile-stats">
+                            <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
+                            <div><div class="stat-number">${archivedCount}</div><div class="stat-label">В архіві</div></div>
+                            <div><div class="stat-number">${deletedCount}</div><div class="stat-label">Видалених</div></div>
+                            <div><div class="stat-number">${myJobsCount}</div><div class="stat-label">Вакансій</div></div>
+                            <div><div class="stat-number">${myResumesCount}</div><div class="stat-label">Резюме</div></div>
+                        </div>
                     </div>
-                </div>
-                <div class="my-goods-actions">
-                    <button class="action-btn action-view" onclick="openDetail(${item.id}, 'job')">👁 Переглянути</button>
-                    <button class="action-btn action-delete" onclick="confirmDeleteJob(${item.id})">🗑 Видалити</button>
-                </div>
-            </div>
-        `).join('');
-    } else if (state.profileTab === 'resumes') {
-        list.innerHTML = filtered.map(item => `
-            <div class="my-goods-card">
-                <div class="my-goods-header">
-                    <div class="my-goods-info">
-                        <div class="my-goods-title">${escapeHtml(item.specialty)}</div>
-                        <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
-                        <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                        <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                    <div style="margin-bottom:16px">
+                        <input type="tel" id="profilePhone" class="modal-input" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}">
+                        <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
-                </div>
-                <div class="my-goods-actions">
-                    <button class="action-btn action-view" onclick="openDetail(${item.id}, 'resume')">👁 Переглянути</button>
-                    <button class="action-btn action-delete" onclick="confirmDeleteResume(${item.id})">🗑 Видалити</button>
-                </div>
-            </div>
-        `).join('');
-    } else if (state.profileTab === 'deleted') {
-        // ВИДАЛЕНІ - ТІЛЬКИ ПЕРЕГЛЯД, БЕЗ КНОПОК
-        list.innerHTML = filtered.map(item => `
-            <div class="my-goods-card">
-                <div class="my-goods-header">
-                    <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                    <div class="my-goods-info">
-                        <div class="my-goods-title">${escapeHtml(item.title)}</div>
-                        <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                        <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                        <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                    <div class="profile-tabs">
+                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'jobs' ? 'active' : ''}" onclick="switchProfileTab('jobs')">💼 Вакансії (${myJobsCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'resumes' ? 'active' : ''}" onclick="switchProfileTab('resumes')">📄 Резюме (${myResumesCount})</div>
                     </div>
+                    <div id="myGoodsList"></div>
                 </div>
-                <div class="my-goods-actions">
-                    <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
-                </div>
-            </div>
-        `).join('');
-    } else {
-        list.innerHTML = filtered.map(item => `
-            <div class="my-goods-card">
-                <div class="my-goods-header">
-                    <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                    <div class="my-goods-info">
-                        <div class="my-goods-title">${escapeHtml(item.title)} ${getStatusBadge(item.status)}</div>
-                        <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                        <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                        <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+            `;
+            
+            const list = document.getElementById('myGoodsList');
+            let filtered = [];
+            
+            if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
+            else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
+            else if (state.profileTab === 'deleted') filtered = state.myGoods.filter(i => i.status === 'deleted');
+            else if (state.profileTab === 'jobs') filtered = state.myJobs;
+            else if (state.profileTab === 'resumes') filtered = state.myResumes;
+            
+            if (filtered.length === 0) { 
+                if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
+                else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
+                else list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>';
+                return; 
+            }
+            
+            // ВАКАНСІЇ
+            if (state.profileTab === 'jobs') {
+                list.innerHTML = filtered.map(item => `
+                    <div class="my-goods-card">
+                        <div class="my-goods-header">
+                            <div class="my-goods-info">
+                                <div class="my-goods-title">${escapeHtml(item.title)}</div>
+                                <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
+                                <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                                <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                            </div>
+                        </div>
+                        <div class="my-goods-actions">
+                            <button class="action-btn action-view" onclick="openDetail(${item.id}, 'job')">👁 Переглянути</button>
+                            <button class="action-btn action-delete" onclick="confirmDeleteJob(${item.id})">🗑 Видалити</button>
+                        </div>
                     </div>
-                </div>
-                <div class="my-goods-actions">
-                    <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
-                    <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
-                    ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
-                    ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
-                    <button class="action-btn action-delete" onclick="confirmDeleteToTrash(${item.id})">🗑 Видалити</button>
-                </div>
-            </div>
-        `).join('');
-    }
-    setActiveNav('profile');
-}
+                `).join('');
+            } 
+            // РЕЗЮМЕ
+            else if (state.profileTab === 'resumes') {
+                list.innerHTML = filtered.map(item => `
+                    <div class="my-goods-card">
+                        <div class="my-goods-header">
+                            <div class="my-goods-info">
+                                <div class="my-goods-title">${escapeHtml(item.specialty)}</div>
+                                <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
+                                <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                                <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                            </div>
+                        </div>
+                        <div class="my-goods-actions">
+                            <button class="action-btn action-view" onclick="openDetail(${item.id}, 'resume')">👁 Переглянути</button>
+                            <button class="action-btn action-edit" onclick="editResume(${item.id})">✏️ Редагувати</button>
+                            <button class="action-btn action-delete" onclick="confirmDeleteResume(${item.id})">🗑 Видалити</button>
+                        </div>
+                    </div>
+                `).join('');
+            } 
+            // ВИДАЛЕНІ - ТІЛЬКИ ПЕРЕГЛЯД
+            else if (state.profileTab === 'deleted') {
+                list.innerHTML = filtered.map(item => `
+                    <div class="my-goods-card">
+                        <div class="my-goods-header">
+                            <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                            <div class="my-goods-info">
+                                <div class="my-goods-title">${escapeHtml(item.title)}</div>
+                                <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                                <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                                <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                            </div>
+                        </div>
+                        <div class="my-goods-actions">
+                            <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
+                        </div>
+                    </div>
+                `).join('');
+            } 
+            // АКТИВНІ ТА АРХІВ - ПОВНІ КНОПКИ
+            else {
+                list.innerHTML = filtered.map(item => `
+                    <div class="my-goods-card">
+                        <div class="my-goods-header">
+                            <div class="my-goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                            <div class="my-goods-info">
+                                <div class="my-goods-title">${escapeHtml(item.title)} ${getStatusBadge(item.status)}</div>
+                                <div class="my-goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                                <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                                <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
+                            </div>
+                        </div>
+                        <div class="my-goods-actions">
+                            <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
+                            <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
+                            ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
+                            ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
+                            <button class="action-btn action-delete" onclick="confirmDeleteToTrash(${item.id})">🗑 Видалити</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            setActiveNav('profile');
+        }
         
         function renderJobsPage() {
             document.getElementById('app').innerHTML = `
@@ -1364,8 +1430,7 @@ function renderProfilePage() {
             document.getElementById('confirmNoBtn').onclick = () => { dialogDiv.style.display = 'none'; showMessage('❌ Скасовано'); };
         }
         
-        function confirmDeleteToTrash(id) { confirmAction('🗑 Видалення', 'Перемістити товар у видалені? Ви зможете його повернути', () => deleteToTrash(id)); }
-        function confirmPermanentDelete(id) { confirmAction('🗑 ПОВНЕ ВИДАЛЕННЯ', 'Увага! Товар буде видалено назавжди без можливості відновлення. Ви впевнені?', () => permanentDeleteItem(id)); }
+        function confirmDeleteToTrash(id) { confirmAction('🗑 Видалення', 'Перемістити товар у видалені?', () => deleteToTrash(id)); }
         function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити товар в архів?', () => archiveItem(id)); }
         function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити товар з архіву?', () => restoreItem(id)); }
         function confirmDeleteJob(id) { confirmAction('🗑 Видалення', 'Видалити вакансію назавжди?', () => deleteJobItem(id)); }
@@ -1382,6 +1447,13 @@ function renderProfilePage() {
             const submitBtn = document.getElementById('submitGoodsBtn');
             submitBtn.textContent = '✅ Опублікувати';
             submitBtn.onclick = submitGoods;
+            // Скидаємо кнопки інших типів
+            const submitJobBtn = document.getElementById('submitJobBtn');
+            submitJobBtn.textContent = '✅ Опублікувати';
+            submitJobBtn.onclick = submitJob;
+            const submitResumeBtn = document.getElementById('submitResumeBtn');
+            submitResumeBtn.textContent = '✅ Опублікувати';
+            submitResumeBtn.onclick = submitResume;
             document.getElementById('addModal').style.display = 'flex'; 
         }
         
@@ -1558,12 +1630,12 @@ function renderProfilePage() {
         window.switchJobsTab = switchJobsTab;
         window.savePhone = savePhone;
         window.confirmDeleteToTrash = confirmDeleteToTrash;
-        window.confirmPermanentDelete = confirmPermanentDelete;
         window.confirmArchive = confirmArchive;
         window.confirmRestore = confirmRestore;
         window.confirmDeleteJob = confirmDeleteJob;
         window.confirmDeleteResume = confirmDeleteResume;
         window.editGoods = editGoods;
+        window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
         
