@@ -814,19 +814,6 @@
             return false;
         }
         
-        async function permanentDeleteItem(id) {
-            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
-            if (res.success) {
-                showMessage('✅ Товар повністю видалено');
-                await loadGoods();
-                await loadMyGoods();
-                if (state.page === 'profile') renderProfilePage();
-                return true;
-            }
-            showMessage('❌ Помилка видалення', true);
-            return false;
-        }
-        
         async function archiveItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
             if (res.success) {
@@ -1169,10 +1156,13 @@
                             <button class="action-btn action-edit" onclick="editResume(${item.id})">✏️ Редагувати</button>
                             <button class="action-btn action-delete" onclick="confirmDeleteResume(${item.id})">🗑 Видалити</button>
                         </div>
+                        <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
+                            📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
+                        </div>
                     </div>
                 `).join('');
             } 
-            // ВИДАЛЕНІ - ТІЛЬКИ ПЕРЕГЛЯД
+            // ВИДАЛЕНІ - ПОКАЗУЄМО НОМЕР ТЕЛЕФОНУ
             else if (state.profileTab === 'deleted') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
@@ -1187,6 +1177,9 @@
                         </div>
                         <div class="my-goods-actions">
                             <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
+                        </div>
+                        <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
+                            📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
                         </div>
                     </div>
                 `).join('');
@@ -1210,6 +1203,9 @@
                             ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
                             ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
                             <button class="action-btn action-delete" onclick="confirmDeleteToTrash(${item.id})">🗑 Видалити</button>
+                        </div>
+                        <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
+                            📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
                         </div>
                     </div>
                 `).join('');
