@@ -309,6 +309,18 @@
             font-size: 12px;
             cursor: pointer;
         }
+        .add-photo {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: #0f3460;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            color: #ffffff;
+        }
         
         .detail-photo-container {
             position: relative;
@@ -521,30 +533,27 @@
                 <select id="goodsCategory" class="modal-select">
                     <option value="Електроніка">📱 Електроніка</option>
                     <option value="Авто">🚗 Авто</option>
-                    <option value="Шини_Диски">🛞 Шини/Диски</option>
+                    <option value="Шини/Диски">🛞 Шини/Диски</option>
                     <option value="Автозапчастини">🔧 Автозапчастини</option>
                     <option value="Нерухомість">🏠 Нерухомість</option>
-                    <option value="Дім_і_сад">🏡 Дім і сад</option>
-                    <option value="Дитячий_світ">👶 Дитячий світ</option>
+                    <option value="Дім і сад">🏡 Дім і сад</option>
+                    <option value="Дитячий світ">👶 Дитячий світ</option>
                     <option value="Тварини">🐾 Тварини</option>
-                    <option value="Мода_і_стиль">👕 Мода і стиль</option>
-                    <option value="Хобі_Відпочинок">🎮 Хобі/Відпочинок</option>
+                    <option value="Мода і стиль">👕 Мода і стиль</option>
+                    <option value="Хобі/Відпочинок">🎮 Хобі/Відпочинок</option>
                     <option value="Книги">📚 Книги</option>
-                    <option value="Віддам_безкоштовно">🎁 Віддам безкоштовно</option>
+                    <option value="Віддам безкоштовно">🎁 Віддам безкоштовно</option>
                     <option value="Обмін">🔄 Обмін</option>
-                    <option value="Бізнес_Послуги">🏢 Бізнес/Послуги</option>
-                    <option value="Оренда_Прокат">🔑 Оренда/Прокат</option>
-                    <option value="Житло_подобово">🏠 Житло подобово</option>
+                    <option value="Бізнес/Послуги">🏢 Бізнес/Послуги</option>
+                    <option value="Оренда/Прокат">🔑 Оренда/Прокат</option>
+                    <option value="Житло подобово">🏠 Житло подобово</option>
                 </select>
                 <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
                 <input type="text" id="goodsCity" class="modal-input" placeholder="Місто">
                 <input type="tel" id="goodsPhone" class="modal-input" placeholder="Телефон для зв'язку *">
                 <textarea id="goodsDesc" class="modal-textarea" placeholder="Опис товару"></textarea>
-               <div class="photo-grid" id="photoList"></div>
-<div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;">
-    <div class="add-photo" onclick="addPhotoInput()" style="width: 70px; height: 70px; background: #0f3460; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer;">+</div>
-    <span style="font-size: 12px; color: #aaaaaa; margin-top: 4px;">Додати фото</span>
-</div>
+                <div class="photo-grid" id="photoList"></div>
+                <div class="add-photo" onclick="addPhotoInput()">+ Додати фото</div>
                 <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">✅ Опублікувати</button>
                 <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
             </div>
@@ -691,11 +700,9 @@
         function getStatusBadge(status) {
             if (status === 'active') return '<span class="status-badge status-active">✓ Активне</span>';
             if (status === 'archived') return '<span class="status-badge status-archived">📦 В архіві</span>';
-            if (status === 'deleted') return '<span class="status-badge status-deleted">🗑 Видалено</span>';
             return '';
         }
         
-        // ========== ФОТО ==========
         function addPhotoInput() {
             if (selectedPhotos.length >= 15) { showMessage('Максимум 15 фото', true); return; }
             const input = document.createElement('input');
@@ -723,11 +730,13 @@
                     <div class="photo-remove" onclick="removePhoto(${i})">×</div>
                 </div>`
             ).join('');
+            if (selectedPhotos.length < 15) {
+                container.innerHTML += `<div class="add-photo" onclick="addPhotoInput()">+</div>`;
+            }
         }
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
         
-        // ========== ЗАВАНТАЖЕННЯ ==========
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
             state.user = tgUser;
@@ -793,8 +802,10 @@
             } catch(e) { console.error(e); state.myResumes = []; }
         }
         
-        // ========== ДІЇ З ТОВАРАМИ ==========
-        async function deleteGoodsItem(id) {
+        // ========== ОСНОВНІ ДІЇ ==========
+        
+        // Видалення товару в кошик (status='deleted')
+        async function deleteToTrash(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res.success) {
                 showMessage('🗑 Товар переміщено у видалені');
@@ -807,7 +818,21 @@
             return false;
         }
         
-        async function archiveGoodsItem(id) {
+        // ПОВНЕ ВИДАЛЕННЯ з БД
+        async function permanentDeleteItem(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
+            if (res.success) {
+                showMessage('✅ Товар повністю видалено');
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+                return true;
+            }
+            showMessage('❌ Помилка видалення', true);
+            return false;
+        }
+        
+        async function archiveItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
             if (res.success) {
                 showMessage('📦 Товар переміщено в архів');
@@ -820,10 +845,10 @@
             return false;
         }
         
-        async function restoreGoodsItem(id) {
+        async function restoreItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
             if (res.success) {
-                showMessage('✅ Товар відновлено');
+                showMessage('✅ Товар відновлено з архіву');
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
@@ -919,14 +944,22 @@
         }
         
         const allCategories = [
-            { icon: '📱', name: 'Електроніка', id: 'Електроніка' }, { icon: '🚗', name: 'Авто', id: 'Авто' },
-            { icon: '🛞', name: 'Шини/Диски', id: 'Шини_Диски' }, { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
-            { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' }, { icon: '🏡', name: 'Дім і сад', id: 'Дім_і_сад' },
-            { icon: '👶', name: 'Дитячий світ', id: 'Дитячий_світ' }, { icon: '🐾', name: 'Тварини', id: 'Тварини' },
-            { icon: '👕', name: 'Мода і стиль', id: 'Мода_і_стиль' }, { icon: '🎮', name: 'Хобі/Відпочинок', id: 'Хобі_Відпочинок' },
-            { icon: '📚', name: 'Книги', id: 'Книги' }, { icon: '🎁', name: 'Віддам безкоштовно', id: 'Віддам_безкоштовно' },
-            { icon: '🔄', name: 'Обмін', id: 'Обмін' }, { icon: '🏢', name: 'Бізнес/Послуги', id: 'Бізнес_Послуги' },
-            { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда_Прокат' }, { icon: '🏠', name: 'Житло подобово', id: 'Житло_подобово' }
+            { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
+            { icon: '🚗', name: 'Авто', id: 'Авто' },
+            { icon: '🛞', name: 'Шини/Диски', id: 'Шини/Диски' },
+            { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
+            { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' },
+            { icon: '🏡', name: 'Дім і сад', id: 'Дім і сад' },
+            { icon: '👶', name: 'Дитячий світ', id: 'Дитячий світ' },
+            { icon: '🐾', name: 'Тварини', id: 'Тварини' },
+            { icon: '👕', name: 'Мода і стиль', id: 'Мода і стиль' },
+            { icon: '🎮', name: 'Хобі/Відпочинок', id: 'Хобі/Відпочинок' },
+            { icon: '📚', name: 'Книги', id: 'Книги' },
+            { icon: '🎁', name: 'Віддам безкоштовно', id: 'Віддам безкоштовно' },
+            { icon: '🔄', name: 'Обмін', id: 'Обмін' },
+            { icon: '🏢', name: 'Бізнес/Послуги', id: 'Бізнес/Послуги' },
+            { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда/Прокат' },
+            { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
         ];
         
         function renderHomePage() {
@@ -1005,7 +1038,9 @@
                         <div class="profile-avatar">👤</div>
                         <div class="profile-name">${escapeHtml(user.first_name)}</div>
                         <div class="profile-stats">
-                            <div><div class="stat-number">${activeCount}</div><div class="stat-label">Товарів</div></div>
+                            <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
+                            <div><div class="stat-number">${archivedCount}</div><div class="stat-label">В архіві</div></div>
+                            <div><div class="stat-number">${deletedCount}</div><div class="stat-label">Видалених</div></div>
                             <div><div class="stat-number">${myJobsCount}</div><div class="stat-label">Вакансій</div></div>
                             <div><div class="stat-number">${myResumesCount}</div><div class="stat-label">Резюме</div></div>
                         </div>
@@ -1015,7 +1050,7 @@
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
-                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Товари (${activeCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'active' ? 'active' : ''}" onclick="switchProfileTab('active')">✓ Активні (${activeCount})</div>
                         <div class="profile-tab ${state.profileTab === 'archived' ? 'active' : ''}" onclick="switchProfileTab('archived')">📦 Архів (${archivedCount})</div>
                         <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
                         <div class="profile-tab ${state.profileTab === 'jobs' ? 'active' : ''}" onclick="switchProfileTab('jobs')">💼 Мої вакансії (${myJobsCount})</div>
@@ -1092,7 +1127,7 @@
                             <button class="action-btn action-edit" onclick="editGoods(${item.id})">✏️ Редагувати</button>
                             ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
                             ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
-                            <button class="action-btn action-delete" onclick="confirmDeleteGoods(${item.id})">🗑 Видалити</button>
+                            <button class="action-btn action-delete" onclick="confirmDeleteToTrash(${item.id})">🗑 Видалити</button>
                         </div>
                     </div>
                 `).join('');
@@ -1311,9 +1346,10 @@
             document.getElementById('confirmNoBtn').onclick = () => { dialogDiv.style.display = 'none'; showMessage('❌ Скасовано'); };
         }
         
-        function confirmDeleteGoods(id) { confirmAction('🗑 Видалення', 'Перемістити товар у видалені?', () => deleteGoodsItem(id)); }
-        function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити товар в архів?', () => archiveGoodsItem(id)); }
-        function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити товар з архіву?', () => restoreGoodsItem(id)); }
+        function confirmDeleteToTrash(id) { confirmAction('🗑 Видалення', 'Перемістити товар у видалені? Ви зможете його повернути', () => deleteToTrash(id)); }
+        function confirmPermanentDelete(id) { confirmAction('🗑 ПОВНЕ ВИДАЛЕННЯ', 'Увага! Товар буде видалено назавжди без можливості відновлення. Ви впевнені?', () => permanentDeleteItem(id)); }
+        function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити товар в архів?', () => archiveItem(id)); }
+        function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити товар з архіву?', () => restoreItem(id)); }
         function confirmDeleteJob(id) { confirmAction('🗑 Видалення', 'Видалити вакансію назавжди?', () => deleteJobItem(id)); }
         function confirmDeleteResume(id) { confirmAction('🗑 Видалення', 'Видалити резюме назавжди?', () => deleteResumeItem(id)); }
         
@@ -1336,7 +1372,6 @@
             selectedPhotos = []; 
             renderPhotoList(); 
             isSubmitting = false;
-            // Повертаємо кнопку в початковий стан
             const submitBtn = document.getElementById('submitGoodsBtn');
             submitBtn.textContent = '✅ Опублікувати';
             submitBtn.onclick = submitGoods;
@@ -1504,7 +1539,8 @@
         window.switchProfileTab = switchProfileTab;
         window.switchJobsTab = switchJobsTab;
         window.savePhone = savePhone;
-        window.confirmDeleteGoods = confirmDeleteGoods;
+        window.confirmDeleteToTrash = confirmDeleteToTrash;
+        window.confirmPermanentDelete = confirmPermanentDelete;
         window.confirmArchive = confirmArchive;
         window.confirmRestore = confirmRestore;
         window.confirmDeleteJob = confirmDeleteJob;
