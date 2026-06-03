@@ -215,10 +215,8 @@
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
-            cursor: grab;
-        }
-        .profile-tabs:active {
-            cursor: grabbing;
+            overscroll-behavior-x: contain;
+            touch-action: pan-x;
         }
         .profile-tab {
             padding: 8px 16px;
@@ -232,6 +230,7 @@
             flex-shrink: 0;
             user-select: none;
             transition: all 0.2s;
+            touch-action: manipulation;
         }
         .profile-tab.active { background: #2aab6e; color: white; }
         .profile-tab:active { transform: scale(0.95); }
@@ -521,6 +520,19 @@
         }
         .status-active { background: #4caf50; color: white; }
         .status-archived { background: #9c27b0; color: white; }
+        
+        /* Запобігаємо блокуванню скролу */
+        .profile-tabs::-webkit-scrollbar {
+            height: 3px;
+        }
+        .profile-tabs::-webkit-scrollbar-track {
+            background: #0f3460;
+            border-radius: 3px;
+        }
+        .profile-tabs::-webkit-scrollbar-thumb {
+            background: #2aab6e;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -1687,6 +1699,50 @@
             });
         }
         
+        // Додатковий обробник для горизонтального скролу
+        function initProfileTabsScroll() {
+            const tabsContainer = document.querySelector('.profile-tabs');
+            if (tabsContainer) {
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                
+                tabsContainer.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    startX = e.pageX - tabsContainer.offsetLeft;
+                    scrollLeft = tabsContainer.scrollLeft;
+                });
+                
+                tabsContainer.addEventListener('mouseleave', () => {
+                    isDown = false;
+                });
+                
+                tabsContainer.addEventListener('mouseup', () => {
+                    isDown = false;
+                });
+                
+                tabsContainer.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - tabsContainer.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    tabsContainer.scrollLeft = scrollLeft - walk;
+                });
+                
+                // Для тач-скролу на мобільних
+                tabsContainer.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].pageX - tabsContainer.offsetLeft;
+                    scrollLeft = tabsContainer.scrollLeft;
+                }, { passive: true });
+                
+                tabsContainer.addEventListener('touchmove', (e) => {
+                    const x = e.touches[0].pageX - tabsContainer.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    tabsContainer.scrollLeft = scrollLeft - walk;
+                });
+            }
+        }
+        
         window.showAddModal = showAddModal;
         window.switchAddTab = switchAddTab;
         window.submitGoods = submitGoods;
@@ -1727,6 +1783,7 @@
             await loadMyResumes();
             renderHomePage();
             initNavigation();
+            setTimeout(initProfileTabsScroll, 100);
         })();
     </script>
 </body>
