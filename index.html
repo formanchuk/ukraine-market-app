@@ -207,16 +207,13 @@
         
         .profile-tabs {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 20px;
-            padding-bottom: 8px;
             overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
+            padding-bottom: 4px;
         }
         .profile-tab {
-            padding: 8px 16px;
+            padding: 10px 16px;
             background: #0f3460;
             border-radius: 30px;
             font-size: 13px;
@@ -224,10 +221,8 @@
             cursor: pointer;
             white-space: nowrap;
             color: #ffffff;
-            flex-shrink: 0;
         }
         .profile-tab.active { background: #2aab6e; color: white; }
-        .profile-tab:active { transform: scale(0.95); }
         
         .my-goods-card {
             margin-bottom: 16px;
@@ -280,7 +275,6 @@
             justify-content: center;
             gap: 32px;
             margin-top: 16px;
-            flex-wrap: wrap;
         }
         .stat-number { font-size: 28px; font-weight: 700; color: #2aab6e; }
         .stat-label { font-size: 12px; color: #aaaaaa; }
@@ -735,6 +729,7 @@
                     <div class="photo-remove" onclick="removePhoto(${i})">×</div>
                 </div>`
             ).join('');
+            // Без автоматичного додавання плюсика
         }
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
@@ -762,6 +757,7 @@
                 const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) state.myGoods = res.data;
                 else state.myGoods = [];
+                if (state.page === 'profile') renderProfilePage();
             } catch(e) { console.error(e); state.myGoods = []; }
         }
         
@@ -784,22 +780,24 @@
         }
         
         async function loadMyJobs() {
-            if (!state.user) return;
-            try {
-                const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myJobs = res.data;
-                else state.myJobs = [];
-            } catch(e) { console.error(e); state.myJobs = []; }
+    if (!state.user) return;
+    console.log('Завантаження моїх вакансій для user_id:', state.user.id);
+    try {
+        const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+        console.log('Відповідь від Supabase:', res);
+        if (res.success && res.data) {
+            state.myJobs = res.data;
+            console.log('✅ Завантажено вакансій:', state.myJobs.length);
+        } else {
+            state.myJobs = [];
+            console.log('❌ Немає даних або помилка');
         }
-        
-        async function loadMyResumes() {
-            if (!state.user) return;
-            try {
-                const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myResumes = res.data;
-                else state.myResumes = [];
-            } catch(e) { console.error(e); state.myResumes = []; }
-        }
+        if (state.page === 'profile') renderProfilePage();
+    } catch(e) { 
+        console.error('Помилка loadMyJobs:', e);
+        state.myJobs = []; 
+    }
+}
         
         // ========== ОСНОВНІ ДІЇ ==========
         
@@ -807,6 +805,7 @@
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res.success) {
                 showMessage('🗑 Товар переміщено у видалені');
+                await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
                 return true;
@@ -819,6 +818,7 @@
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
             if (res.success) {
                 showMessage('📦 Товар переміщено в архів');
+                await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
                 return true;
@@ -831,6 +831,7 @@
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
             if (res.success) {
                 showMessage('✅ Товар відновлено з архіву');
+                await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
                 return true;
@@ -843,8 +844,10 @@
             const res = await apiRequest(`jobs?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
                 showMessage('✅ Вакансію видалено');
+                await loadJobs();
                 await loadMyJobs();
                 if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'jobs') renderJobsPage();
                 return true;
             }
             showMessage('❌ Помилка видалення', true);
@@ -855,8 +858,10 @@
             const res = await apiRequest(`resumes?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
                 showMessage('✅ Резюме видалено');
+                await loadResumes();
                 await loadMyResumes();
                 if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'jobs') renderJobsPage();
                 return true;
             }
             showMessage('❌ Помилка видалення', true);
@@ -915,67 +920,8 @@
             if (res.success) {
                 showMessage('✅ Товар оновлено!');
                 closeModal();
+                await loadGoods();
                 await loadMyGoods();
-                if (state.page === 'profile') renderProfilePage();
-            } else {
-                showMessage('❌ Помилка оновлення', true);
-            }
-        }
-        
-        async function editJob(id) {
-            const item = state.myJobs.find(j => j.id === id);
-            if (!item) return;
-            
-            document.getElementById('jobTitle').value = item.title;
-            document.getElementById('jobCategory').value = item.category || 'IT/Розробка';
-            document.getElementById('jobSalary').value = item.salary || '';
-            document.getElementById('jobCity').value = item.city || '';
-            document.getElementById('jobPhone').value = item.phone || '';
-            document.getElementById('jobSchedule').value = item.schedule || '';
-            document.getElementById('jobDesc').value = item.description || '';
-            
-            const submitBtn = document.getElementById('submitJobBtn');
-            submitBtn.textContent = '✏️ Оновити вакансію';
-            submitBtn.onclick = () => updateJob(id);
-            
-            switchAddTab('job');
-            document.getElementById('addModal').style.display = 'flex';
-        }
-        
-        async function updateJob(id) {
-            if (isSubmitting) return;
-            isSubmitting = true;
-            
-            const title = document.getElementById('jobTitle')?.value;
-            const category = document.getElementById('jobCategory')?.value;
-            const salary = document.getElementById('jobSalary')?.value;
-            const city = document.getElementById('jobCity')?.value;
-            const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
-            const schedule = document.getElementById('jobSchedule')?.value;
-            const desc = document.getElementById('jobDesc')?.value;
-            
-            if (!title) { showMessage('Введіть назву вакансії', true); isSubmitting = false; return; }
-            
-            showMessage('⏳ Оновлення...');
-            
-            const res = await apiRequest(`jobs?id=eq.${id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ 
-                    title: title.trim(), 
-                    category: category || 'Інше',
-                    salary: salary || '', 
-                    city: city || '', 
-                    phone: phone.trim(), 
-                    schedule: schedule || '', 
-                    description: desc || ''
-                })
-            });
-            
-            isSubmitting = false;
-            if (res.success) {
-                showMessage('✅ Вакансію оновлено!');
-                closeModal();
-                await loadMyJobs();
                 if (state.page === 'profile') renderProfilePage();
             } else {
                 showMessage('❌ Помилка оновлення', true);
@@ -1032,8 +978,10 @@
             if (res.success) {
                 showMessage('✅ Резюме оновлено!');
                 closeModal();
+                await loadResumes();
                 await loadMyResumes();
                 if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'jobs') renderJobsPage();
             } else {
                 showMessage('❌ Помилка оновлення', true);
             }
@@ -1169,16 +1117,16 @@
                 if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
                 else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
                 else list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>';
-                setActiveNav('profile');
                 return; 
             }
             
+            // ВАКАНСІЇ
             if (state.profileTab === 'jobs') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
                         <div class="my-goods-header">
                             <div class="my-goods-info">
-                                <div class="my-goods-title">📌 ${escapeHtml(item.title)}</div>
+                                <div class="my-goods-title">${escapeHtml(item.title)}</div>
                                 <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
                                 <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                                 <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
@@ -1186,17 +1134,18 @@
                         </div>
                         <div class="my-goods-actions">
                             <button class="action-btn action-view" onclick="openDetail(${item.id}, 'job')">👁 Переглянути</button>
-                            <button class="action-btn action-edit" onclick="editJob(${item.id})">✏️ Редагувати</button>
                             <button class="action-btn action-delete" onclick="confirmDeleteJob(${item.id})">🗑 Видалити</button>
                         </div>
                     </div>
                 `).join('');
-            } else if (state.profileTab === 'resumes') {
+            } 
+            // РЕЗЮМЕ
+            else if (state.profileTab === 'resumes') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
                         <div class="my-goods-header">
                             <div class="my-goods-info">
-                                <div class="my-goods-title">📄 ${escapeHtml(item.specialty)}</div>
+                                <div class="my-goods-title">${escapeHtml(item.specialty)}</div>
                                 <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
                                 <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                                 <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
@@ -1207,9 +1156,14 @@
                             <button class="action-btn action-edit" onclick="editResume(${item.id})">✏️ Редагувати</button>
                             <button class="action-btn action-delete" onclick="confirmDeleteResume(${item.id})">🗑 Видалити</button>
                         </div>
+                        <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
+                            📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
+                        </div>
                     </div>
                 `).join('');
-            } else if (state.profileTab === 'deleted') {
+            } 
+            // ВИДАЛЕНІ - ПОКАЗУЄМО НОМЕР ТЕЛЕФОНУ
+            else if (state.profileTab === 'deleted') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
                         <div class="my-goods-header">
@@ -1229,7 +1183,9 @@
                         </div>
                     </div>
                 `).join('');
-            } else {
+            } 
+            // АКТИВНІ ТА АРХІВ - ПОВНІ КНОПКИ
+            else {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
                         <div class="my-goods-header">
@@ -1247,6 +1203,9 @@
                             ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
                             ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
                             <button class="action-btn action-delete" onclick="confirmDeleteToTrash(${item.id})">🗑 Видалити</button>
+                        </div>
+                        <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
+                            📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
                         </div>
                     </div>
                 `).join('');
@@ -1439,18 +1398,8 @@
             }
         }
         
-        function switchProfileTab(tab) { 
-            state.profileTab = tab; 
-            renderProfilePage(); 
-        }
-        
-        function switchJobsTab(tab) { 
-            state.jobsTab = tab; 
-            if (tab === 'jobs') loadJobs(); 
-            else loadResumes(); 
-            renderJobsPage(); 
-        }
-        
+        function switchProfileTab(tab) { state.profileTab = tab; renderProfilePage(); }
+        function switchJobsTab(tab) { state.jobsTab = tab; if (tab === 'jobs') loadJobs(); else loadResumes(); renderJobsPage(); }
         function savePhone() {
             const phone = document.getElementById('profilePhone')?.value;
             if (phone && state.user) { localStorage.setItem('userPhone', phone); showMessage('✅ Номер збережено'); }
@@ -1506,6 +1455,9 @@
             selectedPhotos = []; 
             renderPhotoList(); 
             isSubmitting = false;
+            const submitBtn = document.getElementById('submitGoodsBtn');
+            submitBtn.textContent = '✅ Опублікувати';
+            submitBtn.onclick = submitGoods;
         }
         
         function switchAddTab(tab) {
@@ -1549,6 +1501,7 @@
                 showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
                 selectedPhotos = [];
+                await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'home') renderHomePage();
@@ -1589,10 +1542,11 @@
             if (res.success) {
                 showMessage('✅ Вакансію опубліковано!');
                 closeModal();
+                await loadJobs();
                 await loadMyJobs();
-                if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'home') renderHomePage();
                 if (state.page === 'jobs') renderJobsPage();
+                if (state.page === 'profile') renderProfilePage();
             } else {
                 showMessage('❌ Помилка публікації вакансії', true);
             }
@@ -1627,10 +1581,11 @@
             if (res.success) {
                 showMessage('✅ Резюме опубліковано!');
                 closeModal();
+                await loadResumes();
                 await loadMyResumes();
-                if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'home') renderHomePage();
                 if (state.page === 'jobs') renderJobsPage();
+                if (state.page === 'profile') renderProfilePage();
             } else {
                 showMessage('❌ Помилка публікації резюме', true);
             }
@@ -1640,31 +1595,10 @@
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const page = btn.dataset.page;
-                    if (page === 'home') { 
-                        state.page = 'home'; 
-                        state.category = null; 
-                        await loadGoods(); 
-                        await loadJobs(); 
-                        await loadResumes(); 
-                        renderHomePage(); 
-                    }
-                    else if (page === 'goods') { 
-                        state.page = 'goods'; 
-                        await loadGoods(); 
-                    }
-                    else if (page === 'jobs') { 
-                        state.page = 'jobs'; 
-                        await loadJobs(); 
-                        await loadResumes(); 
-                        renderJobsPage(); 
-                    }
-                    else if (page === 'profile') { 
-                        state.page = 'profile'; 
-                        await loadMyGoods(); 
-                        await loadMyJobs(); 
-                        await loadMyResumes(); 
-                        renderProfilePage(); 
-                    }
+                    if (page === 'home') { state.page = 'home'; state.category = null; await loadGoods(); await loadJobs(); await loadResumes(); renderHomePage(); }
+                    else if (page === 'goods') { state.page = 'goods'; await loadGoods(); }
+                    else if (page === 'jobs') { state.page = 'jobs'; await loadJobs(); await loadResumes(); renderJobsPage(); }
+                    else if (page === 'profile') { state.page = 'profile'; await loadMyGoods(); await loadMyJobs(); await loadMyResumes(); renderProfilePage(); }
                 });
             });
         }
@@ -1694,7 +1628,6 @@
         window.confirmDeleteJob = confirmDeleteJob;
         window.confirmDeleteResume = confirmDeleteResume;
         window.editGoods = editGoods;
-        window.editJob = editJob;
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
