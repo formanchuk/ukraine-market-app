@@ -780,24 +780,24 @@
         }
         
         async function loadMyJobs() {
-            if (!state.user) return;
-            try {
-                const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myJobs = res.data;
-                else state.myJobs = [];
-                if (state.page === 'profile') renderProfilePage();
-            } catch(e) { console.error(e); state.myJobs = []; }
+    if (!state.user) return;
+    console.log('Завантаження моїх вакансій для user_id:', state.user.id);
+    try {
+        const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+        console.log('Відповідь від Supabase:', res);
+        if (res.success && res.data) {
+            state.myJobs = res.data;
+            console.log('✅ Завантажено вакансій:', state.myJobs.length);
+        } else {
+            state.myJobs = [];
+            console.log('❌ Немає даних або помилка');
         }
-        
-        async function loadMyResumes() {
-            if (!state.user) return;
-            try {
-                const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myResumes = res.data;
-                else state.myResumes = [];
-                if (state.page === 'profile') renderProfilePage();
-            } catch(e) { console.error(e); state.myResumes = []; }
-        }
+        if (state.page === 'profile') renderProfilePage();
+    } catch(e) { 
+        console.error('Помилка loadMyJobs:', e);
+        state.myJobs = []; 
+    }
+}
         
         // ========== ОСНОВНІ ДІЇ ==========
         
