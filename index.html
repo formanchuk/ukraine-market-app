@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ukraine Market</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="icon" href="data:,">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -214,6 +215,10 @@
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
+            cursor: grab;
+        }
+        .profile-tabs:active {
+            cursor: grabbing;
         }
         .profile-tab {
             padding: 8px 16px;
@@ -225,6 +230,8 @@
             white-space: nowrap;
             color: #ffffff;
             flex-shrink: 0;
+            user-select: none;
+            transition: all 0.2s;
         }
         .profile-tab.active { background: #2aab6e; color: white; }
         .profile-tab:active { transform: scale(0.95); }
@@ -259,7 +266,9 @@
             border: none;
             color: white;
             text-align: center;
+            transition: opacity 0.2s;
         }
+        .action-btn:active { opacity: 0.8; }
         .action-view { background: #2196f3; }
         .action-edit { background: #ff9800; }
         .action-archive { background: #9c27b0; }
@@ -760,8 +769,11 @@
             if (!state.user) return;
             try {
                 const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myGoods = res.data;
-                else state.myGoods = [];
+                if (res.success && res.data) {
+                    state.myGoods = res.data;
+                } else {
+                    state.myGoods = [];
+                }
             } catch(e) { console.error(e); state.myGoods = []; }
         }
         
@@ -787,8 +799,11 @@
             if (!state.user) return;
             try {
                 const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myJobs = res.data;
-                else state.myJobs = [];
+                if (res.success && res.data) {
+                    state.myJobs = res.data;
+                } else {
+                    state.myJobs = [];
+                }
             } catch(e) { console.error(e); state.myJobs = []; }
         }
         
@@ -796,8 +811,11 @@
             if (!state.user) return;
             try {
                 const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myResumes = res.data;
-                else state.myResumes = [];
+                if (res.success && res.data) {
+                    state.myResumes = res.data;
+                } else {
+                    state.myResumes = [];
+                }
             } catch(e) { console.error(e); state.myResumes = []; }
         }
         
