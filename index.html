@@ -729,7 +729,6 @@
                     <div class="photo-remove" onclick="removePhoto(${i})">×</div>
                 </div>`
             ).join('');
-            // Без автоматичного додавання плюсика
         }
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
@@ -780,24 +779,32 @@
         }
         
         async function loadMyJobs() {
-    if (!state.user) return;
-    console.log('Завантаження моїх вакансій для user_id:', state.user.id);
-    try {
-        const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-        console.log('Відповідь від Supabase:', res);
-        if (res.success && res.data) {
-            state.myJobs = res.data;
-            console.log('✅ Завантажено вакансій:', state.myJobs.length);
-        } else {
-            state.myJobs = [];
-            console.log('❌ Немає даних або помилка');
+            if (!state.user) return;
+            try {
+                const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (res.success && res.data) {
+                    state.myJobs = res.data;
+                    console.log('✅ Завантажено вакансій:', state.myJobs.length);
+                } else {
+                    state.myJobs = [];
+                }
+                if (state.page === 'profile') renderProfilePage();
+            } catch(e) { console.error(e); state.myJobs = []; }
         }
-        if (state.page === 'profile') renderProfilePage();
-    } catch(e) { 
-        console.error('Помилка loadMyJobs:', e);
-        state.myJobs = []; 
-    }
-}
+        
+        async function loadMyResumes() {
+            if (!state.user) return;
+            try {
+                const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (res.success && res.data) {
+                    state.myResumes = res.data;
+                    console.log('✅ Завантажено резюме:', state.myResumes.length);
+                } else {
+                    state.myResumes = [];
+                }
+                if (state.page === 'profile') renderProfilePage();
+            } catch(e) { console.error(e); state.myResumes = []; }
+        }
         
         // ========== ОСНОВНІ ДІЇ ==========
         
@@ -841,6 +848,7 @@
         }
         
         async function deleteJobItem(id) {
+            if (!confirm('Видалити вакансію назавжди?')) return;
             const res = await apiRequest(`jobs?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
                 showMessage('✅ Вакансію видалено');
@@ -855,6 +863,7 @@
         }
         
         async function deleteResumeItem(id) {
+            if (!confirm('Видалити резюме назавжди?')) return;
             const res = await apiRequest(`resumes?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
                 showMessage('✅ Резюме видалено');
@@ -923,6 +932,68 @@
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
+            } else {
+                showMessage('❌ Помилка оновлення', true);
+            }
+        }
+        
+        async function editJob(id) {
+            const item = state.myJobs.find(j => j.id === id);
+            if (!item) return;
+            
+            document.getElementById('jobTitle').value = item.title;
+            document.getElementById('jobCategory').value = item.category || 'IT/Розробка';
+            document.getElementById('jobSalary').value = item.salary || '';
+            document.getElementById('jobCity').value = item.city || '';
+            document.getElementById('jobPhone').value = item.phone || '';
+            document.getElementById('jobSchedule').value = item.schedule || '';
+            document.getElementById('jobDesc').value = item.description || '';
+            
+            const submitBtn = document.getElementById('submitJobBtn');
+            submitBtn.textContent = '✏️ Оновити вакансію';
+            submitBtn.onclick = () => updateJob(id);
+            
+            switchAddTab('job');
+            document.getElementById('addModal').style.display = 'flex';
+        }
+        
+        async function updateJob(id) {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            
+            const title = document.getElementById('jobTitle')?.value;
+            const category = document.getElementById('jobCategory')?.value;
+            const salary = document.getElementById('jobSalary')?.value;
+            const city = document.getElementById('jobCity')?.value;
+            const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
+            const schedule = document.getElementById('jobSchedule')?.value;
+            const desc = document.getElementById('jobDesc')?.value;
+            
+            if (!title) { showMessage('Введіть назву вакансії', true); isSubmitting = false; return; }
+            
+            showMessage('⏳ Оновлення...');
+            
+            const res = await apiRequest(`jobs?id=eq.${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ 
+                    title: title.trim(), 
+                    category: category || 'Інше',
+                    salary: salary || '', 
+                    city: city || '', 
+                    phone: phone.trim(), 
+                    schedule: schedule || '', 
+                    description: desc || ''
+                })
+            });
+            
+            isSubmitting = false;
+            if (res.success) {
+                showMessage('✅ Вакансію оновлено!');
+                closeModal();
+                await loadJobs();
+                await loadMyJobs();
+                if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'jobs') renderJobsPage();
             } else {
                 showMessage('❌ Помилка оновлення', true);
             }
@@ -1117,6 +1188,7 @@
                 if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
                 else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
                 else list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>';
+                setActiveNav('profile');
                 return; 
             }
             
@@ -1126,7 +1198,7 @@
                     <div class="my-goods-card">
                         <div class="my-goods-header">
                             <div class="my-goods-info">
-                                <div class="my-goods-title">${escapeHtml(item.title)}</div>
+                                <div class="my-goods-title">📌 ${escapeHtml(item.title)}</div>
                                 <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
                                 <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                                 <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
@@ -1134,6 +1206,7 @@
                         </div>
                         <div class="my-goods-actions">
                             <button class="action-btn action-view" onclick="openDetail(${item.id}, 'job')">👁 Переглянути</button>
+                            <button class="action-btn action-edit" onclick="editJob(${item.id})">✏️ Редагувати</button>
                             <button class="action-btn action-delete" onclick="confirmDeleteJob(${item.id})">🗑 Видалити</button>
                         </div>
                     </div>
@@ -1145,7 +1218,7 @@
                     <div class="my-goods-card">
                         <div class="my-goods-header">
                             <div class="my-goods-info">
-                                <div class="my-goods-title">${escapeHtml(item.specialty)}</div>
+                                <div class="my-goods-title">📄 ${escapeHtml(item.specialty)}</div>
                                 <div class="my-goods-price">💰 ${escapeHtml(item.salary)} грн</div>
                                 <div class="goods-meta">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                                 <div class="goods-meta">📅 ${new Date(item.created_at).toLocaleDateString('uk-UA')}</div>
@@ -1156,13 +1229,10 @@
                             <button class="action-btn action-edit" onclick="editResume(${item.id})">✏️ Редагувати</button>
                             <button class="action-btn action-delete" onclick="confirmDeleteResume(${item.id})">🗑 Видалити</button>
                         </div>
-                        <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
-                            📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
-                        </div>
                     </div>
                 `).join('');
             } 
-            // ВИДАЛЕНІ - ПОКАЗУЄМО НОМЕР ТЕЛЕФОНУ
+            // ВИДАЛЕНІ - ТІЛЬКИ ПЕРЕГЛЯД
             else if (state.profileTab === 'deleted') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
@@ -1203,9 +1273,6 @@
                             ${item.status === 'active' ? `<button class="action-btn action-archive" onclick="confirmArchive(${item.id})">📦 Архів</button>` : ''}
                             ${item.status === 'archived' ? `<button class="action-btn action-restore" onclick="confirmRestore(${item.id})">🔄 Відновити</button>` : ''}
                             <button class="action-btn action-delete" onclick="confirmDeleteToTrash(${item.id})">🗑 Видалити</button>
-                        </div>
-                        <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
-                            📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
                         </div>
                     </div>
                 `).join('');
@@ -1398,8 +1465,18 @@
             }
         }
         
-        function switchProfileTab(tab) { state.profileTab = tab; renderProfilePage(); }
-        function switchJobsTab(tab) { state.jobsTab = tab; if (tab === 'jobs') loadJobs(); else loadResumes(); renderJobsPage(); }
+        function switchProfileTab(tab) { 
+            state.profileTab = tab; 
+            renderProfilePage(); 
+        }
+        
+        function switchJobsTab(tab) { 
+            state.jobsTab = tab; 
+            if (tab === 'jobs') loadJobs(); 
+            else loadResumes(); 
+            renderJobsPage(); 
+        }
+        
         function savePhone() {
             const phone = document.getElementById('profilePhone')?.value;
             if (phone && state.user) { localStorage.setItem('userPhone', phone); showMessage('✅ Номер збережено'); }
@@ -1455,9 +1532,6 @@
             selectedPhotos = []; 
             renderPhotoList(); 
             isSubmitting = false;
-            const submitBtn = document.getElementById('submitGoodsBtn');
-            submitBtn.textContent = '✅ Опублікувати';
-            submitBtn.onclick = submitGoods;
         }
         
         function switchAddTab(tab) {
@@ -1628,6 +1702,7 @@
         window.confirmDeleteJob = confirmDeleteJob;
         window.confirmDeleteResume = confirmDeleteResume;
         window.editGoods = editGoods;
+        window.editJob = editJob;
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
