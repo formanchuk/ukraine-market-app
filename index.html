@@ -205,24 +205,29 @@
         .btn-danger { background: #dc3545; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
         
-        .profile-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
-        .profile-tab {
-            padding: 10px 16px;
-            background: #0f3460;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-            color: #ffffff;
-        }
-        .profile-tab.active { background: #2aab6e; color: white; }
+       .profile-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    white-space: nowrap;
+}
+.profile-tab {
+    padding: 10px 16px;
+    background: #0f3460;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+.profile-tab.active { background: #2aab6e; color: white; }}
         
         .my-goods-card {
             margin-bottom: 16px;
