@@ -16,7 +16,6 @@
             padding-bottom: 70px;
         }
         .app-container { padding: 16px; padding-bottom: 80px; }
-        
         .header {
             display: flex;
             justify-content: space-between;
@@ -36,7 +35,6 @@
             border-radius: 10px;
             color: #ffffff;
         }
-        
         .search-box {
             width: 100%;
             padding: 14px 16px;
@@ -50,7 +48,6 @@
         }
         .search-box::placeholder { color: #888888; }
         .search-box:focus { background: #0f3460; box-shadow: 0 0 0 2px #2aab6e; }
-        
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -68,7 +65,6 @@
         .category-item:active { transform: scale(0.96); }
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
         .category-name { font-size: 12px; font-weight: 500; color: #ffffff; }
-        
         .goods-list, .fresh-list { display: flex; flex-direction: column; gap: 12px; }
         .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card {
             background: var(--tg-theme-secondary-bg-color, #16213e);
@@ -97,11 +93,9 @@
         .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 4px; }
         .goods-meta { font-size: 12px; color: #aaaaaa; margin-bottom: 2px; }
         .goods-city { font-size: 12px; color: #aaaaaa; }
-        
         .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .job-city { font-size: 13px; color: #aaaaaa; margin-top: 4px; }
-        
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -136,7 +130,6 @@
         .nav-item:active { transform: scale(0.95); }
         .nav-icon { font-size: 22px; }
         .nav-label { font-size: 11px; font-weight: 600; }
-        
         .fab {
             position: fixed;
             bottom: 80px;
@@ -155,7 +148,6 @@
             z-index: 100;
         }
         .fab:active { transform: scale(0.94); }
-        
         .modal, .detail-modal {
             display: none;
             position: fixed;
@@ -178,7 +170,6 @@
             overflow-y: auto;
         }
         .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: #ffffff; }
-        
         .modal-input, .modal-select, .modal-textarea {
             width: 100%;
             padding: 14px;
@@ -205,7 +196,6 @@
         .btn-primary { background: #2aab6e; color: white; }
         .btn-danger { background: #dc3545; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
-        
         .profile-tabs {
             display: flex;
             gap: 8px;
@@ -233,19 +223,9 @@
         }
         .profile-tab.active { background: #2aab6e; color: white; }
         .profile-tab:active { transform: scale(0.95); }
-        
-        .profile-tabs::-webkit-scrollbar {
-            height: 3px;
-        }
-        .profile-tabs::-webkit-scrollbar-track {
-            background: #0f3460;
-            border-radius: 3px;
-        }
-        .profile-tabs::-webkit-scrollbar-thumb {
-            background: #2aab6e;
-            border-radius: 3px;
-        }
-        
+        .profile-tabs::-webkit-scrollbar { height: 3px; }
+        .profile-tabs::-webkit-scrollbar-track { background: #0f3460; border-radius: 3px; }
+        .profile-tabs::-webkit-scrollbar-thumb { background: #2aab6e; border-radius: 3px; }
         .my-goods-card {
             margin-bottom: 16px;
             background: var(--tg-theme-secondary-bg-color, #16213e);
@@ -253,11 +233,7 @@
             padding: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        .my-goods-header {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
+        .my-goods-header { display: flex; gap: 12px; margin-bottom: 12px; }
         .my-goods-info { flex: 1; }
         .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: #ffffff; }
         .my-goods-price { font-size: 16px; font-weight: 700; color: #2aab6e; }
@@ -284,7 +260,6 @@
         .action-archive { background: #9c27b0; }
         .action-delete { background: #dc3545; }
         .action-restore { background: #4caf50; }
-        
         .profile-header {
             text-align: center;
             padding: 24px;
@@ -303,7 +278,6 @@
         }
         .stat-number { font-size: 28px; font-weight: 700; color: #2aab6e; }
         .stat-label { font-size: 12px; color: #aaaaaa; }
-        
         .photo-grid {
             display: flex;
             flex-wrap: wrap;
@@ -346,7 +320,6 @@
             cursor: pointer;
             color: #ffffff;
         }
-        
         .detail-photo-container {
             position: relative;
             width: 100%;
@@ -415,7 +388,6 @@
         }
         .photo-arrow.left { left: 10px; }
         .photo-arrow.right { right: 10px; }
-        
         .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: #ffffff; }
         .detail-price { font-size: 28px; font-weight: 700; color: #2aab6e; margin-bottom: 12px; }
         .detail-row { margin-bottom: 12px; font-size: 14px; color: #ffffff; }
@@ -439,7 +411,6 @@
             font-weight: 600;
             cursor: pointer;
         }
-        
         .jobs-tabs {
             display: flex;
             gap: 8px;
@@ -456,7 +427,6 @@
             color: #ffffff;
         }
         .jobs-tab.active { background: #2aab6e; color: white; }
-        
         .confirm-dialog {
             position: fixed;
             top: 0;
@@ -483,7 +453,6 @@
         .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .confirm-yes { background: #2aab6e; color: white; }
         .confirm-no { background: #dc3545; color: white; }
-        
         .message-toast {
             position: fixed;
             bottom: 100px;
@@ -499,7 +468,6 @@
             white-space: nowrap;
         }
         .empty-state { text-align: center; padding: 50px 20px; color: #aaaaaa; }
-        
         .add-tab {
             flex: 1;
             text-align: center;
@@ -513,14 +481,12 @@
             background: #2aab6e;
             color: white;
         }
-        
         .section-title {
             font-size: 18px;
             font-weight: 700;
             margin: 20px 0 12px 0;
             color: #2aab6e;
         }
-        
         .status-badge {
             display: inline-block;
             padding: 4px 8px;
@@ -648,7 +614,6 @@
                         ...options.headers
                     }
                 });
-                
                 if (response.status === 204) return { success: true, data: [] };
                 if (response.status === 201 || response.status === 200) {
                     const text = await response.text();
@@ -656,7 +621,6 @@
                     catch(e) { return { success: true, data: [] }; }
                 }
                 if (!response.ok) return { success: false };
-                
                 const text = await response.text();
                 if (text && text.length > 0) {
                     try { return { success: true, data: JSON.parse(text) }; }
@@ -762,7 +726,7 @@
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
             state.user = tgUser;
             state.user.phone = localStorage.getItem('userPhone') || '';
-            console.log('Користувач завантажений:', state.user.first_name);
+            console.log('👤 Користувач:', state.user.first_name);
         }
         
         async function loadGoods() {
@@ -772,7 +736,7 @@
                 const res = await apiRequest(url);
                 if (res.success && res.data) {
                     state.goods = res.data;
-                    console.log('✅ Товарів завантажено:', state.goods.length);
+                    console.log('📦 Товарів завантажено:', state.goods.length);
                 }
                 if (state.page === 'goods') renderGoodsPage();
                 if (state.page === 'home') renderHomePage();
@@ -785,7 +749,7 @@
                 const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myGoods = res.data;
-                    console.log('✅ Моїх товарів:', state.myGoods.length);
+                    console.log('📦 Моїх товарів:', state.myGoods.length);
                 } else {
                     state.myGoods = [];
                 }
@@ -797,7 +761,7 @@
                 const res = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
                 if (res.success && res.data) {
                     state.jobs = res.data;
-                    console.log('✅ Вакансій завантажено:', state.jobs.length);
+                    console.log('💼 Вакансій завантажено:', state.jobs.length);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
@@ -809,7 +773,7 @@
                 const res = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
                 if (res.success && res.data) {
                     state.resumes = res.data;
-                    console.log('✅ Резюме завантажено:', state.resumes.length);
+                    console.log('📄 Резюме завантажено:', state.resumes.length);
                 }
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
@@ -822,7 +786,7 @@
                 const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myJobs = res.data;
-                    console.log('✅ Моїх вакансій:', state.myJobs.length);
+                    console.log('💼 Моїх вакансій:', state.myJobs.length);
                 } else {
                     state.myJobs = [];
                 }
@@ -835,19 +799,32 @@
                 const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myResumes = res.data;
-                    console.log('✅ Моїх резюме:', state.myResumes.length);
+                    console.log('📄 Моїх резюме:', state.myResumes.length);
                 } else {
                     state.myResumes = [];
                 }
             } catch(e) { console.error(e); state.myResumes = []; }
         }
         
-        // ========== ОСНОВНІ ДІЇ ==========
-        
+        // ОСНОВНІ ДІЇ
         async function deleteToTrash(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res.success) {
                 showMessage('🗑 Товар переміщено у видалені');
+                await loadGoods();
+                await loadMyGoods();
+                if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'home') renderHomePage();
+                return true;
+            }
+            showMessage('❌ Помилка', true);
+            return false;
+        }
+        
+        async function deletePermanently(id) {
+            const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
+            if (res.success) {
+                showMessage('🗑 Товар повністю видалено');
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
@@ -912,12 +889,10 @@
             return false;
         }
         
-        // ========== РЕДАГУВАННЯ ==========
-        
+        // РЕДАГУВАННЯ
         async function editGoods(id) {
             const item = state.myGoods.find(g => g.id === id);
             if (!item) return;
-            
             document.getElementById('goodsTitle').value = item.title;
             document.getElementById('goodsCategory').value = item.category;
             document.getElementById('goodsPrice').value = item.price;
@@ -926,11 +901,9 @@
             document.getElementById('goodsDesc').value = item.description || '';
             selectedPhotos = getPhotosArray(item.photos);
             renderPhotoList();
-            
             const submitBtn = document.getElementById('submitGoodsBtn');
             submitBtn.textContent = '✏️ Оновити товар';
             submitBtn.onclick = () => updateGoods(id);
-            
             switchAddTab('goods');
             document.getElementById('addModal').style.display = 'flex';
         }
@@ -938,28 +911,19 @@
         async function updateGoods(id) {
             if (isSubmitting) return;
             isSubmitting = true;
-            
             const title = document.getElementById('goodsTitle')?.value;
             const category = document.getElementById('goodsCategory')?.value;
             const price = document.getElementById('goodsPrice')?.value;
             const city = document.getElementById('goodsCity')?.value;
             const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
-            
             if (!title || !price) { showMessage('Заповніть назву та ціну', true); isSubmitting = false; return; }
-            
             showMessage('⏳ Оновлення...');
             const photosJson = JSON.stringify(selectedPhotos);
-            
             const res = await apiRequest(`goods?id=eq.${id}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ 
-                    title: title.trim(), category, price: price.trim(), 
-                    description: desc || '', city: city || '', phone: phone.trim(), 
-                    photos: photosJson
-                })
+                body: JSON.stringify({ title: title.trim(), category, price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: photosJson })
             });
-            
             isSubmitting = false;
             if (res.success) {
                 showMessage('✅ Товар оновлено!');
@@ -976,7 +940,6 @@
         async function editJob(id) {
             const item = state.myJobs.find(j => j.id === id);
             if (!item) return;
-            
             document.getElementById('jobTitle').value = item.title;
             document.getElementById('jobCategory').value = item.category || 'IT/Розробка';
             document.getElementById('jobSalary').value = item.salary || '';
@@ -984,11 +947,9 @@
             document.getElementById('jobPhone').value = item.phone || '';
             document.getElementById('jobSchedule').value = item.schedule || '';
             document.getElementById('jobDesc').value = item.description || '';
-            
             const submitBtn = document.getElementById('submitJobBtn');
             submitBtn.textContent = '✏️ Оновити вакансію';
             submitBtn.onclick = () => updateJob(id);
-            
             switchAddTab('job');
             document.getElementById('addModal').style.display = 'flex';
         }
@@ -996,7 +957,6 @@
         async function updateJob(id) {
             if (isSubmitting) return;
             isSubmitting = true;
-            
             const title = document.getElementById('jobTitle')?.value;
             const category = document.getElementById('jobCategory')?.value;
             const salary = document.getElementById('jobSalary')?.value;
@@ -1004,24 +964,12 @@
             const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
             const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
-            
             if (!title) { showMessage('Введіть назву вакансії', true); isSubmitting = false; return; }
-            
             showMessage('⏳ Оновлення...');
-            
             const res = await apiRequest(`jobs?id=eq.${id}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ 
-                    title: title.trim(), 
-                    category: category || 'Інше',
-                    salary: salary || '', 
-                    city: city || '', 
-                    phone: phone.trim(), 
-                    schedule: schedule || '', 
-                    description: desc || ''
-                })
+                body: JSON.stringify({ title: title.trim(), category: category || 'Інше', salary: salary || '', city: city || '', phone: phone.trim(), schedule: schedule || '', description: desc || '' })
             });
-            
             isSubmitting = false;
             if (res.success) {
                 showMessage('✅ Вакансію оновлено!');
@@ -1038,18 +986,15 @@
         async function editResume(id) {
             const item = state.myResumes.find(r => r.id === id);
             if (!item) return;
-            
             document.getElementById('resumeSpecialty').value = item.specialty;
             document.getElementById('resumeExperience').value = item.experience || '';
             document.getElementById('resumeSkills').value = item.skills || '';
             document.getElementById('resumeCity').value = item.city || '';
             document.getElementById('resumeSalary').value = item.salary || '';
             document.getElementById('resumePhone').value = item.phone || '';
-            
             const submitBtn = document.getElementById('submitResumeBtn');
             submitBtn.textContent = '✏️ Оновити резюме';
             submitBtn.onclick = () => updateResume(id);
-            
             switchAddTab('resume');
             document.getElementById('addModal').style.display = 'flex';
         }
@@ -1057,30 +1002,18 @@
         async function updateResume(id) {
             if (isSubmitting) return;
             isSubmitting = true;
-            
             const specialty = document.getElementById('resumeSpecialty')?.value;
             const experience = document.getElementById('resumeExperience')?.value;
             const skills = document.getElementById('resumeSkills')?.value;
             const city = document.getElementById('resumeCity')?.value;
             const salary = document.getElementById('resumeSalary')?.value;
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
-            
             if (!specialty) { showMessage('Введіть спеціальність', true); isSubmitting = false; return; }
-            
             showMessage('⏳ Оновлення...');
-            
             const res = await apiRequest(`resumes?id=eq.${id}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ 
-                    specialty: specialty.trim(), 
-                    experience: experience || '', 
-                    skills: skills || '', 
-                    city: city || '', 
-                    salary: salary || '', 
-                    phone: phone.trim()
-                })
+                body: JSON.stringify({ specialty: specialty.trim(), experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim() })
             });
-            
             isSubmitting = false;
             if (res.success) {
                 showMessage('✅ Резюме оновлено!');
@@ -1123,7 +1056,6 @@
             });
             allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             const recentItems = allItems.slice(0, 10);
-            
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="header"><h2>🏠 Ukraine Market</h2></div>
@@ -1182,7 +1114,6 @@
             const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
             const myJobsCount = state.myJobs.length;
             const myResumesCount = state.myResumes.length;
-            
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="profile-header">
@@ -1210,16 +1141,13 @@
                     <div id="myGoodsList"></div>
                 </div>
             `;
-            
             const list = document.getElementById('myGoodsList');
             let filtered = [];
-            
             if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
             else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
             else if (state.profileTab === 'deleted') filtered = state.myGoods.filter(i => i.status === 'deleted');
             else if (state.profileTab === 'jobs') filtered = state.myJobs;
             else if (state.profileTab === 'resumes') filtered = state.myResumes;
-            
             if (filtered.length === 0) { 
                 if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
                 else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
@@ -1227,7 +1155,6 @@
                 setActiveNav('profile');
                 return; 
             }
-            
             if (state.profileTab === 'jobs') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
@@ -1278,6 +1205,7 @@
                         </div>
                         <div class="my-goods-actions">
                             <button class="action-btn action-view" onclick="openDetail(${item.id}, 'goods')">👁 Переглянути</button>
+                            <button class="action-btn action-delete" onclick="confirmDeletePermanent(${item.id})">🗑 Видалити назавжди</button>
                         </div>
                         <div class="detail-phone-box" style="margin-top: 8px; font-size: 12px;">
                             📱 Контакт: ${escapeHtml(item.phone || 'не вказано')}
@@ -1349,11 +1277,9 @@
             else if (type === 'job') item = state.jobs.find(j => j.id === id) || state.myJobs.find(j => j.id === id);
             else item = state.resumes.find(r => r.id === id) || state.myResumes.find(r => r.id === id);
             if (!item) { showMessage('Оголошення не знайдено', true); return; }
-            
             const photosArray = getPhotosArray(item.photos);
             currentPhotos = photosArray;
             currentPhotoIndex = 0;
-            
             let galleryHtml = '';
             if (type === 'goods') {
                 if (photosArray.length === 0) {
@@ -1375,7 +1301,6 @@
                     `;
                 }
             }
-            
             if (type === 'goods') {
                 document.getElementById('detailContent').innerHTML = `
                     ${galleryHtml}
@@ -1409,7 +1334,6 @@
                 `;
             }
             document.getElementById('detailModal').style.display = 'flex';
-            
             if (type === 'goods' && photosArray.length > 1) {
                 setTimeout(() => {
                     const container = document.getElementById('swipeContainer');
@@ -1451,14 +1375,14 @@
             const container = document.getElementById('swipeContainer');
             if (container) container.scrollTo({ left: container.clientWidth * currentPhotoIndex, behavior: 'smooth' });
             updateDots();
-        }
+        };
         
         window.goToPhoto = function(index) {
             currentPhotoIndex = index;
             const container = document.getElementById('swipeContainer');
             if (container) container.scrollTo({ left: container.clientWidth * currentPhotoIndex, behavior: 'smooth' });
             updateDots();
-        }
+        };
         
         function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
         
@@ -1478,23 +1402,9 @@
             renderHomePage(); 
         }
         
-        function goToGoodsPage() { 
-            state.page = 'goods'; 
-            loadGoods(); 
-        }
-        
-        function goToJobsPage() { 
-            state.page = 'jobs'; 
-            loadJobs(); 
-            loadResumes(); 
-            renderJobsPage(); 
-        }
-        
-        function selectCategory(cat) { 
-            state.category = cat; 
-            state.page = 'goods'; 
-            loadGoods(); 
-        }
+        function goToGoodsPage() { state.page = 'goods'; loadGoods(); }
+        function goToJobsPage() { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
+        function selectCategory(cat) { state.category = cat; state.page = 'goods'; loadGoods(); }
         
         function searchGoods() {
             const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
@@ -1518,13 +1428,9 @@
         
         async function switchProfileTab(tab) { 
             state.profileTab = tab; 
-            if (tab === 'jobs') {
-                await loadMyJobs();
-            } else if (tab === 'resumes') {
-                await loadMyResumes();
-            } else {
-                await loadMyGoods();
-            }
+            if (tab === 'jobs') await loadMyJobs();
+            else if (tab === 'resumes') await loadMyResumes();
+            else await loadMyGoods();
             renderProfilePage(); 
         }
         
@@ -1560,6 +1466,7 @@
         }
         
         function confirmDeleteToTrash(id) { confirmAction('🗑 Видалення', 'Перемістити товар у видалені?', () => deleteToTrash(id)); }
+        function confirmDeletePermanent(id) { confirmAction('🗑 ПОВНЕ ВИДАЛЕННЯ', 'Увага! Товар буде видалено назавжди!', () => deletePermanently(id)); }
         function confirmArchive(id) { confirmAction('📦 Архівація', 'Перемістити товар в архів?', () => archiveItem(id)); }
         function confirmRestore(id) { confirmAction('🔄 Відновлення', 'Відновити товар з архіву?', () => restoreItem(id)); }
         function confirmDeleteJob(id) { confirmAction('🗑 Видалення', 'Видалити вакансію назавжди?', () => deleteJobItem(id)); }
@@ -1604,50 +1511,31 @@
         async function submitGoods() {
             if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
             isSubmitting = true;
-            
             const title = document.getElementById('goodsTitle')?.value;
             const category = document.getElementById('goodsCategory')?.value;
             const price = document.getElementById('goodsPrice')?.value;
             const city = document.getElementById('goodsCity')?.value;
             const phone = document.getElementById('goodsPhone')?.value || localStorage.getItem('userPhone') || '';
             const desc = document.getElementById('goodsDesc')?.value;
-            
             if (!title || !title.trim()) { showMessage('❌ Введіть назву', true); isSubmitting = false; return; }
             if (!price || !price.trim()) { showMessage('❌ Введіть ціну', true); isSubmitting = false; return; }
             if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
-            
             showMessage('⏳ Публікація...');
             const photosJson = JSON.stringify(selectedPhotos);
-            
             const res = await apiRequest('goods', {
                 method: 'POST',
-                body: JSON.stringify({ 
-                    user_id: state.user.id, title: title.trim(), category, price: price.trim(), 
-                    description: desc || '', city: city || '', phone: phone.trim(), 
-                    photos: photosJson, status: 'active', created_at: new Date().toISOString() 
-                })
+                body: JSON.stringify({ user_id: state.user.id, title: title.trim(), category, price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: photosJson, status: 'active', created_at: new Date().toISOString() })
             });
-            
             isSubmitting = false;
             if (res.success) {
                 showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
                 selectedPhotos = [];
-                // ОНОВЛЮЄМО ВСІ ДАНІ
                 await loadGoods();
                 await loadMyGoods();
-                await loadMyJobs();
-                await loadMyResumes();
-                // ОНОВЛЮЄМО ПОТОЧНУ СТОРІНКУ
-                if (state.page === 'profile') {
-                    renderProfilePage();
-                }
-                if (state.page === 'home') {
-                    renderHomePage();
-                }
-                if (state.page === 'goods') {
-                    renderGoodsPage();
-                }
+                if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'home') renderHomePage();
+                if (state.page === 'goods') renderGoodsPage();
             } else {
                 showMessage('❌ Помилка публікації', true);
             }
@@ -1656,7 +1544,6 @@
         async function submitJob() {
             if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
             isSubmitting = true;
-            
             const title = document.getElementById('jobTitle')?.value;
             const category = document.getElementById('jobCategory')?.value;
             const salary = document.getElementById('jobSalary')?.value;
@@ -1664,37 +1551,22 @@
             const phone = document.getElementById('jobPhone')?.value || localStorage.getItem('userPhone') || '';
             const schedule = document.getElementById('jobSchedule')?.value;
             const desc = document.getElementById('jobDesc')?.value;
-            
             if (!title || !title.trim()) { showMessage('❌ Введіть назву вакансії', true); isSubmitting = false; return; }
             if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
-            
             showMessage('⏳ Публікація...');
-            
             const res = await apiRequest('jobs', {
                 method: 'POST',
-                body: JSON.stringify({ 
-                    user_id: state.user.id, title: title.trim(), category: category || 'Інше',
-                    salary: salary || '', city: city || '', phone: phone.trim(), 
-                    schedule: schedule || '', description: desc || '', status: 'open', 
-                    created_at: new Date().toISOString() 
-                })
+                body: JSON.stringify({ user_id: state.user.id, title: title.trim(), category: category || 'Інше', salary: salary || '', city: city || '', phone: phone.trim(), schedule: schedule || '', description: desc || '', status: 'open', created_at: new Date().toISOString() })
             });
-            
             isSubmitting = false;
             if (res.success) {
                 showMessage('✅ Вакансію опубліковано!');
                 closeModal();
                 await loadJobs();
                 await loadMyJobs();
-                if (state.page === 'profile') {
-                    renderProfilePage();
-                }
-                if (state.page === 'home') {
-                    renderHomePage();
-                }
-                if (state.page === 'jobs') {
-                    renderJobsPage();
-                }
+                if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'home') renderHomePage();
+                if (state.page === 'jobs') renderJobsPage();
             } else {
                 showMessage('❌ Помилка публікації вакансії', true);
             }
@@ -1703,43 +1575,28 @@
         async function submitResume() {
             if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
             isSubmitting = true;
-            
             const specialty = document.getElementById('resumeSpecialty')?.value;
             const experience = document.getElementById('resumeExperience')?.value;
             const skills = document.getElementById('resumeSkills')?.value;
             const city = document.getElementById('resumeCity')?.value;
             const salary = document.getElementById('resumeSalary')?.value;
             const phone = document.getElementById('resumePhone')?.value || localStorage.getItem('userPhone') || '';
-            
             if (!specialty || !specialty.trim()) { showMessage('❌ Введіть спеціальність', true); isSubmitting = false; return; }
             if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
-            
             showMessage('⏳ Публікація...');
-            
             const res = await apiRequest('resumes', {
                 method: 'POST',
-                body: JSON.stringify({ 
-                    user_id: state.user.id, specialty: specialty.trim(), experience: experience || '', 
-                    skills: skills || '', city: city || '', salary: salary || '', 
-                    phone: phone.trim(), status: 'active', created_at: new Date().toISOString() 
-                })
+                body: JSON.stringify({ user_id: state.user.id, specialty: specialty.trim(), experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim(), status: 'active', created_at: new Date().toISOString() })
             });
-            
             isSubmitting = false;
             if (res.success) {
                 showMessage('✅ Резюме опубліковано!');
                 closeModal();
                 await loadResumes();
                 await loadMyResumes();
-                if (state.page === 'profile') {
-                    renderProfilePage();
-                }
-                if (state.page === 'home') {
-                    renderHomePage();
-                }
-                if (state.page === 'jobs') {
-                    renderJobsPage();
-                }
+                if (state.page === 'profile') renderProfilePage();
+                if (state.page === 'home') renderHomePage();
+                if (state.page === 'jobs') renderJobsPage();
             } else {
                 showMessage('❌ Помилка публікації резюме', true);
             }
@@ -1785,21 +1642,13 @@
                 let isDown = false;
                 let startX;
                 let scrollLeft;
-                
                 tabsContainer.addEventListener('mousedown', (e) => {
                     isDown = true;
                     startX = e.pageX - tabsContainer.offsetLeft;
                     scrollLeft = tabsContainer.scrollLeft;
                 });
-                
-                tabsContainer.addEventListener('mouseleave', () => {
-                    isDown = false;
-                });
-                
-                tabsContainer.addEventListener('mouseup', () => {
-                    isDown = false;
-                });
-                
+                tabsContainer.addEventListener('mouseleave', () => { isDown = false; });
+                tabsContainer.addEventListener('mouseup', () => { isDown = false; });
                 tabsContainer.addEventListener('mousemove', (e) => {
                     if (!isDown) return;
                     e.preventDefault();
@@ -1807,12 +1656,10 @@
                     const walk = (x - startX) * 2;
                     tabsContainer.scrollLeft = scrollLeft - walk;
                 });
-                
                 tabsContainer.addEventListener('touchstart', (e) => {
                     startX = e.touches[0].pageX - tabsContainer.offsetLeft;
                     scrollLeft = tabsContainer.scrollLeft;
                 }, { passive: true });
-                
                 tabsContainer.addEventListener('touchmove', (e) => {
                     const x = e.touches[0].pageX - tabsContainer.offsetLeft;
                     const walk = (x - startX) * 2;
@@ -1841,6 +1688,7 @@
         window.switchJobsTab = switchJobsTab;
         window.savePhone = savePhone;
         window.confirmDeleteToTrash = confirmDeleteToTrash;
+        window.confirmDeletePermanent = confirmDeletePermanent;
         window.confirmArchive = confirmArchive;
         window.confirmRestore = confirmRestore;
         window.confirmDeleteJob = confirmDeleteJob;
