@@ -13,6 +13,7 @@
             color: #ffffff;
             min-height: 100vh;
             padding-bottom: 70px;
+            overflow-x: hidden;
         }
         .app-container { padding: 16px; padding-bottom: 80px; }
         
@@ -205,29 +206,28 @@
         .btn-danger { background: #dc3545; color: white; }
         .btn-secondary { background: #6c757d; color: white; }
         
-       .profile-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    white-space: nowrap;
-}
-.profile-tab {
-    padding: 10px 16px;
-    background: #0f3460;
-    border-radius: 30px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-    color: #ffffff;
-    flex-shrink: 0;
-}
-.profile-tab.active { background: #2aab6e; color: white; }}
+        .profile-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        .profile-tab {
+            padding: 8px 16px;
+            background: #0f3460;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+        .profile-tab.active { background: #2aab6e; color: white; }
         
         .my-goods-card {
             margin-bottom: 16px;
@@ -280,6 +280,7 @@
             justify-content: center;
             gap: 32px;
             margin-top: 16px;
+            flex-wrap: wrap;
         }
         .stat-number { font-size: 28px; font-weight: 700; color: #2aab6e; }
         .stat-label { font-size: 12px; color: #aaaaaa; }
@@ -1144,7 +1145,6 @@
         }
         
         async function renderProfilePage() {
-            // Переконуємось, що дані завантажені перед відображенням
             if (!state.myGoods.length && state.user) {
                 await loadMyGoods();
             }
@@ -1207,7 +1207,6 @@
                 return; 
             }
             
-            // ВАКАНСІЇ
             if (state.profileTab === 'jobs') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
@@ -1226,9 +1225,7 @@
                         </div>
                     </div>
                 `).join('');
-            } 
-            // РЕЗЮМЕ
-            else if (state.profileTab === 'resumes') {
+            } else if (state.profileTab === 'resumes') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
                         <div class="my-goods-header">
@@ -1246,9 +1243,7 @@
                         </div>
                     </div>
                 `).join('');
-            } 
-            // ВИДАЛЕНІ - ТІЛЬКИ ПЕРЕГЛЯД
-            else if (state.profileTab === 'deleted') {
+            } else if (state.profileTab === 'deleted') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
                         <div class="my-goods-header">
@@ -1268,9 +1263,7 @@
                         </div>
                     </div>
                 `).join('');
-            } 
-            // АКТИВНІ ТА АРХІВ - ПОВНІ КНОПКИ
-            else {
+            } else {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
                         <div class="my-goods-header">
@@ -1482,12 +1475,11 @@
         
         async function switchProfileTab(tab) { 
             state.profileTab = tab; 
-            // Переконуємось, що дані завантажені перед відображенням
             if (tab === 'jobs') {
                 await loadMyJobs();
             } else if (tab === 'resumes') {
                 await loadMyResumes();
-            } else if (tab === 'active' || tab === 'archived' || tab === 'deleted') {
+            } else {
                 await loadMyGoods();
             }
             await renderProfilePage(); 
