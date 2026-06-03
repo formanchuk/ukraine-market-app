@@ -754,8 +754,11 @@
             if (!state.user) return;
             try {
                 const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) state.myGoods = res.data;
-                else state.myGoods = [];
+                if (res.success && res.data) {
+                    state.myGoods = res.data;
+                } else {
+                    state.myGoods = [];
+                }
                 if (state.page === 'profile') renderProfilePage();
             } catch(e) { console.error(e); state.myGoods = []; }
         }
@@ -784,7 +787,6 @@
                 const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myJobs = res.data;
-                    console.log('✅ Завантажено вакансій:', state.myJobs.length);
                 } else {
                     state.myJobs = [];
                 }
@@ -798,7 +800,6 @@
                 const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myResumes = res.data;
-                    console.log('✅ Завантажено резюме:', state.myResumes.length);
                 } else {
                     state.myResumes = [];
                 }
@@ -848,7 +849,6 @@
         }
         
         async function deleteJobItem(id) {
-            if (!confirm('Видалити вакансію назавжди?')) return;
             const res = await apiRequest(`jobs?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
                 showMessage('✅ Вакансію видалено');
@@ -863,7 +863,6 @@
         }
         
         async function deleteResumeItem(id) {
-            if (!confirm('Видалити резюме назавжди?')) return;
             const res = await apiRequest(`resumes?id=eq.${id}`, { method: 'DELETE' });
             if (res.success) {
                 showMessage('✅ Резюме видалено');
@@ -1139,7 +1138,18 @@
             setActiveNav('goods');
         }
         
-        function renderProfilePage() {
+        async function renderProfilePage() {
+            // Переконуємось, що дані завантажені перед відображенням
+            if (!state.myGoods.length && state.user) {
+                await loadMyGoods();
+            }
+            if (!state.myJobs.length && state.user) {
+                await loadMyJobs();
+            }
+            if (!state.myResumes.length && state.user) {
+                await loadMyResumes();
+            }
+            
             const user = state.user || { first_name: 'Користувач', id: 0 };
             const activeCount = state.myGoods.filter(i => i.status === 'active').length;
             const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
@@ -1465,9 +1475,17 @@
             }
         }
         
-        function switchProfileTab(tab) { 
+        async function switchProfileTab(tab) { 
             state.profileTab = tab; 
-            renderProfilePage(); 
+            // Переконуємось, що дані завантажені перед відображенням
+            if (tab === 'jobs') {
+                await loadMyJobs();
+            } else if (tab === 'resumes') {
+                await loadMyResumes();
+            } else if (tab === 'active' || tab === 'archived' || tab === 'deleted') {
+                await loadMyGoods();
+            }
+            await renderProfilePage(); 
         }
         
         function switchJobsTab(tab) { 
