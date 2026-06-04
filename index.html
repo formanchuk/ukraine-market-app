@@ -722,13 +722,41 @@
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
         
-        // ========== ЗАВАНТАЖЕННЯ ДАНИХ З SUPABASE (не з localStorage!) ==========
+        // ========== ОНОВЛЕНА ФУНКЦІЯ loadUser (зберігає номер в БД) ==========
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
-            state.user = tgUser;
-            // Телефон зберігаємо локально, але оголошення - в Supabase
-            state.user.phone = localStorage.getItem('userPhone') || '';
-            console.log('👤 Користувач:', state.user.id, state.user.first_name);
+            
+            // Перевіряємо чи є користувач в БД
+            let users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
+            
+            if (!users || users.length === 0) {
+                // Створюємо нового користувача
+                await apiRequest('users', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id: tgUser.id,
+                        username: tgUser.username || '',
+                        first_name: tgUser.first_name,
+                        phone: localStorage.getItem('userPhone') || '',
+                        created_at: new Date().toISOString()
+                    })
+                });
+                users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
+            }
+            
+            const userData = users?.[0];
+            state.user = {
+                id: tgUser.id,
+                first_name: tgUser.first_name,
+                phone: userData?.phone || localStorage.getItem('userPhone') || ''
+            };
+            
+            // Оновлюємо localStorage
+            if (userData?.phone) {
+                localStorage.setItem('userPhone', userData.phone);
+            }
+            
+            console.log('✅ Користувач завантажений:', state.user.id, state.user.first_name);
         }
         
         async function loadGoods() {
@@ -745,14 +773,13 @@
             } catch(e) { console.error(e); }
         }
         
-        // ГОЛОВНЕ: myGoods завантажується з Supabase за user_id
         async function loadMyGoods() {
             if (!state.user) return;
             try {
                 const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myGoods = res.data;
-                    console.log('📦 Моїх товарів з Supabase:', state.myGoods.length);
+                    console.log('📦 Моїх товарів:', state.myGoods.length);
                 } else {
                     state.myGoods = [];
                 }
@@ -783,28 +810,26 @@
             } catch(e) { console.error(e); }
         }
         
-        // МОЇ ВАКАНСІЇ з Supabase за user_id
         async function loadMyJobs() {
             if (!state.user) return;
             try {
                 const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myJobs = res.data;
-                    console.log('💼 Моїх вакансій з Supabase:', state.myJobs.length);
+                    console.log('💼 Моїх вакансій:', state.myJobs.length);
                 } else {
                     state.myJobs = [];
                 }
             } catch(e) { console.error(e); state.myJobs = []; }
         }
         
-        // МОЇ РЕЗЮМЕ з Supabase за user_id
         async function loadMyResumes() {
             if (!state.user) return;
             try {
                 const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myResumes = res.data;
-                    console.log('📄 Моїх резюме з Supabase:', state.myResumes.length);
+                    console.log('📄 Моїх резюме:', state.myResumes.length);
                 } else {
                     state.myResumes = [];
                 }
@@ -893,7 +918,7 @@
             return false;
         }
         
-        // РЕДАГУВАННЯ
+        // ========== РЕДАГУВАННЯ ==========
         async function editGoods(id) {
             const item = state.myGoods.find(g => g.id === id);
             if (!item) return;
@@ -1031,6 +1056,33 @@
             }
         }
         
+        // ========== ОНОВЛЕНА ФУНКЦІЯ savePhone (зберігає в Supabase) ==========
+        async function savePhone() {
+            const phone = document.getElementById('profilePhone')?.value;
+            if (!phone || !state.user) {
+                showMessage('❌ Номер не вказано', true);
+                return;
+            }
+            
+            // Очищаємо номер
+            const phoneClean = phone.replace(/[^0-9+]/g, '');
+            
+            // Зберігаємо в Supabase
+            const res = await apiRequest(`users?id=eq.${state.user.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ phone: phoneClean })
+            });
+            
+            if (res.success) {
+                localStorage.setItem('userPhone', phoneClean);
+                state.user.phone = phoneClean;
+                showMessage('✅ Номер збережено в профіль');
+                renderProfilePage();
+            } else {
+                showMessage('❌ Помилка збереження', true);
+            }
+        }
+        
         const allCategories = [
             { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
             { icon: '🚗', name: 'Авто', id: 'Авто' },
@@ -1132,7 +1184,7 @@
                         </div>
                     </div>
                     <div style="margin-bottom:16px">
-                        <input type="tel" id="profilePhone" class="modal-input" placeholder="+380XXXXXXXXX" value="${escapeHtml(localStorage.getItem('userPhone') || '')}">
+                        <input type="tel" id="profilePhone" class="modal-input" placeholder="+380XXXXXXXXX" value="${escapeHtml(user.phone || '')}">
                         <button class="modal-btn btn-primary" onclick="savePhone()">💾 Зберегти номер</button>
                     </div>
                     <div class="profile-tabs">
@@ -1445,11 +1497,6 @@
             renderJobsPage(); 
         }
         
-        function savePhone() {
-            const phone = document.getElementById('profilePhone')?.value;
-            if (phone && state.user) { localStorage.setItem('userPhone', phone); showMessage('✅ Номер збережено'); }
-        }
-        
         function confirmAction(title, message, onYes) {
             const dialogDiv = document.getElementById('confirmDialog');
             dialogDiv.innerHTML = `
@@ -1535,7 +1582,6 @@
                 showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
                 selectedPhotos = [];
-                // ОНОВЛЮЄМО ВСІ ДАНІ
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
