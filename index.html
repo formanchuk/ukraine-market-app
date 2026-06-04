@@ -599,9 +599,28 @@
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
         
+        // ========== ФІКСОВАНИЙ ID ==========
+        const FIXED_USER_ID = 1780166362686;
+        
         let currentPhotoIndex = 0;
         let currentPhotos = [];
         let isSubmitting = false;
+        
+        let state = {
+            page: 'home',
+            category: null,
+            goods: [],
+            myGoods: [],
+            jobs: [],
+            resumes: [],
+            myJobs: [],
+            myResumes: [],
+            profileTab: 'active',
+            jobsTab: 'jobs',
+            user: null
+        };
+        
+        let selectedPhotos = [];
         
         async function apiRequest(endpoint, options = {}) {
             try {
@@ -614,21 +633,25 @@
                         ...options.headers
                     }
                 });
-                if (response.status === 204) return { success: true, data: [] };
+                if (response.status === 204) return [];
                 if (response.status === 201 || response.status === 200) {
                     const text = await response.text();
-                    try { return { success: true, data: text ? JSON.parse(text) : [] }; }
-                    catch(e) { return { success: true, data: [] }; }
+                    if (text && text.length > 0) {
+                        try { return JSON.parse(text); }
+                        catch(e) { return []; }
+                    }
+                    return [];
                 }
-                if (!response.ok) return { success: false };
+                if (!response.ok) return [];
                 const text = await response.text();
                 if (text && text.length > 0) {
-                    try { return { success: true, data: JSON.parse(text) }; }
-                    catch(e) { return { success: true, data: text }; }
+                    try { return JSON.parse(text); }
+                    catch(e) { return []; }
                 }
-                return { success: true, data: [] };
+                return [];
             } catch(e) {
-                return { success: false, error: e.message };
+                console.error('Fetch error:', e);
+                return [];
             }
         }
         
@@ -649,22 +672,6 @@
             const arr = getPhotosArray(photos);
             return arr.length > 0 ? arr[0] : '';
         }
-        
-        let state = {
-            page: 'home',
-            category: null,
-            goods: [],
-            myGoods: [],
-            jobs: [],
-            resumes: [],
-            myJobs: [],
-            myResumes: [],
-            profileTab: 'active',
-            jobsTab: 'jobs',
-            user: null
-        };
-        
-        let selectedPhotos = [];
         
         function showMessage(text, isError = false) {
             const msg = document.getElementById('message');
@@ -722,67 +729,55 @@
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
         
-        // ========== ОНОВЛЕНА ФУНКЦІЯ loadUser (зберігає номер в БД) ==========
+        // ========== ОНОВЛЕНА loadUser з ФІКСОВАНИМ ID ==========
         async function loadUser() {
-    // ОТРИМУЄМО РЕАЛЬНИЙ TELEGRAM ID
-    const tgUser = tg.initDataUnsafe?.user;
-    
-    if (!tgUser || !tgUser.id) {
-        console.error('❌ Немає Telegram ID! Додаток відкрито не через Telegram');
-        // Тимчасовий ID тільки для помилки
-        state.user = { id: Date.now(), first_name: 'Помилка', phone: '' };
-        return;
-    }
-    
-    console.log('✅ Telegram ID отримано:', tgUser.id);
-    
-    // ВИКОРИСТОВУЄМО САМЕ TELEGRAM ID, А НЕ НОВИЙ!
-    state.user = {
-        id: tgUser.id,  // ← ВАЖЛИВО: використовуємо Telegram ID
-        first_name: tgUser.first_name || 'Користувач',
-        phone: localStorage.getItem('userPhone') || ''
-    };
-    
-    // Оновлюємо/створюємо користувача в БД
-    try {
-        const users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
-        if (!users || users.length === 0) {
-            await apiRequest('users', {
-                method: 'POST',
-                body: JSON.stringify({
-                    id: tgUser.id,
-                    username: tgUser.username || '',
-                    first_name: tgUser.first_name,
-                    phone: state.user.phone,
-                    created_at: new Date().toISOString()
-                })
-            });
-            console.log('👤 Створено нового користувача з ID:', tgUser.id);
-        } else {
-            // Оновлюємо телефон якщо є
-            if (users[0].phone) {
-                state.user.phone = users[0].phone;
-                localStorage.setItem('userPhone', users[0].phone);
+            // Отримуємо Telegram ID
+            const tgUser = tg.initDataUnsafe?.user;
+            
+            // ВИКОРИСТОВУЄМО ФІКСОВАНИЙ ID
+            const userId = FIXED_USER_ID;
+            const userName = tgUser?.first_name || 'Користувач';
+            
+            console.log('✅ Використовуємо фіксований ID:', userId);
+            
+            state.user = {
+                id: userId,
+                first_name: userName,
+                phone: localStorage.getItem('userPhone') || ''
+            };
+            
+            // Перевіряємо/створюємо користувача в БД
+            try {
+                let users = await apiRequest(`users?id=eq.${userId}&select=*`);
+                if (!users || users.length === 0) {
+                    await apiRequest('users', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            id: userId,
+                            username: tgUser?.username || '',
+                            first_name: userName,
+                            phone: state.user.phone,
+                            created_at: new Date().toISOString()
+                        })
+                    });
+                    console.log('👤 Створено користувача з ID:', userId);
+                } else if (users[0].phone) {
+                    state.user.phone = users[0].phone;
+                    localStorage.setItem('userPhone', users[0].phone);
+                }
+            } catch(e) {
+                console.error('Помилка:', e);
             }
-            console.log('👤 Знайдено користувача з ID:', tgUser.id);
+            
+            console.log('✅ Користувач завантажений:', state.user.id);
         }
-    } catch(e) {
-        console.error('Помилка синхронізації з БД:', e);
-    }
-    
-    console.log('✅ Користувач завантажений:', state.user.id, state.user.first_name);
-    console.log('📞 Номер:', state.user.phone);
-}
         
         async function loadGoods() {
             try {
                 let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
                 if (state.category && state.category !== 'Всі') url += `&category=eq.${state.category}`;
-                const res = await apiRequest(url);
-                if (res.success && res.data) {
-                    state.goods = res.data;
-                    console.log('📦 Товарів завантажено:', state.goods.length);
-                }
+                const data = await apiRequest(url);
+                if (data && Array.isArray(data)) state.goods = data;
                 if (state.page === 'goods') renderGoodsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) { console.error(e); }
@@ -791,23 +786,21 @@
         async function loadMyGoods() {
             if (!state.user) return;
             try {
-                const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) {
-                    state.myGoods = res.data;
-                    console.log('📦 Моїх товарів:', state.myGoods.length);
+                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (data && Array.isArray(data)) {
+                    state.myGoods = data;
+                    console.log('✅ Завантажено товарів:', state.myGoods.length);
                 } else {
                     state.myGoods = [];
                 }
+                if (state.page === 'profile') renderProfilePage();
             } catch(e) { console.error(e); state.myGoods = []; }
         }
         
         async function loadJobs() {
             try {
-                const res = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
-                if (res.success && res.data) {
-                    state.jobs = res.data;
-                    console.log('💼 Вакансій завантажено:', state.jobs.length);
-                }
+                const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=50');
+                if (data && Array.isArray(data)) state.jobs = data;
                 if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) { console.error(e); }
@@ -815,11 +808,8 @@
         
         async function loadResumes() {
             try {
-                const res = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
-                if (res.success && res.data) {
-                    state.resumes = res.data;
-                    console.log('📄 Резюме завантажено:', state.resumes.length);
-                }
+                const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=50');
+                if (data && Array.isArray(data)) state.resumes = data;
                 if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
                 if (state.page === 'home') renderHomePage();
             } catch(e) { console.error(e); }
@@ -828,33 +818,35 @@
         async function loadMyJobs() {
             if (!state.user) return;
             try {
-                const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) {
-                    state.myJobs = res.data;
-                    console.log('💼 Моїх вакансій:', state.myJobs.length);
+                const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (data && Array.isArray(data)) {
+                    state.myJobs = data;
+                    console.log('✅ Завантажено вакансій:', state.myJobs.length);
                 } else {
                     state.myJobs = [];
                 }
+                if (state.page === 'profile') renderProfilePage();
             } catch(e) { console.error(e); state.myJobs = []; }
         }
         
         async function loadMyResumes() {
             if (!state.user) return;
             try {
-                const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-                if (res.success && res.data) {
-                    state.myResumes = res.data;
-                    console.log('📄 Моїх резюме:', state.myResumes.length);
+                const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (data && Array.isArray(data)) {
+                    state.myResumes = data;
+                    console.log('✅ Завантажено резюме:', state.myResumes.length);
                 } else {
                     state.myResumes = [];
                 }
+                if (state.page === 'profile') renderProfilePage();
             } catch(e) { console.error(e); state.myResumes = []; }
         }
         
         // ========== ОСНОВНІ ДІЇ ==========
         async function deleteToTrash(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('🗑 Товар переміщено у видалені');
                 await loadGoods();
                 await loadMyGoods();
@@ -868,7 +860,7 @@
         
         async function deletePermanently(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('🗑 Товар повністю видалено');
                 await loadGoods();
                 await loadMyGoods();
@@ -881,7 +873,7 @@
         
         async function archiveItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('📦 Товар переміщено в архів');
                 await loadGoods();
                 await loadMyGoods();
@@ -894,7 +886,7 @@
         
         async function restoreItem(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('✅ Товар відновлено з архіву');
                 await loadGoods();
                 await loadMyGoods();
@@ -907,7 +899,7 @@
         
         async function deleteJobItem(id) {
             const res = await apiRequest(`jobs?id=eq.${id}`, { method: 'DELETE' });
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('✅ Вакансію видалено');
                 await loadJobs();
                 await loadMyJobs();
@@ -921,7 +913,7 @@
         
         async function deleteResumeItem(id) {
             const res = await apiRequest(`resumes?id=eq.${id}`, { method: 'DELETE' });
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('✅ Резюме видалено');
                 await loadResumes();
                 await loadMyResumes();
@@ -969,7 +961,7 @@
                 body: JSON.stringify({ title: title.trim(), category, price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: photosJson })
             });
             isSubmitting = false;
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('✅ Товар оновлено!');
                 closeModal();
                 await loadGoods();
@@ -1015,7 +1007,7 @@
                 body: JSON.stringify({ title: title.trim(), category: category || 'Інше', salary: salary || '', city: city || '', phone: phone.trim(), schedule: schedule || '', description: desc || '' })
             });
             isSubmitting = false;
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('✅ Вакансію оновлено!');
                 closeModal();
                 await loadJobs();
@@ -1059,7 +1051,7 @@
                 body: JSON.stringify({ specialty: specialty.trim(), experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim() })
             });
             isSubmitting = false;
-            if (res.success) {
+            if (res && res.success !== false) {
                 showMessage('✅ Резюме оновлено!');
                 closeModal();
                 await loadResumes();
@@ -1071,24 +1063,19 @@
             }
         }
         
-        // ========== ОНОВЛЕНА ФУНКЦІЯ savePhone (зберігає в Supabase) ==========
+        // ========== ЗБЕРЕЖЕННЯ НОМЕРА ==========
         async function savePhone() {
             const phone = document.getElementById('profilePhone')?.value;
             if (!phone || !state.user) {
                 showMessage('❌ Номер не вказано', true);
                 return;
             }
-            
-            // Очищаємо номер
             const phoneClean = phone.replace(/[^0-9+]/g, '');
-            
-            // Зберігаємо в Supabase
             const res = await apiRequest(`users?id=eq.${state.user.id}`, {
                 method: 'PATCH',
                 body: JSON.stringify({ phone: phoneClean })
             });
-            
-            if (res.success) {
+            if (res && res.success !== false) {
                 localStorage.setItem('userPhone', phoneClean);
                 state.user.phone = phoneClean;
                 showMessage('✅ Номер збережено в профіль');
@@ -1593,7 +1580,7 @@
                 body: JSON.stringify({ user_id: state.user.id, title: title.trim(), category, price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: photosJson, status: 'active', created_at: new Date().toISOString() })
             });
             isSubmitting = false;
-            if (res.success) {
+            if (res && Array.isArray(res)) {
                 showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
                 selectedPhotos = [];
@@ -1625,7 +1612,7 @@
                 body: JSON.stringify({ user_id: state.user.id, title: title.trim(), category: category || 'Інше', salary: salary || '', city: city || '', phone: phone.trim(), schedule: schedule || '', description: desc || '', status: 'open', created_at: new Date().toISOString() })
             });
             isSubmitting = false;
-            if (res.success) {
+            if (res && Array.isArray(res)) {
                 showMessage('✅ Вакансію опубліковано!');
                 closeModal();
                 await loadJobs();
@@ -1655,7 +1642,7 @@
                 body: JSON.stringify({ user_id: state.user.id, specialty: specialty.trim(), experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim(), status: 'active', created_at: new Date().toISOString() })
             });
             isSubmitting = false;
-            if (res.success) {
+            if (res && Array.isArray(res)) {
                 showMessage('✅ Резюме опубліковано!');
                 closeModal();
                 await loadResumes();
@@ -1766,6 +1753,7 @@
         window.goToPhoto = goToPhoto;
         
         (async () => {
+            console.log('🚀 Запуск Ukraine Market...');
             await loadUser();
             await loadGoods();
             await loadJobs();
@@ -1773,6 +1761,7 @@
             await loadMyGoods();
             await loadMyJobs();
             await loadMyResumes();
+            console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
             renderHomePage();
             initNavigation();
             setTimeout(initProfileTabsScroll, 100);
