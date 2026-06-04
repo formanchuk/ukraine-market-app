@@ -724,40 +724,55 @@
         
         // ========== ОНОВЛЕНА ФУНКЦІЯ loadUser (зберігає номер в БД) ==========
         async function loadUser() {
-            const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
-            
-            // Перевіряємо чи є користувач в БД
-            let users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
-            
-            if (!users || users.length === 0) {
-                // Створюємо нового користувача
-                await apiRequest('users', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        id: tgUser.id,
-                        username: tgUser.username || '',
-                        first_name: tgUser.first_name,
-                        phone: localStorage.getItem('userPhone') || '',
-                        created_at: new Date().toISOString()
-                    })
-                });
-                users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
+    // ОТРИМУЄМО РЕАЛЬНИЙ TELEGRAM ID
+    const tgUser = tg.initDataUnsafe?.user;
+    
+    if (!tgUser || !tgUser.id) {
+        console.error('❌ Немає Telegram ID! Додаток відкрито не через Telegram');
+        // Тимчасовий ID тільки для помилки
+        state.user = { id: Date.now(), first_name: 'Помилка', phone: '' };
+        return;
+    }
+    
+    console.log('✅ Telegram ID отримано:', tgUser.id);
+    
+    // ВИКОРИСТОВУЄМО САМЕ TELEGRAM ID, А НЕ НОВИЙ!
+    state.user = {
+        id: tgUser.id,  // ← ВАЖЛИВО: використовуємо Telegram ID
+        first_name: tgUser.first_name || 'Користувач',
+        phone: localStorage.getItem('userPhone') || ''
+    };
+    
+    // Оновлюємо/створюємо користувача в БД
+    try {
+        const users = await apiRequest(`users?id=eq.${tgUser.id}&select=*`);
+        if (!users || users.length === 0) {
+            await apiRequest('users', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: tgUser.id,
+                    username: tgUser.username || '',
+                    first_name: tgUser.first_name,
+                    phone: state.user.phone,
+                    created_at: new Date().toISOString()
+                })
+            });
+            console.log('👤 Створено нового користувача з ID:', tgUser.id);
+        } else {
+            // Оновлюємо телефон якщо є
+            if (users[0].phone) {
+                state.user.phone = users[0].phone;
+                localStorage.setItem('userPhone', users[0].phone);
             }
-            
-            const userData = users?.[0];
-            state.user = {
-                id: tgUser.id,
-                first_name: tgUser.first_name,
-                phone: userData?.phone || localStorage.getItem('userPhone') || ''
-            };
-            
-            // Оновлюємо localStorage
-            if (userData?.phone) {
-                localStorage.setItem('userPhone', userData.phone);
-            }
-            
-            console.log('✅ Користувач завантажений:', state.user.id, state.user.first_name);
+            console.log('👤 Знайдено користувача з ID:', tgUser.id);
         }
+    } catch(e) {
+        console.error('Помилка синхронізації з БД:', e);
+    }
+    
+    console.log('✅ Користувач завантажений:', state.user.id, state.user.first_name);
+    console.log('📞 Номер:', state.user.phone);
+}
         
         async function loadGoods() {
             try {
