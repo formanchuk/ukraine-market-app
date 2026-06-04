@@ -722,11 +722,13 @@
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
         
+        // ========== ЗАВАНТАЖЕННЯ ДАНИХ З SUPABASE (не з localStorage!) ==========
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'Користувач' };
             state.user = tgUser;
+            // Телефон зберігаємо локально, але оголошення - в Supabase
             state.user.phone = localStorage.getItem('userPhone') || '';
-            console.log('👤 Користувач:', state.user.first_name);
+            console.log('👤 Користувач:', state.user.id, state.user.first_name);
         }
         
         async function loadGoods() {
@@ -743,13 +745,14 @@
             } catch(e) { console.error(e); }
         }
         
+        // ГОЛОВНЕ: myGoods завантажується з Supabase за user_id
         async function loadMyGoods() {
             if (!state.user) return;
             try {
                 const res = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myGoods = res.data;
-                    console.log('📦 Моїх товарів:', state.myGoods.length);
+                    console.log('📦 Моїх товарів з Supabase:', state.myGoods.length);
                 } else {
                     state.myGoods = [];
                 }
@@ -780,33 +783,35 @@
             } catch(e) { console.error(e); }
         }
         
+        // МОЇ ВАКАНСІЇ з Supabase за user_id
         async function loadMyJobs() {
             if (!state.user) return;
             try {
                 const res = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myJobs = res.data;
-                    console.log('💼 Моїх вакансій:', state.myJobs.length);
+                    console.log('💼 Моїх вакансій з Supabase:', state.myJobs.length);
                 } else {
                     state.myJobs = [];
                 }
             } catch(e) { console.error(e); state.myJobs = []; }
         }
         
+        // МОЇ РЕЗЮМЕ з Supabase за user_id
         async function loadMyResumes() {
             if (!state.user) return;
             try {
                 const res = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (res.success && res.data) {
                     state.myResumes = res.data;
-                    console.log('📄 Моїх резюме:', state.myResumes.length);
+                    console.log('📄 Моїх резюме з Supabase:', state.myResumes.length);
                 } else {
                     state.myResumes = [];
                 }
             } catch(e) { console.error(e); state.myResumes = []; }
         }
         
-        // ОСНОВНІ ДІЇ
+        // ========== ОСНОВНІ ДІЇ ==========
         async function deleteToTrash(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res.success) {
@@ -828,7 +833,6 @@
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
-                if (state.page === 'home') renderHomePage();
                 return true;
             }
             showMessage('❌ Помилка', true);
@@ -1531,6 +1535,7 @@
                 showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
                 selectedPhotos = [];
+                // ОНОВЛЮЄМО ВСІ ДАНІ
                 await loadGoods();
                 await loadMyGoods();
                 if (state.page === 'profile') renderProfilePage();
