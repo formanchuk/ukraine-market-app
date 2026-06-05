@@ -697,7 +697,7 @@
             return '';
         }
         
-        // ========== ВИПРАВЛЕНА ФУНКЦІЯ ДЛЯ ФОТО ==========
+        // ========== ФОТО ==========
         function addPhotoInput() {
             if (selectedPhotos.length >= 15) { 
                 showMessage('Максимум 15 фото', true); 
@@ -714,7 +714,6 @@
                         selectedPhotos.push(ev.target.result); 
                         renderPhotoList(); 
                         showMessage(`📸 Додано фото (${selectedPhotos.length}/15)`);
-                        // Примусово оновлюємо відображення через 10ms
                         setTimeout(() => {
                             const container = document.getElementById('photoList');
                             if (container) {
@@ -783,23 +782,21 @@
         }
         
         async function loadGoods() {
-    try {
-        let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
-        if (state.category && state.category !== 'Всі') {
-            // НЕ КОДУЄМО - відправляємо як є
-            url += `&category=eq.${state.category}`;
-            console.log('🔍 Фільтр:', state.category);
-        }
-        console.log('📡 URL:', url);
-        const data = await apiRequest(url);
-        if (data && Array.isArray(data)) {
-            state.goods = data;
-            console.log(`📦 Завантажено ${state.goods.length} товарів`);
-        }
-        if (state.page === 'goods') renderGoodsPage();
-        if (state.page === 'home') renderHomePage();
-    } catch(e) { console.error(e); }
-}
+            try {
+                let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
+                if (state.category && state.category !== 'Всі' && state.category !== 'all') {
+                    url += `&category=eq.${encodeURIComponent(state.category)}`;
+                    console.log('🔍 Фільтр категорії:', state.category);
+                }
+                console.log('📡 URL:', url);
+                const data = await apiRequest(url);
+                if (data && Array.isArray(data)) {
+                    state.goods = data;
+                    console.log(`📦 Завантажено ${state.goods.length} товарів для категорії: ${state.category || 'Всі'}`);
+                }
+                if (state.page === 'goods') renderGoodsPage();
+                if (state.page === 'home') renderHomePage();
+            } catch(e) { console.error(e); }
         }
         
         async function loadMyGoods() {
@@ -808,6 +805,7 @@
                 const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (data && Array.isArray(data)) {
                     state.myGoods = data;
+                    console.log(`📦 Моїх товарів: ${state.myGoods.length}`);
                 } else {
                     state.myGoods = [];
                 }
@@ -839,6 +837,7 @@
                 const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (data && Array.isArray(data)) {
                     state.myJobs = data;
+                    console.log(`💼 Моїх вакансій: ${state.myJobs.length}`);
                 } else {
                     state.myJobs = [];
                 }
@@ -852,6 +851,7 @@
                 const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
                 if (data && Array.isArray(data)) {
                     state.myResumes = data;
+                    console.log(`📄 Моїх резюме: ${state.myResumes.length}`);
                 } else {
                     state.myResumes = [];
                 }
@@ -1100,24 +1100,26 @@
             }
         }
         
-const allCategories = [
-    { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
-    { icon: '🚗', name: 'Авто', id: 'Авто' },
-    { icon: '🛞', name: 'Шини/Диски', id: 'Шини/Диски' },
-    { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
-    { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' },
-    { icon: '🏡', name: 'Дім і сад', id: 'Дім і сад' },
-    { icon: '👶', name: 'Дитячий світ', id: 'Дитячий світ' },
-    { icon: '🐾', name: 'Тварини', id: 'Тварини' },
-    { icon: '👕', name: 'Мода і стиль', id: 'Мода і стиль' },
-    { icon: '🎮', name: 'Хобі/Відпочинок', id: 'Хобі/Відпочинок' },
-    { icon: '📚', name: 'Книги', id: 'Книги' },
-    { icon: '🎁', name: 'Віддам безкоштовно', id: 'Віддам безкоштовно' },
-    { icon: '🔄', name: 'Обмін', id: 'Обмін' },
-    { icon: '🏢', name: 'Бізнес/Послуги', id: 'Бізнес/Послуги' },
-    { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда/Прокат' },
-    { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
-];
+        // ========== КАТЕГОРІЇ (ТЕКСТОВІ, НЕ ЦИФРИ) ==========
+        const allCategories = [
+            { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
+            { icon: '🚗', name: 'Авто', id: 'Авто' },
+            { icon: '🛞', name: 'Шини/Диски', id: 'Шини/Диски' },
+            { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
+            { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' },
+            { icon: '🏡', name: 'Дім і сад', id: 'Дім і сад' },
+            { icon: '👶', name: 'Дитячий світ', id: 'Дитячий світ' },
+            { icon: '🐾', name: 'Тварини', id: 'Тварини' },
+            { icon: '👕', name: 'Мода і стиль', id: 'Мода і стиль' },
+            { icon: '🎮', name: 'Хобі/Відпочинок', id: 'Хобі/Відпочинок' },
+            { icon: '📚', name: 'Книги', id: 'Книги' },
+            { icon: '🎁', name: 'Віддам безкоштовно', id: 'Віддам безкоштовно' },
+            { icon: '🔄', name: 'Обмін', id: 'Обмін' },
+            { icon: '🏢', name: 'Бізнес/Послуги', id: 'Бізнес/Послуги' },
+            { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда/Прокат' },
+            { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
+        ];
+        
         function renderHomePage() {
             const allItems = [];
             state.goods.forEach(item => {
@@ -1477,12 +1479,12 @@ const allCategories = [
         function goToGoodsPage() { state.page = 'goods'; loadGoods(); }
         function goToJobsPage() { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
         
-       function selectCategory(cat) { 
-    state.category = cat; 
-    state.page = 'goods'; 
-    console.log('📂 Вибрано категорію:', cat);
-    loadGoods(); 
-}
+        function selectCategory(cat) { 
+            state.category = cat; 
+            state.page = 'goods'; 
+            console.log('📂 Вибрано категорію:', cat);
+            loadGoods(); 
+        }
         
         function searchGoods() {
             const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
