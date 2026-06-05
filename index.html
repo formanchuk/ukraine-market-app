@@ -783,19 +783,23 @@
         }
         
         async function loadGoods() {
-            try {
-                let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
-                if (state.category && state.category !== 'Всі') {
-                    url += `&category=eq.${state.category}`;
-                }
-                const data = await apiRequest(url);
-                if (data && Array.isArray(data)) {
-                    state.goods = data;
-                    console.log(`📦 Завантажено ${state.goods.length} товарів для категорії: ${state.category || 'Всі'}`);
-                }
-                if (state.page === 'goods') renderGoodsPage();
-                if (state.page === 'home') renderHomePage();
-            } catch(e) { console.error(e); }
+    try {
+        let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=50`;
+        if (state.category && state.category !== 'Всі') {
+            // НЕ КОДУЄМО - відправляємо як є
+            url += `&category=eq.${state.category}`;
+            console.log('🔍 Фільтр:', state.category);
+        }
+        console.log('📡 URL:', url);
+        const data = await apiRequest(url);
+        if (data && Array.isArray(data)) {
+            state.goods = data;
+            console.log(`📦 Завантажено ${state.goods.length} товарів`);
+        }
+        if (state.page === 'goods') renderGoodsPage();
+        if (state.page === 'home') renderHomePage();
+    } catch(e) { console.error(e); }
+}
         }
         
         async function loadMyGoods() {
@@ -1096,23 +1100,23 @@
             }
         }
         
-      const allCategories = [
-    { icon: '📱', name: 'Електроніка', id: 1 },
-    { icon: '🚗', name: 'Авто', id: 2 },
-    { icon: '🛞', name: 'Шини/Диски', id: 3 },
-    { icon: '🔧', name: 'Автозапчастини', id: 4 },
-    { icon: '🏠', name: 'Нерухомість', id: 5 },
-    { icon: '🏡', name: 'Дім і сад', id: 6 },
-    { icon: '👶', name: 'Дитячий світ', id: 7 },
-    { icon: '🐾', name: 'Тварини', id: 8 },
-    { icon: '👕', name: 'Мода і стиль', id: 9 },
-    { icon: '🎮', name: 'Хобі/Відпочинок', id: 10 },
-    { icon: '📚', name: 'Книги', id: 11 },
-    { icon: '🎁', name: 'Віддам безкоштовно', id: 12 },
-    { icon: '🔄', name: 'Обмін', id: 13 },
-    { icon: '🏢', name: 'Бізнес/Послуги', id: 14 },
-    { icon: '🔑', name: 'Оренда/Прокат', id: 15 },
-    { icon: '🏠', name: 'Житло подобово', id: 16 }
+const allCategories = [
+    { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
+    { icon: '🚗', name: 'Авто', id: 'Авто' },
+    { icon: '🛞', name: 'Шини/Диски', id: 'Шини/Диски' },
+    { icon: '🔧', name: 'Автозапчастини', id: 'Автозапчастини' },
+    { icon: '🏠', name: 'Нерухомість', id: 'Нерухомість' },
+    { icon: '🏡', name: 'Дім і сад', id: 'Дім і сад' },
+    { icon: '👶', name: 'Дитячий світ', id: 'Дитячий світ' },
+    { icon: '🐾', name: 'Тварини', id: 'Тварини' },
+    { icon: '👕', name: 'Мода і стиль', id: 'Мода і стиль' },
+    { icon: '🎮', name: 'Хобі/Відпочинок', id: 'Хобі/Відпочинок' },
+    { icon: '📚', name: 'Книги', id: 'Книги' },
+    { icon: '🎁', name: 'Віддам безкоштовно', id: 'Віддам безкоштовно' },
+    { icon: '🔄', name: 'Обмін', id: 'Обмін' },
+    { icon: '🏢', name: 'Бізнес/Послуги', id: 'Бізнес/Послуги' },
+    { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда/Прокат' },
+    { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
 ];
         function renderHomePage() {
             const allItems = [];
@@ -1473,12 +1477,12 @@
         function goToGoodsPage() { state.page = 'goods'; loadGoods(); }
         function goToJobsPage() { state.page = 'jobs'; loadJobs(); loadResumes(); renderJobsPage(); }
         
-        function selectCategory(cat) { 
-            state.category = cat; 
-            state.page = 'goods'; 
-            console.log('📂 Вибрано категорію:', cat);
-            loadGoods(); 
-        }
+       function selectCategory(cat) { 
+    state.category = cat; 
+    state.page = 'goods'; 
+    console.log('📂 Вибрано категорію:', cat);
+    loadGoods(); 
+}
         
         function searchGoods() {
             const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
