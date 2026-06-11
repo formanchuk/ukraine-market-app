@@ -1599,12 +1599,12 @@ function renderGoodsPage() {
             } else showMessage('❌ Номер телефону не вказано', true);
         }
         
-function goBack() { 
+async function goBack() { 
     state.categoryPage = null;
     state.page = 'home'; 
-    loadGoods(true); 
-    loadJobs(true); 
-    loadResumes(true); 
+    await loadGoods(true); 
+    await loadJobs(true); 
+    await loadResumes(true); 
     renderHomePage(); 
 }
         
