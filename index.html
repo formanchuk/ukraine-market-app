@@ -867,8 +867,21 @@
         
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user;
-            const userId = CURRENT_USER_ID;
+            
+            // ОТРИМУЄМО РЕАЛЬНИЙ TELEGRAM ID
+            const userId = tgUser?.id;
             const userName = tgUser?.first_name || 'Користувач';
+            
+            // ЯКЩО НЕ В TELEGRAM (ТЕСТУВАННЯ В БРАУЗЕРІ)
+            if (!userId) {
+                console.log('⚠️ Не в Telegram, використовуємо тимчасовий ID');
+                state.user = {
+                    id: 1,
+                    first_name: userName,
+                    phone: localStorage.getItem('userPhone_1') || ''
+                };
+                return;
+            }
             
             state.user = {
                 id: userId,
@@ -877,21 +890,30 @@
             };
             
             try {
+                // ПЕРЕВІРЯЄМО ЧИ Є КОРИСТУВАЧ В БАЗІ
                 let users = await apiRequest(`users?id=eq.${userId}&select=*`);
+                
                 if (!users || users.length === 0) {
+                    // АВТОМАТИЧНЕ СТВОРЕННЯ НОВОГО КОРИСТУВАЧА
+                    console.log('👤 Створюємо нового користувача...');
                     await apiRequest('users', {
                         method: 'POST',
                         body: JSON.stringify({
                             id: userId,
                             username: tgUser?.username || '',
                             first_name: userName,
-                            phone: state.user.phone,
+                            phone: state.user.phone || '',
                             created_at: new Date().toISOString()
                         })
                     });
-                } else if (users[0]?.phone) {
-                    state.user.phone = users[0].phone;
-                    localStorage.setItem(`userPhone_${userId}`, users[0].phone);
+                    console.log('✅ Нового користувача створено!');
+                } else {
+                    // КОРИСТУВАЧ ВЖЕ Є
+                    console.log('✅ Існуючий користувач:', users[0]);
+                    if (users[0]?.phone) {
+                        state.user.phone = users[0].phone;
+                        localStorage.setItem(`userPhone_${userId}`, users[0].phone);
+                    }
                 }
             } catch(e) {
                 console.log('Помилка синхронізації:', e);
