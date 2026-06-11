@@ -63,6 +63,10 @@
             transition: transform 0.1s;
         }
         .category-item:active { transform: scale(0.96); }
+        .category-item.active-category {
+            background: #2aab6e !important;
+            box-shadow: 0 0 0 2px #ffffff;
+        }
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
         .category-name { font-size: 12px; font-weight: 500; color: #ffffff; }
         .goods-list, .fresh-list { display: flex; flex-direction: column; gap: 12px; }
@@ -605,24 +609,23 @@
         let currentPhotos = [];
         let isSubmitting = false;
         
-let state = {
-    page: 'home',
-    category: null,
-    categoryPage: null,
-    goods: [],
-    myGoods: [],
-    jobs: [],
-    resumes: [],
-    myJobs: [],
-    myResumes: [],
-    profileTab: 'active',
-    jobsTab: 'jobs',
-    user: null
-};
+        let state = {
+            page: 'home',
+            category: null,
+            categoryPage: null,
+            goods: [],
+            myGoods: [],
+            jobs: [],
+            resumes: [],
+            myJobs: [],
+            myResumes: [],
+            profileTab: 'active',
+            jobsTab: 'jobs',
+            user: null
+        };
         
         let selectedPhotos = [];
         
-        // ========== КЕШ ДАНИХ ==========
         let dataCache = {
             goods: null,
             myGoods: null,
@@ -635,14 +638,9 @@ let state = {
         
         const CACHE_TIME = 0;
         
-function isCacheValid(cacheKey) {
-    // ВИМИКАЄМО КЕШ ДЛЯ ТОВАРІВ
-    if (cacheKey === 'goods') return false;
-    
-    return dataCache[cacheKey] && 
-           dataCache.lastUpdate[cacheKey] && 
-           (Date.now() - dataCache.lastUpdate[cacheKey]) < CACHE_TIME;
-}
+        function isCacheValid(cacheKey) {
+            return false;
+        }
         
         async function apiRequest(endpoint, options = {}) {
             try {
@@ -720,7 +718,6 @@ function isCacheValid(cacheKey) {
             return '';
         }
         
-        // ========== ФОТО ==========
         function addPhotoInput() {
             if (selectedPhotos.length >= 15) { 
                 showMessage('Максимум 15 фото', true); 
@@ -770,7 +767,6 @@ function isCacheValid(cacheKey) {
             showMessage(`Фото видалено (${selectedPhotos.length}/15)`);
         }
         
-        // ========== ЗАВАНТАЖЕННЯ ДАНИХ З КЕШУВАННЯМ ==========
         async function loadUser() {
             const tgUser = tg.initDataUnsafe?.user;
             const userId = FIXED_USER_ID;
@@ -804,171 +800,100 @@ function isCacheValid(cacheKey) {
             }
         }
         
-async function loadGoods(force = false) {
-    try {
-        let url = `goods?select=*&status=eq.active&order=created_at.desc`;
-        
-        if (state.categoryPage && state.categoryPage !== 'Всі' && state.categoryPage !== 'all') {
-            url += `&category=eq.${encodeURIComponent(state.categoryPage)}`;
-            console.log(`🔍 Фільтр: ${state.categoryPage}`);
+        async function loadGoods(force = false) {
+            try {
+                let url = `goods?select=*&status=eq.active&order=created_at.desc`;
+                
+                if (state.categoryPage && state.categoryPage !== 'Всі' && state.categoryPage !== 'all') {
+                    url += `&category=eq.${encodeURIComponent(state.categoryPage)}`;
+                    console.log(`🔍 Фільтр: ${state.categoryPage}`);
+                }
+                
+                const data = await apiRequest(url);
+                state.goods = data || [];
+                console.log(`✅ Завантажено ${state.goods.length} товарів`);
+                
+                if (state.page === 'goods') renderGoodsPage();
+                if (state.page === 'home') renderHomePage();
+            } catch(e) { 
+                console.error(e);
+                state.goods = [];
+            }
         }
         
-        const data = await apiRequest(url);
-        state.goods = data || [];
-        console.log(`✅ Завантажено ${state.goods.length} товарів`);
-        
-        if (state.page === 'goods') renderGoodsPage();
-        if (state.page === 'home') renderHomePage();
-    } catch(e) { 
-        console.error(e);
-        state.goods = [];
-    }
-}
-
-    
-    try {
-        let url = `goods?select=*&status=eq.active&order=created_at.desc`;
-        
-        // 👇 ВИКОРИСТОВУЄМО categoryPage
-        if (state.categoryPage && state.categoryPage !== 'Всі' && state.categoryPage !== 'all' && state.categoryPage !== null) {
-            url += `&category=eq.${encodeURIComponent(state.categoryPage)}`;
-            console.log(`🔍 Фільтруємо за категорією: ${state.categoryPage}`);
+        async function loadMyGoods(force = false) {
+            if (!state.user) return;
+            
+            try {
+                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (data && Array.isArray(data)) {
+                    state.myGoods = data;
+                    console.log(`📦 Моїх товарів: ${state.myGoods.length}`);
+                } else {
+                    state.myGoods = [];
+                }
+                if (state.page === 'profile') renderProfilePage();
+            } catch(e) { console.error(e); state.myGoods = []; }
         }
         
-        const data = await apiRequest(url);
-        if (data && Array.isArray(data)) {
-            state.goods = data;
-            dataCache.goods = data;
-            dataCache.lastUpdate.goods = Date.now();
-            console.log(`✅ Завантажено ${state.goods.length} товарів у категорії "${state.categoryPage || 'Всі'}"`);
+        async function loadJobs(force = false) {
+            try {
+                const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc');
+                if (data && Array.isArray(data)) {
+                    state.jobs = data;
+                    console.log(`💼 Завантажено ${state.jobs.length} вакансій`);
+                } else {
+                    state.jobs = [];
+                }
+                if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
+                if (state.page === 'home') renderHomePage();
+            } catch(e) { console.error(e); state.jobs = []; }
         }
-        if (state.page === 'goods') renderGoodsPage();
-        if (state.page === 'home') renderHomePage();
-    } catch(e) { console.error(e); }
-}
-
-async function loadMyGoods(force = false) {
-    if (!state.user) return;
-    
-    if (!force && isCacheValid('myGoods')) {
-        console.log('📦 Використовуємо кеш myGoods');
-        state.myGoods = dataCache.myGoods;
-        if (state.page === 'profile') renderProfilePage();
-        return;
-    }
-    
-    try {
-        const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-        // ❌ ПРИБРАНО &limit=20
-        if (data && Array.isArray(data)) {
-            state.myGoods = data;
-            dataCache.myGoods = data;
-            dataCache.lastUpdate.myGoods = Date.now();
-            console.log(`📦 Моїх товарів: ${state.myGoods.length}`);
-        } else {
-            state.myGoods = [];
-        }
-        if (state.page === 'profile') renderProfilePage();
-    } catch(e) { console.error(e); state.myGoods = []; }
-}
-
-async function loadJobs(force = false) {
-    if (!force && isCacheValid('jobs')) {
-        console.log('📦 Використовуємо кеш jobs');
-        state.jobs = dataCache.jobs;
-        if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
-        if (state.page === 'home') renderHomePage();
-        return;
-    }
-    
-    try {
-        const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc');
-        // ❌ ПРИБРАНО &limit=20
-        if (data && Array.isArray(data)) {
-            state.jobs = data;
-            dataCache.jobs = data;
-            dataCache.lastUpdate.jobs = Date.now();
-            console.log(`💼 Завантажено ${state.jobs.length} вакансій`);
-        }
-        if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
-        if (state.page === 'home') renderHomePage();
-    } catch(e) { console.error(e); }
-}
-
-async function loadResumes(force = false) {
-    if (!force && isCacheValid('resumes')) {
-        console.log('📦 Використовуємо кеш resumes');
-        state.resumes = dataCache.resumes;
-        if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
-        if (state.page === 'home') renderHomePage();
-        return;
-    }
-    
-    try {
-        const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc');
-        // ❌ ПРИБРАНО &limit=20
-        if (data && Array.isArray(data)) {
-            state.resumes = data;
-            dataCache.resumes = data;
-            dataCache.lastUpdate.resumes = Date.now();
-            console.log(`📄 Завантажено ${state.resumes.length} резюме`);
-        }
-        if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
-        if (state.page === 'home') renderHomePage();
-    } catch(e) { console.error(e); }
-}
-
-async function loadMyJobs(force = false) {
-    if (!state.user) return;
-    
-    if (!force && isCacheValid('myJobs')) {
-        console.log('📦 Використовуємо кеш myJobs');
-        state.myJobs = dataCache.myJobs;
-        if (state.page === 'profile') renderProfilePage();
-        return;
-    }
-    
-    try {
-        const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-        // ❌ ПРИБРАНО &limit=20
-        if (data && Array.isArray(data)) {
-            state.myJobs = data;
-            dataCache.myJobs = data;
-            dataCache.lastUpdate.myJobs = Date.now();
-            console.log(`💼 Моїх вакансій: ${state.myJobs.length}`);
-        } else {
-            state.myJobs = [];
-        }
-        if (state.page === 'profile') renderProfilePage();
-    } catch(e) { console.error(e); state.myJobs = []; }
-}
-
-async function loadMyResumes(force = false) {
-    if (!state.user) return;
-    
-    if (!force && isCacheValid('myResumes')) {
-        console.log('📦 Використовуємо кеш myResumes');
-        state.myResumes = dataCache.myResumes;
-        if (state.page === 'profile') renderProfilePage();
-        return;
-    }
-    
-    try {
-        const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
-        // ❌ ПРИБРАНО &limit=20
-        if (data && Array.isArray(data)) {
-            state.myResumes = data;
-            dataCache.myResumes = data;
-            dataCache.lastUpdate.myResumes = Date.now();
-            console.log(`📄 Моїх резюме: ${state.myResumes.length}`);
-        } else {
-            state.myResumes = [];
-        }
-        if (state.page === 'profile') renderProfilePage();
-    } catch(e) { console.error(e); state.myResumes = []; }
-}
         
-        // ========== ОСНОВНІ ДІЇ ==========
+        async function loadResumes(force = false) {
+            try {
+                const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc');
+                if (data && Array.isArray(data)) {
+                    state.resumes = data;
+                    console.log(`📄 Завантажено ${state.resumes.length} резюме`);
+                } else {
+                    state.resumes = [];
+                }
+                if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
+                if (state.page === 'home') renderHomePage();
+            } catch(e) { console.error(e); state.resumes = []; }
+        }
+        
+        async function loadMyJobs(force = false) {
+            if (!state.user) return;
+            
+            try {
+                const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (data && Array.isArray(data)) {
+                    state.myJobs = data;
+                    console.log(`💼 Моїх вакансій: ${state.myJobs.length}`);
+                } else {
+                    state.myJobs = [];
+                }
+                if (state.page === 'profile') renderProfilePage();
+            } catch(e) { console.error(e); state.myJobs = []; }
+        }
+        
+        async function loadMyResumes(force = false) {
+            if (!state.user) return;
+            
+            try {
+                const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                if (data && Array.isArray(data)) {
+                    state.myResumes = data;
+                    console.log(`📄 Моїх резюме: ${state.myResumes.length}`);
+                } else {
+                    state.myResumes = [];
+                }
+                if (state.page === 'profile') renderProfilePage();
+            } catch(e) { console.error(e); state.myResumes = []; }
+        }
+        
         async function deleteToTrash(id) {
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res && res.length !== undefined) {
@@ -1051,7 +976,6 @@ async function loadMyResumes(force = false) {
             return false;
         }
         
-        // ========== РЕДАГУВАННЯ ==========
         async function editGoods(id) {
             const item = state.myGoods.find(g => g.id === id);
             if (!item) return;
@@ -1229,89 +1153,90 @@ async function loadMyResumes(force = false) {
             { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
         ];
         
-function renderHomePage() {
-    const allItems = [];
-    state.goods.forEach(item => {
-        allItems.push({
-            id: item.id, type: 'goods', title: item.title, price: item.price,
-            city: item.city, photo: getFirstPhoto(item.photos), category: item.category, created_at: item.created_at
-        });
-    });
-    allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    const recentItems = allItems.slice(0, 10);
-    document.getElementById('app').innerHTML = `
-        <div class="app-container">
-            <div class="header"><h2>🏠 Ukraine Market</h2></div>
-            <div class="section-title">📂 Категорії товарів</div>
-            <div class="categories-grid">${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
-            <div class="section-title">🆕 Свіжі оголошення</div>
-            <div class="goods-list" id="freshList"></div>
-            <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
-            <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Вакансії та резюме →</button>
-        </div>
-    `;
-    const freshContainer = document.getElementById('freshList');
-    if (recentItems.length === 0) freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>📱 Натисніть "+" щоб додати перше</div>';
-    else freshContainer.innerHTML = recentItems.map(item => `
-        <div class="fresh-card" onclick="openDetail(${item.id}, 'goods')">
-            <div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div>
-            <div class="goods-info">
-                <div class="goods-title">${escapeHtml(item.title)}</div>
-                <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                <div class="goods-meta">📂 ${escapeHtml(item.category)}</div>
-                <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-            </div>
-        </div>
-    `).join('');
-    setActiveNav('home');
-}
-        
-function renderGoodsPage() {
-    const categoryName = state.categoryPage || 'Всі товари';
-    let goodsToShow = state.goods;
-    if (state.categoryPage) {
-        goodsToShow = state.goods.filter(item => item.category === state.categoryPage);
-        console.log(`🔍 Відфільтровано ${goodsToShow.length} з ${state.goods.length} товарів для категорії ${state.categoryPage}`);
-    }
-    
-    document.getElementById('app').innerHTML = `
-        <div class="app-container">
-            <div class="header">
-                <h2>📦 ${escapeHtml(categoryName)} (${goodsToShow.length})</h2>
-                <button class="back-btn" onclick="goBack()">←</button>
-            </div>
-            <div class="categories-grid" style="margin-bottom: 16px;">
-                ${allCategories.map(c => `
-                    <div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" 
-                         onclick="selectCategory('${c.id}')">
-                        <span class="category-icon">${c.icon}</span>
-                        <span class="category-name">${c.name}</span>
-                    </div>
-                `).join('')}
-            </div>
-            <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()">
-            <div class="goods-list" id="goodsList"></div>
-        </div>
-    `;
-    
-    const container = document.getElementById('goodsList');
-    if (goodsToShow.length === 0) {
-        container.innerHTML = `<div class="empty-state">📭 Немає товарів у категорії "${categoryName}"<br><br>📱 Натисніть "+" щоб додати</div>`;
-    } else {
-        container.innerHTML = goodsToShow.map(item => `
-            <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
-                <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                <div class="goods-info">
-                    <div class="goods-title">${escapeHtml(item.title)}</div>
-                    <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                    <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
-                    <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+        function renderHomePage() {
+            const allItems = [];
+            state.goods.forEach(item => {
+                allItems.push({
+                    id: item.id, type: 'goods', title: item.title, price: item.price,
+                    city: item.city, photo: getFirstPhoto(item.photos), category: item.category, created_at: item.created_at
+                });
+            });
+            allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const recentItems = allItems.slice(0, 10);
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="header"><h2>🏠 Ukraine Market</h2></div>
+                    <div class="section-title">📂 Категорії товарів</div>
+                    <div class="categories-grid">${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
+                    <div class="section-title">🆕 Свіжі оголошення</div>
+                    <div class="goods-list" id="freshList"></div>
+                    <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
+                    <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Вакансії та резюме →</button>
                 </div>
-            </div>
-        `).join('');
-    }
-    setActiveNav('goods');
-}
+            `;
+            const freshContainer = document.getElementById('freshList');
+            if (recentItems.length === 0) freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>📱 Натисніть "+" щоб додати перше</div>';
+            else freshContainer.innerHTML = recentItems.map(item => `
+                <div class="fresh-card" onclick="openDetail(${item.id}, 'goods')">
+                    <div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div>
+                    <div class="goods-info">
+                        <div class="goods-title">${escapeHtml(item.title)}</div>
+                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                        <div class="goods-meta">📂 ${escapeHtml(item.category)}</div>
+                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                    </div>
+                </div>
+            `).join('');
+            setActiveNav('home');
+        }
+        
+        function renderGoodsPage() {
+            const categoryName = state.categoryPage || 'Всі товари';
+            
+            let goodsToShow = state.goods;
+            if (state.categoryPage) {
+                goodsToShow = state.goods.filter(item => item.category === state.categoryPage);
+                console.log(`🔍 Відфільтровано ${goodsToShow.length} з ${state.goods.length} товарів`);
+            }
+            
+            document.getElementById('app').innerHTML = `
+                <div class="app-container">
+                    <div class="header">
+                        <h2>📦 ${escapeHtml(categoryName)} (${goodsToShow.length})</h2>
+                        <button class="back-btn" onclick="goBack()">←</button>
+                    </div>
+                    <div class="categories-grid" style="margin-bottom: 16px;">
+                        ${allCategories.map(c => `
+                            <div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" 
+                                 onclick="selectCategory('${c.id}')">
+                                <span class="category-icon">${c.icon}</span>
+                                <span class="category-name">${c.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()">
+                    <div class="goods-list" id="goodsList"></div>
+                </div>
+            `;
+            
+            const container = document.getElementById('goodsList');
+            if (goodsToShow.length === 0) {
+                container.innerHTML = `<div class="empty-state">📭 Немає товарів у категорії "${categoryName}"<br><br>📱 Натисніть "+" щоб додати</div>`;
+            } else {
+                container.innerHTML = goodsToShow.map(item => `
+                    <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
+                        <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                        <div class="goods-info">
+                            <div class="goods-title">${escapeHtml(item.title)}</div>
+                            <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                            <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            setActiveNav('goods');
+        }
         
         function renderProfilePage() {
             const user = state.user || { first_name: 'Користувач', id: 0 };
@@ -1599,100 +1524,59 @@ function renderGoodsPage() {
             } else showMessage('❌ Номер телефону не вказано', true);
         }
         
-async function goBack() { 
-    state.categoryPage = null;
-    state.page = 'home'; 
-    await loadGoods(true); 
-    await loadJobs(true); 
-    await loadResumes(true); 
-    renderHomePage(); 
-}
+        async function goBack() { 
+            state.categoryPage = null;
+            state.page = 'home'; 
+            await loadGoods(true); 
+            await loadJobs(true); 
+            await loadResumes(true); 
+            renderHomePage(); 
+        }
         
-        function goToGoodsPage() { 
+        async function goToGoodsPage() { 
             state.page = 'goods'; 
-            if (state.goods.length === 0) loadGoods(); 
+            if (state.goods.length === 0) await loadGoods(); 
             else renderGoodsPage();
         }
         
-        function goToJobsPage() { 
+        async function goToJobsPage() { 
             state.page = 'jobs'; 
-            if (state.jobs.length === 0) loadJobs(); 
-            if (state.resumes.length === 0) loadResumes(); 
+            if (state.jobs.length === 0) await loadJobs(); 
+            if (state.resumes.length === 0) await loadResumes(); 
             renderJobsPage(); 
         }
         
-function selectCategory(cat) { 
-    console.log(`📂 Вибрано категорію: ${cat}`);
-    state.categoryPage = cat;
-    state.page = 'goods';
-    loadGoods(true);
-}
-    
-    // ОЧИЩУЄМО ВЕСЬ КЕШ
-    dataCache = {
-        goods: null,
-        myGoods: null,
-        jobs: null,
-        resumes: null,
-        myJobs: null,
-        myResumes: null,
-        lastUpdate: {}
-    };
-    
-    loadGoodsDirect(cat);
-}
-
-async function loadGoodsDirect(category) {
-    try {
-        let url = `goods?select=*&status=eq.active&order=created_at.desc`;
-        
-        if (category && category !== 'Всі' && category !== 'all') {
-            url += `&category=eq.${encodeURIComponent(category)}`;
+        async function selectCategory(cat) { 
+            console.log(`📂 Вибрано категорію: ${cat}`);
+            state.categoryPage = cat;
+            state.page = 'goods';
+            await loadGoods(true);
         }
         
-        console.log(`📡 Прямий запит: ${url}`);
-        const data = await apiRequest(url);
-        
-        if (data && Array.isArray(data)) {
-            state.goods = data;
-            console.log(`✅ Завантажено ${data.length} товарів для категорії: ${category || 'Всі'}`);
-        } else {
-            state.goods = [];
+        function searchGoods() {
+            const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            let filtered = state.goods;
+            if (state.categoryPage) {
+                filtered = filtered.filter(i => i.category === state.categoryPage);
+            }
+            filtered = filtered.filter(i => i.title.toLowerCase().includes(q));
+            
+            const container = document.getElementById('goodsList');
+            if (container) {
+                if (filtered.length === 0) container.innerHTML = '<div class="empty-state">🔍 Нічого не знайдено</div>';
+                else container.innerHTML = filtered.map(item => `
+                    <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
+                        <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                        <div class="goods-info">
+                            <div class="goods-title">${escapeHtml(item.title)}</div>
+                            <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                            <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
-        
-        renderGoodsPage();
-        
-    } catch(e) { 
-        console.error(e);
-        state.goods = [];
-        renderGoodsPage();
-    }
-}
-        
-function searchGoods() {
-    const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    let filtered = state.goods;
-    if (state.categoryPage) {
-        filtered = filtered.filter(i => i.category === state.categoryPage);
-    }
-    filtered = filtered.filter(i => i.title.toLowerCase().includes(q));
-    
-    const container = document.getElementById('goodsList');
-    if (container) {
-        if (filtered.length === 0) container.innerHTML = '<div class="empty-state">🔍 Нічого не знайдено</div>';
-        else container.innerHTML = filtered.map(item => `
-            <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
-                <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                <div class="goods-info">
-                    <div class="goods-title">${escapeHtml(item.title)}</div>
-                    <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                    <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
-                    <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                </div>
-            </div>
-        `).join('');
-    }
-}
         
         function switchProfileTab(tab) { 
             state.profileTab = tab; 
@@ -1866,40 +1750,40 @@ function searchGoods() {
             }
         }
         
-function initNavigation() {
-    document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const page = btn.dataset.page;
-            if (page === 'home') { 
-                state.page = 'home'; 
-                state.categoryPage = null;
-                await loadGoods(true); 
-                await loadJobs(true); 
-                await loadResumes(true); 
-                renderHomePage(); 
-            }
-            else if (page === 'goods') { 
-                state.page = 'goods'; 
-                if (state.goods.length === 0) await loadGoods(); 
-                else renderGoodsPage(); 
-            }
-            else if (page === 'jobs') { 
-                state.page = 'jobs'; 
-                if (state.jobs.length === 0) await loadJobs(); 
-                if (state.resumes.length === 0) await loadResumes(); 
-                renderJobsPage(); 
-            }
-            else if (page === 'profile') { 
-                state.page = 'profile'; 
-                state.profileTab = 'active';
-                if (state.myGoods.length === 0) await loadMyGoods(); 
-                if (state.myJobs.length === 0) await loadMyJobs(); 
-                if (state.myResumes.length === 0) await loadMyResumes(); 
-                renderProfilePage(); 
-            }
-        });
-    });
-}
+        function initNavigation() {
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const page = btn.dataset.page;
+                    if (page === 'home') { 
+                        state.page = 'home'; 
+                        state.categoryPage = null;
+                        await loadGoods(true); 
+                        await loadJobs(true); 
+                        await loadResumes(true); 
+                        renderHomePage(); 
+                    }
+                    else if (page === 'goods') { 
+                        state.page = 'goods'; 
+                        if (state.goods.length === 0) await loadGoods(); 
+                        else renderGoodsPage(); 
+                    }
+                    else if (page === 'jobs') { 
+                        state.page = 'jobs'; 
+                        if (state.jobs.length === 0) await loadJobs(); 
+                        if (state.resumes.length === 0) await loadResumes(); 
+                        renderJobsPage(); 
+                    }
+                    else if (page === 'profile') { 
+                        state.page = 'profile'; 
+                        state.profileTab = 'active';
+                        if (state.myGoods.length === 0) await loadMyGoods(); 
+                        if (state.myJobs.length === 0) await loadMyJobs(); 
+                        if (state.myResumes.length === 0) await loadMyResumes(); 
+                        renderProfilePage(); 
+                    }
+                });
+            });
+        }
         
         function initProfileTabsScroll() {
             const tabsContainer = document.querySelector('.profile-tabs');
