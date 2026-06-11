@@ -810,17 +810,21 @@ async function loadGoods(force = false) {
     }
     
     try {
+        // ОСНОВНИЙ URL - ВСІ АКТИВНІ ТОВАРИ
         let url = `goods?select=*&status=eq.active&order=created_at.desc`;
-        // ❌ ПРИБРАНО &limit=20
-        if (state.category && state.category !== 'Всі' && state.category !== 'all') {
+        
+        // ЯКЩО ВИБРАНА КАТЕГОРІЯ - ДОДАЄМО ФІЛЬТР
+        if (state.category && state.category !== 'Всі' && state.category !== 'all' && state.category !== null) {
             url += `&category=eq.${encodeURIComponent(state.category)}`;
+            console.log(`🔍 Фільтруємо за категорією: ${state.category}`);
         }
+        
         const data = await apiRequest(url);
         if (data && Array.isArray(data)) {
             state.goods = data;
             dataCache.goods = data;
             dataCache.lastUpdate.goods = Date.now();
-            console.log(`✅ Завантажено ${state.goods.length} товарів`);
+            console.log(`✅ Завантажено ${state.goods.length} товарів у категорії "${state.category || 'Всі'}"`);
         }
         if (state.page === 'goods') renderGoodsPage();
         if (state.page === 'home') renderHomePage();
@@ -1246,29 +1250,38 @@ async function loadMyResumes(force = false) {
             setActiveNav('home');
         }
         
-        function renderGoodsPage() {
-            document.getElementById('app').innerHTML = `
-                <div class="app-container">
-                    <div class="header"><h2>📦 ${state.category || 'Всі товари'}</h2><button class="back-btn" onclick="goBack()">←</button></div>
-                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()">
-                    <div class="goods-list" id="goodsList"></div>
+function renderGoodsPage() {
+    const categoryName = state.category || 'Всі товари';
+    const categoryCount = state.goods.length;
+    
+    document.getElementById('app').innerHTML = `
+        <div class="app-container">
+            <div class="header">
+                <h2>📦 ${escapeHtml(categoryName)} (${categoryCount})</h2>
+                <button class="back-btn" onclick="goBack()">←</button>
+            </div>
+            <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()">
+            <div class="goods-list" id="goodsList"></div>
+        </div>
+    `;
+    const container = document.getElementById('goodsList');
+    if (!state.goods || state.goods.length === 0) {
+        container.innerHTML = `<div class="empty-state">📭 Немає товарів у категорії "${categoryName}"<br><br>📱 Натисніть "+" щоб додати</div>`;
+    } else {
+        container.innerHTML = state.goods.map(item => `
+            <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
+                <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                <div class="goods-info">
+                    <div class="goods-title">${escapeHtml(item.title)}</div>
+                    <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                    <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                    <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
                 </div>
-            `;
-            const container = document.getElementById('goodsList');
-            if (!state.goods || state.goods.length === 0) container.innerHTML = '<div class="empty-state">📭 Немає товарів<br><br>📱 Натисніть "+" щоб додати перше оголошення</div>';
-            else container.innerHTML = state.goods.map(item => `
-                <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
-                    <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                    <div class="goods-info">
-                        <div class="goods-title">${escapeHtml(item.title)}</div>
-                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                        <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
-                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                    </div>
-                </div>
-            `).join('');
-            setActiveNav('goods');
-        }
+            </div>
+        `).join('');
+    }
+    setActiveNav('goods');
+}
         
         function renderProfilePage() {
             const user = state.user || { first_name: 'Користувач', id: 0 };
@@ -1556,14 +1569,15 @@ async function loadMyResumes(force = false) {
             } else showMessage('❌ Номер телефону не вказано', true);
         }
         
-        function goBack() { 
-            state.category = null; 
-            state.page = 'home'; 
-            loadGoods(true); 
-            loadJobs(true); 
-            loadResumes(true); 
-            renderHomePage(); 
-        }
+function goBack() { 
+    state.category = null; 
+    state.page = 'home'; 
+    dataCache.goods = null;
+    loadGoods(true); 
+    loadJobs(true); 
+    loadResumes(true); 
+    renderHomePage(); 
+}
         
         function goToGoodsPage() { 
             state.page = 'goods'; 
@@ -1578,12 +1592,16 @@ async function loadMyResumes(force = false) {
             renderJobsPage(); 
         }
         
-        function selectCategory(cat) { 
-            state.category = cat; 
-            state.page = 'goods'; 
-            dataCache.goods = null;
-            loadGoods(true); 
-        }
+function selectCategory(cat) { 
+    console.log(`📂 Вибрано категорію: ${cat}`);
+    state.category = cat; 
+    state.page = 'goods'; 
+    // ОЧИЩУЄМО КЕШ ЩОБ ПЕРЕЗАВАНТАЖИТИ
+    dataCache.goods = null;
+    dataCache.lastUpdate.goods = null;
+    // ПЕРЕЗАВАНТАЖУЄМО ТОВАРИ ДЛЯ ЦІЄЇ КАТЕГОРІЇ
+    loadGoods(true);
+}
         
         function searchGoods() {
             const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
