@@ -518,7 +518,7 @@
         .status-active { background: #4caf50; color: white; }
         .status-archived { background: #9c27b0; color: white; }
 
-        /* Швидші переходи */
+              /* Швидші переходи */
         .app-container {
             will-change: transform;
             backface-visibility: hidden;
@@ -529,6 +529,13 @@
         }
         body {
             -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ФІКС КНОПКИ - ЗАВЖДИ ВИДНА */
+        .fab, .fab.visible, .fab.hidden {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            pointer-events: auto !important;
         }
     </style>
 </head>
@@ -1875,7 +1882,7 @@
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
-        
+
         (async () => {
             console.log('🚀 Запуск UAMO...');
             await loadUser();
