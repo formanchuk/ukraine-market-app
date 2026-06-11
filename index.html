@@ -15,7 +15,15 @@
             min-height: 100vh;
             padding-bottom: 70px;
         }
-        .app-container { padding: 16px; padding-bottom: 80px; }
+        .app-container { 
+            padding: 16px; 
+            padding-bottom: 80px;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         .header {
             display: flex;
             justify-content: space-between;
@@ -25,7 +33,7 @@
             background: #16213e;
             border-radius: 14px;
         }
-        .header h2 { font-size: 20px; font-weight: 600; }
+        .header h2 { font-size: 20px; font-weight: 600; color: #ffffff; }
         .back-btn {
             background: transparent;
             border: none;
@@ -68,7 +76,7 @@
             box-shadow: 0 0 0 2px #ffffff;
         }
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
-        .category-name { font-size: 12px; font-weight: 500; }
+        .category-name { font-size: 12px; font-weight: 500; color: #ffffff; }
         .goods-list, .fresh-list { display: flex; flex-direction: column; gap: 12px; }
         .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card {
             background: #16213e;
@@ -93,11 +101,11 @@
         .my-goods-image { width: 70px; height: 70px; }
         .fresh-image { width: 80px; height: 80px; }
         .goods-info { flex: 1; }
-        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
         .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 4px; }
         .goods-meta { font-size: 12px; color: #aaaaaa; margin-bottom: 2px; }
         .goods-city { font-size: 12px; color: #aaaaaa; }
-        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .job-city { font-size: 13px; color: #aaaaaa; margin-top: 4px; }
         .bottom-nav {
@@ -121,7 +129,7 @@
             padding: 10px 16px;
             border-radius: 18px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.1s ease;
             background: #0f3460;
             color: #ffffff;
             min-width: 70px;
@@ -173,7 +181,7 @@
             max-height: 85vh;
             overflow-y: auto;
         }
-        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: #ffffff; }
         .modal-input, .modal-select, .modal-textarea {
             width: 100%;
             padding: 14px;
@@ -209,6 +217,8 @@
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
+            overscroll-behavior-x: contain;
+            touch-action: pan-x;
         }
         .profile-tab {
             padding: 8px 16px;
@@ -218,13 +228,26 @@
             font-weight: 500;
             cursor: pointer;
             white-space: nowrap;
+            color: #ffffff;
             flex-shrink: 0;
+            user-select: none;
+            transition: all 0.2s;
         }
         .profile-tab.active { background: #2aab6e; color: white; }
-        .my-goods-card { margin-bottom: 16px; background: #16213e; border-radius: 16px; padding: 12px; }
+        .profile-tab:active { transform: scale(0.95); }
+        .profile-tabs::-webkit-scrollbar { height: 3px; }
+        .profile-tabs::-webkit-scrollbar-track { background: #0f3460; border-radius: 3px; }
+        .profile-tabs::-webkit-scrollbar-thumb { background: #2aab6e; border-radius: 3px; }
+        .my-goods-card {
+            margin-bottom: 16px;
+            background: #16213e;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
         .my-goods-header { display: flex; gap: 12px; margin-bottom: 12px; }
         .my-goods-info { flex: 1; }
-        .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: #ffffff; }
         .my-goods-price { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .my-goods-actions {
             display: grid;
@@ -241,7 +264,9 @@
             border: none;
             color: white;
             text-align: center;
+            transition: opacity 0.2s;
         }
+        .action-btn:active { opacity: 0.8; }
         .action-view { background: #2196f3; }
         .action-edit { background: #ff9800; }
         .action-archive { background: #9c27b0; }
@@ -255,7 +280,7 @@
             margin-bottom: 20px;
         }
         .profile-avatar { font-size: 64px; margin-bottom: 12px; }
-        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #ffffff; }
         .profile-stats {
             display: flex;
             justify-content: center;
@@ -270,7 +295,7 @@
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 12px;
-            min-height: 80px;
+            min-height: auto;
         }
         .photo-preview {
             width: 70px;
@@ -297,17 +322,18 @@
             cursor: pointer;
         }
         .add-photo {
-    width: 70px;
-    height: 70px;
-    border-radius: 12px;
-    background: #0f3460;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    cursor: pointer;
-    margin-bottom: 16px;
-}
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: #0f3460;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
         .detail-photo-container {
             position: relative;
             width: 100%;
@@ -323,6 +349,7 @@
             scroll-snap-type: x mandatory;
             height: 100%;
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
         .photo-swipe-container img {
             width: 100%;
@@ -350,6 +377,7 @@
             height: 8px;
             border-radius: 50%;
             background: rgba(255,255,255,0.5);
+            transition: all 0.2s;
         }
         .photo-dot.active {
             background: white;
@@ -374,9 +402,9 @@
         }
         .photo-arrow.left { left: 10px; }
         .photo-arrow.right { right: 10px; }
-        .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: #ffffff; }
         .detail-price { font-size: 28px; font-weight: 700; color: #2aab6e; margin-bottom: 12px; }
-        .detail-row { margin-bottom: 12px; font-size: 14px; }
+        .detail-row { margin-bottom: 12px; font-size: 14px; color: #ffffff; }
         .detail-label { color: #aaaaaa; margin-right: 8px; }
         .detail-phone-box {
             background: #0f3460;
@@ -384,6 +412,7 @@
             border-radius: 12px;
             margin: 16px 0;
             text-align: center;
+            color: #ffffff;
         }
         .contact-seller {
             width: 100%;
@@ -409,6 +438,7 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: 500;
+            color: #ffffff;
         }
         .jobs-tab.active { background: #2aab6e; color: white; }
         .confirm-dialog {
@@ -431,7 +461,7 @@
             max-width: 300px;
             text-align: center;
         }
-        .confirm-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .confirm-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #ffffff; }
         .confirm-message { font-size: 14px; color: #aaaaaa; margin-bottom: 20px; }
         .confirm-buttons { display: flex; gap: 12px; }
         .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
@@ -459,6 +489,7 @@
             border-radius: 12px;
             cursor: pointer;
             background: #0f3460;
+            color: #ffffff;
         }
         .add-tab.active {
             background: #2aab6e;
@@ -580,12 +611,13 @@
         tg.expand();
         
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_thNsCu4H3VcfOw-gU1ofIA_MTqxh6gH';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnbm9uZ2NkbXFpZnVrcHFmZXZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzIxMTcsImV4cCI6MjA5NTU0ODExN30.xUUXxkvIyyLEQ5wImCp-ekCfV0sUw1DQudEsGqrxT6k';
         const FIXED_USER_ID = 1780166362686;
         
         let currentPhotoIndex = 0;
         let currentPhotos = [];
         let isSubmitting = false;
+        let isLoading = false;
         
         let state = {
             page: 'home',
@@ -603,6 +635,22 @@
         };
         
         let selectedPhotos = [];
+        
+        let dataCache = {
+            goods: null,
+            myGoods: null,
+            jobs: null,
+            resumes: null,
+            myJobs: null,
+            myResumes: null,
+            lastUpdate: {}
+        };
+        
+        const CACHE_TIME = 0;
+        
+        function isCacheValid(cacheKey) {
+            return false;
+        }
         
         async function apiRequest(endpoint, options = {}) {
             try {
@@ -696,6 +744,12 @@
                         selectedPhotos.push(ev.target.result); 
                         renderPhotoList(); 
                         showMessage(`📸 Додано фото (${selectedPhotos.length}/15)`);
+                        setTimeout(() => {
+                            const container = document.getElementById('photoList');
+                            if (container) {
+                                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 10);
                     };
                     reader.readAsDataURL(file);
                 }
@@ -758,10 +812,10 @@
         
         async function loadGoods(force = false) {
             try {
-                let url = `goods?select=*&status=eq.active&order=created_at.desc`;
+                let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=500`;
                 
                 if (state.categoryPage && state.categoryPage !== 'Всі' && state.categoryPage !== 'all') {
-                    url += `&category=eq.${encodeURIComponent(state.categoryPage)}`;
+                    url = `goods?select=*&status=eq.active&category=eq.${encodeURIComponent(state.categoryPage)}&order=created_at.desc&limit=500`;
                     console.log(`🔍 Фільтр: ${state.categoryPage}`);
                 }
                 
@@ -781,7 +835,7 @@
             if (!state.user) return;
             
             try {
-                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=500`);
                 if (data && Array.isArray(data)) {
                     state.myGoods = data;
                     console.log(`📦 Моїх товарів: ${state.myGoods.length}`);
@@ -794,7 +848,7 @@
         
         async function loadJobs(force = false) {
             try {
-                const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc');
+                const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=500');
                 if (data && Array.isArray(data)) {
                     state.jobs = data;
                     console.log(`💼 Завантажено ${state.jobs.length} вакансій`);
@@ -808,7 +862,7 @@
         
         async function loadResumes(force = false) {
             try {
-                const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc');
+                const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=500');
                 if (data && Array.isArray(data)) {
                     state.resumes = data;
                     console.log(`📄 Завантажено ${state.resumes.length} резюме`);
@@ -824,7 +878,7 @@
             if (!state.user) return;
             
             try {
-                const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=500`);
                 if (data && Array.isArray(data)) {
                     state.myJobs = data;
                     console.log(`💼 Моїх вакансій: ${state.myJobs.length}`);
@@ -839,7 +893,7 @@
             if (!state.user) return;
             
             try {
-                const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+                const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=500`);
                 if (data && Array.isArray(data)) {
                     state.myResumes = data;
                     console.log(`📄 Моїх резюме: ${state.myResumes.length}`);
@@ -1143,6 +1197,7 @@
             let goodsToShow = state.goods;
             if (state.categoryPage) {
                 goodsToShow = state.goods.filter(item => item.category === state.categoryPage);
+                console.log(`🔍 Відфільтровано ${goodsToShow.length} з ${state.goods.length} товарів для категорії ${state.categoryPage}`);
             }
             
             document.getElementById('app').innerHTML = `
@@ -1160,7 +1215,7 @@
                             </div>
                         `).join('')}
                     </div>
-                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()">
+                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()" onkeypress="if(event.keyCode==13){this.blur();}">
                     <div class="goods-list" id="goodsList"></div>
                 </div>
             `;
@@ -1227,8 +1282,8 @@
             else if (state.profileTab === 'resumes') filtered = state.myResumes;
             
             if (filtered.length === 0) { 
-                if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій</div>';
-                else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме</div>';
+                if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
+                else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
                 else list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>';
                 setActiveNav('profile');
                 return; 
@@ -1692,9 +1747,19 @@
             }
         }
         
+        // Закриття клавіатури при кліку поза полем
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'SELECT') {
+                document.activeElement?.blur();
+            }
+        });
+        
         function initNavigation() {
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.addEventListener('click', async () => {
+                    if (isLoading) return;
+                    isLoading = true;
+                    
                     const page = btn.dataset.page;
                     if (page === 'home') { 
                         state.page = 'home'; 
@@ -1706,23 +1771,25 @@
                     }
                     else if (page === 'goods') { 
                         state.page = 'goods'; 
-                        if (state.goods.length === 0) await loadGoods(); 
-                        else renderGoodsPage(); 
+                        await loadGoods(true); 
+                        renderGoodsPage(); 
                     }
                     else if (page === 'jobs') { 
                         state.page = 'jobs'; 
-                        if (state.jobs.length === 0) await loadJobs(); 
-                        if (state.resumes.length === 0) await loadResumes(); 
+                        await loadJobs(true); 
+                        await loadResumes(true); 
                         renderJobsPage(); 
                     }
                     else if (page === 'profile') { 
                         state.page = 'profile'; 
                         state.profileTab = 'active';
-                        if (state.myGoods.length === 0) await loadMyGoods(); 
-                        if (state.myJobs.length === 0) await loadMyJobs(); 
-                        if (state.myResumes.length === 0) await loadMyResumes(); 
+                        await loadMyGoods(true); 
+                        await loadMyJobs(true); 
+                        await loadMyResumes(true); 
                         renderProfilePage(); 
                     }
+                    
+                    setTimeout(() => { isLoading = false; }, 300);
                 });
             });
         }
