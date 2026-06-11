@@ -10,7 +10,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color, #1a1a2e);
+            background: #1a1a2e;
             color: #ffffff;
             min-height: 100vh;
             padding-bottom: 70px;
@@ -22,10 +22,10 @@
             align-items: center;
             margin-bottom: 20px;
             padding: 12px 16px;
-            background: var(--tg-theme-secondary-bg-color, #16213e);
+            background: #16213e;
             border-radius: 14px;
         }
-        .header h2 { font-size: 20px; font-weight: 600; color: #ffffff; }
+        .header h2 { font-size: 20px; font-weight: 600; }
         .back-btn {
             background: transparent;
             border: none;
@@ -42,7 +42,7 @@
             border-radius: 14px;
             margin-bottom: 16px;
             font-size: 16px;
-            background: var(--tg-theme-secondary-bg-color, #16213e);
+            background: #16213e;
             color: #ffffff;
             outline: none;
         }
@@ -55,7 +55,7 @@
             margin-bottom: 24px;
         }
         .category-item {
-            background: var(--tg-theme-secondary-bg-color, #16213e);
+            background: #16213e;
             padding: 16px 8px;
             border-radius: 16px;
             text-align: center;
@@ -68,10 +68,10 @@
             box-shadow: 0 0 0 2px #ffffff;
         }
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
-        .category-name { font-size: 12px; font-weight: 500; color: #ffffff; }
+        .category-name { font-size: 12px; font-weight: 500; }
         .goods-list, .fresh-list { display: flex; flex-direction: column; gap: 12px; }
         .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card {
-            background: var(--tg-theme-secondary-bg-color, #16213e);
+            background: #16213e;
             border-radius: 16px;
             padding: 12px;
             cursor: pointer;
@@ -93,11 +93,11 @@
         .my-goods-image { width: 70px; height: 70px; }
         .fresh-image { width: 80px; height: 80px; }
         .goods-info { flex: 1; }
-        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
+        .goods-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
         .goods-price { font-size: 18px; font-weight: 700; color: #2aab6e; margin-bottom: 4px; }
         .goods-meta { font-size: 12px; color: #aaaaaa; margin-bottom: 2px; }
         .goods-city { font-size: 12px; color: #aaaaaa; }
-        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #ffffff; }
+        .job-title, .resume-specialty { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
         .job-salary { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .job-city { font-size: 13px; color: #aaaaaa; margin-top: 4px; }
         .bottom-nav {
@@ -108,7 +108,7 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 16px 20px;
-            background: var(--tg-theme-secondary-bg-color, #16213e);
+            background: #16213e;
             border-top: 0.5px solid rgba(255,255,255,0.1);
             z-index: 100;
         }
@@ -173,7 +173,7 @@
             max-height: 85vh;
             overflow-y: auto;
         }
-        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: #ffffff; }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
         .modal-input, .modal-select, .modal-textarea {
             width: 100%;
             padding: 14px;
@@ -209,8 +209,6 @@
             overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
-            overscroll-behavior-x: contain;
-            touch-action: pan-x;
         }
         .profile-tab {
             padding: 8px 16px;
@@ -220,26 +218,13 @@
             font-weight: 500;
             cursor: pointer;
             white-space: nowrap;
-            color: #ffffff;
             flex-shrink: 0;
-            user-select: none;
-            transition: all 0.2s;
         }
         .profile-tab.active { background: #2aab6e; color: white; }
-        .profile-tab:active { transform: scale(0.95); }
-        .profile-tabs::-webkit-scrollbar { height: 3px; }
-        .profile-tabs::-webkit-scrollbar-track { background: #0f3460; border-radius: 3px; }
-        .profile-tabs::-webkit-scrollbar-thumb { background: #2aab6e; border-radius: 3px; }
-        .my-goods-card {
-            margin-bottom: 16px;
-            background: var(--tg-theme-secondary-bg-color, #16213e);
-            border-radius: 16px;
-            padding: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+        .my-goods-card { margin-bottom: 16px; background: #16213e; border-radius: 16px; padding: 12px; }
         .my-goods-header { display: flex; gap: 12px; margin-bottom: 12px; }
         .my-goods-info { flex: 1; }
-        .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: #ffffff; }
+        .my-goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
         .my-goods-price { font-size: 16px; font-weight: 700; color: #2aab6e; }
         .my-goods-actions {
             display: grid;
@@ -256,9 +241,7 @@
             border: none;
             color: white;
             text-align: center;
-            transition: opacity 0.2s;
         }
-        .action-btn:active { opacity: 0.8; }
         .action-view { background: #2196f3; }
         .action-edit { background: #ff9800; }
         .action-archive { background: #9c27b0; }
@@ -267,12 +250,12 @@
         .profile-header {
             text-align: center;
             padding: 24px;
-            background: var(--tg-theme-secondary-bg-color, #16213e);
+            background: #16213e;
             border-radius: 20px;
             margin-bottom: 20px;
         }
         .profile-avatar { font-size: 64px; margin-bottom: 12px; }
-        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #ffffff; }
+        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
         .profile-stats {
             display: flex;
             justify-content: center;
@@ -323,7 +306,6 @@
             justify-content: center;
             font-size: 28px;
             cursor: pointer;
-            color: #ffffff;
         }
         .detail-photo-container {
             position: relative;
@@ -340,7 +322,6 @@
             scroll-snap-type: x mandatory;
             height: 100%;
             scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
         }
         .photo-swipe-container img {
             width: 100%;
@@ -368,7 +349,6 @@
             height: 8px;
             border-radius: 50%;
             background: rgba(255,255,255,0.5);
-            transition: all 0.2s;
         }
         .photo-dot.active {
             background: white;
@@ -393,9 +373,9 @@
         }
         .photo-arrow.left { left: 10px; }
         .photo-arrow.right { right: 10px; }
-        .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: #ffffff; }
+        .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
         .detail-price { font-size: 28px; font-weight: 700; color: #2aab6e; margin-bottom: 12px; }
-        .detail-row { margin-bottom: 12px; font-size: 14px; color: #ffffff; }
+        .detail-row { margin-bottom: 12px; font-size: 14px; }
         .detail-label { color: #aaaaaa; margin-right: 8px; }
         .detail-phone-box {
             background: #0f3460;
@@ -403,7 +383,6 @@
             border-radius: 12px;
             margin: 16px 0;
             text-align: center;
-            color: #ffffff;
         }
         .contact-seller {
             width: 100%;
@@ -429,7 +408,6 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: 500;
-            color: #ffffff;
         }
         .jobs-tab.active { background: #2aab6e; color: white; }
         .confirm-dialog {
@@ -452,7 +430,7 @@
             max-width: 300px;
             text-align: center;
         }
-        .confirm-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #ffffff; }
+        .confirm-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
         .confirm-message { font-size: 14px; color: #aaaaaa; margin-bottom: 20px; }
         .confirm-buttons { display: flex; gap: 12px; }
         .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
@@ -480,7 +458,6 @@
             border-radius: 12px;
             cursor: pointer;
             background: #0f3460;
-            color: #ffffff;
         }
         .add-tab.active {
             background: #2aab6e;
@@ -626,22 +603,6 @@
         
         let selectedPhotos = [];
         
-        let dataCache = {
-            goods: null,
-            myGoods: null,
-            jobs: null,
-            resumes: null,
-            myJobs: null,
-            myResumes: null,
-            lastUpdate: {}
-        };
-        
-        const CACHE_TIME = 0;
-        
-        function isCacheValid(cacheKey) {
-            return false;
-        }
-        
         async function apiRequest(endpoint, options = {}) {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
@@ -734,12 +695,6 @@
                         selectedPhotos.push(ev.target.result); 
                         renderPhotoList(); 
                         showMessage(`📸 Додано фото (${selectedPhotos.length}/15)`);
-                        setTimeout(() => {
-                            const container = document.getElementById('photoList');
-                            if (container) {
-                                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                        }, 10);
                     };
                     reader.readAsDataURL(file);
                 }
@@ -898,7 +853,6 @@
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
             if (res && res.length !== undefined) {
                 showMessage('🗑 Товар переміщено у видалені');
-                dataCache.myGoods = null;
                 await loadMyGoods(true);
                 await loadGoods(true);
                 if (state.page === 'profile') renderProfilePage();
@@ -913,7 +867,6 @@
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'DELETE' });
             if (res && res.length !== undefined) {
                 showMessage('🗑 Товар повністю видалено');
-                dataCache.myGoods = null;
                 await loadMyGoods(true);
                 if (state.page === 'profile') renderProfilePage();
                 return true;
@@ -926,7 +879,6 @@
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'archived' }) });
             if (res && res.length !== undefined) {
                 showMessage('📦 Товар переміщено в архів');
-                dataCache.myGoods = null;
                 await loadMyGoods(true);
                 if (state.page === 'profile') renderProfilePage();
                 return true;
@@ -939,7 +891,6 @@
             const res = await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'active' }) });
             if (res && res.length !== undefined) {
                 showMessage('✅ Товар відновлено з архіву');
-                dataCache.myGoods = null;
                 await loadMyGoods(true);
                 if (state.page === 'profile') renderProfilePage();
                 return true;
@@ -952,7 +903,6 @@
             const res = await apiRequest(`jobs?id=eq.${id}`, { method: 'DELETE' });
             if (res && res.length !== undefined) {
                 showMessage('✅ Вакансію видалено');
-                dataCache.myJobs = null;
                 await loadMyJobs(true);
                 if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'jobs') renderJobsPage();
@@ -966,7 +916,6 @@
             const res = await apiRequest(`resumes?id=eq.${id}`, { method: 'DELETE' });
             if (res && res.length !== undefined) {
                 showMessage('✅ Резюме видалено');
-                dataCache.myResumes = null;
                 await loadMyResumes(true);
                 if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'jobs') renderJobsPage();
@@ -1014,7 +963,6 @@
             if (res && res.length !== undefined) {
                 showMessage('✅ Товар оновлено!');
                 closeModal();
-                dataCache.myGoods = null;
                 await loadMyGoods(true);
                 if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'home') renderHomePage();
@@ -1060,7 +1008,6 @@
             if (res && res.length !== undefined) {
                 showMessage('✅ Вакансію оновлено!');
                 closeModal();
-                dataCache.myJobs = null;
                 await loadMyJobs(true);
                 if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'jobs') renderJobsPage();
@@ -1104,7 +1051,6 @@
             if (res && res.length !== undefined) {
                 showMessage('✅ Резюме оновлено!');
                 closeModal();
-                dataCache.myResumes = null;
                 await loadMyResumes(true);
                 if (state.page === 'profile') renderProfilePage();
                 if (state.page === 'jobs') renderJobsPage();
@@ -1196,7 +1142,6 @@
             let goodsToShow = state.goods;
             if (state.categoryPage) {
                 goodsToShow = state.goods.filter(item => item.category === state.categoryPage);
-                console.log(`🔍 Відфільтровано ${goodsToShow.length} з ${state.goods.length} товарів`);
             }
             
             document.getElementById('app').innerHTML = `
@@ -1279,13 +1224,15 @@
             else if (state.profileTab === 'deleted') filtered = state.myGoods.filter(i => i.status === 'deleted');
             else if (state.profileTab === 'jobs') filtered = state.myJobs;
             else if (state.profileTab === 'resumes') filtered = state.myResumes;
+            
             if (filtered.length === 0) { 
-                if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій<br><br>📱 Натисніть "+" щоб додати</div>';
-                else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме<br><br>📱 Натисніть "+" щоб додати</div>';
+                if (state.profileTab === 'jobs') list.innerHTML = '<div class="empty-state">📭 Немає вакансій</div>';
+                else if (state.profileTab === 'resumes') list.innerHTML = '<div class="empty-state">📭 Немає резюме</div>';
                 else list.innerHTML = '<div class="empty-state">📭 Немає оголошень</div>';
                 setActiveNav('profile');
                 return; 
             }
+            
             if (state.profileTab === 'jobs') {
                 list.innerHTML = filtered.map(item => `
                     <div class="my-goods-card">
@@ -1525,33 +1472,33 @@
         }
         
         async function goBack() { 
-    state.categoryPage = null;
-    state.page = 'home'; 
-    await loadGoods(true); 
-    await loadJobs(true); 
-    await loadResumes(true); 
-    renderHomePage(); 
-}
+            state.categoryPage = null;
+            state.page = 'home'; 
+            await loadGoods(true); 
+            await loadJobs(true); 
+            await loadResumes(true); 
+            renderHomePage(); 
+        }
         
-async function goToGoodsPage() { 
-    state.page = 'goods'; 
-    if (state.goods.length === 0) await loadGoods(); 
-    else renderGoodsPage();
-}
+        async function goToGoodsPage() { 
+            state.page = 'goods'; 
+            if (state.goods.length === 0) await loadGoods(); 
+            else renderGoodsPage();
+        }
         
-       async function goToJobsPage() { 
-    state.page = 'jobs'; 
-    if (state.jobs.length === 0) await loadJobs(); 
-    if (state.resumes.length === 0) await loadResumes(); 
-    renderJobsPage(); 
-}
+        async function goToJobsPage() { 
+            state.page = 'jobs'; 
+            if (state.jobs.length === 0) await loadJobs(); 
+            if (state.resumes.length === 0) await loadResumes(); 
+            renderJobsPage(); 
+        }
         
         async function selectCategory(cat) { 
-    console.log(`📂 Вибрано категорію: ${cat}`);
-    state.categoryPage = cat;
-    state.page = 'goods';
-    await loadGoods(true);
-}
+            console.log(`📂 Вибрано категорію: ${cat}`);
+            state.categoryPage = cat;
+            state.page = 'goods';
+            await loadGoods(true);
+        }
         
         function searchGoods() {
             const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
@@ -1673,8 +1620,6 @@ async function goToGoodsPage() {
                 showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
                 closeModal();
                 selectedPhotos = [];
-                dataCache.goods = null;
-                dataCache.myGoods = null;
                 await loadGoods(true);
                 await loadMyGoods(true);
                 if (state.page === 'profile') renderProfilePage();
@@ -1706,8 +1651,6 @@ async function goToGoodsPage() {
             if (res && Array.isArray(res)) {
                 showMessage('✅ Вакансію опубліковано!');
                 closeModal();
-                dataCache.jobs = null;
-                dataCache.myJobs = null;
                 await loadJobs(true);
                 await loadMyJobs(true);
                 if (state.page === 'profile') renderProfilePage();
@@ -1738,8 +1681,6 @@ async function goToGoodsPage() {
             if (res && Array.isArray(res)) {
                 showMessage('✅ Резюме опубліковано!');
                 closeModal();
-                dataCache.resumes = null;
-                dataCache.myResumes = null;
                 await loadResumes(true);
                 await loadMyResumes(true);
                 if (state.page === 'profile') renderProfilePage();
