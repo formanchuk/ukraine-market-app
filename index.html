@@ -143,10 +143,10 @@
         .nav-icon { font-size: 22px; }
         .nav-label { font-size: 11px; font-weight: 600; }
         
-        /* ПЛАВАЮЧА КНОПКА */
+        /* ПЛАВАЮЧА КНОПКА - ЗАВЖДИ ВИДНА */
         .fab {
             position: fixed;
-            bottom: 20px;
+            bottom: 80px;
             right: 16px;
             width: 56px;
             height: 56px;
@@ -160,10 +160,8 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 100;
-            transition: all 0.2s ease;
         }
-        .fab.visible { opacity: 1; transform: translateY(0); }
-        .fab.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
+        
         .fab:active { transform: scale(0.94); }
         
         .modal, .detail-modal {
