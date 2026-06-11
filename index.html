@@ -605,19 +605,20 @@
         let currentPhotos = [];
         let isSubmitting = false;
         
-        let state = {
-            page: 'home',
-            category: null,
-            goods: [],
-            myGoods: [],
-            jobs: [],
-            resumes: [],
-            myJobs: [],
-            myResumes: [],
-            profileTab: 'active',
-            jobsTab: 'jobs',
-            user: null
-        };
+let state = {
+    page: 'home',
+    category: null,
+    categoryPage: null,
+    goods: [],
+    myGoods: [],
+    jobs: [],
+    resumes: [],
+    myJobs: [],
+    myResumes: [],
+    profileTab: 'active',
+    jobsTab: 'jobs',
+    user: null
+};
         
         let selectedPhotos = [];
         
@@ -804,13 +805,25 @@ function isCacheValid(cacheKey) {
         }
         
 async function loadGoods(force = false) {
-    if (!force && isCacheValid('goods') && !state.categoryPage) {
-        console.log('📦 Використовуємо кеш goods');
-        state.goods = dataCache.goods;
+    try {
+        let url = `goods?select=*&status=eq.active&order=created_at.desc`;
+        
+        if (state.categoryPage && state.categoryPage !== 'Всі' && state.categoryPage !== 'all') {
+            url += `&category=eq.${encodeURIComponent(state.categoryPage)}`;
+            console.log(`🔍 Фільтр: ${state.categoryPage}`);
+        }
+        
+        const data = await apiRequest(url);
+        state.goods = data || [];
+        console.log(`✅ Завантажено ${state.goods.length} товарів`);
+        
         if (state.page === 'goods') renderGoodsPage();
         if (state.page === 'home') renderHomePage();
-        return;
+    } catch(e) { 
+        console.error(e);
+        state.goods = [];
     }
+}
 
     
     try {
@@ -1255,8 +1268,6 @@ function renderHomePage() {
         
 function renderGoodsPage() {
     const categoryName = state.categoryPage || 'Всі товари';
-    
-    // ПЕРЕВІРЯЄМО - ЧИ ВСІ ТОВАРИ ВІДПОВІДАЮТЬ КАТЕГОРІЇ?
     let goodsToShow = state.goods;
     if (state.categoryPage) {
         goodsToShow = state.goods.filter(item => item.category === state.categoryPage);
@@ -1589,9 +1600,8 @@ function renderGoodsPage() {
         }
         
 function goBack() { 
-    state.category = null; 
+    state.categoryPage = null;
     state.page = 'home'; 
-    dataCache.goods = null;
     loadGoods(true); 
     loadJobs(true); 
     loadResumes(true); 
@@ -1613,10 +1623,10 @@ function goBack() {
         
 function selectCategory(cat) { 
     console.log(`📂 Вибрано категорію: ${cat}`);
-    
-    // СКИДАЄМО ВСІ СТАНИ
     state.categoryPage = cat;
     state.page = 'goods';
+    loadGoods(true);
+}
     
     // ОЧИЩУЄМО ВЕСЬ КЕШ
     dataCache = {
