@@ -800,147 +800,153 @@
             }
         }
         
-        async function loadGoods(force = false) {
-            if (!force && isCacheValid('goods')) {
-                console.log('📦 Використовуємо кеш goods');
-                state.goods = dataCache.goods;
-                if (state.page === 'goods') renderGoodsPage();
-                if (state.page === 'home') renderHomePage();
-                return;
-            }
-            
-            try {
-                let url = `goods?select=*&status=eq.active&order=created_at.desc&limit=20`;
-                if (state.category && state.category !== 'Всі' && state.category !== 'all') {
-                    url += `&category=eq.${encodeURIComponent(state.category)}`;
-                }
-                const data = await apiRequest(url);
-                if (data && Array.isArray(data)) {
-                    state.goods = data;
-                    dataCache.goods = data;
-                    dataCache.lastUpdate.goods = Date.now();
-                    console.log(`✅ Завантажено ${state.goods.length} товарів`);
-                }
-                if (state.page === 'goods') renderGoodsPage();
-                if (state.page === 'home') renderHomePage();
-            } catch(e) { console.error(e); }
+async function loadGoods(force = false) {
+    if (!force && isCacheValid('goods')) {
+        console.log('📦 Використовуємо кеш goods');
+        state.goods = dataCache.goods;
+        if (state.page === 'goods') renderGoodsPage();
+        if (state.page === 'home') renderHomePage();
+        return;
+    }
+    
+    try {
+        let url = `goods?select=*&status=eq.active&order=created_at.desc`;
+        // ❌ ПРИБРАНО &limit=20
+        if (state.category && state.category !== 'Всі' && state.category !== 'all') {
+            url += `&category=eq.${encodeURIComponent(state.category)}`;
         }
-        
-        async function loadMyGoods(force = false) {
-            if (!state.user) return;
-            
-            if (!force && isCacheValid('myGoods')) {
-                console.log('📦 Використовуємо кеш myGoods');
-                state.myGoods = dataCache.myGoods;
-                if (state.page === 'profile') renderProfilePage();
-                return;
-            }
-            
-            try {
-                const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=20`);
-                if (data && Array.isArray(data)) {
-                    state.myGoods = data;
-                    dataCache.myGoods = data;
-                    dataCache.lastUpdate.myGoods = Date.now();
-                    console.log(`📦 Моїх товарів: ${state.myGoods.length}`);
-                } else {
-                    state.myGoods = [];
-                }
-                if (state.page === 'profile') renderProfilePage();
-            } catch(e) { console.error(e); state.myGoods = []; }
+        const data = await apiRequest(url);
+        if (data && Array.isArray(data)) {
+            state.goods = data;
+            dataCache.goods = data;
+            dataCache.lastUpdate.goods = Date.now();
+            console.log(`✅ Завантажено ${state.goods.length} товарів`);
         }
-        
-        async function loadJobs(force = false) {
-            if (!force && isCacheValid('jobs')) {
-                console.log('📦 Використовуємо кеш jobs');
-                state.jobs = dataCache.jobs;
-                if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
-                if (state.page === 'home') renderHomePage();
-                return;
-            }
-            
-            try {
-                const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc&limit=20');
-                if (data && Array.isArray(data)) {
-                    state.jobs = data;
-                    dataCache.jobs = data;
-                    dataCache.lastUpdate.jobs = Date.now();
-                    console.log(`💼 Завантажено ${state.jobs.length} вакансій`);
-                }
-                if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
-                if (state.page === 'home') renderHomePage();
-            } catch(e) { console.error(e); }
+        if (state.page === 'goods') renderGoodsPage();
+        if (state.page === 'home') renderHomePage();
+    } catch(e) { console.error(e); }
+}
+
+async function loadMyGoods(force = false) {
+    if (!state.user) return;
+    
+    if (!force && isCacheValid('myGoods')) {
+        console.log('📦 Використовуємо кеш myGoods');
+        state.myGoods = dataCache.myGoods;
+        if (state.page === 'profile') renderProfilePage();
+        return;
+    }
+    
+    try {
+        const data = await apiRequest(`goods?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+        // ❌ ПРИБРАНО &limit=20
+        if (data && Array.isArray(data)) {
+            state.myGoods = data;
+            dataCache.myGoods = data;
+            dataCache.lastUpdate.myGoods = Date.now();
+            console.log(`📦 Моїх товарів: ${state.myGoods.length}`);
+        } else {
+            state.myGoods = [];
         }
-        
-        async function loadResumes(force = false) {
-            if (!force && isCacheValid('resumes')) {
-                console.log('📦 Використовуємо кеш resumes');
-                state.resumes = dataCache.resumes;
-                if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
-                if (state.page === 'home') renderHomePage();
-                return;
-            }
-            
-            try {
-                const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc&limit=20');
-                if (data && Array.isArray(data)) {
-                    state.resumes = data;
-                    dataCache.resumes = data;
-                    dataCache.lastUpdate.resumes = Date.now();
-                    console.log(`📄 Завантажено ${state.resumes.length} резюме`);
-                }
-                if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
-                if (state.page === 'home') renderHomePage();
-            } catch(e) { console.error(e); }
+        if (state.page === 'profile') renderProfilePage();
+    } catch(e) { console.error(e); state.myGoods = []; }
+}
+
+async function loadJobs(force = false) {
+    if (!force && isCacheValid('jobs')) {
+        console.log('📦 Використовуємо кеш jobs');
+        state.jobs = dataCache.jobs;
+        if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
+        if (state.page === 'home') renderHomePage();
+        return;
+    }
+    
+    try {
+        const data = await apiRequest('jobs?select=*&status=eq.open&order=created_at.desc');
+        // ❌ ПРИБРАНО &limit=20
+        if (data && Array.isArray(data)) {
+            state.jobs = data;
+            dataCache.jobs = data;
+            dataCache.lastUpdate.jobs = Date.now();
+            console.log(`💼 Завантажено ${state.jobs.length} вакансій`);
         }
-        
-        async function loadMyJobs(force = false) {
-            if (!state.user) return;
-            
-            if (!force && isCacheValid('myJobs')) {
-                console.log('📦 Використовуємо кеш myJobs');
-                state.myJobs = dataCache.myJobs;
-                if (state.page === 'profile') renderProfilePage();
-                return;
-            }
-            
-            try {
-                const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=20`);
-                if (data && Array.isArray(data)) {
-                    state.myJobs = data;
-                    dataCache.myJobs = data;
-                    dataCache.lastUpdate.myJobs = Date.now();
-                    console.log(`💼 Моїх вакансій: ${state.myJobs.length}`);
-                } else {
-                    state.myJobs = [];
-                }
-                if (state.page === 'profile') renderProfilePage();
-            } catch(e) { console.error(e); state.myJobs = []; }
+        if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage();
+        if (state.page === 'home') renderHomePage();
+    } catch(e) { console.error(e); }
+}
+
+async function loadResumes(force = false) {
+    if (!force && isCacheValid('resumes')) {
+        console.log('📦 Використовуємо кеш resumes');
+        state.resumes = dataCache.resumes;
+        if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
+        if (state.page === 'home') renderHomePage();
+        return;
+    }
+    
+    try {
+        const data = await apiRequest('resumes?select=*&status=eq.active&order=created_at.desc');
+        // ❌ ПРИБРАНО &limit=20
+        if (data && Array.isArray(data)) {
+            state.resumes = data;
+            dataCache.resumes = data;
+            dataCache.lastUpdate.resumes = Date.now();
+            console.log(`📄 Завантажено ${state.resumes.length} резюме`);
         }
-        
-        async function loadMyResumes(force = false) {
-            if (!state.user) return;
-            
-            if (!force && isCacheValid('myResumes')) {
-                console.log('📦 Використовуємо кеш myResumes');
-                state.myResumes = dataCache.myResumes;
-                if (state.page === 'profile') renderProfilePage();
-                return;
-            }
-            
-            try {
-                const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc&limit=20`);
-                if (data && Array.isArray(data)) {
-                    state.myResumes = data;
-                    dataCache.myResumes = data;
-                    dataCache.lastUpdate.myResumes = Date.now();
-                    console.log(`📄 Моїх резюме: ${state.myResumes.length}`);
-                } else {
-                    state.myResumes = [];
-                }
-                if (state.page === 'profile') renderProfilePage();
-            } catch(e) { console.error(e); state.myResumes = []; }
+        if (state.page === 'jobs' && state.jobsTab === 'resumes') renderJobsPage();
+        if (state.page === 'home') renderHomePage();
+    } catch(e) { console.error(e); }
+}
+
+async function loadMyJobs(force = false) {
+    if (!state.user) return;
+    
+    if (!force && isCacheValid('myJobs')) {
+        console.log('📦 Використовуємо кеш myJobs');
+        state.myJobs = dataCache.myJobs;
+        if (state.page === 'profile') renderProfilePage();
+        return;
+    }
+    
+    try {
+        const data = await apiRequest(`jobs?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+        // ❌ ПРИБРАНО &limit=20
+        if (data && Array.isArray(data)) {
+            state.myJobs = data;
+            dataCache.myJobs = data;
+            dataCache.lastUpdate.myJobs = Date.now();
+            console.log(`💼 Моїх вакансій: ${state.myJobs.length}`);
+        } else {
+            state.myJobs = [];
         }
+        if (state.page === 'profile') renderProfilePage();
+    } catch(e) { console.error(e); state.myJobs = []; }
+}
+
+async function loadMyResumes(force = false) {
+    if (!state.user) return;
+    
+    if (!force && isCacheValid('myResumes')) {
+        console.log('📦 Використовуємо кеш myResumes');
+        state.myResumes = dataCache.myResumes;
+        if (state.page === 'profile') renderProfilePage();
+        return;
+    }
+    
+    try {
+        const data = await apiRequest(`resumes?select=*&user_id=eq.${state.user.id}&order=created_at.desc`);
+        // ❌ ПРИБРАНО &limit=20
+        if (data && Array.isArray(data)) {
+            state.myResumes = data;
+            dataCache.myResumes = data;
+            dataCache.lastUpdate.myResumes = Date.now();
+            console.log(`📄 Моїх резюме: ${state.myResumes.length}`);
+        } else {
+            state.myResumes = [];
+        }
+        if (state.page === 'profile') renderProfilePage();
+    } catch(e) { console.error(e); state.myResumes = []; }
+}
         
         // ========== ОСНОВНІ ДІЇ ==========
         async function deleteToTrash(id) {
