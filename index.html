@@ -632,13 +632,16 @@
             lastUpdate: {}
         };
         
-        const CACHE_TIME = 30000; // 30 секунд
+        const CACHE_TIME = 0;
         
-        function isCacheValid(cacheKey) {
-            return dataCache[cacheKey] && 
-                   dataCache.lastUpdate[cacheKey] && 
-                   (Date.now() - dataCache.lastUpdate[cacheKey]) < CACHE_TIME;
-        }
+function isCacheValid(cacheKey) {
+    // ВИМИКАЄМО КЕШ ДЛЯ ТОВАРІВ
+    if (cacheKey === 'goods') return false;
+    
+    return dataCache[cacheKey] && 
+           dataCache.lastUpdate[cacheKey] && 
+           (Date.now() - dataCache.lastUpdate[cacheKey]) < CACHE_TIME;
+}
         
         async function apiRequest(endpoint, options = {}) {
             try {
@@ -801,13 +804,14 @@
         }
         
 async function loadGoods(force = false) {
-    if (!force && isCacheValid('goods')) {
+    if (!force && isCacheValid('goods') && !state.categoryPage) {
         console.log('📦 Використовуємо кеш goods');
         state.goods = dataCache.goods;
         if (state.page === 'goods') renderGoodsPage();
         if (state.page === 'home') renderHomePage();
         return;
     }
+
     
     try {
         let url = `goods?select=*&status=eq.active&order=created_at.desc`;
@@ -1250,18 +1254,24 @@ function renderHomePage() {
 }
         
 function renderGoodsPage() {
-    const categoryName = state.category || 'Всі товари';
-    const categoryCount = state.goods.length;
+    const categoryName = state.categoryPage || 'Всі товари';
+    
+    // ПЕРЕВІРЯЄМО - ЧИ ВСІ ТОВАРИ ВІДПОВІДАЮТЬ КАТЕГОРІЇ?
+    let goodsToShow = state.goods;
+    if (state.categoryPage) {
+        goodsToShow = state.goods.filter(item => item.category === state.categoryPage);
+        console.log(`🔍 Відфільтровано ${goodsToShow.length} з ${state.goods.length} товарів для категорії ${state.categoryPage}`);
+    }
     
     document.getElementById('app').innerHTML = `
         <div class="app-container">
             <div class="header">
-                <h2>📦 ${escapeHtml(categoryName)} (${categoryCount})</h2>
+                <h2>📦 ${escapeHtml(categoryName)} (${goodsToShow.length})</h2>
                 <button class="back-btn" onclick="goBack()">←</button>
             </div>
             <div class="categories-grid" style="margin-bottom: 16px;">
                 ${allCategories.map(c => `
-                    <div class="category-item ${state.category === c.id ? 'active-category' : ''}" 
+                    <div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" 
                          onclick="selectCategory('${c.id}')">
                         <span class="category-icon">${c.icon}</span>
                         <span class="category-name">${c.name}</span>
@@ -1274,10 +1284,10 @@ function renderGoodsPage() {
     `;
     
     const container = document.getElementById('goodsList');
-    if (!state.goods || state.goods.length === 0) {
+    if (goodsToShow.length === 0) {
         container.innerHTML = `<div class="empty-state">📭 Немає товарів у категорії "${categoryName}"<br><br>📱 Натисніть "+" щоб додати</div>`;
     } else {
-        container.innerHTML = state.goods.map(item => `
+        container.innerHTML = goodsToShow.map(item => `
             <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
                 <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
                 <div class="goods-info">
@@ -1604,41 +1614,75 @@ function goBack() {
 function selectCategory(cat) { 
     console.log(`📂 Вибрано категорію: ${cat}`);
     
-    // ОНОВЛЮЄМО СТАН
-    state.category = cat; 
+    // СКИДАЄМО ВСІ СТАНИ
+    state.categoryPage = cat;
     state.page = 'goods';
     
     // ОЧИЩУЄМО ВЕСЬ КЕШ
-    dataCache.goods = null;
-    dataCache.myGoods = null;
-    dataCache.lastUpdate = {};
+    dataCache = {
+        goods: null,
+        myGoods: null,
+        jobs: null,
+        resumes: null,
+        myJobs: null,
+        myResumes: null,
+        lastUpdate: {}
+    };
     
-    // ПЕРЕЗАВАНТАЖУЄМО ТОВАРИ
-    loadGoods(true);
-    
-    // ОДРАЗУ РЕНДЕРИМО СТОРІНКУ
-    renderGoodsPage();
+    loadGoodsDirect(cat);
+}
+
+async function loadGoodsDirect(category) {
+    try {
+        let url = `goods?select=*&status=eq.active&order=created_at.desc`;
+        
+        if (category && category !== 'Всі' && category !== 'all') {
+            url += `&category=eq.${encodeURIComponent(category)}`;
+        }
+        
+        console.log(`📡 Прямий запит: ${url}`);
+        const data = await apiRequest(url);
+        
+        if (data && Array.isArray(data)) {
+            state.goods = data;
+            console.log(`✅ Завантажено ${data.length} товарів для категорії: ${category || 'Всі'}`);
+        } else {
+            state.goods = [];
+        }
+        
+        renderGoodsPage();
+        
+    } catch(e) { 
+        console.error(e);
+        state.goods = [];
+        renderGoodsPage();
+    }
 }
         
-        function searchGoods() {
-            const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
-            const filtered = state.goods.filter(i => i.title.toLowerCase().includes(q));
-            const container = document.getElementById('goodsList');
-            if (container) {
-                if (filtered.length === 0) container.innerHTML = '<div class="empty-state">🔍 Нічого не знайдено</div>';
-                else container.innerHTML = filtered.map(item => `
-                    <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
-                        <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                        <div class="goods-info">
-                            <div class="goods-title">${escapeHtml(item.title)}</div>
-                            <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                            <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
-                            <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
+function searchGoods() {
+    const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    let filtered = state.goods;
+    if (state.categoryPage) {
+        filtered = filtered.filter(i => i.category === state.categoryPage);
+    }
+    filtered = filtered.filter(i => i.title.toLowerCase().includes(q));
+    
+    const container = document.getElementById('goodsList');
+    if (container) {
+        if (filtered.length === 0) container.innerHTML = '<div class="empty-state">🔍 Нічого не знайдено</div>';
+        else container.innerHTML = filtered.map(item => `
+            <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
+                <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                <div class="goods-info">
+                    <div class="goods-title">${escapeHtml(item.title)}</div>
+                    <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                    <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                    <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
         
         function switchProfileTab(tab) { 
             state.profileTab = tab; 
