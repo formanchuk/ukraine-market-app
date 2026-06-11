@@ -640,27 +640,36 @@
     <div id="confirmDialog" style="display:none;"></div>
 
     <script>
-        const tg = window.Telegram.WebApp;
+          const tg = window.Telegram.WebApp;
         tg.expand();
         
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnbm9uZ2NkbXFpZnVrcHFmZXZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzIxMTcsImV4cCI6MjA5NTU0ODExN30.xUUXxkvIyyLEQ5wImCp-ekCfV0sUw1DQudEsGqrxT6k';
         
-        // ОТРИМУЄМО РЕАЛЬНИЙ ID КОРИСТУВАЧА
-        function getCurrentUserId() {
-            const tgUser = tg.initDataUnsafe?.user;
-            if (tgUser && tgUser.id) {
-                return tgUser.id;
-            }
-            let tempId = localStorage.getItem('temp_user_id');
-            if (!tempId) {
-                tempId = 'temp_' + Date.now();
-                localStorage.setItem('temp_user_id', tempId);
-            }
-            return tempId;
-        }
+        // ФІКСОВАНИЙ ID ДЛЯ ТЕСТУВАННЯ
+        const CURRENT_USER_ID = 1;
         
-        const CURRENT_USER_ID = getCurrentUserId();
+        let currentPhotoIndex = 0;
+        let currentPhotos = [];
+        let isSubmitting = false;
+        let isLoading = false;
+        let lastScrollTop = 0;
+        let isModalOpen = false;
+        
+        let state = {
+            page: 'home',
+            category: null,
+            categoryPage: null,
+            goods: [],
+            myGoods: [],
+            jobs: [],
+            resumes: [],
+            myJobs: [],
+            myResumes: [],
+            profileTab: 'active',
+            jobsTab: 'jobs',
+            user: { id: CURRENT_USER_ID, first_name: 'Користувач', phone: '' }
+        };
         
         let currentPhotoIndex = 0;
         let currentPhotos = [];
