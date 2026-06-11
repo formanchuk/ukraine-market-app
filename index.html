@@ -810,13 +810,12 @@ async function loadGoods(force = false) {
     }
     
     try {
-        // ОСНОВНИЙ URL - ВСІ АКТИВНІ ТОВАРИ
         let url = `goods?select=*&status=eq.active&order=created_at.desc`;
         
-        // ЯКЩО ВИБРАНА КАТЕГОРІЯ - ДОДАЄМО ФІЛЬТР
-        if (state.category && state.category !== 'Всі' && state.category !== 'all' && state.category !== null) {
-            url += `&category=eq.${encodeURIComponent(state.category)}`;
-            console.log(`🔍 Фільтруємо за категорією: ${state.category}`);
+        // 👇 ВИКОРИСТОВУЄМО categoryPage
+        if (state.categoryPage && state.categoryPage !== 'Всі' && state.categoryPage !== 'all' && state.categoryPage !== null) {
+            url += `&category=eq.${encodeURIComponent(state.categoryPage)}`;
+            console.log(`🔍 Фільтруємо за категорією: ${state.categoryPage}`);
         }
         
         const data = await apiRequest(url);
@@ -824,7 +823,7 @@ async function loadGoods(force = false) {
             state.goods = data;
             dataCache.goods = data;
             dataCache.lastUpdate.goods = Date.now();
-            console.log(`✅ Завантажено ${state.goods.length} товарів у категорії "${state.category || 'Всі'}"`);
+            console.log(`✅ Завантажено ${state.goods.length} товарів у категорії "${state.categoryPage || 'Всі'}"`);
         }
         if (state.page === 'goods') renderGoodsPage();
         if (state.page === 'home') renderHomePage();
@@ -1213,42 +1212,42 @@ async function loadMyResumes(force = false) {
             { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
         ];
         
-        function renderHomePage() {
-            const allItems = [];
-            state.goods.forEach(item => {
-                allItems.push({
-                    id: item.id, type: 'goods', title: item.title, price: item.price,
-                    city: item.city, photo: getFirstPhoto(item.photos), category: item.category, created_at: item.created_at
-                });
-            });
-            allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            const recentItems = allItems.slice(0, 10);
-            document.getElementById('app').innerHTML = `
-                <div class="app-container">
-                    <div class="header"><h2>🏠 Ukraine Market</h2></div>
-                    <div class="section-title">📂 Категорії товарів</div>
-                    <div class="categories-grid">${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
-                    <div class="section-title">🆕 Свіжі оголошення</div>
-                    <div class="goods-list" id="freshList"></div>
-                    <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
-                    <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Вакансії та резюме →</button>
-                </div>
-            `;
-            const freshContainer = document.getElementById('freshList');
-            if (recentItems.length === 0) freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>📱 Натисніть "+" щоб додати перше</div>';
-            else freshContainer.innerHTML = recentItems.map(item => `
-                <div class="fresh-card" onclick="openDetail(${item.id}, 'goods')">
-                    <div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div>
-                    <div class="goods-info">
-                        <div class="goods-title">${escapeHtml(item.title)}</div>
-                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                        <div class="goods-meta">📂 ${escapeHtml(item.category)}</div>
-                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                    </div>
-                </div>
-            `).join('');
-            setActiveNav('home');
-        }
+function renderHomePage() {
+    const allItems = [];
+    state.goods.forEach(item => {
+        allItems.push({
+            id: item.id, type: 'goods', title: item.title, price: item.price,
+            city: item.city, photo: getFirstPhoto(item.photos), category: item.category, created_at: item.created_at
+        });
+    });
+    allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const recentItems = allItems.slice(0, 10);
+    document.getElementById('app').innerHTML = `
+        <div class="app-container">
+            <div class="header"><h2>🏠 Ukraine Market</h2></div>
+            <div class="section-title">📂 Категорії товарів</div>
+            <div class="categories-grid">${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
+            <div class="section-title">🆕 Свіжі оголошення</div>
+            <div class="goods-list" id="freshList"></div>
+            <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
+            <button class="modal-btn btn-secondary" style="margin-top:12px" onclick="goToJobsPage()">💼 Вакансії та резюме →</button>
+        </div>
+    `;
+    const freshContainer = document.getElementById('freshList');
+    if (recentItems.length === 0) freshContainer.innerHTML = '<div class="empty-state">📭 Немає оголошень<br><br>📱 Натисніть "+" щоб додати перше</div>';
+    else freshContainer.innerHTML = recentItems.map(item => `
+        <div class="fresh-card" onclick="openDetail(${item.id}, 'goods')">
+            <div class="fresh-image" style="background-image: url('${item.photo || ''}')"></div>
+            <div class="goods-info">
+                <div class="goods-title">${escapeHtml(item.title)}</div>
+                <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                <div class="goods-meta">📂 ${escapeHtml(item.category)}</div>
+                <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+            </div>
+        </div>
+    `).join('');
+    setActiveNav('home');
+}
         
 function renderGoodsPage() {
     const categoryName = state.category || 'Всі товари';
@@ -1260,10 +1259,20 @@ function renderGoodsPage() {
                 <h2>📦 ${escapeHtml(categoryName)} (${categoryCount})</h2>
                 <button class="back-btn" onclick="goBack()">←</button>
             </div>
+            <div class="categories-grid" style="margin-bottom: 16px;">
+                ${allCategories.map(c => `
+                    <div class="category-item ${state.category === c.id ? 'active-category' : ''}" 
+                         onclick="selectCategory('${c.id}')">
+                        <span class="category-icon">${c.icon}</span>
+                        <span class="category-name">${c.name}</span>
+                    </div>
+                `).join('')}
+            </div>
             <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук..." onkeyup="searchGoods()">
             <div class="goods-list" id="goodsList"></div>
         </div>
     `;
+    
     const container = document.getElementById('goodsList');
     if (!state.goods || state.goods.length === 0) {
         container.innerHTML = `<div class="empty-state">📭 Немає товарів у категорії "${categoryName}"<br><br>📱 Натисніть "+" щоб додати</div>`;
@@ -1594,13 +1603,21 @@ function goBack() {
         
 function selectCategory(cat) { 
     console.log(`📂 Вибрано категорію: ${cat}`);
+    
+    // ОНОВЛЮЄМО СТАН
     state.category = cat; 
-    state.page = 'goods'; 
-    // ОЧИЩУЄМО КЕШ ЩОБ ПЕРЕЗАВАНТАЖИТИ
+    state.page = 'goods';
+    
+    // ОЧИЩУЄМО ВЕСЬ КЕШ
     dataCache.goods = null;
-    dataCache.lastUpdate.goods = null;
-    // ПЕРЕЗАВАНТАЖУЄМО ТОВАРИ ДЛЯ ЦІЄЇ КАТЕГОРІЇ
+    dataCache.myGoods = null;
+    dataCache.lastUpdate = {};
+    
+    // ПЕРЕЗАВАНТАЖУЄМО ТОВАРИ
     loadGoods(true);
+    
+    // ОДРАЗУ РЕНДЕРИМО СТОРІНКУ
+    renderGoodsPage();
 }
         
         function searchGoods() {
