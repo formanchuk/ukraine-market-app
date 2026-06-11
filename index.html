@@ -1866,40 +1866,40 @@ function searchGoods() {
             }
         }
         
-        function initNavigation() {
-            document.querySelectorAll('.nav-item').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const page = btn.dataset.page;
-                    if (page === 'home') { 
-                        state.page = 'home'; 
-                        state.category = null; 
-                        if (state.goods.length === 0) await loadGoods(); 
-                        if (state.jobs.length === 0) await loadJobs(); 
-                        if (state.resumes.length === 0) await loadResumes(); 
-                        renderHomePage(); 
-                    }
-                    else if (page === 'goods') { 
-                        state.page = 'goods'; 
-                        if (state.goods.length === 0) await loadGoods(); 
-                        else renderGoodsPage(); 
-                    }
-                    else if (page === 'jobs') { 
-                        state.page = 'jobs'; 
-                        if (state.jobs.length === 0) await loadJobs(); 
-                        if (state.resumes.length === 0) await loadResumes(); 
-                        renderJobsPage(); 
-                    }
-                    else if (page === 'profile') { 
-                        state.page = 'profile'; 
-                        state.profileTab = 'active';
-                        if (state.myGoods.length === 0) await loadMyGoods(); 
-                        if (state.myJobs.length === 0) await loadMyJobs(); 
-                        if (state.myResumes.length === 0) await loadMyResumes(); 
-                        renderProfilePage(); 
-                    }
-                });
-            });
-        }
+function initNavigation() {
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const page = btn.dataset.page;
+            if (page === 'home') { 
+                state.page = 'home'; 
+                state.categoryPage = null;
+                await loadGoods(true); 
+                await loadJobs(true); 
+                await loadResumes(true); 
+                renderHomePage(); 
+            }
+            else if (page === 'goods') { 
+                state.page = 'goods'; 
+                if (state.goods.length === 0) await loadGoods(); 
+                else renderGoodsPage(); 
+            }
+            else if (page === 'jobs') { 
+                state.page = 'jobs'; 
+                if (state.jobs.length === 0) await loadJobs(); 
+                if (state.resumes.length === 0) await loadResumes(); 
+                renderJobsPage(); 
+            }
+            else if (page === 'profile') { 
+                state.page = 'profile'; 
+                state.profileTab = 'active';
+                if (state.myGoods.length === 0) await loadMyGoods(); 
+                if (state.myJobs.length === 0) await loadMyJobs(); 
+                if (state.myResumes.length === 0) await loadMyResumes(); 
+                renderProfilePage(); 
+            }
+        });
+    });
+}
         
         function initProfileTabsScroll() {
             const tabsContainer = document.querySelector('.profile-tabs');
