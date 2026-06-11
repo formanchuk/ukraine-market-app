@@ -640,7 +640,7 @@
     <div id="confirmDialog" style="display:none;"></div>
 
     <script>
-          const tg = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
         tg.expand();
         
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
@@ -669,28 +669,6 @@
             profileTab: 'active',
             jobsTab: 'jobs',
             user: { id: CURRENT_USER_ID, first_name: 'Користувач', phone: '' }
-        };
-        
-        let currentPhotoIndex = 0;
-        let currentPhotos = [];
-        let isSubmitting = false;
-        let isLoading = false;
-        let lastScrollTop = 0;
-        let isModalOpen = false;
-        
-        let state = {
-            page: 'home',
-            category: null,
-            categoryPage: null,
-            goods: [],
-            myGoods: [],
-            jobs: [],
-            resumes: [],
-            myJobs: [],
-            myResumes: [],
-            profileTab: 'active',
-            jobsTab: 'jobs',
-            user: null
         };
         
         let selectedPhotos = [];
