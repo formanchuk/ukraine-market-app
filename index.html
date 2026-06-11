@@ -143,7 +143,7 @@
         .nav-icon { font-size: 22px; }
         .nav-label { font-size: 11px; font-weight: 600; }
         
-        /* ПЛАВАЮЧА КНОПКА - ЗАВЖДИ ВИДНА */
+        /* ПЛАВАЮЧА КНОПКА - ЇЗДИТЬ ПРИ СКРОЛІ */
         .fab {
             position: fixed;
             bottom: 80px;
@@ -159,7 +159,23 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 100;
+            z-index: 1000;
+            transition: all 0.2s ease;
+        }
+        
+        .fab.hide-fab {
+            display: none !important;
+        }
+        
+        .fab.visible { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+        
+        .fab.hidden { 
+            opacity: 0; 
+            transform: translateY(20px); 
+            pointer-events: none; 
         }
         
         .fab:active { transform: scale(0.94); }
@@ -516,7 +532,7 @@
         .status-active { background: #4caf50; color: white; }
         .status-archived { background: #9c27b0; color: white; }
 
-              /* Швидші переходи */
+        /* Швидші переходи */
         .app-container {
             will-change: transform;
             backface-visibility: hidden;
@@ -527,31 +543,6 @@
         }
         body {
             -webkit-tap-highlight-color: transparent;
-        }
-
-             /* ПРИМУСОВЕ ВІДОБРАЖЕННЯ КНОПКИ */
-        .fab {
-            display: flex !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            position: fixed !important;
-            bottom: 80px !important;
-            right: 16px !important;
-            width: 56px !important;
-            height: 56px !important;
-            border-radius: 28px !important;
-            background: #2aab6e !important;
-            color: white !important;
-            font-size: 28px !important;
-            align-items: center !important;
-            justify-content: center !important;
-            cursor: pointer !important;
-            z-index: 9999 !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-        }
-        
-        .fab:active {
-            transform: scale(0.94) !important;
         }
     </style>
 </head>
@@ -655,13 +646,12 @@
         const SUPABASE_URL = 'https://kgnongcdmqifukpqfevp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtnbm9uZ2NkbXFpZnVrcHFmZXZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzIxMTcsImV4cCI6MjA5NTU0ODExN30.xUUXxkvIyyLEQ5wImCp-ekCfV0sUw1DQudEsGqrxT6k';
         
-        // ОТРИМУЄМО РЕАЛЬНИЙ ID КОРИСТУВАЧА (БЕЗПЕКА)
+        // ОТРИМУЄМО РЕАЛЬНИЙ ID КОРИСТУВАЧА
         function getCurrentUserId() {
             const tgUser = tg.initDataUnsafe?.user;
             if (tgUser && tgUser.id) {
                 return tgUser.id;
             }
-            // ДЛЯ ТЕСТУВАННЯ ПОЗА TELEGRAM
             let tempId = localStorage.getItem('temp_user_id');
             if (!tempId) {
                 tempId = 'temp_' + Date.now();
@@ -677,6 +667,7 @@
         let isSubmitting = false;
         let isLoading = false;
         let lastScrollTop = 0;
+        let isModalOpen = false;
         
         let state = {
             page: 'home',
@@ -705,7 +696,7 @@
             lastUpdate: {}
         };
         
-        const CACHE_TIME = 30000; // 30 секунд кешу
+        const CACHE_TIME = 30000;
         
         function isCacheValid(cacheKey) {
             return dataCache[cacheKey] && 
@@ -713,12 +704,29 @@
                    (Date.now() - dataCache.lastUpdate[cacheKey]) < CACHE_TIME;
         }
         
-        // КЕРУВАННЯ ПЛАВАЮЧОЮ КНОПКОЮ
+        function hideFab() {
+            const fab = document.getElementById('fabButton');
+            if (fab) {
+                fab.classList.add('hide-fab');
+                isModalOpen = true;
+            }
+        }
+        
+        function showFab() {
+            const fab = document.getElementById('fabButton');
+            if (fab) {
+                fab.classList.remove('hide-fab');
+                isModalOpen = false;
+            }
+        }
+        
         function initFloatingButton() {
             const fab = document.getElementById('fabButton');
             if (!fab) return;
             
             window.addEventListener('scroll', () => {
+                if (isModalOpen) return;
+                
                 const st = window.pageYOffset || document.documentElement.scrollTop;
                 if (st > lastScrollTop && st > 100) {
                     fab.classList.add('hidden');
@@ -1673,6 +1681,8 @@
         function confirmDeleteResume(id) { confirmAction('🗑 Видалення', 'Видалити резюме назавжди?', () => deleteResumeItem(id)); }
         
         function showAddModal() { 
+            hideFab();
+            
             document.getElementById('goodsTitle').value = '';
             document.getElementById('goodsPrice').value = '';
             document.getElementById('goodsCity').value = '';
@@ -1697,6 +1707,7 @@
             selectedPhotos = []; 
             renderPhotoList(); 
             isSubmitting = false;
+            showFab();
         }
         
         function switchAddTab(tab) {
@@ -1730,6 +1741,8 @@
             showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
             closeModal();
             selectedPhotos = [];
+            dataCache.goods = null;
+            dataCache.myGoods = null;
             await loadGoods(true);
             await loadMyGoods(true);
             if (state.page === 'profile') renderProfilePage();
@@ -1757,6 +1770,8 @@
             isSubmitting = false;
             showMessage('✅ Вакансію опубліковано!');
             closeModal();
+            dataCache.jobs = null;
+            dataCache.myJobs = null;
             await loadJobs(true);
             await loadMyJobs(true);
             if (state.page === 'profile') renderProfilePage();
@@ -1783,6 +1798,8 @@
             isSubmitting = false;
             showMessage('✅ Резюме опубліковано!');
             closeModal();
+            dataCache.resumes = null;
+            dataCache.myResumes = null;
             await loadResumes(true);
             await loadMyResumes(true);
             if (state.page === 'profile') renderProfilePage();
@@ -1898,7 +1915,7 @@
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
-
+        
         (async () => {
             console.log('🚀 Запуск UAMO...');
             await loadUser();
