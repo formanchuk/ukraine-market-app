@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ukraine Market</title>
+    <title>UAMO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="icon" href="data:,">
     <style>
@@ -1183,7 +1183,7 @@ body {
             const recentItems = allItems.slice(0, 10);
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
-                    <div class="header"><h2>🏠 Ukraine Market</h2></div>
+                    <div class="header"><h2>🏠 UAMO</h2></div>
                     <div class="section-title">📂 Категорії товарів</div>
                     <div class="categories-grid">${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
                     <div class="section-title">🆕 Свіжі оголошення</div>
@@ -1880,7 +1880,7 @@ document.querySelectorAll('.nav-item').forEach(btn => {
 });
         
         (async () => {
-            console.log('🚀 Запуск Ukraine Market...');
+            console.log('🚀 Запуск UAMO...');
             await loadUser();
             await loadGoods(true);
             await loadJobs(true);
