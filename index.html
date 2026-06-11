@@ -1525,33 +1525,33 @@
         }
         
         async function goBack() { 
-            state.categoryPage = null;
-            state.page = 'home'; 
-            await loadGoods(true); 
-            await loadJobs(true); 
-            await loadResumes(true); 
-            renderHomePage(); 
-        }
+    state.categoryPage = null;
+    state.page = 'home'; 
+    await loadGoods(true); 
+    await loadJobs(true); 
+    await loadResumes(true); 
+    renderHomePage(); 
+}
         
-        async function goToGoodsPage() { 
-            state.page = 'goods'; 
-            if (state.goods.length === 0) await loadGoods(); 
-            else renderGoodsPage();
-        }
+async function goToGoodsPage() { 
+    state.page = 'goods'; 
+    if (state.goods.length === 0) await loadGoods(); 
+    else renderGoodsPage();
+}
         
-        async function goToJobsPage() { 
-            state.page = 'jobs'; 
-            if (state.jobs.length === 0) await loadJobs(); 
-            if (state.resumes.length === 0) await loadResumes(); 
-            renderJobsPage(); 
-        }
+       async function goToJobsPage() { 
+    state.page = 'jobs'; 
+    if (state.jobs.length === 0) await loadJobs(); 
+    if (state.resumes.length === 0) await loadResumes(); 
+    renderJobsPage(); 
+}
         
         async function selectCategory(cat) { 
-            console.log(`📂 Вибрано категорію: ${cat}`);
-            state.categoryPage = cat;
-            state.page = 'goods';
-            await loadGoods(true);
-        }
+    console.log(`📂 Вибрано категорію: ${cat}`);
+    state.categoryPage = cat;
+    state.page = 'goods';
+    await loadGoods(true);
+}
         
         function searchGoods() {
             const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
