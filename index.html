@@ -548,36 +548,20 @@
 </head>
 <body>
 <!-- СПЛЕШ-ЕКРАН -->
-<!-- СПЛЕШ-ЕКРАН -->
 <div id="splash" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; z-index:9999; flex-direction:column; gap:40px;">
     <div style="position:relative;">
-        <!-- Світлові кільця -->
         <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; height:200px; border-radius:50%; background:rgba(107,196,255,0.15); animation:ripple 1.8s infinite;"></div>
         <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; height:200px; border-radius:50%; background:rgba(107,196,255,0.1); animation:ripple 1.8s infinite 0.6s;"></div>
         <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; height:200px; border-radius:50%; background:rgba(107,196,255,0.05); animation:ripple 1.8s infinite 1.2s;"></div>
-        
-        <!-- Логотип UAMO -->
-        <div style="font-size:64px; font-weight:700; color:#6bc4ff; text-shadow:0 0 30px rgba(107,196,255,0.5); position:relative; z-index:1; letter-spacing:4px;">
-            UAMO
-        </div>
+        <div style="font-size:64px; font-weight:700; color:#6bc4ff; text-shadow:0 0 30px rgba(107,196,255,0.5); position:relative; z-index:1; letter-spacing:4px;">UAMO</div>
     </div>
-    
-    <!-- Текст завантаження внизу -->
     <div style="color:#aaa; font-size:14px;">Завантаження...</div>
 </div>
 
 <style>
 @keyframes ripple {
-    0% {
-        width: 100px;
-        height: 100px;
-        opacity: 0.8;
-    }
-    100% {
-        width: 320px;
-        height: 320px;
-        opacity: 0;
-    }
+    0% { width: 100px; height: 100px; opacity: 0.8; }
+    100% { width: 320px; height: 320px; opacity: 0; }
 }
 </style>
     <div id="app"></div>
@@ -1958,11 +1942,23 @@
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
         
-function updateSplashProgress(percent, text) {
-    const progressBar = document.getElementById('splashProgress');
-    const textEl = document.getElementById('splashText');
-    if (progressBar) progressBar.style.width = percent + '%';
-    if (textEl) textEl.textContent = text;
+// ПРИБРАТИ СПЛЕШ
+function removeSplash() {
+    console.log('🔴 Спробуємо прибрати сплеш...');
+    const splash = document.getElementById('splash');
+    if (splash) {
+        console.log('✅ Сплеш знайдено, видаляємо');
+        splash.style.transition = 'opacity 0.3s';
+        splash.style.opacity = '0';
+        setTimeout(() => {
+            if (splash && splash.parentNode) {
+                splash.parentNode.removeChild(splash);
+                console.log('✅ Сплеш видалено!');
+            }
+        }, 300);
+    } else {
+        console.log('❌ Сплеш не знайдено!');
+    }
 }
 
 // ЗАВАНТАЖЕННЯ ДАНИХ
@@ -1983,16 +1979,9 @@ function updateSplashProgress(percent, text) {
     initNavigation();
     initFloatingButton();
     setTimeout(initProfileTabsScroll, 100);
+    
+    removeSplash(); // ← Прибираємо після завантаження
 })();
 
-// 👍 СПЛЕШ ЗНИКНЕ ЧЕРЕЗ 2 СЕКУНДИ В БУДЬ-ЯКОМУ РАЗІ
-setTimeout(() => {
-    const splash = document.getElementById('splash');
-    if (splash) {
-        splash.style.transition = 'opacity 0.3s';
-        splash.style.opacity = '0';
-        setTimeout(() => {
-            if (splash.parentNode) splash.remove();
-        }, 300);
-    }
-}, 2000);
+// СТРАХОВКА - ПРИБРАТИ ЧЕРЕЗ 3 СЕКУНДИ
+setTimeout(removeSplash, 3000);
