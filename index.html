@@ -548,22 +548,37 @@
 </head>
 <body>
 <!-- СПЛЕШ-ЕКРАН -->
-<div id="splash" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; z-index:9999; flex-direction:column; gap:25px;">
+<!-- СПЛЕШ-ЕКРАН -->
+<div id="splash" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; z-index:9999; flex-direction:column; gap:40px;">
     <div style="position:relative;">
-        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:140px; height:140px; border-radius:50%; background:rgba(107,196,255,0.15); animation:ripple 1.8s infinite;"></div>
-        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:140px; height:140px; border-radius:50%; background:rgba(107,196,255,0.1); animation:ripple 1.8s infinite 0.6s;"></div>
-        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:140px; height:140px; border-radius:50%; background:rgba(107,196,255,0.05); animation:ripple 1.8s infinite 1.2s;"></div>
-        <div style="font-size:120px; font-weight:900; color:#6bc4ff; text-shadow:0 0 30px rgba(107,196,255,0.5); position:relative; z-index:1;">U</div>
+        <!-- Світлові кільця -->
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; height:200px; border-radius:50%; background:rgba(107,196,255,0.15); animation:ripple 1.8s infinite;"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; height:200px; border-radius:50%; background:rgba(107,196,255,0.1); animation:ripple 1.8s infinite 0.6s;"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; height:200px; border-radius:50%; background:rgba(107,196,255,0.05); animation:ripple 1.8s infinite 1.2s;"></div>
+        
+        <!-- Логотип UAMO -->
+        <div style="font-size:64px; font-weight:700; color:#6bc4ff; text-shadow:0 0 30px rgba(107,196,255,0.5); position:relative; z-index:1; letter-spacing:4px;">
+            UAMO
+        </div>
     </div>
+    
+    <!-- Текст завантаження внизу -->
     <div style="color:#aaa; font-size:14px;">Завантаження...</div>
 </div>
 
 <style>
 @keyframes ripple {
-    0% { width: 80px; height: 80px; opacity: 0.8; }
-    100% { width: 220px; height: 220px; opacity: 0; }
+    0% {
+        width: 100px;
+        height: 100px;
+        opacity: 0.8;
+    }
+    100% {
+        width: 320px;
+        height: 320px;
+        opacity: 0;
+    }
 }
-</style>
 </style>
     <div id="app"></div>
     <div class="fab" id="fabButton" onclick="window.showAddModal && showAddModal()">+</div>
