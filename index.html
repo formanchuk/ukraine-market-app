@@ -1941,26 +1941,49 @@
         window.goToPhoto = goToPhoto;
         
 (async () => {
-    console.log('🚀 Запуск UAMO...');
+    console.log('🚀 1. Запуск...');
     
-    await loadUser();
-    await loadGoods(true);
-    await loadJobs(true);
-    await loadResumes(true);
-    await loadMyGoods(true);
-    await loadMyJobs(true);
-    await loadMyResumes(true);
-    
-    console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
-    
-    renderHomePage();
-    initNavigation();
-    initFloatingButton();
-    setTimeout(initProfileTabsScroll, 100);
+    try {
+        console.log('🚀 2. Завантаження даних...');
+        await loadUser();
+        await loadGoods(true);
+        await loadJobs(true);
+        await loadResumes(true);
+        await loadMyGoods(true);
+        await loadMyJobs(true);
+        await loadMyResumes(true);
+        
+        console.log('🚀 3. Дані завантажено, рендер сторінки...');
+        renderHomePage();
+        initNavigation();
+        initFloatingButton();
+        setTimeout(initProfileTabsScroll, 100);
+        
+        console.log('🚀 4. Видалення сплешу...');
+        const splash = document.getElementById('splash');
+        if (splash) {
+            splash.style.opacity = '0';
+            setTimeout(() => splash.remove(), 500);
+        }
+        
+    } catch(error) {
+        console.error('❌ ПОМИЛКА:', error);
+        // Якщо помилка - все одно показуємо сторінку
+        document.getElementById('app').innerHTML = '<div style="padding:20px; color:red;">Помилка: ' + error.message + '</div>';
+        const splash = document.getElementById('splash');
+        if (splash) splash.remove();
+    }
 })();
 
-// ПРИБРАТИ СПЛЕШ ЧЕРЕЗ 2 СЕКУНДИ
+// СТРАХОВКА НА ВСЯКИЙ ВИПАДОК
 setTimeout(() => {
     const splash = document.getElementById('splash');
-    if (splash) splash.remove();
-}, 2000);
+    if (splash) {
+        splash.style.opacity = '0';
+        setTimeout(() => splash.remove(), 500);
+    }
+    // Якщо через 5 секунд сторінка порожня - показати помилку
+    if (document.getElementById('app').innerHTML === '') {
+        document.getElementById('app').innerHTML = '<div style="padding:20px; color:orange;">⚠️ Додаток не завантажився. Перевірте консоль (F12)</div>';
+    }
+}, 5000);
