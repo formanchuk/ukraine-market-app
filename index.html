@@ -1940,19 +1940,6 @@
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
         
-// СТРАХОВКА НА ВСЯКИЙ ВИПАДОК
-setTimeout(() => {
-    const splash = document.getElementById('splash');
-    if (splash) {
-        splash.style.opacity = '0';
-        setTimeout(() => splash.remove(), 500);
-    }
-    if (document.getElementById('app').innerHTML === '') {
-        document.getElementById('app').innerHTML = '<div style="padding:20px; color:orange;">⚠️ Додаток не завантажився. Перевірте консоль (F12)</div>';
-    }
-}, 5000);
-
-// ЗАПУСК ДОДАТКУ
 (async () => {
     console.log('🚀 Запуск UAMO...');
     await loadUser();
@@ -1968,7 +1955,6 @@ setTimeout(() => {
     initFloatingButton();
     setTimeout(initProfileTabsScroll, 100);
     
-    // ВИДАЛЕННЯ СПЛЕШУ ПІСЛЯ ЗАВАНТАЖЕННЯ
     const splash = document.getElementById('splash');
     if (splash) splash.remove();
 })();
