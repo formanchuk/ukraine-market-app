@@ -1952,6 +1952,27 @@ setTimeout(() => {
     }
 }, 5000);
 
+// ЗАПУСК ДОДАТКУ
+(async () => {
+    console.log('🚀 Запуск UAMO...');
+    await loadUser();
+    await loadGoods(true);
+    await loadJobs(true);
+    await loadResumes(true);
+    await loadMyGoods(true);
+    await loadMyJobs(true);
+    await loadMyResumes(true);
+    console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+    renderHomePage();
+    initNavigation();
+    initFloatingButton();
+    setTimeout(initProfileTabsScroll, 100);
+    
+    // ВИДАЛЕННЯ СПЛЕШУ ПІСЛЯ ЗАВАНТАЖЕННЯ
+    const splash = document.getElementById('splash');
+    if (splash) splash.remove();
+})();
+
 </script>
 </body>
 </html>
