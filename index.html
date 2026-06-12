@@ -1951,25 +1951,41 @@ function updateSplashProgress(percent, text) {
 
 (async () => {
     console.log('🚀 Запуск UAMO...');
-    await loadUser();
-    await loadGoods(true);
-    await loadJobs(true);
-    await loadResumes(true);
-    await loadMyGoods(true);
-    await loadMyJobs(true);
-    await loadMyResumes(true);
-    console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
     
-    // Ховаємо сплеш
-    const splash = document.getElementById('splash');
-    if (splash) {
-        splash.style.transition = 'opacity 0.3s';
-        splash.style.opacity = '0';
-        setTimeout(() => splash.remove(), 300);
+    try {
+        await loadUser();
+        await loadGoods(true);
+        await loadJobs(true);
+        await loadResumes(true);
+        await loadMyGoods(true);
+        await loadMyJobs(true);
+        await loadMyResumes(true);
+        
+        console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+        
+        const splash = document.getElementById('splash');
+        if (splash) {
+            console.log('✅ Ховаємо сплеш');
+            splash.style.transition = 'opacity 0.3s';
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.remove();
+                console.log('✅ Сплеш видалено');
+            }, 300);
+        } else {
+            console.log('❌ Сплеш не знайдено!');
+        }
+        
+        renderHomePage();
+        initNavigation();
+        initFloatingButton();
+        setTimeout(initProfileTabsScroll, 100);
+        
+    } catch (error) {
+        console.error('Помилка:', error);
+        // Якщо помилка - все одно ховаємо сплеш
+        const splash = document.getElementById('splash');
+        if (splash) splash.remove();
+        renderHomePage();
     }
-    
-    renderHomePage();
-    initNavigation();
-    initFloatingButton();
-    setTimeout(initProfileTabsScroll, 100);
 })();
