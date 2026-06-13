@@ -1969,5 +1969,30 @@
     console.log('✅ Eruda запущено!');
 </script>
 
+    <script>
+    setTimeout(() => {
+        if (typeof state !== 'undefined') {
+            // Показати на екрані
+            const debugDiv = document.createElement('div');
+            debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#0f0; padding:10px; font-size:14px; z-index:9999; border-radius:5px; font-family:monospace;';
+            debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user?.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
+            document.body.appendChild(debugDiv);
+            
+            // Також в консоль
+            console.log('=== ДІАГНОСТИКА ===');
+            console.log('Ваш ID:', state.user?.id);
+            console.log('Моїх оголошень:', state.myGoods?.length);
+            console.log('Всі оголошення state.myGoods:', state.myGoods);
+        } else {
+            console.log('❌ state не визначено');
+            const debugDiv = document.createElement('div');
+            debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#f00; padding:10px; font-size:14px; z-index:9999; border-radius:5px;';
+            debugDiv.innerHTML = `❌ Помилка: state не визначено`;
+            document.body.appendChild(debugDiv);
+        }
+    }, 3000);
+</script>
+</body>
+</html>
 </body>
 </html>
