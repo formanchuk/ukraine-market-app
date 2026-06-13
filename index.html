@@ -1940,80 +1940,82 @@
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
 <script>
-        (async () => {
-            console.log('🚀 Запуск UAMO...');
-            await loadUser();
-            await loadGoods(true);
-            await loadJobs(true);
-            await loadResumes(true);
-            await loadMyGoods(true);
-            await loadMyJobs(true);
-            await loadMyResumes(true);
-            console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
-            renderHomePage();
-            initNavigation();
-            initFloatingButton();
-            setTimeout(initProfileTabsScroll, 100);
-            
-            const splash = document.getElementById('splash');
-            if (splash) splash.remove();
-        })();
-    </script>
-    // ДІАГНОСТИКА TELEGRAM
-    setTimeout(() => {
-        const webApp = window.Telegram?.WebApp;
-        const user = webApp?.initDataUnsafe?.user;
+    async function loadUser() {
+        let userId = null;
+        let userName = 'Користувач';
         
-        const infoDiv = document.createElement('div');
-        infoDiv.style.cssText = 'position:fixed; top:10px; left:10px; background:#fff; color:#000; padding:10px; font-size:12px; z-index:10000; border-radius:5px;';
-        infoDiv.innerHTML = `📱 TELEGRAM DATA:<br>WebApp: ${!!webApp}<br>User ID: ${user?.id || 'немає'}<br>User name: ${user?.first_name || 'немає'}`;
-        document.body.appendChild(infoDiv);
-    }, 1000);
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
-    
-
-    <script>
-        // ФІКС ID ДЛЯ TELEGRAM
-        setTimeout(() => {
-            try {
-                const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-                if (tgUser?.id && state?.user && state.user.id !== tgUser.id) {
-                    state.user.id = tgUser.id;
-                    state.user.first_name = tgUser.first_name || 'Користувач';
-                    loadMyGoods(true);
-                    if (state.page === 'profile') renderProfilePage();
-                    
-                    // Оновити діагностику
-                    const debugDiv = document.querySelector('#debugInfo');
-                    if (debugDiv) {
-                        debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
-                    }
-                }
-            } catch(e) {}
-        }, 2000);
-    </script>
-
-    <script>
-        // ДІАГНОСТИКА НА ЕКРАНІ
-        setTimeout(() => {
-            if (typeof state !== 'undefined') {
-                const debugDiv = document.createElement('div');
-                debugDiv.id = 'debugInfo';
-                debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#0f0; padding:10px; font-size:14px; z-index:9999; border-radius:5px; font-family:monospace;';
-                debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user?.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
-                document.body.appendChild(debugDiv);
-                console.log('=== ДІАГНОСТИКА ===');
-                console.log('Ваш ID:', state.user?.id);
-                console.log('Моїх оголошень:', state.myGoods?.length);
-            } else {
-                const debugDiv = document.createElement('div');
-                debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#f00; padding:10px; font-size:14px; z-index:9999; border-radius:5px;';
-                debugDiv.innerHTML = `❌ Помилка: state не визначено`;
-                document.body.appendChild(debugDiv);
+        if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+            const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+            userId = tgUser.id;
+            userName = tgUser.first_name || 'Користувач';
+            console.log('✅ Telegram ID:', userId);
+        } else {
+            userId = localStorage.getItem('test_user_id');
+            if (!userId) {
+                userId = 'test_' + Date.now();
+                localStorage.setItem('test_user_id', userId);
             }
-        }, 3000);
-    </script>
+            console.log('⚠️ Тестовий режим, ID:', userId);
+        }
+        
+        state.user = {
+            id: userId,
+            first_name: userName,
+            phone: localStorage.getItem(`userPhone_${userId}`) || ''
+        };
+        
+        try {
+            let users = await apiRequest(`users?id=eq.${userId}&select=*`);
+            if (!users || users.length === 0) {
+                await apiRequest('users', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id: userId,
+                        first_name: userName,
+                        phone: state.user.phone || '',
+                        created_at: new Date().toISOString()
+                    })
+                });
+                console.log('✅ Користувача створено');
+            }
+        } catch(e) {
+            console.log('Помилка:', e);
+        }
+    }
+
+    (async () => {
+        console.log('🚀 Запуск UAMO...');
+        await loadUser();
+        await loadGoods(true);
+        await loadJobs(true);
+        await loadResumes(true);
+        await loadMyGoods(true);
+        await loadMyJobs(true);
+        await loadMyResumes(true);
+        console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+        renderHomePage();
+        initNavigation();
+        initFloatingButton();
+        setTimeout(initProfileTabsScroll, 100);
+        
+        const splash = document.getElementById('splash');
+        if (splash) splash.remove();
+    })();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
+
+<script>
+    setTimeout(() => {
+        if (typeof state !== 'undefined') {
+            const debugDiv = document.createElement('div');
+            debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#0f0; padding:10px; font-size:14px; z-index:9999; border-radius:5px; font-family:monospace;';
+            debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user?.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
+            document.body.appendChild(debugDiv);
+        }
+    }, 3000);
+</script>
+
 </body>
 </html>
