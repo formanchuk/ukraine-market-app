@@ -872,59 +872,36 @@
         }
         
 async function loadUser() {
-    const tgUser = tg.initDataUnsafe?.user;
-    
-
-    const userId = tgUser?.id ? String(tgUser.id) : null;
+    // ОТРИМУЄМО ID БЕЗПОСЕРЕДНЬО З TELEGRAM
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    let userId = tgUser?.id ? String(tgUser.id) : null;
     const userName = tgUser?.first_name || 'Користувач';
     
-
+    console.log('🔴 Отриманий ID з Telegram:', userId);
+    
+    // Якщо Telegram не передав ID - тестовий режим
     if (!userId) {
-        console.log('⚠️ Не в Telegram, використовуємо тимчасовий ID');
-        state.user = {
-            id: "1",
-            first_name: userName,
-            phone: localStorage.getItem('userPhone_1') || ''
-        };
-        return;
+        console.log('⚠️ Тестовий режим, ID=1');
+        userId = '1';
     }
     
-
-    state.user = {
-        id: userId,
-        first_name: userName,
-        phone: localStorage.getItem(`userPhone_${userId}`) || ''
-    };
+    // ВАЖЛИВО: використовуємо userId, а не фіксований ID
+    state.user = { id: userId, first_name: userName, phone: '' };
     
+    console.log('✅ Встановлено state.user.id:', state.user.id);
+    
+    // Створюємо користувача в БД, якщо немає
     try {
-
         let users = await apiRequest(`users?id=eq.${userId}&select=*`);
-        
         if (!users || users.length === 0) {
-            console.log('👤 Створюємо нового користувача...');
             await apiRequest('users', {
                 method: 'POST',
-                body: JSON.stringify({
-                    id: userId,
-                    username: tgUser?.username || '',
-                    first_name: userName,
-                    phone: state.user.phone || '',
-                    created_at: new Date().toISOString()
-                })
+                body: JSON.stringify({ id: userId, first_name: userName, created_at: new Date().toISOString() })
             });
-            console.log('✅ Нового користувача створено!');
-        } else {
-            console.log('✅ Існуючий користувач:', users[0]);
-            if (users[0]?.phone) {
-                state.user.phone = users[0].phone;
-                localStorage.setItem(`userPhone_${userId}`, users[0].phone);
-            }
+            console.log('✅ Нового користувача створено:', userId);
         }
-    } catch(e) {
-        console.log('Помилка синхронізації:', e);
-    }
+    } catch(e) { console.log('Помилка:', e); }
 }
-        
         async function loadGoods(force = false) {
             if (!force && isCacheValid('goods')) {
                 state.goods = dataCache.goods;
