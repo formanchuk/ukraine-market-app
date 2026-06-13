@@ -1939,51 +1939,22 @@
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
-<script>
-    async function loadUser() {
-        let userId = null;
-        let userName = 'Користувач';
-        
-        if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-            const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-            userId = tgUser.id;
-            userName = tgUser.first_name || 'Користувач';
-            console.log('✅ Telegram ID:', userId);
-        } else {
-            userId = localStorage.getItem('test_user_id');
-            if (!userId) {
-                userId = 'test_' + Date.now();
-                localStorage.setItem('test_user_id', userId);
-            }
-            console.log('⚠️ Тестовий режим, ID:', userId);
-        }
-        
-        state.user = {
-            id: userId,
-            first_name: userName,
-            phone: localStorage.getItem(`userPhone_${userId}`) || ''
-        };
-    }
-
-    (async () => {
-        console.log('🚀 Запуск UAMO...');
-        await loadUser();
-        await loadGoods(true);
-        await loadJobs(true);
-        await loadResumes(true);
-        await loadMyGoods(true);
-        await loadMyJobs(true);
-        await loadMyResumes(true);
-        console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
-        renderHomePage();
-        initNavigation();
-        initFloatingButton();
-        setTimeout(initProfileTabsScroll, 100);
-        
-        const splash = document.getElementById('splash');
-        if (splash) splash.remove();
-    })();
-</script>
-
+    <script>
+        (async () => {
+            console.log('🚀 Запуск UAMO...');
+            await loadUser();
+            await loadGoods(true);
+            await loadJobs(true);
+            await loadResumes(true);
+            await loadMyGoods(true);
+            await loadMyJobs(true);
+            await loadMyResumes(true);
+            console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+            renderHomePage();
+            initNavigation();
+            initFloatingButton();
+            setTimeout(initProfileTabsScroll, 100);
+        })();
+    </script>
 </body>
 </html>
