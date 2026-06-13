@@ -1331,7 +1331,11 @@ async function loadUser() {
             setActiveNav('goods');
         }
         
-     function renderProfilePage() {
+function renderProfilePage() {
+    state.myGoods = state.myGoods.filter(item => String(item.user_id) === String(state.user.id));
+    state.myJobs = state.myJobs.filter(item => String(item.user_id) === String(state.user.id));
+    state.myResumes = state.myResumes.filter(item => String(item.user_id) === String(state.user.id));
+    
     const user = state.user || { first_name: 'Користувач', id: 0 };
     const activeCount = state.myGoods.filter(i => i.status === 'active').length;
     const archivedCount = state.myGoods.filter(i => i.status === 'archived').length;
