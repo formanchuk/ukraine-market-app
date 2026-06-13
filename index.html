@@ -1940,46 +1940,69 @@
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
 <script>
-    (async () => {
-        console.log('🚀 Запуск UAMO...');
-        await loadUser();
-        await loadGoods(true);
-        await loadJobs(true);
-        await loadResumes(true);
-        await loadMyGoods(true);
-        await loadMyJobs(true);
-        await loadMyResumes(true);
-        console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
-        renderHomePage();
-        initNavigation();
-        initFloatingButton();
-        setTimeout(initProfileTabsScroll, 100);
-        
-        const splash = document.getElementById('splash');
-        if (splash) splash.remove();
-    })();
+        (async () => {
+            console.log('🚀 Запуск UAMO...');
+            await loadUser();
+            await loadGoods(true);
+            await loadJobs(true);
+            await loadResumes(true);
+            await loadMyGoods(true);
+            await loadMyJobs(true);
+            await loadMyResumes(true);
+            console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+            renderHomePage();
+            initNavigation();
+            initFloatingButton();
+            setTimeout(initProfileTabsScroll, 100);
+            
+            const splash = document.getElementById('splash');
+            if (splash) splash.remove();
+        })();
+    </script>
 
-    setTimeout(() => {
-        if (typeof state !== 'undefined') {
-            const debugDiv = document.createElement('div');
-            debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#0f0; padding:10px; font-size:14px; z-index:9999; border-radius:5px; font-family:monospace;';
-            debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user?.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
-            document.body.appendChild(debugDiv);
-            console.log('=== ДІАГНОСТИКА ===');
-            console.log('Ваш ID:', state.user?.id);
-            console.log('Моїх оголошень:', state.myGoods?.length);
-        } else {
-            console.log('❌ state не визначено');
-            const debugDiv = document.createElement('div');
-            debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#f00; padding:10px; font-size:14px; z-index:9999; border-radius:5px;';
-            debugDiv.innerHTML = `❌ Помилка: state не визначено`;
-            document.body.appendChild(debugDiv);
-        }
-    }, 3000);
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
 
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
+    <script>
+        // ФІКС ID ДЛЯ TELEGRAM
+        setTimeout(() => {
+            try {
+                const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+                if (tgUser?.id && state?.user && state.user.id !== tgUser.id) {
+                    state.user.id = tgUser.id;
+                    state.user.first_name = tgUser.first_name || 'Користувач';
+                    loadMyGoods(true);
+                    if (state.page === 'profile') renderProfilePage();
+                    
+                    // Оновити діагностику
+                    const debugDiv = document.querySelector('#debugInfo');
+                    if (debugDiv) {
+                        debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
+                    }
+                }
+            } catch(e) {}
+        }, 2000);
+    </script>
 
+    <script>
+        // ДІАГНОСТИКА НА ЕКРАНІ
+        setTimeout(() => {
+            if (typeof state !== 'undefined') {
+                const debugDiv = document.createElement('div');
+                debugDiv.id = 'debugInfo';
+                debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#0f0; padding:10px; font-size:14px; z-index:9999; border-radius:5px; font-family:monospace;';
+                debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user?.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
+                document.body.appendChild(debugDiv);
+                console.log('=== ДІАГНОСТИКА ===');
+                console.log('Ваш ID:', state.user?.id);
+                console.log('Моїх оголошень:', state.myGoods?.length);
+            } else {
+                const debugDiv = document.createElement('div');
+                debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#f00; padding:10px; font-size:14px; z-index:9999; border-radius:5px;';
+                debugDiv.innerHTML = `❌ Помилка: state не визначено`;
+                document.body.appendChild(debugDiv);
+            }
+        }, 3000);
+    </script>
 </body>
 </html>
