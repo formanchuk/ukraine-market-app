@@ -1949,8 +1949,8 @@ let currentPhotoList = [];
 let currentPhotoIndex = 0;
 
 function openFullScreenPhoto(photos, index) {
-    currentPhotoList = photos;
-    currentPhotoIndex = index;
+    let currentPhotoList = photos;
+    let currentIndex = index;
     
     const overlay = document.createElement('div');
     overlay.id = 'fullscreenOverlay';
@@ -1991,10 +1991,8 @@ function openFullScreenPhoto(photos, index) {
         z-index: 100002;
         transition: background 0.2s;
     `;
-    closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255,255,255,0.3)';
-    closeBtn.onmouseout = () => closeBtn.style.background = 'rgba(255,255,255,0.2)';
     closeBtn.onclick = () => overlay.remove();
-
+    
     const imageContainer = document.createElement('div');
     imageContainer.style.cssText = `
         width: 100%;
@@ -2014,7 +2012,6 @@ function openFullScreenPhoto(photos, index) {
         object-fit: contain;
         border-radius: 12px;
         transition: transform 0.1s ease;
-        cursor: grab;
     `;
     
     const leftArrow = document.createElement('div');
@@ -2035,17 +2032,15 @@ function openFullScreenPhoto(photos, index) {
         color: white;
         cursor: pointer;
         z-index: 100002;
-        transition: background 0.2s;
     `;
     leftArrow.onclick = (e) => {
         e.stopPropagation();
-        let newIndex = currentPhotoIndex - 1;
+        let newIndex = currentIndex - 1;
         if (newIndex < 0) newIndex = photos.length - 1;
         if (photos[newIndex]) {
-            currentPhotoIndex = newIndex;
-            img.src = photos[currentPhotoIndex];
+            currentIndex = newIndex;
+            img.src = photos[currentIndex];
             img.style.transform = 'scale(1)';
-            currentScale = 1;
         }
     };
     
@@ -2067,17 +2062,15 @@ function openFullScreenPhoto(photos, index) {
         color: white;
         cursor: pointer;
         z-index: 100002;
-        transition: background 0.2s;
     `;
     rightArrow.onclick = (e) => {
         e.stopPropagation();
-        let newIndex = currentPhotoIndex + 1;
+        let newIndex = currentIndex + 1;
         if (newIndex >= photos.length) newIndex = 0;
         if (photos[newIndex]) {
-            currentPhotoIndex = newIndex;
-            img.src = photos[currentPhotoIndex];
+            currentIndex = newIndex;
+            img.src = photos[currentIndex];
             img.style.transform = 'scale(1)';
-            currentScale = 1;
         }
     };
     
@@ -2096,38 +2089,57 @@ function openFullScreenPhoto(photos, index) {
         z-index: 100002;
     `;
     
-    // Масштабування
+    // Оновлення лічильника при зміні фото
+    const updateCounter = () => {
+        counter.innerHTML = `${currentIndex + 1} / ${photos.length}`;
+    };
+    
+    leftArrow.onclick = (e) => {
+        e.stopPropagation();
+        let newIndex = currentIndex - 1;
+        if (newIndex < 0) newIndex = photos.length - 1;
+        if (photos[newIndex]) {
+            currentIndex = newIndex;
+            img.src = photos[currentIndex];
+            img.style.transform = 'scale(1)';
+            updateCounter();
+        }
+    };
+    
+    rightArrow.onclick = (e) => {
+        e.stopPropagation();
+        let newIndex = currentIndex + 1;
+        if (newIndex >= photos.length) newIndex = 0;
+        if (photos[newIndex]) {
+            currentIndex = newIndex;
+            img.src = photos[currentIndex];
+            img.style.transform = 'scale(1)';
+            updateCounter();
+        }
+    };
+    
     let currentScale = 1;
     img.addEventListener('dblclick', (e) => {
         e.stopPropagation();
         if (currentScale === 1) {
             currentScale = 2;
             img.style.transform = `scale(2)`;
-            img.style.cursor = 'zoom-out';
         } else {
             currentScale = 1;
             img.style.transform = `scale(1)`;
-            img.style.cursor = 'grab';
         }
     });
     
-    // Свайп для гортання
     let touchStartX = 0;
-    let touchEndX = 0;
-    
     imageContainer.addEventListener('touchstart', (e) => {
         touchStartX = e.touches[0].clientX;
     });
-    
     imageContainer.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].clientX;
+        const touchEndX = e.changedTouches[0].clientX;
         const diff = touchEndX - touchStartX;
         if (Math.abs(diff) > 50) {
-            if (diff > 0) {
-                leftArrow.onclick();
-            } else {
-                rightArrow.onclick();
-            }
+            if (diff > 0) leftArrow.onclick();
+            else rightArrow.onclick();
         }
     });
     
@@ -2141,7 +2153,6 @@ function openFullScreenPhoto(photos, index) {
     
     document.body.appendChild(overlay);
 }
-
         (async () => {
             console.log('🚀 Запуск UAMO...');
             await loadUser();
