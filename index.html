@@ -1939,25 +1939,27 @@
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
-<script>
-    (async () => {
-        console.log('🚀 Запуск UAMO...');
-        await loadUser();
-        await loadGoods(true);
-        await loadJobs(true);
-        await loadResumes(true);
-        await loadMyGoods(true);
-        await loadMyJobs(true);
-        await loadMyResumes(true);
-        console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
-        renderHomePage();
-        initNavigation();
-        initFloatingButton();
-        setTimeout(initProfileTabsScroll, 100);
-        
-        const splash = document.getElementById('splash');
-        if (splash) splash.remove();
-    })();
+    setActiveNav('profile');
+}
+(async () => {
+    console.log('🚀 Запуск UAMO...');
+    await loadUser();
+    await loadGoods(true);
+    await loadJobs(true);
+    await loadResumes(true);
+    await loadMyGoods(true);
+    await loadMyJobs(true);
+    await loadMyResumes(true);
+    console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+    renderHomePage();
+    initNavigation();
+    initFloatingButton();
+    setTimeout(initProfileTabsScroll, 100);
+    
+    const splash = document.getElementById('splash');
+    if (splash) splash.remove();
+})();
+
 </script>
 </body>
 </html>
