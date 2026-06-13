@@ -1949,151 +1949,279 @@
         window.goToPhoto = goToPhoto;
 
 
-        function openFullScreenPhoto(photos, index) {
-            window.currentPhotoIndex = index;
-            
-            const overlay = document.createElement('div');
-            overlay.id = 'fullscreenOverlay';
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: #1a1a2e;
-                z-index: 100000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-            `;
-            
-            const logo = document.createElement('div');
-            logo.innerHTML = `<div style="position:absolute; top:20px; left:20px; font-size:24px; font-weight:700; color:#6bc4ff; letter-spacing:3px; z-index:100001;">UAMO</div>`;
-            
-            const closeBtn = document.createElement('div');
-            closeBtn.innerHTML = `✕`;
-            closeBtn.style.cssText = `
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                width: 40px;
-                height: 40px;
-                background: rgba(255,255,255,0.2);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                color: white;
-                cursor: pointer;
-                z-index: 100002;
-            `;
-            closeBtn.onclick = () => overlay.remove();
-            
-            const img = document.createElement('img');
-            img.src = photos[index];
-            img.style.cssText = `max-width: 90%; max-height: 80%; object-fit: contain; border-radius: 12px; transition: transform 0.1s ease;`;
-            
-            const leftArrow = document.createElement('div');
-            leftArrow.innerHTML = `‹`;
-            leftArrow.style.cssText = `
-                position: absolute;
-                left: 20px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 50px;
-                height: 50px;
-                background: rgba(0,0,0,0.5);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 40px;
-                color: white;
-                cursor: pointer;
-                z-index: 100002;
-            `;
-            
-            const rightArrow = document.createElement('div');
-            rightArrow.innerHTML = `›`;
-            rightArrow.style.cssText = `
-                position: absolute;
-                right: 20px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 50px;
-                height: 50px;
-                background: rgba(0,0,0,0.5);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 40px;
-                color: white;
-                cursor: pointer;
-                z-index: 100002;
-            `;
-            
-            const counter = document.createElement('div');
-            counter.innerHTML = `${index + 1} / ${photos.length}`;
-            counter.style.cssText = `
-                position: absolute;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(0,0,0,0.6);
-                padding: 6px 12px;
-                border-radius: 20px;
-                color: white;
-                font-size: 14px;
-                z-index: 100002;
-            `;
-            
-            const updateImage = (newIndex) => {
-                window.currentPhotoIndex = newIndex;
-                img.src = photos[newIndex];
-                img.style.transform = 'scale(1)';
-                counter.innerHTML = `${newIndex + 1} / ${photos.length}`;
-            };
-            
-            leftArrow.onclick = () => {
-                let newIndex = window.currentPhotoIndex - 1;
-                if (newIndex < 0) newIndex = photos.length - 1;
-                updateImage(newIndex);
-            };
-            
-            rightArrow.onclick = () => {
-                let newIndex = window.currentPhotoIndex + 1;
-                if (newIndex >= photos.length) newIndex = 0;
-                updateImage(newIndex);
-            };
-            
-            let scale = 1;
-            img.ondblclick = () => {
-                scale = scale === 1 ? 2 : 1;
-                img.style.transform = `scale(${scale})`;
-            };
-            
-            let startX = 0;
-            img.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
-            img.addEventListener('touchend', (e) => {
-                const diff = e.changedTouches[0].clientX - startX;
-                if (Math.abs(diff) > 50) {
-                    if (diff > 0) leftArrow.onclick();
-                    else rightArrow.onclick();
-                }
-            });
-            
-            overlay.appendChild(logo);
-            overlay.appendChild(closeBtn);
-            overlay.appendChild(leftArrow);
-            overlay.appendChild(rightArrow);
-            overlay.appendChild(img);
-            overlay.appendChild(counter);
-            document.body.appendChild(overlay);
-        }
+function openFullScreenPhoto(photos, index) {
+    window.currentPhotoIndex = index;
+    
+    const overlay = document.createElement('div');
+    overlay.id = 'fullscreenOverlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #1a1a2e;
+        z-index: 100000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        overflow: hidden;
+    `;
+    
 
+    const logo = document.createElement('div');
+    logo.innerHTML = `<div style="position:absolute; top:20px; left:20px; font-size:24px; font-weight:700; color:#6bc4ff; letter-spacing:3px; z-index:100001; opacity:0.8;">UAMO</div>`;
+    
+
+    const closeBtn = document.createElement('div');
+    closeBtn.innerHTML = `✕`;
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        z-index: 100002;
+        transition: 0.2s;
+    `;
+    closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255,255,255,0.4)';
+    closeBtn.onmouseout = () => closeBtn.style.background = 'rgba(255,255,255,0.2)';
+    closeBtn.onclick = () => overlay.remove();
+    
+
+    const imageContainer = document.createElement('div');
+    imageContainer.style.cssText = `
+        width: 100%;
+        height: 80%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        touch-action: pan-x pinch-zoom;
+    `;
+    
+    const img = document.createElement('img');
+    img.src = photos[index];
+    img.style.cssText = `
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        transition: transform 0.1s ease;
+        cursor: grab;
+    `;
+    
+
+    const leftArrow = document.createElement('div');
+    leftArrow.innerHTML = `‹`;
+    leftArrow.style.cssText = `
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
+        background: rgba(0,0,0,0.5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        color: white;
+        cursor: pointer;
+        z-index: 100002;
+        transition: 0.2s;
+    `;
+    leftArrow.onmouseover = () => leftArrow.style.background = 'rgba(0,0,0,0.8)';
+    leftArrow.onmouseout = () => leftArrow.style.background = 'rgba(0,0,0,0.5)';
+    
+    const rightArrow = document.createElement('div');
+    rightArrow.innerHTML = `›`;
+    rightArrow.style.cssText = `
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
+        background: rgba(0,0,0,0.5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 35px;
+        color: white;
+        cursor: pointer;
+        z-index: 100002;
+        transition: 0.2s;
+    `;
+    rightArrow.onmouseover = () => rightArrow.style.background = 'rgba(0,0,0,0.8)';
+    rightArrow.onmouseout = () => rightArrow.style.background = 'rgba(0,0,0,0.5)';
+    
+
+    const counter = document.createElement('div');
+    counter.innerHTML = `${index + 1} / ${photos.length}`;
+    counter.style.cssText = `
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.6);
+        padding: 8px 16px;
+        border-radius: 25px;
+        color: white;
+        font-size: 14px;
+        z-index: 100002;
+        pointer-events: none;
+    `;
+    
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+    let initialDistance = 0;
+    let initialScale = 1;
+    let startX = 0, startY = 0;
+    let isDragging = false;
+    
+    const updateTransform = () => {
+        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    };
+    
+    img.ondblclick = (e) => {
+        e.stopPropagation();
+        if (scale === 1) {
+            scale = 2.5;
+            translateX = 0;
+            translateY = 0;
+        } else {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+        }
+        updateTransform();
+    };
+    
+
+    img.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            initialDistance = Math.hypot(dx, dy);
+            initialScale = scale;
+            startX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            startY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        } else if (e.touches.length === 1 && scale > 1) {
+            startX = e.touches[0].clientX - translateX;
+            startY = e.touches[0].clientY - translateY;
+            isDragging = true;
+        }
+    });
+    
+    img.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && initialDistance > 0) {
+            e.preventDefault();
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const newDistance = Math.hypot(dx, dy);
+            let newScale = initialScale * (newDistance / initialDistance);
+            newScale = Math.min(Math.max(newScale, 1), 4);
+            if (newScale !== scale) {
+                scale = newScale;
+                updateTransform();
+            }
+        } else if (e.touches.length === 1 && isDragging && scale > 1) {
+            translateX = e.touches[0].clientX - startX;
+            translateY = e.touches[0].clientY - startY;
+
+            
+            const maxX = (scale - 1) * 200;
+            const maxY = (scale - 1) * 300;
+            translateX = Math.min(Math.max(translateX, -maxX), maxX);
+            translateY = Math.min(Math.max(translateY, -maxY), maxY);
+            
+            updateTransform();
+        }
+    });
+    
+    img.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) {
+            initialDistance = 0;
+        }
+        if (e.touches.length === 0) {
+            isDragging = false;
+        }
+    });
+    
+    let touchStartX = 0;
+    let touchStartTime = 0;
+    
+    imageContainer.addEventListener('touchstart', (e) => {
+        if (scale === 1 && e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartTime = Date.now();
+        }
+    });
+    
+    imageContainer.addEventListener('touchend', (e) => {
+        if (scale === 1) {
+            const diff = e.changedTouches[0].clientX - touchStartX;
+            const timeDiff = Date.now() - touchStartTime;
+            if (Math.abs(diff) > 50 && timeDiff < 300) {
+                if (diff > 0) {
+                    // Свайп вправо - попереднє фото
+                    let newIndex = window.currentPhotoIndex - 1;
+                    if (newIndex < 0) newIndex = photos.length - 1;
+                    updateImage(newIndex);
+                } else {
+                    // Свайп вліво - наступне фото
+                    let newIndex = window.currentPhotoIndex + 1;
+                    if (newIndex >= photos.length) newIndex = 0;
+                    updateImage(newIndex);
+                }
+            }
+        }
+    });
+    
+    const updateImage = (newIndex) => {
+        window.currentPhotoIndex = newIndex;
+        img.src = photos[newIndex];
+        scale = 1;
+        translateX = 0;
+        translateY = 0;
+        updateTransform();
+        counter.innerHTML = `${newIndex + 1} / ${photos.length}`;
+    };
+    
+    leftArrow.onclick = () => {
+        let newIndex = window.currentPhotoIndex - 1;
+        if (newIndex < 0) newIndex = photos.length - 1;
+        updateImage(newIndex);
+    };
+    
+    rightArrow.onclick = () => {
+        let newIndex = window.currentPhotoIndex + 1;
+        if (newIndex >= photos.length) newIndex = 0;
+        updateImage(newIndex);
+    };
+    
+    imageContainer.appendChild(img);
+    overlay.appendChild(logo);
+    overlay.appendChild(closeBtn);
+    overlay.appendChild(leftArrow);
+    overlay.appendChild(rightArrow);
+    overlay.appendChild(imageContainer);
+    overlay.appendChild(counter);
+    document.body.appendChild(overlay);
+}
 
         function enablePhotoZoom() {
             const container = document.querySelector('.photo-swipe-container');
