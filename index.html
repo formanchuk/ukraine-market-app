@@ -1963,24 +1963,6 @@
             first_name: userName,
             phone: localStorage.getItem(`userPhone_${userId}`) || ''
         };
-        
-        try {
-            let users = await apiRequest(`users?id=eq.${userId}&select=*`);
-            if (!users || users.length === 0) {
-                await apiRequest('users', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        id: userId,
-                        first_name: userName,
-                        phone: state.user.phone || '',
-                        created_at: new Date().toISOString()
-                    })
-                });
-                console.log('✅ Користувача створено');
-            }
-        } catch(e) {
-            console.log('Помилка:', e);
-        }
     }
 
     (async () => {
@@ -2001,20 +1983,6 @@
         const splash = document.getElementById('splash');
         if (splash) splash.remove();
     })();
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
-
-<script>
-    setTimeout(() => {
-        if (typeof state !== 'undefined') {
-            const debugDiv = document.createElement('div');
-            debugDiv.style.cssText = 'position:fixed; bottom:100px; left:10px; background:#000; color:#0f0; padding:10px; font-size:14px; z-index:9999; border-radius:5px; font-family:monospace;';
-            debugDiv.innerHTML = `🔍 ДІАГНОСТИКА:<br>Ваш ID: ${state.user?.id}<br>Моїх оголошень: ${state.myGoods?.length}<br>Всього товарів: ${state.goods?.length}`;
-            document.body.appendChild(debugDiv);
-        }
-    }, 3000);
 </script>
 
 </body>
