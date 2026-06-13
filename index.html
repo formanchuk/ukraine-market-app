@@ -1945,152 +1945,181 @@
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
 
-function openFullScreenPhoto(photos, index) {
-    window.currentPhotoIndex = index;
-    
-    const overlay = document.createElement('div');
-    overlay.id = 'fullscreenOverlay';
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #1a1a2e;
-        z-index: 100000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-    `;
-    
+        window.changePhoto = changePhoto;
+        window.goToPhoto = goToPhoto;
 
-    const logo = document.createElement('div');
-    logo.innerHTML = `<div style="position:absolute; top:20px; left:20px; font-size:24px; font-weight:700; color:#6bc4ff; letter-spacing:3px; z-index:100001;">UAMO</div>`;
-    
 
-    const closeBtn = document.createElement('div');
-    closeBtn.innerHTML = `✕`;
-    closeBtn.style.cssText = `
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 40px;
-        height: 40px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        color: white;
-        cursor: pointer;
-        z-index: 100002;
-    `;
-    closeBtn.onclick = () => overlay.remove();
-    
-    const img = document.createElement('img');
-    img.src = photos[index];
-    img.style.cssText = `max-width: 90%; max-height: 80%; object-fit: contain; border-radius: 12px; transition: transform 0.1s ease;`;
-    
-    const leftArrow = document.createElement('div');
-    leftArrow.innerHTML = `‹`;
-    leftArrow.style.cssText = `
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 50px;
-        height: 50px;
-        background: rgba(0,0,0,0.5);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        color: white;
-        cursor: pointer;
-        z-index: 100002;
-    `;
-    
-    const rightArrow = document.createElement('div');
-    rightArrow.innerHTML = `›`;
-    rightArrow.style.cssText = `
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 50px;
-        height: 50px;
-        background: rgba(0,0,0,0.5);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        color: white;
-        cursor: pointer;
-        z-index: 100002;
-    `;
-    
-
-    const counter = document.createElement('div');
-    counter.innerHTML = `${index + 1} / ${photos.length}`;
-    counter.style.cssText = `
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.6);
-        padding: 6px 12px;
-        border-radius: 20px;
-        color: white;
-        font-size: 14px;
-        z-index: 100002;
-    `;
-        const updateImage = (newIndex) => {
-        window.currentPhotoIndex = newIndex;
-        img.src = photos[newIndex];
-        img.style.transform = 'scale(1)';
-        counter.innerHTML = `${newIndex + 1} / ${photos.length}`;
-    };
-    
-    leftArrow.onclick = () => {
-        let newIndex = window.currentPhotoIndex - 1;
-        if (newIndex < 0) newIndex = photos.length - 1;
-        updateImage(newIndex);
-    };
-    
-    rightArrow.onclick = () => {
-        let newIndex = window.currentPhotoIndex + 1;
-        if (newIndex >= photos.length) newIndex = 0;
-        updateImage(newIndex);
-    };
-
-    let scale = 1;
-    img.ondblclick = () => {
-        scale = scale === 1 ? 2 : 1;
-        img.style.transform = `scale(${scale})`;
-    };
-    
-    let startX = 0;
-    img.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
-    img.addEventListener('touchend', (e) => {
-        const diff = e.changedTouches[0].clientX - startX;
-        if (Math.abs(diff) > 50) {
-            if (diff > 0) leftArrow.onclick();
-            else rightArrow.onclick();
+        function openFullScreenPhoto(photos, index) {
+            window.currentPhotoIndex = index;
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'fullscreenOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #1a1a2e;
+                z-index: 100000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            `;
+            
+            const logo = document.createElement('div');
+            logo.innerHTML = `<div style="position:absolute; top:20px; left:20px; font-size:24px; font-weight:700; color:#6bc4ff; letter-spacing:3px; z-index:100001;">UAMO</div>`;
+            
+            const closeBtn = document.createElement('div');
+            closeBtn.innerHTML = `✕`;
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: white;
+                cursor: pointer;
+                z-index: 100002;
+            `;
+            closeBtn.onclick = () => overlay.remove();
+            
+            const img = document.createElement('img');
+            img.src = photos[index];
+            img.style.cssText = `max-width: 90%; max-height: 80%; object-fit: contain; border-radius: 12px; transition: transform 0.1s ease;`;
+            
+            const leftArrow = document.createElement('div');
+            leftArrow.innerHTML = `‹`;
+            leftArrow.style.cssText = `
+                position: absolute;
+                left: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 50px;
+                height: 50px;
+                background: rgba(0,0,0,0.5);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 40px;
+                color: white;
+                cursor: pointer;
+                z-index: 100002;
+            `;
+            
+            const rightArrow = document.createElement('div');
+            rightArrow.innerHTML = `›`;
+            rightArrow.style.cssText = `
+                position: absolute;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 50px;
+                height: 50px;
+                background: rgba(0,0,0,0.5);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 40px;
+                color: white;
+                cursor: pointer;
+                z-index: 100002;
+            `;
+            
+            const counter = document.createElement('div');
+            counter.innerHTML = `${index + 1} / ${photos.length}`;
+            counter.style.cssText = `
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.6);
+                padding: 6px 12px;
+                border-radius: 20px;
+                color: white;
+                font-size: 14px;
+                z-index: 100002;
+            `;
+            
+            const updateImage = (newIndex) => {
+                window.currentPhotoIndex = newIndex;
+                img.src = photos[newIndex];
+                img.style.transform = 'scale(1)';
+                counter.innerHTML = `${newIndex + 1} / ${photos.length}`;
+            };
+            
+            leftArrow.onclick = () => {
+                let newIndex = window.currentPhotoIndex - 1;
+                if (newIndex < 0) newIndex = photos.length - 1;
+                updateImage(newIndex);
+            };
+            
+            rightArrow.onclick = () => {
+                let newIndex = window.currentPhotoIndex + 1;
+                if (newIndex >= photos.length) newIndex = 0;
+                updateImage(newIndex);
+            };
+            
+            let scale = 1;
+            img.ondblclick = () => {
+                scale = scale === 1 ? 2 : 1;
+                img.style.transform = `scale(${scale})`;
+            };
+            
+            let startX = 0;
+            img.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+            img.addEventListener('touchend', (e) => {
+                const diff = e.changedTouches[0].clientX - startX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) leftArrow.onclick();
+                    else rightArrow.onclick();
+                }
+            });
+            
+            overlay.appendChild(logo);
+            overlay.appendChild(closeBtn);
+            overlay.appendChild(leftArrow);
+            overlay.appendChild(rightArrow);
+            overlay.appendChild(img);
+            overlay.appendChild(counter);
+            document.body.appendChild(overlay);
         }
-    });
-    
-    overlay.appendChild(logo);
-    overlay.appendChild(closeBtn);
-    overlay.appendChild(leftArrow);
-    overlay.appendChild(rightArrow);
-    overlay.appendChild(img);
-    overlay.appendChild(counter);
-    document.body.appendChild(overlay);
-}
+
+
+        function enablePhotoZoom() {
+            const container = document.querySelector('.photo-swipe-container');
+            if (container) {
+                const photos = Array.from(container.querySelectorAll('img')).map(img => img.src);
+                const images = container.querySelectorAll('img');
+                images.forEach((img, idx) => {
+                    img.style.cursor = 'pointer';
+                    img.onclick = (e) => {
+                        e.stopPropagation();
+                        openFullScreenPhoto(photos, idx);
+                    };
+                });
+            } else {
+                const singleImg = document.querySelector('.detail-photo-container img');
+                if (singleImg) {
+                    singleImg.style.cursor = 'pointer';
+                    singleImg.onclick = (e) => {
+                        e.stopPropagation();
+                        openFullScreenPhoto([singleImg.src], 0);
+                    };
+                }
+            }
+        }
+
+
         (async () => {
             console.log('🚀 Запуск UAMO...');
             await loadUser();
