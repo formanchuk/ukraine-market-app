@@ -1959,9 +1959,20 @@
             if (splash) splash.remove();
         })();
     </script>
-
+    // ДІАГНОСТИКА TELEGRAM
+    setTimeout(() => {
+        const webApp = window.Telegram?.WebApp;
+        const user = webApp?.initDataUnsafe?.user;
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.style.cssText = 'position:fixed; top:10px; left:10px; background:#fff; color:#000; padding:10px; font-size:12px; z-index:10000; border-radius:5px;';
+        infoDiv.innerHTML = `📱 TELEGRAM DATA:<br>WebApp: ${!!webApp}<br>User ID: ${user?.id || 'немає'}<br>User name: ${user?.first_name || 'немає'}`;
+        document.body.appendChild(infoDiv);
+    }, 1000);
+</script>
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
+    
 
     <script>
         // ФІКС ID ДЛЯ TELEGRAM
