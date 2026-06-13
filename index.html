@@ -1939,29 +1939,35 @@
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
-(async () => {
-    console.log('🚀 Запуск UAMO...');
-    await loadUser();
-    await loadGoods(true);
-    await loadJobs(true);
-    await loadResumes(true);
-    await loadMyGoods(true);
-    await loadMyJobs(true);
-    await loadMyResumes(true);
-    console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
-    renderHomePage();
-    initNavigation();
-    initFloatingButton();
-    setTimeout(initProfileTabsScroll, 100);
-    
-    const splash = document.getElementById('splash');
-    if (splash) splash.remove();
-})();
+<script>
+    (async () => {
+        console.log('🚀 Запуск UAMO...');
+        await loadUser();
+        await loadGoods(true);
+        await loadJobs(true);
+        await loadResumes(true);
+        await loadMyGoods(true);
+        await loadMyJobs(true);
+        await loadMyResumes(true);
+        console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+        renderHomePage();
+        initNavigation();
+        initFloatingButton();
+        setTimeout(initProfileTabsScroll, 100);
+        
+        const splash = document.getElementById('splash');
+        if (splash) splash.remove();
+    })();
 
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>
-        eruda.init();
-        console.log('✅ Eruda запущено!');
-    </script>
+    // Eruda ВСТАВИТИ ВСЕРЕДИНІ ТОГО Ж САМОГО СКРИПТА АБО ДОДАТИ НОВИЙ
+</script>
+
+<!-- Eruda як окремий скрипт (правильно) -->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+    eruda.init();
+    console.log('✅ Eruda запущено!');
+</script>
+
 </body>
 </html>
