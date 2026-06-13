@@ -1557,7 +1557,7 @@
                     <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Запросити</button>
                 `;
             }
-            document.getElementById('detailModal').style.display = 'flex';
+            setTimeout(() => { enablePhotoZoom(); }, 100);
             if (type === 'goods' && photosArray.length > 1) {
                 setTimeout(() => {
                     const container = document.getElementById('swipeContainer');
