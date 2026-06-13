@@ -1939,8 +1939,6 @@
         window.editResume = editResume;
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
-    setActiveNav('profile');
-}
 (async () => {
     console.log('🚀 Запуск UAMO...');
     await loadUser();
@@ -1959,7 +1957,3 @@
     const splash = document.getElementById('splash');
     if (splash) splash.remove();
 })();
-
-</script>
-</body>
-</html>
