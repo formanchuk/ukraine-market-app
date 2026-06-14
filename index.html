@@ -2231,7 +2231,7 @@ function openFullScreenPhoto(photos, index) {
         }
 
 
-        (async () => {
+            (async () => {
             console.log('🚀 Запуск UAMO...');
             await loadUser();
             await loadGoods(true);
@@ -2249,6 +2249,12 @@ function openFullScreenPhoto(photos, index) {
             const splash = document.getElementById('splash');
             if (splash) splash.remove();
         })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+        eruda.init();
+        console.log('✅ Eruda запущено!');
     </script>
 </body>
 </html>
