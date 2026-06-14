@@ -2248,19 +2248,7 @@ function openFullScreenPhoto(photos, index) {
             
             const splash = document.getElementById('splash');
             if (splash) splash.remove();
-            
-            // ===== ДІАГНОСТИКА ПРЯМО В КОДІ =====
-            setTimeout(() => {
-                const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-                alert('Telegram ID: ' + (tgUser?.id || 'НЕМАЄ') + '\nstate.user.id: ' + (state?.user?.id || 'НЕМАЄ'));
-            }, 1000);
         })();
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>
-        eruda.init();
-        console.log('✅ Eruda запущено!');
     </script>
 </body>
 </html>
