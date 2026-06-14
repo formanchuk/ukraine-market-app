@@ -2248,6 +2248,12 @@ function openFullScreenPhoto(photos, index) {
             
             const splash = document.getElementById('splash');
             if (splash) splash.remove();
+            
+            // ===== ДІАГНОСТИКА ПРЯМО В КОДІ =====
+            setTimeout(() => {
+                const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+                alert('Telegram ID: ' + (tgUser?.id || 'НЕМАЄ') + '\nstate.user.id: ' + (state?.user?.id || 'НЕМАЄ'));
+            }, 1000);
         })();
     </script>
 
@@ -2255,33 +2261,6 @@ function openFullScreenPhoto(photos, index) {
     <script>
         eruda.init();
         console.log('✅ Eruda запущено!');
-    </script>
-
-    <script>
-        setTimeout(() => {
-            const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-            const debugDiv = document.createElement('div');
-            debugDiv.style.cssText = 'position:fixed; top:10px; left:10px; background:#000; color:#0f0; padding:15px; font-size:14px; z-index:99999; border-radius:10px; font-family:monospace;';
-            
-            // Перевіряємо, чи існує state
-            if (typeof state !== 'undefined' && state) {
-                debugDiv.innerHTML = `
-                    <b>📱 ДІАГНОСТИКА</b><br><br>
-                    Telegram user ID: ${tgUser?.id || '❌ НЕМАЄ'}<br>
-                    Telegram name: ${tgUser?.first_name || '❌ НЕМАЄ'}<br>
-                    state.user.id: ${state.user?.id || '❌ НЕМАЄ'}<br>
-                    Моїх оголошень: ${state.myGoods?.length || 0}
-                `;
-            } else {
-                debugDiv.innerHTML = `
-                    <b>⚠️ ДІАГНОСТИКА</b><br><br>
-                    Telegram user ID: ${tgUser?.id || '❌ НЕМАЄ'}<br>
-                    Telegram name: ${tgUser?.first_name || '❌ НЕМАЄ'}<br>
-                    <span style="color:red">state ще не створено</span>
-                `;
-            }
-            document.body.appendChild(debugDiv);
-        }, 3000);
     </script>
 </body>
 </html>
