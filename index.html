@@ -2230,8 +2230,8 @@ function openFullScreenPhoto(photos, index) {
             }
         }
 
-
-            (async () => {
+    <script>
+        (async () => {
             console.log('🚀 Запуск UAMO...');
             await loadUser();
             await loadGoods(true);
@@ -2255,6 +2255,26 @@ function openFullScreenPhoto(photos, index) {
     <script>
         eruda.init();
         console.log('✅ Eruda запущено!');
+    </script>
+
+    <script>
+        setTimeout(() => {
+            const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+            const debugDiv = document.createElement('div');
+            debugDiv.style.cssText = 'position:fixed; top:10px; left:10px; background:#000; color:#0f0; padding:15px; font-size:14px; z-index:99999; border-radius:10px; font-family:monospace;';
+            debugDiv.innerHTML = `
+                <b>📱 ДІАГНОСТИКА</b><br><br>
+                Telegram user ID: ${tgUser?.id || '❌ НЕМАЄ'}<br>
+                Telegram name: ${tgUser?.first_name || '❌ НЕМАЄ'}<br>
+                state.user.id: ${state?.user?.id || '❌ НЕМАЄ'}<br>
+                Моїх оголошень: ${state?.myGoods?.length || 0}
+            `;
+            document.body.appendChild(debugDiv);
+            
+            console.log('🔍 Діагностика:');
+            console.log('tgUser:', tgUser);
+            console.log('state.user:', state?.user);
+        }, 2000);
     </script>
 </body>
 </html>
