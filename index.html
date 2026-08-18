@@ -1843,21 +1843,31 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         if (state.page === 'jobs') renderJobsPage();
     }
 
-    // ========== PHOTO ZOOM ==========
+    // ============================================
+    // ФОТО ЗУМ (ПОВНОЕКРАННИЙ ПЕРЕГЛЯД)
+    // ============================================
+
     function openFullScreenPhoto(photos, index) {
         window.currentPhotoIndex = index;
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:#0a0a0f; z-index:100000; display:flex; align-items:center; justify-content:center; flex-direction:column; overflow:hidden;';
+        
         const closeBtn = document.createElement('div');
         closeBtn.innerHTML = '✕';
         closeBtn.style.cssText = 'position:absolute; top:20px; right:20px; width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:white; cursor:pointer; z-index:100002;';
         closeBtn.onclick = () => overlay.remove();
+        
         const img = document.createElement('img');
         img.src = photos[index];
         img.style.cssText = 'max-width:90%; max-height:85%; object-fit:contain; transition:transform 0.1s ease;';
+        
         let scale = 1;
-        img.ondblclick = () => { scale = scale === 1 ? 2.5 : 1; img.style.transform = `scale(${scale})`; };
-        // pinch zoom
+        img.ondblclick = () => { 
+            scale = scale === 1 ? 2.5 : 1; 
+            img.style.transform = `scale(${scale})`; 
+        };
+        
+        // Збільшення двома пальцями (pinch zoom)
         let dist = 0, initialScale = 1;
         img.addEventListener('touchstart', e => {
             if (e.touches.length === 2) {
@@ -1867,6 +1877,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                 initialScale = scale;
             }
         });
+        
         img.addEventListener('touchmove', e => {
             if (e.touches.length === 2 && dist > 0) {
                 e.preventDefault();
@@ -1879,7 +1890,9 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                 img.style.transform = `scale(${scale})`;
             }
         });
+        
         img.addEventListener('touchend', () => { dist = 0; });
+        
         overlay.appendChild(closeBtn);
         overlay.appendChild(img);
         document.body.appendChild(overlay);
@@ -1891,16 +1904,26 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             const photos = Array.from(container.querySelectorAll('img')).map(img => img.src);
             container.querySelectorAll('img').forEach((img, idx) => {
                 img.style.cursor = 'pointer';
-                img.onclick = e => { e.stopPropagation(); openFullScreenPhoto(photos, idx); };
+                img.onclick = e => { 
+                    e.stopPropagation(); 
+                    openFullScreenPhoto(photos, idx); 
+                };
             });
         } else {
             const single = document.querySelector('.detail-photo-container img');
             if (single) {
                 single.style.cursor = 'pointer';
-                single.onclick = e => { e.stopPropagation(); openFullScreenPhoto([single.src], 0); };
+                single.onclick = e => { 
+                    e.stopPropagation(); 
+                    openFullScreenPhoto([single.src], 0); 
+                };
             }
         }
     }
+
+    // ============================================
+    // ПРОКРУТКА ВКЛАДОК ПРОФІЛЮ
+    // ============================================
 
     function initProfileTabsScroll() {
         const c = document.querySelector('.profile-tabs');
@@ -1909,13 +1932,98 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         c.addEventListener('mousedown', e => { down = true; sx = e.pageX - c.offsetLeft; sl = c.scrollLeft; });
         c.addEventListener('mouseleave', () => { down = false; });
         c.addEventListener('mouseup', () => { down = false; });
-        c.addEventListener('mousemove', e => { if (!down) return; e.preventDefault(); const x = e.pageX - c.offsetLeft; const walk = (x - sx) * 2; c.scrollLeft = sl - walk; });
-        c.addEventListener('touchstart', e => { sx = e.touches[0].pageX - c.offsetLeft; sl = c.scrollLeft; }, { passive: true });
-        c.addEventListener('touchmove', e => { const x = e.touches[0].pageX - c.offsetLeft; const walk = (x - sx) * 2; c.scrollLeft = sl - walk; });
+        c.addEventListener('mousemove', e => { 
+            if (!down) return; 
+            e.preventDefault(); 
+            const x = e.pageX - c.offsetLeft; 
+            const walk = (x - sx) * 2; 
+            c.scrollLeft = sl - walk; 
+        });
+        c.addEventListener('touchstart', e => { 
+            sx = e.touches[0].pageX - c.offsetLeft; 
+            sl = c.scrollLeft; 
+        }, { passive: true });
+        c.addEventListener('touchmove', e => { 
+            const x = e.touches[0].pageX - c.offsetLeft; 
+            const walk = (x - sx) * 2; 
+            c.scrollLeft = sl - walk; 
+        });
     }
 
     // ============================================
-    // ЗАКРИТТЯ КЛАВІАТУРИ (ВСТАВИТИ ТУТ)
+    // НАВІГАЦІЯ
+    // ============================================
+
+    function initNavigation() {
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (isLoading) return;
+                isLoading = true;
+                const page = btn.dataset.page;
+                if (page === 'home') { 
+                    state.page = 'home'; 
+                    state.categoryPage = null; 
+                    renderHomePage(); 
+                    loadGoods(true); 
+                    loadJobs(true); 
+                    loadResumes(true); 
+                    loadMyChats(); 
+                }
+                else if (page === 'goods') { 
+                    state.page = 'goods'; 
+                    renderGoodsPage(); 
+                    if (!state.goods.length) loadGoods(true); 
+                }
+                else if (page === 'jobs') { 
+                    state.page = 'jobs'; 
+                    renderJobsPage(); 
+                    if (!state.jobs.length) loadJobs(true); 
+                    if (!state.resumes.length) loadResumes(true); 
+                }
+                else if (page === 'chats') { 
+                    state.page = 'chats'; 
+                    renderChatsPage(); 
+                    loadMyChats(); 
+                }
+                else if (page === 'profile') { 
+                    state.page = 'profile'; 
+                    state.profileTab = 'active'; 
+                    renderProfilePage(); 
+                    loadMyGoods(true); 
+                    loadMyJobs(true); 
+                    loadMyResumes(true); 
+                    loadMyChats(); 
+                    loadNotifications(); 
+                }
+                setTimeout(() => { isLoading = false; }, 150);
+            });
+        });
+    }
+
+    // ============================================
+    // ПЛАВАЮЧА КНОПКА
+    // ============================================
+
+    function initFloatingButton() {
+        const fab = document.getElementById('fabButton');
+        if (!fab) return;
+        window.addEventListener('scroll', () => {
+            if (isModalOpen) return;
+            const st = window.pageYOffset || document.documentElement.scrollTop;
+            if (st > lastScrollTop && st > 100) {
+                fab.classList.add('hidden');
+                fab.classList.remove('visible');
+            } else {
+                fab.classList.remove('hidden');
+                fab.classList.add('visible');
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+        });
+        fab.classList.add('visible');
+    }
+
+    // ============================================
+    // ЗАКРИТТЯ КЛАВІАТУРИ
     // ============================================
 
     function closeKeyboard() {
@@ -1924,47 +2032,24 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-            const active = document.activeElement;
-            if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) {
-                setTimeout(() => active.blur(), 50);
-            }
+            setTimeout(() => document.activeElement?.blur(), 50);
         }
     });
 
     document.addEventListener('click', function(e) {
         const target = e.target;
-        if (target.closest('.nav-item') || 
-            target.closest('.category-item') || 
-            target.closest('.goods-card') || 
-            target.closest('.fresh-card') || 
-            target.closest('.job-card') || 
-            target.closest('.resume-card') || 
-            target.closest('.chat-card') || 
-            target.closest('.modal-btn') || 
-            target.closest('.btn-primary') ||
-            target.closest('.btn-danger') ||
-            target.closest('.back-btn') ||
-            target.closest('.action-btn') ||
-            target.closest('.contact-seller') ||
-            target.closest('.fab')) {
-            setTimeout(() => document.activeElement?.blur(), 50);
-        }
-    });
-
-    document.addEventListener('scroll', function() {
-        setTimeout(() => document.activeElement?.blur(), 50);
-    });
-
-    document.addEventListener('touchstart', function(e) {
-        if (e.target.closest('.profile-tab') || 
-            e.target.closest('.jobs-tab') || 
-            e.target.closest('.add-tab')) {
+        if (target.closest('.nav-item') || target.closest('.category-item') || target.closest('.goods-card') || 
+            target.closest('.fresh-card') || target.closest('.job-card') || target.closest('.resume-card') || 
+            target.closest('.chat-card') || target.closest('.modal-btn') || target.closest('.btn-primary') ||
+            target.closest('.btn-danger') || target.closest('.back-btn') || target.closest('.action-btn') ||
+            target.closest('.contact-seller') || target.closest('.fab') || target.closest('.profile-tab') ||
+            target.closest('.jobs-tab') || target.closest('.add-tab')) {
             setTimeout(() => document.activeElement?.blur(), 50);
         }
     });
 
     // ============================================
-    // window.XXX = XXX (ЗАЛИШАЄТЬСЯ БЕЗ ЗМІН)
+    // window.XXX = XXX
     // ============================================
 
     window.showAddModal = showAddModal;
