@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>UAMO</title>
+    <title>UAMO PRO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="icon" href="data:,">
     <style>
@@ -18,25 +18,28 @@
         .app-container { padding: 16px; padding-bottom: 80px; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card {
+        /* КАРТКИ */
+        .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card, .chat-card {
             background: rgba(15, 30, 50, 0.8);
             border: 1px solid rgba(100, 200, 255, 0.15);
-            box-shadow: 0 0 20px rgba(0, 150, 255, 0.05);
             border-radius: 16px;
             padding: 12px;
             cursor: pointer;
             margin-bottom: 8px;
             border-left: 4px solid #00a3ff;
+            transition: all 0.2s;
         }
+        .goods-card:hover, .chat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,150,255,0.1); }
         .job-card { border-left-color: #ff6b00; }
         .resume-card { border-left-color: #34c759; }
+        .chat-card { border-left-color: #af52de; }
         
         .btn-primary, .nav-item.active, .profile-tab.active, .fab {
             background: linear-gradient(135deg, #00a3ff, #0066cc);
             box-shadow: 0 0 30px rgba(0, 150, 255, 0.2);
         }
         .btn-primary { border: none; color: white; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
-        .goods-price, .job-salary { color: #66d0ff; text-shadow: 0 0 20px rgba(0, 150, 255, 0.2); }
+        .goods-price, .job-salary { color: #66d0ff; }
         .section-title { color: #66d0ff; }
         
         .bottom-nav {
@@ -113,11 +116,27 @@
             text-align: center;
             cursor: pointer;
             border: 1px solid rgba(100, 200, 255, 0.1);
-            transition: transform 0.1s;
             border-left: 4px solid #00a3ff;
+            transition: transform 0.1s;
         }
         .category-item:active { transform: scale(0.96); }
         .category-item.active-category { background: rgba(0, 163, 255, 0.2); border-color: #00a3ff; }
+        .category-item[data-category="Електроніка"] { border-left-color: #00a3ff; }
+        .category-item[data-category="Авто"] { border-left-color: #ff6b00; }
+        .category-item[data-category="Шини/Диски"] { border-left-color: #ff9500; }
+        .category-item[data-category="Автозапчастини"] { border-left-color: #ff3b30; }
+        .category-item[data-category="Нерухомість"] { border-left-color: #34c759; }
+        .category-item[data-category="Дім і сад"] { border-left-color: #8e8e93; }
+        .category-item[data-category="Дитячий світ"] { border-left-color: #ff2d55; }
+        .category-item[data-category="Тварини"] { border-left-color: #ff9500; }
+        .category-item[data-category="Мода і стиль"] { border-left-color: #af52de; }
+        .category-item[data-category="Хобі/Відпочинок"] { border-left-color: #5ac8fa; }
+        .category-item[data-category="Книги"] { border-left-color: #ffcc00; }
+        .category-item[data-category="Віддам безкоштовно"] { border-left-color: #34c759; }
+        .category-item[data-category="Обмін"] { border-left-color: #007aff; }
+        .category-item[data-category="Бізнес/Послуги"] { border-left-color: #5856d6; }
+        .category-item[data-category="Оренда/Прокат"] { border-left-color: #ff2d55; }
+        .category-item[data-category="Житло подобово"] { border-left-color: #ff6b00; }
         .category-icon { font-size: 32px; margin-bottom: 8px; display: block; }
         .category-name { font-size: 12px; font-weight: 500; color: #e0f0ff; }
         
@@ -202,6 +221,7 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            margin-top: 8px;
         }
         
         .profile-tabs {
@@ -357,6 +377,83 @@
         .detail-row { margin-bottom: 12px; font-size: 14px; color: #ffffff; }
         .detail-label { color: #aaaaaa; margin-right: 8px; }
         
+        /* ЧАТ */
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px;
+            max-height: 65vh;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+        .chat-message {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            word-wrap: break-word;
+            position: relative;
+        }
+        .chat-message.own {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #00a3ff, #0066cc);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message.other {
+            align-self: flex-start;
+            background: rgba(15, 30, 50, 0.8);
+            color: white;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(100, 200, 255, 0.1);
+        }
+        .chat-message .chat-time {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-left: 8px;
+        }
+        .chat-input {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(15, 30, 50, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(100, 200, 255, 0.1);
+            position: sticky;
+            bottom: 0;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(10, 14, 23, 0.8);
+            color: white;
+            outline: none;
+        }
+        .chat-input button {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #00a3ff, #0066cc);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .chat-input button:active { transform: scale(0.95); }
+        
+        /* РЕЙТИНГ */
+        .rating-stars {
+            display: flex;
+            gap: 4px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .rating-stars .star { color: #8899aa; transition: 0.2s; }
+        .rating-stars .star.active { color: #ffcc00; text-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
+        .rating-stars .star:hover { transform: scale(1.2); }
+        
         @keyframes ripple {
             0% { width: 80px; height: 80px; opacity: 0.8; }
             100% { width: 280px; height: 280px; opacity: 0; }
@@ -364,23 +461,23 @@
         .app-container { will-change: transform; backface-visibility: hidden; }
         body { -webkit-tap-highlight-color: transparent; }
         
-        /* КОЛЬОРИ КАТЕГОРІЙ */
-        .category-item[data-category="Електроніка"] { border-left-color: #00a3ff; }
-        .category-item[data-category="Авто"] { border-left-color: #ff6b00; }
-        .category-item[data-category="Шини/Диски"] { border-left-color: #ff9500; }
-        .category-item[data-category="Автозапчастини"] { border-left-color: #ff3b30; }
-        .category-item[data-category="Нерухомість"] { border-left-color: #34c759; }
-        .category-item[data-category="Дім і сад"] { border-left-color: #8e8e93; }
-        .category-item[data-category="Дитячий світ"] { border-left-color: #ff2d55; }
-        .category-item[data-category="Тварини"] { border-left-color: #ff9500; }
-        .category-item[data-category="Мода і стиль"] { border-left-color: #af52de; }
-        .category-item[data-category="Хобі/Відпочинок"] { border-left-color: #5ac8fa; }
-        .category-item[data-category="Книги"] { border-left-color: #ffcc00; }
-        .category-item[data-category="Віддам безкоштовно"] { border-left-color: #34c759; }
-        .category-item[data-category="Обмін"] { border-left-color: #007aff; }
-        .category-item[data-category="Бізнес/Послуги"] { border-left-color: #5856d6; }
-        .category-item[data-category="Оренда/Прокат"] { border-left-color: #ff2d55; }
-        .category-item[data-category="Житло подобово"] { border-left-color: #ff6b00; }
+        .chat-card .chat-preview {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-card .chat-preview .chat-name { font-weight: 600; color: #e0f0ff; }
+        .chat-card .chat-preview .chat-last { color: #8899aa; font-size: 13px; }
+        .chat-card .chat-preview .chat-time { color: #667788; font-size: 11px; }
+        .unread-badge {
+            background: #ff3355;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
@@ -403,6 +500,7 @@
     </div>
     <div id="message" class="message-toast"></div>
 
+    <!-- МОДАЛЬНІ ВІКНА (СТАРІ) -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <div class="modal-title">➕ Додати оголошення</div>
@@ -513,7 +611,9 @@
             myResumes: [],
             profileTab: 'active',
             jobsTab: 'jobs',
-            user: { id: CURRENT_USER_ID, first_name: 'Користувач', phone: '' }
+            user: { id: CURRENT_USER_ID, first_name: 'Користувач', phone: '' },
+            chats: [],
+            notifications: []
         };
         
         let selectedPhotos = [];
@@ -525,6 +625,8 @@
             resumes: null,
             myJobs: null,
             myResumes: null,
+            chats: null,
+            notifications: null,
             lastUpdate: {}
         };
         
@@ -669,7 +771,6 @@
         
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoList(); showMessage(`Фото видалено (${selectedPhotos.length}/15)`); }
         
-        // Визначення геолокації
         function detectUserCity() {
             if (!navigator.geolocation) return;
             navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -685,6 +786,320 @@
                 } catch(e) {}
             }, () => {});
         }
+        
+        // ============================================
+        // НОВІ ФУНКЦІЇ: ЧАТИ
+        // ============================================
+        
+        function openChat(sellerId, adId) {
+            if (!sellerId || !adId) { showMessage('❌ Помилка відкриття чату', true); return; }
+            showMessage('⏳ Відкриваємо чат...');
+            apiRequest(`chats?buyer_id=eq.${state.user.id}&seller_id=eq.${sellerId}&ad_id=eq.${adId}&select=*`)
+                .then(chats => {
+                    if (chats && chats.length > 0) {
+                        renderChatPage(chats[0].id);
+                    } else {
+                        apiRequest('chats', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                ad_id: adId,
+                                buyer_id: state.user.id,
+                                seller_id: sellerId
+                            })
+                        }).then(newChat => {
+                            if (newChat && newChat.length > 0) {
+                                renderChatPage(newChat[0].id);
+                            }
+                        });
+                    }
+                });
+        }
+        
+        function renderChatPage(chatId) {
+            // Отримуємо деталі чату
+            apiRequest(`chats?id=eq.${chatId}&select=*,goods(title)`)
+                .then(chatData => {
+                    const chat = chatData[0];
+                    if (!chat) { showMessage('❌ Чат не знайдено', true); return; }
+                    
+                    // Отримуємо повідомлення
+                    apiRequest(`messages?chat_id=eq.${chatId}&order=created_at.asc&limit=200`)
+                        .then(messages => {
+                            // Отримуємо інформацію про співрозмовника
+                            const otherId = chat.buyer_id === state.user.id ? chat.seller_id : chat.buyer_id;
+                            apiRequest(`users?id=eq.${otherId}&select=first_name`)
+                                .then(users => {
+                                    const otherName = users[0]?.first_name || 'Користувач';
+                                    document.getElementById('app').innerHTML = `
+                                        <div class="app-container">
+                                            <div class="header">
+                                                <button class="back-btn" onclick="goBack()">←</button>
+                                                <h2>💬 ${escapeHtml(otherName)}</h2>
+                                            </div>
+                                            <div style="font-size:12px; color:#8899aa; margin-bottom:8px; padding:0 4px;">
+                                                📦 ${chat.goods?.title || 'Оголошення'}
+                                            </div>
+                                            <div class="chat-messages" id="chatMessages">
+                                                ${messages.map(msg => `
+                                                    <div class="chat-message ${msg.sender_id === state.user.id ? 'own' : 'other'}">
+                                                        ${escapeHtml(msg.text)}
+                                                        <span class="chat-time">${new Date(msg.created_at).toLocaleTimeString()}</span>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                            <div class="chat-input">
+                                                <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeypress="if(event.keyCode==13) sendMessage(${chatId})">
+                                                <button onclick="sendMessage(${chatId})">➤</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                    // Скролимо вниз
+                                    setTimeout(() => {
+                                        const container = document.getElementById('chatMessages');
+                                        if (container) container.scrollTop = container.scrollHeight;
+                                    }, 100);
+                                });
+                        });
+                });
+        }
+        
+        function sendMessage(chatId) {
+            const input = document.getElementById('chatInput');
+            const text = input?.value?.trim();
+            if (!text) return;
+            
+            apiRequest('messages', {
+                method: 'POST',
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    sender_id: state.user.id,
+                    text: text
+                })
+            }).then(() => {
+                input.value = '';
+                renderChatPage(chatId);
+                // Оновлюємо останнє повідомлення в чаті
+                apiRequest(`chats?id=eq.${chatId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        last_message: text,
+                        last_message_time: new Date().toISOString()
+                    })
+                }).then(() => {});
+            });
+        }
+        
+        function loadMyChats() {
+            apiRequest(`chats?buyer_id=eq.${state.user.id}&order=last_message_time.desc&select=*,goods(title)`)
+                .then(chats1 => {
+                    apiRequest(`chats?seller_id=eq.${state.user.id}&order=last_message_time.desc&select=*,goods(title)`)
+                        .then(chats2 => {
+                            const allChats = [...(chats1 || []), ...(chats2 || [])];
+                            const unique = {};
+                            allChats.forEach(c => unique[c.id] = c);
+                            state.chats = Object.values(unique);
+                            state.chats.sort((a, b) => new Date(b.last_message_time) - new Date(a.last_message_time));
+                            dataCache.chats = state.chats;
+                            dataCache.lastUpdate.chats = Date.now();
+                            renderChatsList();
+                        });
+                });
+        }
+        
+        function renderChatsList() {
+            const list = document.getElementById('myGoodsList');
+            if (!list) return;
+            
+            if (state.chats.length === 0) {
+                list.innerHTML = '<div class="empty-state">💬 Немає чатів<br><br>Напишіть продавцю, щоб почати діалог</div>';
+                return;
+            }
+            
+            list.innerHTML = state.chats.map(chat => {
+                const otherId = chat.buyer_id === state.user.id ? chat.seller_id : chat.buyer_id;
+                // Тут потрібно отримати ім'я іншого користувача з БД, але поки заглушка
+                return `
+                    <div class="chat-card" onclick="renderChatPage(${chat.id})">
+                        <div class="chat-preview">
+                            <div>
+                                <span class="chat-name">👤 ${escapeHtml(chat.buyer_id === state.user.id ? 'Продавець' : 'Покупець')}</span>
+                                <span class="chat-last">${escapeHtml(chat.last_message || 'Немає повідомлень')}</span>
+                            </div>
+                            <span class="chat-time">${chat.last_message_time ? new Date(chat.last_message_time).toLocaleDateString() : ''}</span>
+                        </div>
+                        <div style="font-size:11px; color:#667788;">📦 ${chat.goods?.title || 'Оголошення'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // ============================================
+        // НОВІ ФУНКЦІЇ: РЕЙТИНГ
+        // ============================================
+        
+        function renderRating(userId, targetUserId, adId) {
+            // Перевіряємо, чи вже є оцінка
+            apiRequest(`ratings?from_user_id=eq.${userId}&to_user_id=eq.${targetUserId}&ad_id=eq.${adId}&select=*`)
+                .then(existing => {
+                    const alreadyRated = existing && existing.length > 0;
+                    const currentRating = alreadyRated ? existing[0].rating : 0;
+                    
+                    const container = document.getElementById('ratingContainer');
+                    if (!container) return;
+                    
+                    container.innerHTML = `
+                        <div style="text-align:center; margin:12px 0;">
+                            <div style="font-size:14px; color:#8899aa; margin-bottom:8px;">${alreadyRated ? 'Ваша оцінка:' : 'Оцініть продавця:'}</div>
+                            <div class="rating-stars" id="ratingStars">
+                                ${[1,2,3,4,5].map(i => `
+                                    <span class="star ${i <= currentRating ? 'active' : ''}" data-value="${i}" onclick="setRating(${i}, '${userId}', '${targetUserId}', '${adId}')">★</span>
+                                `).join('')}
+                            </div>
+                            ${alreadyRated ? `<div style="font-size:12px; color:#667788;">Дякуємо за оцінку!</div>` : ''}
+                        </div>
+                    `;
+                });
+        }
+        
+        function setRating(value, fromUserId, toUserId, adId) {
+            // Перевіряємо, чи вже є оцінка
+            apiRequest(`ratings?from_user_id=eq.${fromUserId}&to_user_id=eq.${toUserId}&ad_id=eq.${adId}&select=*`)
+                .then(existing => {
+                    if (existing && existing.length > 0) {
+                        apiRequest(`ratings?id=eq.${existing[0].id}`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({ rating: value })
+                        }).then(() => {
+                            showMessage('⭐ Оцінку оновлено!');
+                            renderRating(fromUserId, toUserId, adId);
+                            updateUserRating(toUserId);
+                        });
+                    } else {
+                        apiRequest('ratings', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                from_user_id: fromUserId,
+                                to_user_id: toUserId,
+                                ad_id: adId,
+                                rating: value
+                            })
+                        }).then(() => {
+                            showMessage('⭐ Дякуємо за оцінку!');
+                            renderRating(fromUserId, toUserId, adId);
+                            updateUserRating(toUserId);
+                        });
+                    }
+                });
+        }
+        
+        function updateUserRating(userId) {
+            apiRequest(`ratings?to_user_id=eq.${userId}&select=rating`)
+                .then(ratings => {
+                    if (ratings && ratings.length > 0) {
+                        const avg = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+                        apiRequest(`users?id=eq.${userId}`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({ rating: Math.round(avg * 10) / 10 })
+                        }).then(() => {});
+                    }
+                });
+        }
+        
+        // ============================================
+        // НОВІ ФУНКЦІЇ: СПОВІЩЕННЯ
+        // ============================================
+        
+        function loadNotifications() {
+            apiRequest(`notifications?user_id=eq.${state.user.id}&order=created_at.desc&limit=50`)
+                .then(notifications => {
+                    state.notifications = notifications || [];
+                    dataCache.notifications = state.notifications;
+                    dataCache.lastUpdate.notifications = Date.now();
+                    renderNotifications();
+                });
+        }
+        
+        function renderNotifications() {
+            const list = document.getElementById('myGoodsList');
+            if (!list) return;
+            
+            if (state.notifications.length === 0) {
+                list.innerHTML = '<div class="empty-state">🔔 Немає сповіщень</div>';
+                return;
+            }
+            
+            list.innerHTML = state.notifications.map(n => `
+                <div class="chat-card" style="${n.is_read ? 'opacity:0.7;' : ''}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-weight:600; color:#e0f0ff;">${escapeHtml(n.title)}</div>
+                            <div style="font-size:13px; color:#8899aa;">${escapeHtml(n.body)}</div>
+                        </div>
+                        <span style="font-size:11px; color:#667788;">${new Date(n.created_at).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Позначаємо всі як прочитані
+            apiRequest(`notifications?user_id=eq.${state.user.id}&is_read=eq.false`, {
+                method: 'PATCH',
+                body: JSON.stringify({ is_read: true })
+            }).then(() => {});
+        }
+        
+        function addNotification(userId, type, title, body, data = {}) {
+            apiRequest('notifications', {
+                method: 'POST',
+                body: JSON.stringify({
+                    user_id: userId,
+                    type: type,
+                    title: title,
+                    body: body,
+                    data: data
+                })
+            }).then(() => {});
+        }
+        
+        // ============================================
+        // НОВІ ФУНКЦІЇ: СКАРГИ
+        // ============================================
+        
+        function reportAd(adId) {
+            const reason = prompt('Опишіть причину скарги:');
+            if (!reason || reason.trim() === '') return;
+            
+            apiRequest('reports', {
+                method: 'POST',
+                body: JSON.stringify({
+                    ad_id: adId,
+                    reporter_id: state.user.id,
+                    reason: reason.trim()
+                })
+            }).then(() => {
+                showMessage('📩 Скаргу прийнято! Модератор перевірить оголошення.');
+            });
+        }
+        
+        // ============================================
+        // НОВІ ФУНКЦІЇ: ПЕРЕГЛЯДИ
+        // ============================================
+        
+        function trackView(adId) {
+            if (!adId) return;
+            try {
+                apiRequest('ad_views', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        ad_id: adId,
+                        user_id: state.user?.id || null
+                    })
+                }).catch(() => {});
+            } catch(e) {}
+        }
+        
+        // ============================================
+        // ОСНОВНІ ФУНКЦІЇ (СТАРІ + ОНОВЛЕНІ)
+        // ============================================
         
         async function loadUser() {
             const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
@@ -713,6 +1128,9 @@
                     if (users[0]?.phone) {
                         state.user.phone = users[0].phone;
                         localStorage.setItem(`userPhone_${userId}`, users[0].phone);
+                    }
+                    if (users[0]?.rating) {
+                        state.user.rating = users[0].rating;
                     }
                 }
             } catch(e) { console.log('Помилка:', e); }
@@ -1018,6 +1436,39 @@
             { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
         ];
         
+        let allCities = ['Київ','Харків','Одеса','Дніпро','Львів','Запоріжжя','Кривий Ріг','Миколаїв','Маріуполь','Вінниця','Херсон','Полтава','Чернігів','Черкаси','Суми','Житомир','Рівне','Івано-Франківськ','Кам\'янське','Кропивницький','Тернопіль','Луцьк','Ужгород','Хмельницький','Чернівці','Біла Церква','Бровари','Нікополь','Павлоград','Хмельницький'];
+        
+        function searchByCity() {
+            const input = document.getElementById('citySearch');
+            if (!input) return;
+            const query = input.value.toLowerCase().trim();
+            const datalist = document.getElementById('citiesList');
+            if (!datalist) return;
+            const filtered = allCities.filter(c => c.toLowerCase().includes(query));
+            datalist.innerHTML = filtered.map(c => `<option value="${c}">`).join('');
+            const goodsList = document.getElementById('goodsList');
+            if (!goodsList) return;
+            const items = state.goods.filter(g => {
+                if (!query) return true;
+                return g.city && g.city.toLowerCase().includes(query);
+            });
+            if (items.length === 0) {
+                goodsList.innerHTML = '<div class="empty-state">🏙 Немає товарів у цьому місті</div>';
+                return;
+            }
+            goodsList.innerHTML = items.map(item => `
+                <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
+                    <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
+                    <div class="goods-info">
+                        <div class="goods-title">${escapeHtml(item.title)}</div>
+                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
+                        <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
+                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
         function renderHomePage() {
             const allItems = [];
             state.goods.forEach(item => {
@@ -1055,48 +1506,9 @@
             setActiveNav('home');
         }
         
-        // ПОШУК ПО МІСТАХ
-        let allCities = ['Київ','Харків','Одеса','Дніпро','Львів','Запоріжжя','Кривий Ріг','Миколаїв','Маріуполь','Вінниця','Херсон','Полтава','Чернігів','Черкаси','Суми','Житомир','Рівне','Івано-Франківськ','Кам\'янське','Кропивницький','Тернопіль','Луцьк','Ужгород','Хмельницький','Чернівці','Біла Церква','Бровари','Нікополь','Павлоград','Хмельницький'];
-        
-        function searchByCity() {
-            const input = document.getElementById('citySearch');
-            if (!input) return;
-            const query = input.value.toLowerCase().trim();
-            const datalist = document.getElementById('citiesList');
-            if (!datalist) return;
-            
-            const filtered = allCities.filter(c => c.toLowerCase().includes(query));
-            datalist.innerHTML = filtered.map(c => `<option value="${c}">`).join('');
-            
-            // Фільтруємо товари по місту
-            const goodsList = document.getElementById('goodsList');
-            if (!goodsList) return;
-            const items = state.goods.filter(g => {
-                if (!query) return true;
-                return g.city && g.city.toLowerCase().includes(query);
-            });
-            
-            if (items.length === 0) {
-                goodsList.innerHTML = '<div class="empty-state">🏙 Немає товарів у цьому місті</div>';
-                return;
-            }
-            goodsList.innerHTML = items.map(item => `
-                <div class="goods-card" onclick="openDetail(${item.id}, 'goods')">
-                    <div class="goods-image" style="background-image: url('${getFirstPhoto(item.photos)}')"></div>
-                    <div class="goods-info">
-                        <div class="goods-title">${escapeHtml(item.title)}</div>
-                        <div class="goods-price">💰 ${escapeHtml(item.price)} грн</div>
-                        <div class="goods-meta">📂 ${escapeHtml(item.category || 'Без категорії')}</div>
-                        <div class="goods-city">📍 ${escapeHtml(item.city || 'не вказано')}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
         function renderGoodsPage() {
             const categoryName = state.categoryPage || 'Всі товари';
             const goodsToShow = state.categoryPage ? state.goods.filter(item => item.category === state.categoryPage) : state.goods;
-            
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="header">
@@ -1106,7 +1518,7 @@
                     <input type="text" id="citySearch" class="search-box" placeholder="🏙 Пошук за містом..." oninput="searchByCity()" list="citiesList">
                     <datalist id="citiesList"></datalist>
                     <div class="categories-grid" style="margin-bottom:16px;">${allCategories.map(c => `<div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" data-category="${c.id}" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
-                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук за назвою..." onkeyup="searchGoods()" onkeypress="if(event.keyCode==13){this.blur();}">
+                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук за назвою..." onkeyup="searchGoods()">
                     <div class="goods-list" id="goodsList">
                         ${goodsToShow.length === 0 ? `<div class="empty-state">📭 Немає товарів у категорії "${categoryName}"<br><br>📱 Натисніть "+" щоб додати</div>` : 
                         goodsToShow.map(item => `
@@ -1124,7 +1536,6 @@
                 </div>
             `;
             setActiveNav('goods');
-            // Додаємо міста в datalist
             const datalist = document.getElementById('citiesList');
             if (datalist) {
                 datalist.innerHTML = allCities.map(c => `<option value="${c}">`).join('');
@@ -1142,17 +1553,24 @@
             const deletedCount = state.myGoods.filter(i => i.status === 'deleted').length;
             const myJobsCount = state.myJobs.length;
             const myResumesCount = state.myResumes.length;
+            const chatsCount = state.chats.length;
+            const unreadCount = state.notifications.filter(n => !n.is_read).length;
+            
             document.getElementById('app').innerHTML = `
                 <div class="app-container">
                     <div class="profile-header">
                         <div class="profile-avatar">👤</div>
                         <div class="profile-name">${escapeHtml(user.first_name)}</div>
+                        <div style="display:flex; justify-content:center; gap:4px; margin:4px 0;">
+                            ${user.rating ? '⭐'.repeat(Math.round(user.rating)) : '⭐'}<span style="font-size:14px; color:#8899aa;">${user.rating || 0}</span>
+                        </div>
                         <div class="profile-stats">
                             <div><div class="stat-number">${activeCount}</div><div class="stat-label">Активних</div></div>
                             <div><div class="stat-number">${archivedCount}</div><div class="stat-label">В архіві</div></div>
                             <div><div class="stat-number">${deletedCount}</div><div class="stat-label">Видалених</div></div>
                             <div><div class="stat-number">${myJobsCount}</div><div class="stat-label">Вакансій</div></div>
                             <div><div class="stat-number">${myResumesCount}</div><div class="stat-label">Резюме</div></div>
+                            <div><div class="stat-number">${chatsCount}</div><div class="stat-label">Чатів</div></div>
                         </div>
                     </div>
                     <div style="margin-bottom:16px">
@@ -1165,11 +1583,23 @@
                         <div class="profile-tab ${state.profileTab === 'deleted' ? 'active' : ''}" onclick="switchProfileTab('deleted')">🗑 Видалені (${deletedCount})</div>
                         <div class="profile-tab ${state.profileTab === 'jobs' ? 'active' : ''}" onclick="switchProfileTab('jobs')">💼 Вакансії (${myJobsCount})</div>
                         <div class="profile-tab ${state.profileTab === 'resumes' ? 'active' : ''}" onclick="switchProfileTab('resumes')">📄 Резюме (${myResumesCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'chats' ? 'active' : ''}" onclick="switchProfileTab('chats')">💬 Чати (${chatsCount})</div>
+                        <div class="profile-tab ${state.profileTab === 'notifications' ? 'active' : ''}" onclick="switchProfileTab('notifications')">🔔 Сповіщення ${unreadCount > 0 ? `(${unreadCount})` : ''}</div>
                     </div>
                     <div id="myGoodsList"></div>
                 </div>
             `;
+            
             const list = document.getElementById('myGoodsList');
+            if (state.profileTab === 'chats') {
+                renderChatsList();
+                return;
+            }
+            if (state.profileTab === 'notifications') {
+                renderNotifications();
+                return;
+            }
+            
             let filtered = [];
             if (state.profileTab === 'active') filtered = state.myGoods.filter(i => i.status === 'active');
             else if (state.profileTab === 'archived') filtered = state.myGoods.filter(i => i.status === 'archived');
@@ -1307,6 +1737,12 @@
             else if (type === 'job') item = state.jobs.find(j => j.id === id) || state.myJobs.find(j => j.id === id);
             else item = state.resumes.find(r => r.id === id) || state.myResumes.find(r => r.id === id);
             if (!item) { showMessage('Оголошення не знайдено', true); return; }
+            
+            // Трекаємо перегляд
+            if (type === 'goods' && item.id) {
+                trackView(item.id);
+            }
+            
             const photosArray = getPhotosArray(item.photos);
             currentPhotos = photosArray;
             currentPhotoIndex = 0;
@@ -1340,8 +1776,15 @@
                     <div class="detail-row"><span class="detail-label">📍 Місто:</span> ${escapeHtml(item.city || 'не вказано')}</div>
                     <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description || 'Без опису')}</div>
                     <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
-                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Зв'язатися</button>
+                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">📞 Зателефонувати</button>
+                    <button class="contact-seller" style="background:linear-gradient(135deg,#af52de,#7b2fbe);" onclick="openChat('${item.user_id}', '${item.id}')">💬 Написати</button>
+                    <div id="ratingContainer"></div>
+                    <button class="contact-seller" style="background:linear-gradient(135deg,#ff3355,#cc0022);" onclick="reportAd(${item.id})">🚨 Поскаржитися</button>
                 `;
+                // Рендеримо рейтинг
+                if (item.user_id && state.user.id !== item.user_id) {
+                    renderRating(state.user.id, item.user_id, item.id);
+                }
             } else if (type === 'job') {
                 document.getElementById('detailContent').innerHTML = `
                     <div class="detail-title">${escapeHtml(item.title)}</div>
@@ -1350,7 +1793,8 @@
                     <div class="detail-row">🕐 ${escapeHtml(item.schedule || 'не вказано')}</div>
                     <div class="detail-row">📝 ${escapeHtml(item.description || 'Без опису')}</div>
                     <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
-                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Відгукнутися</button>
+                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">📞 Зателефонувати</button>
+                    <button class="contact-seller" style="background:linear-gradient(135deg,#af52de,#7b2fbe);" onclick="openChat('${item.user_id}', '${item.id}')">💬 Написати</button>
                 `;
             } else {
                 document.getElementById('detailContent').innerHTML = `
@@ -1360,7 +1804,7 @@
                     <div class="detail-row">📝 Досвід: ${escapeHtml(item.experience || 'не вказано')}</div>
                     <div class="detail-row">🛠️ Навички: ${escapeHtml(item.skills || 'не вказано')}</div>
                     <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone || 'не вказано')}</div>
-                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">💬 Запросити</button>
+                    <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone || '')}')">📞 Зателефонувати</button>
                 `;
             }
             document.getElementById('detailModal').style.display = 'flex';
@@ -1431,6 +1875,7 @@
             loadGoods(true); 
             loadJobs(true); 
             loadResumes(true); 
+            if (state.user.id) loadMyChats();
         }
         
         async function goToGoodsPage() { 
@@ -1476,7 +1921,13 @@
             }
         }
         
-        function switchProfileTab(tab) { state.profileTab = tab; renderProfilePage(); }
+        function switchProfileTab(tab) { 
+            state.profileTab = tab; 
+            if (tab === 'chats' && state.chats.length === 0) loadMyChats();
+            if (tab === 'notifications' && state.notifications.length === 0) loadNotifications();
+            renderProfilePage(); 
+        }
+        
         function switchJobsTab(tab) { state.jobsTab = tab; renderJobsPage(); }
         
         function confirmAction(title, message, onYes) {
@@ -1507,15 +1958,12 @@
         
         function showAddModal() { 
             hideFab();
-            
-            // Визначаємо активний таб
             let defaultTab = 'goods';
             if (state.page === 'jobs') {
                 if (state.jobsTab === 'jobs') defaultTab = 'job';
                 else if (state.jobsTab === 'resumes') defaultTab = 'resume';
             }
             switchAddTab(defaultTab);
-            
             document.getElementById('goodsTitle').value = '';
             document.getElementById('goodsPrice').value = '';
             document.getElementById('goodsCity').value = localStorage.getItem('userCity') || '';
@@ -1523,7 +1971,6 @@
             document.getElementById('goodsDesc').value = '';
             selectedPhotos = [];
             renderPhotoList();
-            
             const submitBtn = document.getElementById('submitGoodsBtn');
             submitBtn.textContent = '✅ Опублікувати';
             submitBtn.onclick = submitGoods;
@@ -1533,7 +1980,6 @@
             const submitResumeBtn = document.getElementById('submitResumeBtn');
             submitResumeBtn.textContent = '✅ Опублікувати';
             submitResumeBtn.onclick = submitResume;
-            
             document.getElementById('addModal').style.display = 'flex';
             detectUserCity();
         }
@@ -1555,7 +2001,6 @@
             if (activeTab) activeTab.classList.add('active');
         }
         
-        // Збереження даних при виході
         window.addEventListener('beforeunload', function() {
             const phone = document.getElementById('goodsPhone')?.value;
             if (phone && state.user?.id) {
@@ -1680,6 +2125,7 @@
                         loadGoods(true); 
                         loadJobs(true); 
                         loadResumes(true); 
+                        loadMyChats();
                     }
                     else if (page === 'goods') { 
                         state.page = 'goods'; 
@@ -1699,6 +2145,8 @@
                         if (state.myGoods.length === 0) loadMyGoods(true); 
                         if (state.myJobs.length === 0) loadMyJobs(true); 
                         if (state.myResumes.length === 0) loadMyResumes(true); 
+                        loadMyChats();
+                        loadNotifications();
                     }
                     setTimeout(() => { isLoading = false; }, 150);
                 });
@@ -1737,27 +2185,229 @@
             }
         }
         
-        // НОВІ ФУНКЦІЇ
-        function trackView(adId) {
-            if (!adId) return;
-            try {
-                apiRequest('ad_views', {
-                    method: 'POST',
-                    body: JSON.stringify({ ad_id: adId, user_id: state.user?.id || null })
-                }).catch(() => {});
-            } catch(e) {}
+        function openFullScreenPhoto(photos, index) {
+            window.currentPhotoIndex = index;
+            const overlay = document.createElement('div');
+            overlay.id = 'fullscreenOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #0a0e17;
+                z-index: 100000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                overflow: hidden;
+            `;
+            const logo = document.createElement('div');
+            logo.innerHTML = `<div style="position:absolute; top:20px; left:20px; font-size:24px; font-weight:700; color:#00a3ff; letter-spacing:3px; z-index:100001; opacity:0.8;">UAMO</div>`;
+            const closeBtn = document.createElement('div');
+            closeBtn.innerHTML = `✕`;
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                color: white;
+                cursor: pointer;
+                z-index: 100002;
+                transition: 0.2s;
+            `;
+            closeBtn.onclick = () => overlay.remove();
+            const imageContainer = document.createElement('div');
+            imageContainer.style.cssText = `
+                width: 100%;
+                height: 80%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                touch-action: pan-x pinch-zoom;
+            `;
+            const img = document.createElement('img');
+            img.src = photos[index];
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                transition: transform 0.1s ease;
+                cursor: grab;
+            `;
+            const leftArrow = document.createElement('div');
+            leftArrow.innerHTML = `‹`;
+            leftArrow.style.cssText = `
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 45px;
+                height: 45px;
+                background: rgba(0,0,0,0.5);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 35px;
+                color: white;
+                cursor: pointer;
+                z-index: 100002;
+            `;
+            const rightArrow = document.createElement('div');
+            rightArrow.innerHTML = `›`;
+            rightArrow.style.cssText = `
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 45px;
+                height: 45px;
+                background: rgba(0,0,0,0.5);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 35px;
+                color: white;
+                cursor: pointer;
+                z-index: 100002;
+            `;
+            const counter = document.createElement('div');
+            counter.innerHTML = `${index + 1} / ${photos.length}`;
+            counter.style.cssText = `
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.6);
+                padding: 8px 16px;
+                border-radius: 25px;
+                color: white;
+                font-size: 14px;
+                z-index: 100002;
+                pointer-events: none;
+            `;
+            let scale = 1;
+            let translateX = 0;
+            let translateY = 0;
+            const updateTransform = () => {
+                img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            };
+            img.ondblclick = (e) => {
+                e.stopPropagation();
+                if (scale === 1) { scale = 2.5; translateX = 0; translateY = 0; }
+                else { scale = 1; translateX = 0; translateY = 0; }
+                updateTransform();
+            };
+            let initialDistance = 0;
+            let initialScale = 1;
+            let startX = 0, startY = 0;
+            let isDragging = false;
+            img.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    initialDistance = Math.hypot(dx, dy);
+                    initialScale = scale;
+                } else if (e.touches.length === 1 && scale > 1) {
+                    startX = e.touches[0].clientX - translateX;
+                    startY = e.touches[0].clientY - translateY;
+                    isDragging = true;
+                }
+            });
+            img.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2 && initialDistance > 0) {
+                    e.preventDefault();
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const newDistance = Math.hypot(dx, dy);
+                    let newScale = initialScale * (newDistance / initialDistance);
+                    newScale = Math.min(Math.max(newScale, 1), 4);
+                    if (newScale !== scale) { scale = newScale; updateTransform(); }
+                } else if (e.touches.length === 1 && isDragging && scale > 1) {
+                    translateX = e.touches[0].clientX - startX;
+                    translateY = e.touches[0].clientY - startY;
+                    const maxX = (scale - 1) * 200;
+                    const maxY = (scale - 1) * 300;
+                    translateX = Math.min(Math.max(translateX, -maxX), maxX);
+                    translateY = Math.min(Math.max(translateY, -maxY), maxY);
+                    updateTransform();
+                }
+            });
+            img.addEventListener('touchend', () => {
+                if (e.touches.length < 2) initialDistance = 0;
+                if (e.touches.length === 0) isDragging = false;
+            });
+            let touchStartX = 0;
+            let touchStartTime = 0;
+            imageContainer.addEventListener('touchstart', (e) => {
+                if (scale === 1 && e.touches.length === 1) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartTime = Date.now();
+                }
+            });
+            imageContainer.addEventListener('touchend', (e) => {
+                if (scale === 1) {
+                    const diff = e.changedTouches[0].clientX - touchStartX;
+                    const timeDiff = Date.now() - touchStartTime;
+                    if (Math.abs(diff) > 50 && timeDiff < 300) {
+                        if (diff > 0) { let newIndex = window.currentPhotoIndex - 1; if (newIndex < 0) newIndex = photos.length - 1; updateImage(newIndex); }
+                        else { let newIndex = window.currentPhotoIndex + 1; if (newIndex >= photos.length) newIndex = 0; updateImage(newIndex); }
+                    }
+                }
+            });
+            const updateImage = (newIndex) => {
+                window.currentPhotoIndex = newIndex;
+                img.src = photos[newIndex];
+                scale = 1; translateX = 0; translateY = 0;
+                updateTransform();
+                counter.innerHTML = `${newIndex + 1} / ${photos.length}`;
+            };
+            leftArrow.onclick = () => { let newIndex = window.currentPhotoIndex - 1; if (newIndex < 0) newIndex = photos.length - 1; updateImage(newIndex); };
+            rightArrow.onclick = () => { let newIndex = window.currentPhotoIndex + 1; if (newIndex >= photos.length) newIndex = 0; updateImage(newIndex); };
+            imageContainer.appendChild(img);
+            overlay.appendChild(logo);
+            overlay.appendChild(closeBtn);
+            overlay.appendChild(leftArrow);
+            overlay.appendChild(rightArrow);
+            overlay.appendChild(imageContainer);
+            overlay.appendChild(counter);
+            document.body.appendChild(overlay);
         }
         
-        function openChat() {
-            showMessage('💬 Чат буде доступний у наступному оновленні!');
-        }
-        
-        function toggleFavorite() {
-            showMessage('⭐ Обране буде доступне у наступному оновленні!');
-        }
-        
-        function reportAd() {
-            showMessage('📩 Скаргу прийнято! Модератор перевірить оголошення.');
+        function enablePhotoZoom() {
+            const container = document.querySelector('.photo-swipe-container');
+            if (container) {
+                const photos = Array.from(container.querySelectorAll('img')).map(img => img.src);
+                const images = container.querySelectorAll('img');
+                images.forEach((img, idx) => {
+                    img.style.cursor = 'pointer';
+                    img.onclick = (e) => {
+                        e.stopPropagation();
+                        openFullScreenPhoto(photos, idx);
+                    };
+                });
+            } else {
+                const singleImg = document.querySelector('.detail-photo-container img');
+                if (singleImg) {
+                    singleImg.style.cursor = 'pointer';
+                    singleImg.onclick = (e) => {
+                        e.stopPropagation();
+                        openFullScreenPhoto([singleImg.src], 0);
+                    };
+                }
+            }
         }
         
         window.showAddModal = showAddModal;
@@ -1792,16 +2442,10 @@
         window.changePhoto = changePhoto;
         window.goToPhoto = goToPhoto;
         window.openChat = openChat;
-        window.toggleFavorite = toggleFavorite;
+        window.sendMessage = sendMessage;
         window.reportAd = reportAd;
-        
-        function openFullScreenPhoto(photos, index) {
-            // ... (той самий код, що був раніше)
-        }
-        
-        function enablePhotoZoom() {
-            // ... (той самий код, що був раніше)
-        }
+        window.setRating = setRating;
+        window.renderRating = renderRating;
         
         (async () => {
             console.log('🚀 Запуск UAMO PRO...');
@@ -1812,7 +2456,9 @@
             await loadMyGoods(true);
             await loadMyJobs(true);
             await loadMyResumes(true);
-            console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме');
+            await loadMyChats();
+            await loadNotifications();
+            console.log('📊 Підсумок:', state.myGoods.length, 'товарів,', state.myJobs.length, 'вакансій,', state.myResumes.length, 'резюме,', state.chats.length, 'чатів');
             renderHomePage();
             initNavigation();
             initFloatingButton();
