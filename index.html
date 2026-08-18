@@ -1902,23 +1902,6 @@
         }
     }
 
-    // ========== INIT ==========
-    function initNavigation() {
-        document.querySelectorAll('.nav-item').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                if (isLoading) return;
-                isLoading = true;
-                const page = btn.dataset.page;
-                if (page === 'home') { state.page = 'home'; state.categoryPage = null; renderHomePage(); loadGoods(true); loadJobs(true); loadResumes(true); loadMyChats(); }
-                else if (page === 'goods') { state.page = 'goods'; renderGoodsPage(); if (!state.goods.length) loadGoods(true); }
-                else if (page === 'jobs') { state.page = 'jobs'; renderJobsPage(); if (!state.jobs.length) loadJobs(true); if (!state.resumes.length) loadResumes(true); }
-                else if (page === 'chats') { state.page = 'chats'; renderChatsPage(); loadMyChats(); }
-                else if (page === 'profile') { state.page = 'profile'; state.profileTab = 'active'; renderProfilePage(); loadMyGoods(true); loadMyJobs(true); loadMyResumes(true); loadMyChats(); loadNotifications(); }
-                setTimeout(() => { isLoading = false; }, 150);
-            });
-        });
-    }
-
     function initProfileTabsScroll() {
         const c = document.querySelector('.profile-tabs');
         if (!c) return;
@@ -1930,6 +1913,59 @@
         c.addEventListener('touchstart', e => { sx = e.touches[0].pageX - c.offsetLeft; sl = c.scrollLeft; }, { passive: true });
         c.addEventListener('touchmove', e => { const x = e.touches[0].pageX - c.offsetLeft; const walk = (x - sx) * 2; c.scrollLeft = sl - walk; });
     }
+
+    // ============================================
+    // ЗАКРИТТЯ КЛАВІАТУРИ (ВСТАВИТИ ТУТ)
+    // ============================================
+
+    function closeKeyboard() {
+        document.activeElement?.blur();
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const active = document.activeElement;
+            if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) {
+                setTimeout(() => active.blur(), 50);
+            }
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        const target = e.target;
+        if (target.closest('.nav-item') || 
+            target.closest('.category-item') || 
+            target.closest('.goods-card') || 
+            target.closest('.fresh-card') || 
+            target.closest('.job-card') || 
+            target.closest('.resume-card') || 
+            target.closest('.chat-card') || 
+            target.closest('.modal-btn') || 
+            target.closest('.btn-primary') ||
+            target.closest('.btn-danger') ||
+            target.closest('.back-btn') ||
+            target.closest('.action-btn') ||
+            target.closest('.contact-seller') ||
+            target.closest('.fab')) {
+            setTimeout(() => document.activeElement?.blur(), 50);
+        }
+    });
+
+    document.addEventListener('scroll', function() {
+        setTimeout(() => document.activeElement?.blur(), 50);
+    });
+
+    document.addEventListener('touchstart', function(e) {
+        if (e.target.closest('.profile-tab') || 
+            e.target.closest('.jobs-tab') || 
+            e.target.closest('.add-tab')) {
+            setTimeout(() => document.activeElement?.blur(), 50);
+        }
+    });
+
+    // ============================================
+    // window.XXX = XXX (ЗАЛИШАЄТЬСЯ БЕЗ ЗМІН)
+    // ============================================
 
     window.showAddModal = showAddModal;
     window.switchAddTab = switchAddTab;
@@ -1968,6 +2004,10 @@
     window.setRating = setRating;
     window.renderRating = renderRating;
     window.goToChats = goToChats;
+
+    // ============================================
+    // ЗАПУСК ДОДАТКУ
+    // ============================================
 
     (async () => {
         console.log('🚀 UAMO PRO');
