@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>UAMO PRO</title>
+    <title>UAMO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="icon" href="data:,">
     <style>
-        /* ===== ЧОРНИЙ ДИЗАЙН З ГОЛУБИМИ АКЦЕНТАМИ ===== */
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #111118;
@@ -64,7 +63,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* НАВІГАЦІЯ */
+        /* НАВІГАЦІЯ (5 кнопок) */
         .bottom-nav {
             background: rgba(10, 10, 15, 0.95);
             border-top: 1px solid var(--border-color);
@@ -114,26 +113,44 @@
         }
         .header h2 { font-size: 18px; font-weight: 600; color: var(--text-primary); }
         .back-btn { background: transparent; border: none; font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 8px; color: var(--text-primary); }
+        .header-home { margin-bottom: 16px; }
+        .search-container { display: flex; gap: 8px; align-items: center; }
+        .search-container .search-box { flex: 1; margin-bottom: 0; }
+        .notif-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+        .search-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            padding-left: 4px;
+        }
 
-        /* КАТЕГОРІЇ (4 в ряд, БІЛЬШІ ІКОНКИ) */
-        .categories-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        /* КАТЕГОРІЇ (2 в ряд) */
+        .categories-grid { display: flex; flex-direction: column; gap: 10px; }
+        .category-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .category-item {
             background: var(--bg-card);
-            padding: 14px 6px;
+            padding: 16px;
             border-radius: 14px;
             text-align: center;
             cursor: pointer;
             border: 1px solid var(--border-color);
             transition: 0.2s;
-            border-left: 3px solid var(--blue-primary);
         }
-        .category-item:active { transform: scale(0.94); }
+        .category-item:active { transform: scale(0.95); }
         .category-item.active-category {
             background: rgba(0, 163, 255, 0.08);
             border-color: var(--blue-primary);
         }
-        .category-icon { font-size: 40px; margin-bottom: 6px; display: block; }
-        .category-name { font-size: 10px; font-weight: 500; color: var(--text-secondary); }
+        .category-icon { font-size: 32px; display: block; margin-bottom: 4px; }
+        .category-name { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
 
         /* ІНПУТИ */
         .modal-input, .modal-select, .modal-textarea, .search-box {
@@ -175,7 +192,6 @@
         }
         .profile-stats .stat-item { text-align: center; min-width: 50px; }
         
-        /* АВАТАРКА */
         .profile-avatar {
             width: 80px;
             height: 80px;
@@ -186,15 +202,8 @@
             margin: 0 auto 12px;
             transition: 0.3s;
         }
-        .profile-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 163, 255, 0.2);
-        }
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .profile-avatar:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 163, 255, 0.2); }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         /* ВКЛАДКИ */
         .profile-tabs, .jobs-tabs {
@@ -288,7 +297,6 @@
         .rating-stars .star.active { color: #ffcc00; text-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
         .rating-stars .star:hover { transform: scale(1.2); }
 
-        /* КНОПКИ ДІЙ */
         .my-goods-actions {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -311,7 +319,6 @@
         .action-archive { background: #9c27b0; }
         .action-restore { background: #00c853; }
 
-        /* ФОТО */
         .photo-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
         .photo-preview {
             width: 70px;
@@ -562,7 +569,6 @@
         ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--blue-primary), #0077cc); border-radius: 10px; }
         ::-webkit-scrollbar-track { background: transparent; }
         
-        /* КЛАВІАТУРА */
         input, textarea, select {
             -webkit-user-select: text;
             user-select: text;
@@ -571,11 +577,22 @@
             outline: 2px solid var(--blue-primary);
             outline-offset: 2px;
         }
+        
+        /* FAVORITES */
+        .favorite-btn {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: 0.2s;
+        }
+        .favorite-btn.active { color: #ff3355; }
+        .favorite-btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
-<!-- СПЛЕШ -->
 <div id="splash" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#0a0a0f; display:flex; align-items:center; justify-content:center; z-index:9999;">
     <div style="position:relative;">
         <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; height:200px; border-radius:50%; background:rgba(0,163,255,0.15); animation:ripple 1.8s infinite;"></div>
@@ -588,118 +605,46 @@
 <div id="app"></div>
 <div class="fab" id="fabButton" onclick="window.showAddModal && showAddModal()">+</div>
 
-<!-- НАВІГАЦІЯ -->
 <div class="bottom-nav" id="bottomNav">
     <div class="nav-item" data-page="home"><div class="nav-icon">🏠</div><div class="nav-label">Головна</div></div>
-    <div class="nav-item" data-page="goods"><div class="nav-icon">📦</div><div class="nav-label">Товари</div></div>
-    <div class="nav-item" data-page="jobs"><div class="nav-icon">💼</div><div class="nav-label">Робота</div></div>
+    <div class="nav-item" data-page="favorites"><div class="nav-icon">❤️</div><div class="nav-label">Вибране</div></div>
+    <div class="nav-item" data-page="create"><div class="nav-icon">➕</div><div class="nav-label">Створити</div></div>
     <div class="nav-item" data-page="chats"><div class="nav-icon">💬</div><div class="nav-label">Чати</div></div>
     <div class="nav-item" data-page="profile"><div class="nav-icon">👤</div><div class="nav-label">Профіль</div></div>
 </div>
 
 <div id="message" class="message-toast"></div>
 
-<!-- МОДАЛКА ДОДАВАННЯ -->
+<!-- МОДАЛКА СТВОРЕННЯ -->
 <div id="addModal" class="modal">
     <div class="modal-content">
-        <div class="modal-title">➕ Додати</div>
-        <div style="display:flex; gap:8px; margin-bottom:16px;">
-            <div class="add-tab active" data-add-tab="goods" onclick="switchAddTab('goods')">📦 Товар</div>
-            <div class="add-tab" data-add-tab="job" onclick="switchAddTab('job')">💼 Вакансія</div>
-            <div class="add-tab" data-add-tab="resume" onclick="switchAddTab('resume')">📄 Резюме</div>
-        </div>
-        <!-- Товар -->
-        <div id="addGoodsForm">
-            <input type="text" id="goodsTitle" class="modal-input" placeholder="Назва товару *">
-            <select id="goodsCategory" class="modal-select">
-                <option value="Електроніка">📱 Електроніка</option>
-                <option value="Авто">🚗 Авто</option>
-                <option value="Шини/Диски">🛞 Шини/Диски</option>
-                <option value="Автозапчастини">🔧 Автозапчастини</option>
-                <option value="Нерухомість">🏠 Нерухомість</option>
-                <option value="Дім і сад">🏡 Дім і сад</option>
-                <option value="Дитячий світ">👶 Дитячий світ</option>
-                <option value="Тварини">🐾 Тварини</option>
-                <option value="Мода і стиль">👕 Мода і стиль</option>
-                <option value="Хобі/Відпочинок">🎮 Хобі/Відпочинок</option>
-                <option value="Книги">📚 Книги</option>
-                <option value="Віддам безкоштовно">🎁 Віддам безкоштовно</option>
-                <option value="Обмін">🔄 Обмін</option>
-                <option value="Бізнес/Послуги">🏢 Бізнес/Послуги</option>
-                <option value="Оренда/Прокат">🔑 Оренда/Прокат</option>
-                <option value="Житло подобово">🏠 Житло подобово</option>
-            </select>
-            <input type="text" id="goodsPrice" class="modal-input" placeholder="Ціна (грн) *">
-            <input type="text" id="goodsCity" class="modal-input" placeholder="🏙 Місто">
-            <input type="tel" id="goodsPhone" class="modal-input" placeholder="📱 Телефон">
-            <textarea id="goodsDesc" class="modal-textarea" placeholder="📝 Опис"></textarea>
-            <div class="photo-grid" id="photoList"></div>
-            <div class="add-photo" onclick="addPhotoInput()">+</div>
-            <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">✅ Опублікувати</button>
-            <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
-        </div>
-        <!-- Вакансія -->
-        <div id="addJobForm" style="display:none">
-            <input type="text" id="jobTitle" class="modal-input" placeholder="Назва вакансії *">
-            <select id="jobCategory" class="modal-select">
-                <option value="IT/Розробка">💻 IT/Розробка</option>
-                <option value="Маркетинг/PR">📊 Маркетинг/PR</option>
-                <option value="Фінанси/Бухгалтерія">💰 Фінанси/Бухгалтерія</option>
-                <option value="Адміністрація/HR">🏢 Адміністрація/HR</option>
-                <option value="Call центр/Продажі">📞 Call центр/Продажі</option>
-                <option value="Доставка/Логістика">🚚 Доставка/Логістика</option>
-                <option value="Виробництво/Робочі">🏭 Виробництво/Робочі</option>
-                <option value="Домашній персонал">🏠 Домашній персонал</option>
-                <option value="Освіта/Репетитори">🎓 Освіта/Репетитори</option>
-                <option value="Медицина/Краса">⚕️ Медицина/Краса</option>
-                <option value="Віддалена робота">🌍 Віддалена робота</option>
-            </select>
-            <input type="text" id="jobSalary" class="modal-input" placeholder="💰 Зарплата">
-            <input type="text" id="jobCity" class="modal-input" placeholder="🏙 Місто">
-            <input type="tel" id="jobPhone" class="modal-input" placeholder="📱 Телефон">
-            <input type="text" id="jobSchedule" class="modal-input" placeholder="🕐 Графік">
-            <textarea id="jobDesc" class="modal-textarea" placeholder="📝 Опис"></textarea>
-            <button class="modal-btn btn-primary" id="submitJobBtn" onclick="submitJob()">✅ Опублікувати</button>
-            <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
-        </div>
-        <!-- Резюме -->
-        <div id="addResumeForm" style="display:none">
-            <select id="resumeSpecialty" class="modal-select">
-                <option value="">📌 Виберіть спеціальність *</option>
-                <option value="Програміст">💻 Програміст</option>
-                <option value="Маркетолог">📊 Маркетолог</option>
-                <option value="Бухгалтер">💰 Бухгалтер</option>
-                <option value="Менеджер">📋 Менеджер</option>
-                <option value="Дизайнер">🎨 Дизайнер</option>
-                <option value="Копірайтер">✍️ Копірайтер</option>
-                <option value="SEO-спеціаліст">🔍 SEO-спеціаліст</option>
-                <option value="Студент">🎓 Студент</option>
-                <option value="Водій">🚗 Водій</option>
-                <option value="Кур'єр">📦 Кур'єр</option>
-                <option value="Охоронець">🛡️ Охоронець</option>
-                <option value="Прибиральник">🧹 Прибиральник</option>
-                <option value="Кухар">🍳 Кухар</option>
-                <option value="Офіціант">🍽️ Офіціант</option>
-                <option value="Вчитель">📚 Вчитель</option>
-                <option value="Лікар">⚕️ Лікар</option>
-                <option value="Юрист">⚖️ Юрист</option>
-                <option value="Архітектор">🏛️ Архітектор</option>
-                <option value="Будівельник">🔨 Будівельник</option>
-                <option value="Електрик">⚡ Електрик</option>
-                <option value="Сантехнік">🔧 Сантехнік</option>
-                <option value="Фотограф">📷 Фотограф</option>
-                <option value="Відеограф">🎥 Відеограф</option>
-                <option value="SMM-менеджер">📱 SMM-менеджер</option>
-                <option value="Таргетолог">🎯 Таргетолог</option>
-            </select>
-            <input type="text" id="resumeExperience" class="modal-input" placeholder="📋 Досвід роботи">
-            <input type="text" id="resumeSkills" class="modal-input" placeholder="🛠️ Навички">
-            <input type="text" id="resumeCity" class="modal-input" placeholder="🏙 Місто">
-            <input type="text" id="resumeSalary" class="modal-input" placeholder="💰 Очікувана зарплата">
-            <input type="tel" id="resumePhone" class="modal-input" placeholder="📱 Телефон">
-            <button class="modal-btn btn-primary" id="submitResumeBtn" onclick="submitResume()">✅ Опублікувати</button>
-            <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
-        </div>
+        <div class="modal-title">📝 Деталі оголошення</div>
+        <div class="photo-grid" id="photoList"></div>
+        <div class="add-photo" onclick="addPhotoInput()">➕ Додати фото</div>
+        <input type="text" id="goodsTitle" class="modal-input" placeholder="Заголовок оголошення">
+        <select id="goodsCategory" class="modal-select">
+            <option value="">📌 Категорія</option>
+            <option value="Електроніка">📱 Електроніка</option>
+            <option value="Авто">🚗 Авто</option>
+            <option value="Шини/Диски">🛞 Шини/Диски</option>
+            <option value="Автозапчастини">🔧 Автозапчастини</option>
+            <option value="Нерухомість">🏠 Нерухомість</option>
+            <option value="Дім і сад">🏡 Дім і сад</option>
+            <option value="Дитячий світ">👶 Дитячий світ</option>
+            <option value="Тварини">🐾 Тварини</option>
+            <option value="Мода і стиль">👕 Мода і стиль</option>
+            <option value="Хобі/Відпочинок">🎮 Хобі/Відпочинок</option>
+            <option value="Книги">📚 Книги</option>
+            <option value="Віддам безкоштовно">🎁 Віддам безкоштовно</option>
+            <option value="Обмін">🔄 Обмін</option>
+            <option value="Бізнес/Послуги">🏢 Бізнес/Послуги</option>
+            <option value="Оренда/Прокат">🔑 Оренда/Прокат</option>
+            <option value="Житло подобово">🏠 Житло подобово</option>
+        </select>
+        <textarea id="goodsDesc" class="modal-textarea" placeholder="📝 Опис"></textarea>
+        <input type="tel" id="goodsPhone" class="modal-input" placeholder="📱 Номер телефону" value="">
+        <button class="modal-btn btn-primary" onclick="submitGoods()">📤 Опублікувати</button>
+        <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
     </div>
 </div>
 
@@ -717,9 +662,8 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-const SUPABASE_URL = 'https://lrtuljhznhjyelutfsoh.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
-
+    const SUPABASE_URL = 'https://lrtuljhznhjyelutfsoh.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
     const CURRENT_USER_ID = "1";
 
     let currentPhotoIndex = 0;
@@ -729,8 +673,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
     let lastScrollTop = 0;
     let isModalOpen = false;
     let selectedPhotos = [];
-    let viewUserProfileId = null;
-
     let state = {
         page: 'home',
         category: null,
@@ -741,6 +683,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         resumes: [],
         myJobs: [],
         myResumes: [],
+        favorites: [],
         profileTab: 'active',
         jobsTab: 'jobs',
         user: { id: CURRENT_USER_ID, first_name: 'Користувач', phone: '', avatar_url: '' },
@@ -748,31 +691,43 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         notifications: [],
         currentChat: null
     };
-
-    let dataCache = {
-        goods: null, myGoods: null, jobs: null, resumes: null,
-        myJobs: null, myResumes: null, chats: null, notifications: null,
-        lastUpdate: {}
-    };
+    let dataCache = { goods: null, myGoods: null, jobs: null, resumes: null, myJobs: null, myResumes: null, chats: null, notifications: null, favorites: null, lastUpdate: {} };
     const CACHE_TIME = 30000;
-
     function isCacheValid(key) { return dataCache[key] && dataCache.lastUpdate[key] && (Date.now() - dataCache.lastUpdate[key]) < CACHE_TIME; }
 
     function hideFab() { const f = document.getElementById('fabButton'); if(f){ f.classList.add('hide-fab'); isModalOpen = true; } }
     function showFab() { const f = document.getElementById('fabButton'); if(f){ f.classList.remove('hide-fab'); isModalOpen = false; } }
 
-    function initFloatingButton() {
-        const fab = document.getElementById('fabButton');
-        if (!fab) return;
-        window.addEventListener('scroll', () => {
-            if (isModalOpen) return;
-            const st = window.pageYOffset || document.documentElement.scrollTop;
-            if (st > lastScrollTop && st > 100) { fab.classList.add('hidden'); fab.classList.remove('visible'); }
-            else { fab.classList.remove('hidden'); fab.classList.add('visible'); }
-            lastScrollTop = st <= 0 ? 0 : st;
-        });
-        fab.classList.add('visible');
+    function setActiveNav(page) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[data-page="${page}"]`);
+        if (active) active.classList.add('active');
     }
+
+    function escapeHtml(text) { if (!text) return ''; return String(text).replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : m === '>' ? '&gt;' : m); }
+    function getStatusBadge(status) { if (status === 'active') return '<span class="status-badge status-active">✓ Активне</span>'; if (status === 'archived') return '<span class="status-badge status-archived">📦 В архіві</span>'; return ''; }
+
+    function showMessage(text, isError = false) {
+        const msg = document.getElementById('message');
+        msg.textContent = text;
+        msg.style.background = isError ? '#dc3545' : '#2aab6e';
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 2500);
+    }
+
+    function getPhotosArray(photos) {
+        if (!photos) return [];
+        try {
+            if (typeof photos === 'string') {
+                if (photos.startsWith('[')) return JSON.parse(photos);
+                else if (photos.includes(',')) return photos.split(',');
+                else if (photos.startsWith('http')) return [photos];
+            }
+            if (Array.isArray(photos)) return photos;
+            return [];
+        } catch(e) { return []; }
+    }
+    function getFirstPhoto(photos) { const arr = getPhotosArray(photos); return arr.length > 0 ? arr[0] : ''; }
 
     async function apiRequest(endpoint, options = {}) {
         try {
@@ -796,42 +751,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             if (text && text.length > 0) { try { return JSON.parse(text); } catch(e){ return []; } }
             return [];
         } catch(e) { console.error('Fetch error:', e); return []; }
-    }
-
-    function getPhotosArray(photos) {
-        if (!photos) return [];
-        try {
-            if (typeof photos === 'string') {
-                if (photos.startsWith('[')) return JSON.parse(photos);
-                else if (photos.includes(',')) return photos.split(',');
-                else if (photos.startsWith('http')) return [photos];
-            }
-            if (Array.isArray(photos)) return photos;
-            return [];
-        } catch(e) { return []; }
-    }
-    function getFirstPhoto(photos) { const arr = getPhotosArray(photos); return arr.length > 0 ? arr[0] : ''; }
-
-    function showMessage(text, isError = false) {
-        const msg = document.getElementById('message');
-        msg.textContent = text;
-        msg.style.background = isError ? '#dc3545' : '#2aab6e';
-        msg.style.display = 'block';
-        setTimeout(() => msg.style.display = 'none', 2500);
-    }
-
-    function setActiveNav(page) {
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        const active = document.querySelector(`.nav-item[data-page="${page}"]`);
-        if (active) active.classList.add('active');
-    }
-
-    function escapeHtml(text) { if (!text) return ''; return String(text).replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : m === '>' ? '&gt;' : m); }
-
-    function getStatusBadge(status) {
-        if (status === 'active') return '<span class="status-badge status-active">✓ Активне</span>';
-        if (status === 'archived') return '<span class="status-badge status-archived">📦 В архіві</span>';
-        return '';
     }
 
     function addPhotoInput() {
@@ -889,10 +808,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         try {
             let users = await apiRequest(`users?id=eq.${userId}&select=*`);
             if (!users || users.length === 0) {
-                await apiRequest('users', {
-                    method: 'POST',
-                    body: JSON.stringify({ id: userId, first_name: userName, phone: state.user.phone || '', created_at: new Date().toISOString() })
-                });
+                await apiRequest('users', { method: 'POST', body: JSON.stringify({ id: userId, first_name: userName, phone: state.user.phone || '', created_at: new Date().toISOString() }) });
             } else {
                 if (users[0]?.phone) { state.user.phone = users[0].phone; localStorage.setItem(`userPhone_${userId}`, users[0].phone); }
                 if (users[0]?.rating) { state.user.rating = users[0].rating; }
@@ -927,7 +843,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         } catch(e) { state.myGoods = []; }
     }
 
-    // ========== JOBS & RESUMES ==========
     async function loadJobs(force = false) {
         if (!force && isCacheValid('jobs')) { state.jobs = dataCache.jobs; if (state.page === 'jobs' && state.jobsTab === 'jobs') renderJobsPage(); if (state.page === 'home') renderHomePage(); return; }
         try {
@@ -968,6 +883,65 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             state.myResumes = (data && Array.isArray(data)) ? data.filter(item => String(item.user_id) === String(state.user.id)) : [];
             if (state.page === 'profile') renderProfilePage();
         } catch(e) { state.myResumes = []; }
+    }
+
+    // ========== FAVORITES ==========
+    async function loadFavorites() {
+        try {
+            const data = await apiRequest(`favorites?user_id=eq.${state.user.id}&select=*,goods(*)`);
+            state.favorites = data || [];
+            dataCache.favorites = state.favorites;
+            dataCache.lastUpdate.favorites = Date.now();
+            if (state.page === 'favorites') renderFavoritesPage();
+        } catch(e) { state.favorites = []; }
+    }
+
+    async function toggleFavorite(adId) {
+        const exists = state.favorites.find(f => f.ad_id === adId);
+        if (exists) {
+            await apiRequest(`favorites?id=eq.${exists.id}`, { method: 'DELETE' });
+            state.favorites = state.favorites.filter(f => f.ad_id !== adId);
+            showMessage('💔 Видалено з вибраного');
+        } else {
+            await apiRequest('favorites', {
+                method: 'POST',
+                body: JSON.stringify({ user_id: state.user.id, ad_id: adId })
+            });
+            await loadFavorites();
+            showMessage('❤️ Додано до вибраного');
+        }
+        if (state.page === 'favorites') renderFavoritesPage();
+    }
+
+    function renderFavoritesPage() {
+        const favs = state.favorites || [];
+        document.getElementById('app').innerHTML = `
+            <div class="app-container">
+                <div class="header"><h2>❤️ Вибране</h2></div>
+                <div style="display:flex; gap:16px; color:var(--text-secondary); font-size:14px; margin-bottom:16px;">
+                    <span>Оголошення ${favs.length}/50</span>
+                    <span>Пошук 0/50</span>
+                </div>
+                ${favs.length === 0 ? `
+                    <div class="empty-state" style="text-align:center; padding:60px 20px;">
+                        <div style="font-size:64px; margin-bottom:16px;">💔</div>
+                        <div style="font-size:16px; color:var(--text-secondary);">Збережіть цікаві оголошення</div>
+                        <div style="font-size:14px; color:var(--text-dim);">Натисніть на сердечко ❤️ біля оголошення</div>
+                    </div>
+                ` : favs.map(f => `
+                    <div class="goods-card" onclick="openDetail(${f.ad_id}, 'goods')">
+                        <div class="goods-image" style="background-image:url('${getFirstPhoto(f.goods?.photos)}')"></div>
+                        <div class="goods-info">
+                            <div class="goods-title">${escapeHtml(f.goods?.title)}</div>
+                            <div class="goods-price">💰 ${escapeHtml(f.goods?.price)} грн</div>
+                            <div class="goods-meta">${escapeHtml(f.goods?.category)}</div>
+                        </div>
+                        <button class="favorite-btn active" onclick="event.stopPropagation(); toggleFavorite(${f.ad_id})">❤️</button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        setActiveNav('favorites');
     }
 
     // ========== CHATS ==========
@@ -1033,6 +1007,10 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                                             <button class="back-btn" onclick="goToChats()">←</button>
                                             <h2>💬 ${escapeHtml(otherName)}</h2>
                                         </div>
+                                        <div style="display:flex; gap:8px; margin-bottom:8px;">
+                                            <button class="jobs-tab active" onclick="setChatType('sale')">📦 Купівля</button>
+                                            <button class="jobs-tab" onclick="setChatType('buy')">💰 Продаж</button>
+                                        </div>
                                         <div style="font-size:12px; color:var(--text-secondary); padding:0 4px 8px;">📦 ${chat.goods?.title || 'Оголошення'}</div>
                                         <div class="chat-messages" id="chatMessages">
                                             ${messages.map(msg => `
@@ -1058,16 +1036,12 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         const input = document.getElementById('chatInput');
         const text = input?.value?.trim();
         if (!text) return;
-        apiRequest('messages', {
-            method: 'POST',
-            body: JSON.stringify({ chat_id: chatId, sender_id: state.user.id, text: text })
-        }).then(() => {
-            input.value = '';
-            apiRequest(`chats?id=eq.${chatId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ last_message: text, last_message_time: new Date().toISOString() })
-            }).then(() => { openChatPage(chatId); loadMyChats(); });
-        });
+        apiRequest('messages', { method: 'POST', body: JSON.stringify({ chat_id: chatId, sender_id: state.user.id, text: text }) })
+            .then(() => {
+                input.value = '';
+                apiRequest(`chats?id=eq.${chatId}`, { method: 'PATCH', body: JSON.stringify({ last_message: text, last_message_time: new Date().toISOString() }) })
+                    .then(() => { openChatPage(chatId); loadMyChats(); });
+            });
     }
 
     function openChat(sellerId, adId) {
@@ -1076,21 +1050,13 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             .then(chats => {
                 if (chats && chats.length > 0) { openChatPage(chats[0].id); }
                 else {
-                    apiRequest('chats', {
-                        method: 'POST',
-                        body: JSON.stringify({ ad_id: adId, buyer_id: state.user.id, seller_id: sellerId })
-                    }).then(newChat => {
-                        if (newChat && newChat.length > 0) { openChatPage(newChat[0].id); }
-                    });
+                    apiRequest('chats', { method: 'POST', body: JSON.stringify({ ad_id: adId, buyer_id: state.user.id, seller_id: sellerId }) })
+                        .then(newChat => { if (newChat && newChat.length > 0) { openChatPage(newChat[0].id); } });
                 }
             });
     }
 
-    function goToChats() {
-        state.page = 'chats';
-        renderChatsPage();
-        loadMyChats();
-    }
+    function goToChats() { state.page = 'chats'; renderChatsPage(); loadMyChats(); }
 
     // ========== RATING ==========
     function renderRating(userId, targetUserId, adId) {
@@ -1116,15 +1082,11 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         apiRequest(`ratings?from_user_id=eq.${fromUserId}&to_user_id=eq.${toUserId}&ad_id=eq.${adId}&select=*`)
             .then(existing => {
                 if (existing && existing.length > 0) {
-                    apiRequest(`ratings?id=eq.${existing[0].id}`, {
-                        method: 'PATCH',
-                        body: JSON.stringify({ rating: value })
-                    }).then(() => { showMessage('⭐ Оцінку оновлено!'); renderRating(fromUserId, toUserId, adId); updateUserRating(toUserId); });
+                    apiRequest(`ratings?id=eq.${existing[0].id}`, { method: 'PATCH', body: JSON.stringify({ rating: value }) })
+                        .then(() => { showMessage('⭐ Оцінку оновлено!'); renderRating(fromUserId, toUserId, adId); updateUserRating(toUserId); });
                 } else {
-                    apiRequest('ratings', {
-                        method: 'POST',
-                        body: JSON.stringify({ from_user_id: fromUserId, to_user_id: toUserId, ad_id: adId, rating: value })
-                    }).then(() => { showMessage('⭐ Дякуємо за оцінку!'); renderRating(fromUserId, toUserId, adId); updateUserRating(toUserId); });
+                    apiRequest('ratings', { method: 'POST', body: JSON.stringify({ from_user_id: fromUserId, to_user_id: toUserId, ad_id: adId, rating: value }) })
+                        .then(() => { showMessage('⭐ Дякуємо за оцінку!'); renderRating(fromUserId, toUserId, adId); updateUserRating(toUserId); });
                 }
             });
     }
@@ -1134,12 +1096,26 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             .then(ratings => {
                 if (ratings && ratings.length > 0) {
                     const avg = ratings.reduce((s,r) => s + r.rating, 0) / ratings.length;
-                    apiRequest(`users?id=eq.${userId}`, {
-                        method: 'PATCH',
-                        body: JSON.stringify({ rating: Math.round(avg * 10) / 10 })
-                    }).then(() => {});
+                    apiRequest(`users?id=eq.${userId}`, { method: 'PATCH', body: JSON.stringify({ rating: Math.round(avg * 10) / 10 }) })
+                        .then(() => {});
                 }
             });
+    }
+
+    // ========== AVATAR ==========
+    function uploadAvatar() {
+        const input = document.getElementById('avatarInput');
+        const file = input?.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const base64 = e.target.result;
+            await apiRequest(`users?id=eq.${state.user.id}`, { method: 'PATCH', body: JSON.stringify({ avatar_url: base64 }) });
+            state.user.avatar_url = base64;
+            renderProfilePage();
+            showMessage('✅ Аватарку оновлено!');
+        };
+        reader.readAsDataURL(file);
     }
 
     // ========== NOTIFICATIONS ==========
@@ -1153,44 +1129,20 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         } catch(e) { state.notifications = []; }
     }
 
-    // ========== AVATAR ==========
-    function uploadAvatar() {
-        const input = document.getElementById('avatarInput');
-        const file = input?.files?.[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const base64 = e.target.result;
-            const userId = state.user.id;
-            await apiRequest(`users?id=eq.${userId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ avatar_url: base64 })
-            });
-            state.user.avatar_url = base64;
-            renderProfilePage();
-            showMessage('✅ Аватарку оновлено!');
-        };
-        reader.readAsDataURL(file);
-    }
-
     // ========== REPORTS ==========
     function reportAd(adId) {
         const reason = prompt('Опишіть причину скарги:');
         if (!reason || reason.trim() === '') return;
-        apiRequest('reports', {
-            method: 'POST',
-            body: JSON.stringify({ ad_id: adId, reporter_id: state.user.id, reason: reason.trim() })
-        }).then(() => { showMessage('📩 Скаргу прийнято! Модератор перевірить.'); });
+        apiRequest('reports', { method: 'POST', body: JSON.stringify({ ad_id: adId, reporter_id: state.user.id, reason: reason.trim() }) })
+            .then(() => { showMessage('📩 Скаргу прийнято! Модератор перевірить.'); });
     }
 
-    // ========== VIEWS ==========
     function trackView(adId) {
         if (!adId) return;
         try { apiRequest('ad_views', { method: 'POST', body: JSON.stringify({ ad_id: adId, user_id: state.user?.id || null }) }).catch(()=>{}); } catch(e) {}
     }
 
-    // ========== CRUD OPERATIONS ==========
+    // ========== CRUD ==========
     async function deleteToTrash(id) {
         await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
         showMessage('🗑 Товар переміщено у видалені');
@@ -1244,7 +1196,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         renderPhotoList();
         document.getElementById('submitGoodsBtn').textContent = '✏️ Оновити';
         document.getElementById('submitGoodsBtn').onclick = () => updateGoods(id);
-        switchAddTab('goods');
         document.getElementById('addModal').style.display = 'flex';
     }
     async function updateGoods(id) {
@@ -1258,10 +1209,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         const desc = document.getElementById('goodsDesc')?.value;
         if (!title || !price) { showMessage('Заповніть назву та ціну', true); isSubmitting = false; return; }
         showMessage('⏳ Оновлення...');
-        await apiRequest(`goods?id=eq.${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ title: title.trim(), category, price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: JSON.stringify(selectedPhotos) })
-        });
+        await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ title: title.trim(), category, price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: JSON.stringify(selectedPhotos) }) });
         isSubmitting = false;
         showMessage('✅ Товар оновлено!');
         closeModal();
@@ -1282,7 +1230,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         document.getElementById('jobDesc').value = item.description || '';
         document.getElementById('submitJobBtn').textContent = '✏️ Оновити';
         document.getElementById('submitJobBtn').onclick = () => updateJob(id);
-        switchAddTab('job');
         document.getElementById('addModal').style.display = 'flex';
     }
     async function updateJob(id) {
@@ -1297,10 +1244,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         const desc = document.getElementById('jobDesc')?.value;
         if (!title) { showMessage('Введіть назву', true); isSubmitting = false; return; }
         showMessage('⏳ Оновлення...');
-        await apiRequest(`jobs?id=eq.${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ title: title.trim(), category: category || 'Інше', salary: salary || '', city: city || '', phone: phone.trim(), schedule: schedule || '', description: desc || '' })
-        });
+        await apiRequest(`jobs?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ title: title.trim(), category: category || 'Інше', salary: salary || '', city: city || '', phone: phone.trim(), schedule: schedule || '', description: desc || '' }) });
         isSubmitting = false;
         showMessage('✅ Оновлено!');
         closeModal();
@@ -1320,7 +1264,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         document.getElementById('resumePhone').value = item.phone || '';
         document.getElementById('submitResumeBtn').textContent = '✏️ Оновити';
         document.getElementById('submitResumeBtn').onclick = () => updateResume(id);
-        switchAddTab('resume');
         document.getElementById('addModal').style.display = 'flex';
     }
     async function updateResume(id) {
@@ -1334,10 +1277,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         const phone = document.getElementById('resumePhone')?.value || localStorage.getItem(`userPhone_${state.user.id}`) || '';
         if (!specialty) { showMessage('Введіть спеціальність', true); isSubmitting = false; return; }
         showMessage('⏳ Оновлення...');
-        await apiRequest(`resumes?id=eq.${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ specialty: specialty.trim(), experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim() })
-        });
+        await apiRequest(`resumes?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ specialty: specialty.trim(), experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim() }) });
         isSubmitting = false;
         showMessage('✅ Оновлено!');
         closeModal();
@@ -1357,7 +1297,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         renderProfilePage();
     }
 
-    // ========== RENDER PAGES ==========
+    // ========== RENDER ==========
     const allCategories = [
         { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
         { icon: '🚗', name: 'Авто', id: 'Авто' },
@@ -1376,6 +1316,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         { icon: '🔑', name: 'Оренда/Прокат', id: 'Оренда/Прокат' },
         { icon: '🏠', name: 'Житло подобово', id: 'Житло подобово' }
     ];
+    const allCities = ['Київ','Харків','Одеса','Дніпро','Львів','Запоріжжя','Кривий Ріг','Миколаїв','Маріуполь','Вінниця','Херсон','Полтава','Чернігів','Черкаси','Суми','Житомир','Рівне','Івано-Франківськ','Кам\'янське','Кропивницький','Тернопіль','Луцьк','Ужгород','Хмельницький','Чернівці','Біла Церква','Бровари','Нікополь','Павлоград'];
 
     function renderHomePage() {
         const items = [];
@@ -1384,13 +1325,34 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         });
         items.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
         const recent = items.slice(0, 10);
+        const rows = [];
+        for (let i = 0; i < allCategories.length; i += 2) {
+            rows.push(allCategories.slice(i, i + 2));
+        }
         document.getElementById('app').innerHTML = `
             <div class="app-container">
-                <div class="header"><h2>🏠 UAMO</h2></div>
-                <div class="section-title">📂 Категорії</div>
-                <div class="categories-grid">${allCategories.map(c => `<div class="category-item" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
-                <div class="section-title">🆕 Свіжі</div>
-                <div class="goods-list" id="freshList">${recent.length === 0 ? '<div class="empty-state">📭 Немає оголошень</div>' :
+                <div class="header-home">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук...">
+                        <button class="notif-btn" onclick="loadNotifications(); switchProfileTab('notifications');">🔔</button>
+                    </div>
+                    <div class="search-hint">Допомога з пошуком?</div>
+                </div>
+                <div class="categories-grid">
+                    ${rows.map(row => `
+                        <div class="category-row">
+                            ${row.map(c => `
+                                <div class="category-item" onclick="selectCategory('${c.id}')">
+                                    <span class="category-icon">${c.icon}</span>
+                                    <span class="category-name">${c.name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="section-title">🕐 Нещодавно переглянуті</div>
+                <div class="goods-list" id="recentList">
+                    ${recent.length === 0 ? '<div class="empty-state">📭 Немає нещодавно переглянутих</div>' :
                     recent.map(item => `
                         <div class="fresh-card" onclick="openDetail(${item.id}, 'goods')">
                             <div class="fresh-image" style="background-image:url('${item.photo||''}')"></div>
@@ -1400,18 +1362,23 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                                 <div class="goods-meta">${escapeHtml(item.category)}</div>
                                 <div class="goods-city">📍 ${escapeHtml(item.city||'не вказано')}</div>
                             </div>
+                            <button class="favorite-btn ${state.favorites.find(f => f.ad_id === item.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${item.id})">❤️</button>
                         </div>
-                    `).join('')}</div>
-                <button class="modal-btn btn-primary" onclick="goToGoodsPage()">📦 Всі товари →</button>
-                <button class="modal-btn btn-secondary" style="margin-top:8px" onclick="goToJobsPage()">💼 Робота →</button>
+                    `).join('')}
+                </div>
             </div>
         `;
         setActiveNav('home');
+        loadFavorites();
     }
 
     function renderGoodsPage() {
         const categoryName = state.categoryPage || 'Всі товари';
         const goodsToShow = state.categoryPage ? state.goods.filter(item => item.category === state.categoryPage) : state.goods;
+        const rows = [];
+        for (let i = 0; i < allCategories.length; i += 2) {
+            rows.push(allCategories.slice(i, i + 2));
+        }
         document.getElementById('app').innerHTML = `
             <div class="app-container">
                 <div class="header">
@@ -1420,7 +1387,18 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                 </div>
                 <input type="text" id="citySearch" class="search-box" placeholder="🏙 Пошук за містом..." oninput="searchByCity()" list="citiesList">
                 <datalist id="citiesList"></datalist>
-                <div class="categories-grid" style="margin-bottom:12px;">${allCategories.map(c => `<div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" onclick="selectCategory('${c.id}')"><span class="category-icon">${c.icon}</span><span class="category-name">${c.name}</span></div>`).join('')}</div>
+                <div class="categories-grid" style="margin-bottom:12px;">
+                    ${rows.map(row => `
+                        <div class="category-row">
+                            ${row.map(c => `
+                                <div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" onclick="selectCategory('${c.id}')">
+                                    <span class="category-icon">${c.icon}</span>
+                                    <span class="category-name">${c.name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
                 <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук за назвою..." oninput="searchGoods()">
                 <div class="goods-list" id="goodsList">${goodsToShow.length === 0 ? '<div class="empty-state">📭 Немає товарів</div>' :
                     goodsToShow.map(item => `
@@ -1432,6 +1410,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                                 <div class="goods-meta">${escapeHtml(item.category||'Без категорії')}</div>
                                 <div class="goods-city">📍 ${escapeHtml(item.city||'не вказано')}</div>
                             </div>
+                            <button class="favorite-btn ${state.favorites.find(f => f.ad_id === item.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${item.id})">❤️</button>
                         </div>
                     `).join('')}</div>
             </div>
@@ -1440,8 +1419,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         const dl = document.getElementById('citiesList');
         if(dl) dl.innerHTML = allCities.map(c => `<option value="${c}">`).join('');
     }
-
-    const allCities = ['Київ','Харків','Одеса','Дніпро','Львів','Запоріжжя','Кривий Ріг','Миколаїв','Маріуполь','Вінниця','Херсон','Полтава','Чернігів','Черкаси','Суми','Житомир','Рівне','Івано-Франківськ','Кам\'янське','Кропивницький','Тернопіль','Луцьк','Ужгород','Хмельницький','Чернівці','Біла Церква','Бровари','Нікополь','Павлоград'];
 
     function searchByCity() {
         const input = document.getElementById('citySearch');
@@ -1462,6 +1439,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                     <div class="goods-meta">${escapeHtml(item.category||'Без категорії')}</div>
                     <div class="goods-city">📍 ${escapeHtml(item.city||'не вказано')}</div>
                 </div>
+                <button class="favorite-btn ${state.favorites.find(f => f.ad_id === item.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${item.id})">❤️</button>
             </div>
         `).join('');
     }
@@ -1483,6 +1461,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                     <div class="goods-meta">${escapeHtml(item.category||'Без категорії')}</div>
                     <div class="goods-city">📍 ${escapeHtml(item.city||'не вказано')}</div>
                 </div>
+                <button class="favorite-btn ${state.favorites.find(f => f.ad_id === item.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${item.id})">❤️</button>
             </div>
         `).join('');
     }
@@ -1539,7 +1518,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             <div class="app-container">
                 <div class="profile-header">
                     <div class="profile-avatar" onclick="document.getElementById('avatarInput').click()">
-                        <img id="avatarImg" src="${user.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E👤%3C/text%3E%3C/svg%3E'}" alt="avatar">
+                        <img id="avatarImg" src="${user.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E👤%3C/text%3E%3C/svg%3E'}">
                         <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="uploadAvatar()">
                     </div>
                     <div class="profile-name">${escapeHtml(user.first_name)}</div>
@@ -1568,6 +1547,15 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                     <div class="profile-tab ${state.profileTab === 'notifications' ? 'active' : ''}" onclick="switchProfileTab('notifications')">🔔 Сповіщення ${unreadCount > 0 ? `(${unreadCount})` : ''}</div>
                 </div>
                 <div id="myGoodsList"></div>
+                <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="modal-btn btn-primary" onclick="showAddModal()" style="flex:1;">📤 Створити оголошення</button>
+                    <button class="modal-btn btn-secondary" onclick="switchProfileTab('jobs')" style="flex:1; background:var(--bg-card); border:1px solid var(--border-color);">📋 Панель роботодавця</button>
+                </div>
+                <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="modal-btn btn-secondary" onclick="showMessage('🆘 Допомога буде доступна найближчим часом')" style="flex:1; background:var(--bg-card); border:1px solid var(--border-color);">🆘 Допомога</button>
+                    <button class="modal-btn btn-secondary" onclick="reportAd()" style="flex:1; background:var(--bg-card); border:1px solid var(--border-color);">❓ Описати проблему</button>
+                </div>
+                <div style="margin-top:16px; text-align:center; font-size:12px; color:var(--text-dim);">Рейтинг: ${user.rating ? '⭐'.repeat(Math.min(Math.round(user.rating),5)) : '⭐'} (${user.rating || 0})</div>
             </div>
         `;
 
@@ -1659,7 +1647,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         else if (type === 'job') item = state.jobs.find(j => j.id === id) || state.myJobs.find(j => j.id === id);
         else item = state.resumes.find(r => r.id === id) || state.myResumes.find(r => r.id === id);
         if (!item) { showMessage('Оголошення не знайдено', true); return; }
-
         if (type === 'goods' && item.id) trackView(item.id);
 
         const photos = getPhotosArray(item.photos);
@@ -1692,9 +1679,15 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             ${type === 'job' ? `<div class="detail-row"><span class="detail-label">🕐 Графік:</span> ${escapeHtml(item.schedule||'не вказано')}</div>` : ''}
             <div class="detail-row"><span class="detail-label">📝 Опис:</span> ${escapeHtml(item.description||'Без опису')}</div>
             <div class="detail-phone-box">📱 Телефон: ${escapeHtml(item.phone||'не вказано')}</div>
-            <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone||'')}')">📞 Зателефонувати</button>
-            <button class="contact-seller" style="background:linear-gradient(135deg,#af52de,#7b2fbe);" onclick="openChat('${item.user_id}', '${item.id}')">💬 Написати</button>
-            ${type === 'goods' ? `<div id="ratingContainer"></div><button class="contact-seller" style="background:linear-gradient(135deg,#ff3355,#cc0022);" onclick="reportAd(${item.id})">🚨 Поскаржитися</button>` : ''}
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="contact-seller" onclick="contactSeller('${escapeHtml(item.phone||'')}')" style="flex:1;">📞 Зателефонувати</button>
+                <button class="contact-seller" style="flex:1; background:linear-gradient(135deg,#af52de,#7b2fbe);" onclick="openChat('${item.user_id}', '${item.id}')">💬 Написати</button>
+            </div>
+            ${type === 'goods' ? `
+                <button class="favorite-btn ${state.favorites.find(f => f.ad_id === item.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${item.id})" style="font-size:28px; width:100%; margin-top:8px;">${state.favorites.find(f => f.ad_id === item.id) ? '❤️' : '🤍'}</button>
+                <div id="ratingContainer"></div>
+                <button class="contact-seller" style="background:linear-gradient(135deg,#ff3355,#cc0022);" onclick="reportAd(${item.id})">🚨 Поскаржитися</button>
+            ` : ''}
         `;
         document.getElementById('detailModal').style.display = 'flex';
 
@@ -1784,37 +1777,20 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
     // ========== ADD MODAL ==========
     function showAddModal() {
         hideFab();
-        let defaultTab = 'goods';
-        if (state.page === 'jobs') {
-            if (state.jobsTab === 'jobs') defaultTab = 'job';
-            else if (state.jobsTab === 'resumes') defaultTab = 'resume';
-        }
-        switchAddTab(defaultTab);
         document.getElementById('goodsTitle').value = '';
         document.getElementById('goodsPrice').value = '';
         document.getElementById('goodsCity').value = localStorage.getItem('userCity') || '';
         document.getElementById('goodsPhone').value = localStorage.getItem(`userPhone_${state.user.id}`) || '';
         document.getElementById('goodsDesc').value = '';
+        document.getElementById('goodsCategory').value = '';
         selectedPhotos = [];
         renderPhotoList();
-        document.getElementById('submitGoodsBtn').textContent = '✅ Опублікувати';
+        document.getElementById('submitGoodsBtn').textContent = '📤 Опублікувати';
         document.getElementById('submitGoodsBtn').onclick = submitGoods;
-        document.getElementById('submitJobBtn').textContent = '✅ Опублікувати';
-        document.getElementById('submitJobBtn').onclick = submitJob;
-        document.getElementById('submitResumeBtn').textContent = '✅ Опублікувати';
-        document.getElementById('submitResumeBtn').onclick = submitResume;
         document.getElementById('addModal').style.display = 'flex';
         detectUserCity();
     }
     function closeModal() { document.getElementById('addModal').style.display = 'none'; selectedPhotos = []; renderPhotoList(); isSubmitting = false; showFab(); }
-    function switchAddTab(tab) {
-        document.getElementById('addGoodsForm').style.display = tab === 'goods' ? 'block' : 'none';
-        document.getElementById('addJobForm').style.display = tab === 'job' ? 'block' : 'none';
-        document.getElementById('addResumeForm').style.display = tab === 'resume' ? 'block' : 'none';
-        document.querySelectorAll('.add-tab').forEach(el => el.classList.remove('active'));
-        const active = document.querySelector(`.add-tab[data-add-tab="${tab}"]`);
-        if (active) active.classList.add('active');
-    }
 
     // ========== SUBMIT ==========
     async function submitGoods() {
@@ -1834,7 +1810,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         if (city) localStorage.setItem('userCity', city);
         await apiRequest('goods', {
             method: 'POST',
-            body: JSON.stringify({ user_id: state.user.id, title: title.trim(), category, price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: JSON.stringify(selectedPhotos), status: 'active', created_at: new Date().toISOString() })
+            body: JSON.stringify({ user_id: state.user.id, title: title.trim(), category: category || 'Інше', price: price.trim(), description: desc || '', city: city || '', phone: phone.trim(), photos: JSON.stringify(selectedPhotos), status: 'active', created_at: new Date().toISOString() })
         });
         isSubmitting = false;
         showMessage(`✅ Опубліковано! ${selectedPhotos.length} фото`);
@@ -1848,89 +1824,20 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         if (state.page === 'goods') renderGoodsPage();
     }
 
-    async function submitJob() {
-        if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
-        isSubmitting = true;
-        const title = document.getElementById('jobTitle')?.value;
-        const category = document.getElementById('jobCategory')?.value;
-        const salary = document.getElementById('jobSalary')?.value;
-        const city = document.getElementById('jobCity')?.value;
-        const phone = document.getElementById('jobPhone')?.value || localStorage.getItem(`userPhone_${state.user.id}`) || '';
-        const schedule = document.getElementById('jobSchedule')?.value;
-        const desc = document.getElementById('jobDesc')?.value;
-        if (!title || !title.trim()) { showMessage('❌ Введіть назву', true); isSubmitting = false; return; }
-        if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
-        showMessage('⏳ Публікація...');
-        if (phone) localStorage.setItem(`userPhone_${state.user.id}`, phone);
-        if (city) localStorage.setItem('userCity', city);
-        await apiRequest('jobs', {
-            method: 'POST',
-            body: JSON.stringify({ user_id: state.user.id, title: title.trim(), category: category || 'Інше', salary: salary || '', city: city || '', phone: phone.trim(), schedule: schedule || '', description: desc || '', status: 'open', created_at: new Date().toISOString() })
-        });
-        isSubmitting = false;
-        showMessage('✅ Опубліковано!');
-        closeModal();
-        dataCache.jobs = null; dataCache.myJobs = null;
-        await loadJobs(true);
-        await loadMyJobs(true);
-        if (state.page === 'profile') renderProfilePage();
-        if (state.page === 'home') renderHomePage();
-        if (state.page === 'jobs') renderJobsPage();
-    }
-
-    async function submitResume() {
-        if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
-        isSubmitting = true;
-        const specialty = document.getElementById('resumeSpecialty')?.value;
-        const experience = document.getElementById('resumeExperience')?.value;
-        const skills = document.getElementById('resumeSkills')?.value;
-        const city = document.getElementById('resumeCity')?.value;
-        const salary = document.getElementById('resumeSalary')?.value;
-        const phone = document.getElementById('resumePhone')?.value || localStorage.getItem(`userPhone_${state.user.id}`) || '';
-        if (!specialty) { showMessage('❌ Виберіть спеціальність', true); isSubmitting = false; return; }
-        if (!phone || !phone.trim()) { showMessage('❌ Введіть телефон', true); isSubmitting = false; return; }
-        showMessage('⏳ Публікація...');
-        if (phone) localStorage.setItem(`userPhone_${state.user.id}`, phone);
-        if (city) localStorage.setItem('userCity', city);
-        await apiRequest('resumes', {
-            method: 'POST',
-            body: JSON.stringify({ user_id: state.user.id, specialty: specialty, experience: experience || '', skills: skills || '', city: city || '', salary: salary || '', phone: phone.trim(), status: 'active', created_at: new Date().toISOString() })
-        });
-        isSubmitting = false;
-        showMessage('✅ Опубліковано!');
-        closeModal();
-        dataCache.resumes = null; dataCache.myResumes = null;
-        await loadResumes(true);
-        await loadMyResumes(true);
-        if (state.page === 'profile') renderProfilePage();
-        if (state.page === 'home') renderHomePage();
-        if (state.page === 'jobs') renderJobsPage();
-    }
-
-    // ============================================
-    // ФОТО ЗУМ (ПОВНОЕКРАННИЙ ПЕРЕГЛЯД)
-    // ============================================
-
+    // ========== PHOTO ZOOM ==========
     function openFullScreenPhoto(photos, index) {
         window.currentPhotoIndex = index;
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:#0a0a0f; z-index:100000; display:flex; align-items:center; justify-content:center; flex-direction:column; overflow:hidden;';
-        
         const closeBtn = document.createElement('div');
         closeBtn.innerHTML = '✕';
         closeBtn.style.cssText = 'position:absolute; top:20px; right:20px; width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; color:white; cursor:pointer; z-index:100002;';
         closeBtn.onclick = () => overlay.remove();
-        
         const img = document.createElement('img');
         img.src = photos[index];
         img.style.cssText = 'max-width:90%; max-height:85%; object-fit:contain; transition:transform 0.1s ease;';
-        
         let scale = 1;
-        img.ondblclick = () => { 
-            scale = scale === 1 ? 2.5 : 1; 
-            img.style.transform = `scale(${scale})`; 
-        };
-        
+        img.ondblclick = () => { scale = scale === 1 ? 2.5 : 1; img.style.transform = `scale(${scale})`; };
         let dist = 0, initialScale = 1;
         img.addEventListener('touchstart', e => {
             if (e.touches.length === 2) {
@@ -1940,7 +1847,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                 initialScale = scale;
             }
         });
-        
         img.addEventListener('touchmove', e => {
             if (e.touches.length === 2 && dist > 0) {
                 e.preventDefault();
@@ -1953,9 +1859,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                 img.style.transform = `scale(${scale})`;
             }
         });
-        
         img.addEventListener('touchend', () => { dist = 0; });
-        
         overlay.appendChild(closeBtn);
         overlay.appendChild(img);
         document.body.appendChild(overlay);
@@ -1967,27 +1871,18 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
             const photos = Array.from(container.querySelectorAll('img')).map(img => img.src);
             container.querySelectorAll('img').forEach((img, idx) => {
                 img.style.cursor = 'pointer';
-                img.onclick = e => { 
-                    e.stopPropagation(); 
-                    openFullScreenPhoto(photos, idx); 
-                };
+                img.onclick = e => { e.stopPropagation(); openFullScreenPhoto(photos, idx); };
             });
         } else {
             const single = document.querySelector('.detail-photo-container img');
             if (single) {
                 single.style.cursor = 'pointer';
-                single.onclick = e => { 
-                    e.stopPropagation(); 
-                    openFullScreenPhoto([single.src], 0); 
-                };
+                single.onclick = e => { e.stopPropagation(); openFullScreenPhoto([single.src], 0); };
             }
         }
     }
 
-    // ============================================
-    // ПРОКРУТКА ВКЛАДОК ПРОФІЛЮ
-    // ============================================
-
+    // ========== INIT ==========
     function initProfileTabsScroll() {
         const c = document.querySelector('.profile-tabs');
         if (!c) return;
@@ -1995,27 +1890,10 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         c.addEventListener('mousedown', e => { down = true; sx = e.pageX - c.offsetLeft; sl = c.scrollLeft; });
         c.addEventListener('mouseleave', () => { down = false; });
         c.addEventListener('mouseup', () => { down = false; });
-        c.addEventListener('mousemove', e => { 
-            if (!down) return; 
-            e.preventDefault(); 
-            const x = e.pageX - c.offsetLeft; 
-            const walk = (x - sx) * 2; 
-            c.scrollLeft = sl - walk; 
-        });
-        c.addEventListener('touchstart', e => { 
-            sx = e.touches[0].pageX - c.offsetLeft; 
-            sl = c.scrollLeft; 
-        }, { passive: true });
-        c.addEventListener('touchmove', e => { 
-            const x = e.touches[0].pageX - c.offsetLeft; 
-            const walk = (x - sx) * 2; 
-            c.scrollLeft = sl - walk; 
-        });
+        c.addEventListener('mousemove', e => { if (!down) return; e.preventDefault(); const x = e.pageX - c.offsetLeft; const walk = (x - sx) * 2; c.scrollLeft = sl - walk; });
+        c.addEventListener('touchstart', e => { sx = e.touches[0].pageX - c.offsetLeft; sl = c.scrollLeft; }, { passive: true });
+        c.addEventListener('touchmove', e => { const x = e.touches[0].pageX - c.offsetLeft; const walk = (x - sx) * 2; c.scrollLeft = sl - walk; });
     }
-
-    // ============================================
-    // НАВІГАЦІЯ
-    // ============================================
 
     function initNavigation() {
         document.querySelectorAll('.nav-item').forEach(btn => {
@@ -2023,49 +1901,15 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
                 if (isLoading) return;
                 isLoading = true;
                 const page = btn.dataset.page;
-                if (page === 'home') { 
-                    state.page = 'home'; 
-                    state.categoryPage = null; 
-                    renderHomePage(); 
-                    loadGoods(true); 
-                    loadJobs(true); 
-                    loadResumes(true); 
-                    loadMyChats(); 
-                }
-                else if (page === 'goods') { 
-                    state.page = 'goods'; 
-                    renderGoodsPage(); 
-                    if (!state.goods.length) loadGoods(true); 
-                }
-                else if (page === 'jobs') { 
-                    state.page = 'jobs'; 
-                    renderJobsPage(); 
-                    if (!state.jobs.length) loadJobs(true); 
-                    if (!state.resumes.length) loadResumes(true); 
-                }
-                else if (page === 'chats') { 
-                    state.page = 'chats'; 
-                    renderChatsPage(); 
-                    loadMyChats(); 
-                }
-                else if (page === 'profile') { 
-                    state.page = 'profile'; 
-                    state.profileTab = 'active'; 
-                    renderProfilePage(); 
-                    loadMyGoods(true); 
-                    loadMyJobs(true); 
-                    loadMyResumes(true); 
-                    loadMyChats(); 
-                    loadNotifications(); 
-                }
+                if (page === 'home') { state.page = 'home'; state.categoryPage = null; renderHomePage(); loadGoods(true); loadJobs(true); loadResumes(true); loadMyChats(); loadFavorites(); }
+                else if (page === 'favorites') { state.page = 'favorites'; renderFavoritesPage(); loadFavorites(); }
+                else if (page === 'create') { showAddModal(); }
+                else if (page === 'chats') { state.page = 'chats'; renderChatsPage(); loadMyChats(); }
+                else if (page === 'profile') { state.page = 'profile'; state.profileTab = 'active'; renderProfilePage(); loadMyGoods(true); loadMyJobs(true); loadMyResumes(true); loadMyChats(); loadNotifications(); }
                 setTimeout(() => { isLoading = false; }, 150);
             });
         });
     }
-
-    // ============================================
-    // ПЛАВАЮЧА КНОПКА
-    // ============================================
 
     function initFloatingButton() {
         const fab = document.getElementById('fabButton');
@@ -2073,32 +1917,21 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         window.addEventListener('scroll', () => {
             if (isModalOpen) return;
             const st = window.pageYOffset || document.documentElement.scrollTop;
-            if (st > lastScrollTop && st > 100) {
-                fab.classList.add('hidden');
-                fab.classList.remove('visible');
-            } else {
-                fab.classList.remove('hidden');
-                fab.classList.add('visible');
-            }
+            if (st > lastScrollTop && st > 100) { fab.classList.add('hidden'); fab.classList.remove('visible'); }
+            else { fab.classList.remove('hidden'); fab.classList.add('visible'); }
             lastScrollTop = st <= 0 ? 0 : st;
         });
         fab.classList.add('visible');
     }
 
-    // ============================================
-    // ЗАКРИТТЯ КЛАВІАТУРИ
-    // ============================================
-
     function closeKeyboard() {
         document.activeElement?.blur();
     }
-
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             setTimeout(() => document.activeElement?.blur(), 50);
         }
     });
-
     document.addEventListener('click', function(e) {
         const target = e.target;
         if (target.closest('.nav-item') || target.closest('.category-item') || target.closest('.goods-card') || 
@@ -2111,15 +1944,8 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         }
     });
 
-    // ============================================
-    // window.XXX = XXX
-    // ============================================
-
     window.showAddModal = showAddModal;
-    window.switchAddTab = switchAddTab;
     window.submitGoods = submitGoods;
-    window.submitJob = submitJob;
-    window.submitResume = submitResume;
     window.addPhotoInput = addPhotoInput;
     window.removePhoto = removePhoto;
     window.closeModal = closeModal;
@@ -2153,13 +1979,11 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
     window.renderRating = renderRating;
     window.goToChats = goToChats;
     window.uploadAvatar = uploadAvatar;
-
-    // ============================================
-    // ЗАПУСК ДОДАТКУ
-    // ============================================
+    window.toggleFavorite = toggleFavorite;
+    window.loadFavorites = loadFavorites;
 
     (async () => {
-        console.log('🚀 UAMO PRO');
+        console.log('🚀 UAMO PRO OLX');
         await loadUser();
         await loadGoods(true);
         await loadJobs(true);
@@ -2169,6 +1993,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_kw7PnlQSNWQnIoFz86QSJw_w7h6HkMr';
         await loadMyResumes(true);
         await loadMyChats();
         await loadNotifications();
+        await loadFavorites();
         renderHomePage();
         initNavigation();
         initFloatingButton();
