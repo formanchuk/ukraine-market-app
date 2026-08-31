@@ -29,7 +29,6 @@
         .app-container { padding: 14px; padding-bottom: 80px; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* КАРТКИ */
         .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card, .chat-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -48,11 +47,25 @@
         .resume-card { border-left: 3px solid #00c853; }
         .chat-card { border-left: 3px solid #af52de; }
 
-        .btn-primary, .nav-item.active, .profile-tab.active, .fab {
+        .btn-primary, .nav-item.active, .profile-tab.active {
             background: linear-gradient(135deg, var(--blue-primary), #0077cc);
             box-shadow: 0 0 30px rgba(0, 163, 255, 0.15);
         }
         .btn-primary { border: none; color: white; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; transition: 0.2s; }
+        .btn-secondary {
+            border: none;
+            color: var(--text-primary);
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: 0.2s;
+        }
+        .btn-secondary:hover { border-color: var(--blue-primary); }
 
         .goods-price, .job-salary { color: var(--blue-primary); }
         .section-title {
@@ -62,8 +75,14 @@
             margin: 16px 0 12px 0;
             letter-spacing: 0.5px;
         }
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--blue-primary);
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 163, 255, 0.1);
+        }
 
-        /* НАВІГАЦІЯ (5 кнопок) */
         .bottom-nav {
             background: rgba(10, 10, 15, 0.95);
             border-top: 1px solid var(--border-color);
@@ -100,7 +119,6 @@
         }
         .nav-item:active { transform: scale(0.92); }
 
-        /* ХЕДЕР */
         .header {
             display: flex;
             justify-content: space-between;
@@ -113,47 +131,39 @@
         }
         .header h2 { font-size: 18px; font-weight: 600; color: var(--text-primary); }
         .back-btn { background: transparent; border: none; font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 8px; color: var(--text-primary); }
-        .header-home { margin-bottom: 16px; }
-        .search-container { display: flex; gap: 8px; align-items: center; }
-        .search-container .search-box { flex: 1; margin-bottom: 0; }
-        .notif-btn {
-            background: var(--bg-card);
+
+        .header-home {
+            margin-bottom: 16px;
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            padding: 12px 16px;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-home .logo-text { font-size: 20px; }
+        .header-home .notif-btn {
+            background: transparent;
+            border: none;
             font-size: 20px;
             cursor: pointer;
-            color: var(--text-primary);
-        }
-        .search-hint {
-            font-size: 12px;
             color: var(--text-secondary);
-            margin-top: 4px;
-            padding-left: 4px;
-        }
-
-        /* КАТЕГОРІЇ (2 в ряд) */
-        .categories-grid { display: flex; flex-direction: column; gap: 10px; }
-        .category-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .category-item {
-            background: var(--bg-card);
-            padding: 16px;
-            border-radius: 14px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            border-radius: 10px;
             transition: 0.2s;
         }
-        .category-item:active { transform: scale(0.95); }
-        .category-item.active-category {
-            background: rgba(0, 163, 255, 0.08);
-            border-color: var(--blue-primary);
-        }
-        .category-icon { font-size: 32px; display: block; margin-bottom: 4px; }
-        .category-name { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        .header-home .notif-btn:hover { background: var(--bg-card); }
 
-        /* ІНПУТИ */
-        .modal-input, .modal-select, .modal-textarea, .search-box {
+        .search-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .search-container .search-box { flex: 1; margin-bottom: 0; }
+
+        .search-box {
             background: var(--bg-input);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
@@ -165,13 +175,75 @@
             margin-bottom: 12px;
             transition: 0.2s;
         }
-        .modal-input:focus, .search-box:focus {
+        .search-box:focus {
+            border-color: var(--blue-primary);
+            box-shadow: 0 0 30px rgba(0, 163, 255, 0.05);
+        }
+
+        .search-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            padding-left: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* КАТЕГОРІЇ (ГОРИЗОНТАЛЬНИЙ СКРОЛ) */
+        .categories-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 4px 0 16px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .categories-scroll::-webkit-scrollbar { height: 2px; }
+        .categories-scroll::-webkit-scrollbar-thumb { background: var(--blue-primary); border-radius: 10px; }
+        .categories-scroll::-webkit-scrollbar-track { background: transparent; }
+
+        .category-item {
+            flex: 0 0 auto;
+            background: var(--bg-card);
+            padding: 12px 16px;
+            border-radius: 14px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: 0.2s;
+            min-width: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .category-item:active { transform: scale(0.95); }
+        .category-item.active-category {
+            background: rgba(0, 163, 255, 0.08);
+            border-color: var(--blue-primary);
+        }
+        .category-item .category-icon { font-size: 28px; }
+        .category-item .category-name { font-size: 10px; font-weight: 500; color: var(--text-secondary); }
+
+        .modal-input, .modal-select, .modal-textarea {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            outline: none;
+            font-size: 15px;
+            margin-bottom: 12px;
+            transition: 0.2s;
+        }
+        .modal-input:focus, .modal-select:focus, .modal-textarea:focus {
             border-color: var(--blue-primary);
             box-shadow: 0 0 30px rgba(0, 163, 255, 0.05);
         }
         .modal-select option { background: var(--bg-primary); color: var(--text-primary); }
 
-        /* ПРОФІЛЬ + АВАТАРКА */
         .profile-header {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -205,7 +277,6 @@
         .profile-avatar:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 163, 255, 0.2); }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ВКЛАДКИ */
         .profile-tabs, .jobs-tabs {
             display: flex;
             gap: 6px;
@@ -231,7 +302,6 @@
             border-color: var(--blue-primary);
         }
 
-        /* ЧАТИ */
         .chat-messages {
             display: flex;
             flex-direction: column;
@@ -291,7 +361,6 @@
             font-size: 18px;
         }
 
-        /* РЕЙТИНГ */
         .rating-stars { display: flex; gap: 4px; font-size: 28px; cursor: pointer; justify-content: center; margin: 10px 0; }
         .rating-stars .star { color: #445566; transition: 0.2s; }
         .rating-stars .star.active { color: #ffcc00; text-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
@@ -368,7 +437,7 @@
             background-position: center;
             flex-shrink: 0;
         }
-        .goods-card, .fresh-card { display: flex; gap: 12px; }
+        .goods-card, .fresh-card { display: flex; gap: 12px; align-items: center; }
         .goods-info { flex: 1; }
         .goods-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
         .goods-meta { font-size: 12px; color: var(--text-secondary); }
@@ -472,22 +541,8 @@
             white-space: nowrap;
         }
         .fab {
-            position: fixed;
-            bottom: 90px;
-            right: 16px;
-            width: 56px;
-            height: 56px;
-            border-radius: 28px;
-            color: white;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            transition: 0.2s;
+            display: none;
         }
-        .fab:active { transform: scale(0.92); }
 
         .modal, .detail-modal {
             display: none;
@@ -511,23 +566,7 @@
             max-height: 85vh;
             overflow-y: auto;
         }
-        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
-
-        .add-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-        }
-        .add-tab.active {
-            background: rgba(0, 163, 255, 0.1);
-            color: var(--blue-primary);
-            border-color: var(--blue-primary);
-        }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--text-primary); }
 
         .confirm-dialog {
             position: fixed;
@@ -550,7 +589,7 @@
             max-width: 300px;
             text-align: center;
         }
-        .confirm-title { font-size: 18px; font-weight: 600; }
+        .confirm-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
         .confirm-message { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
         .confirm-buttons { display: flex; gap: 12px; }
         .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
@@ -560,6 +599,18 @@
         .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; margin-left: 6px; }
         .status-active { background: #00c853; color: white; }
         .status-archived { background: #9c27b0; color: white; }
+
+        .favorite-btn {
+            background: transparent;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            padding: 4px 8px;
+        }
+        .favorite-btn.active { color: #ff3355; }
+        .favorite-btn:active { transform: scale(0.9); }
 
         @keyframes ripple {
             0% { width: 80px; height: 80px; opacity: 0.8; }
@@ -577,18 +628,21 @@
             outline: 2px solid var(--blue-primary);
             outline-offset: 2px;
         }
-        
-        /* FAVORITES */
-        .favorite-btn {
-            background: transparent;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: 0.2s;
+
+        .help-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
         }
-        .favorite-btn.active { color: #ff3355; }
-        .favorite-btn:active { transform: scale(0.9); }
+        .help-buttons .btn-secondary {
+            padding: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -603,7 +657,6 @@
 </div>
 
 <div id="app"></div>
-<div class="fab" id="fabButton" onclick="window.showAddModal && showAddModal()">+</div>
 
 <div class="bottom-nav" id="bottomNav">
     <div class="nav-item" data-page="home"><div class="nav-icon">🏠</div><div class="nav-label">Головна</div></div>
@@ -615,7 +668,6 @@
 
 <div id="message" class="message-toast"></div>
 
-<!-- МОДАЛКА СТВОРЕННЯ -->
 <div id="addModal" class="modal">
     <div class="modal-content">
         <div class="modal-title">📝 Деталі оголошення</div>
@@ -648,7 +700,6 @@
     </div>
 </div>
 
-<!-- ДЕТАЛЬНИЙ ПЕРЕГЛЯД -->
 <div id="detailModal" class="detail-modal">
     <div class="detail-card">
         <div id="detailContent"></div>
@@ -798,7 +849,6 @@
         }, () => {});
     }
 
-    // ========== USER ==========
     async function loadUser() {
         const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
         let userId = tgUser?.id ? String(tgUser.id) : null;
@@ -817,7 +867,6 @@
         } catch(e) {}
     }
 
-    // ========== GOODS ==========
     async function loadGoods(force = false) {
         if (!force && isCacheValid('goods')) { state.goods = dataCache.goods; if (state.page === 'goods') renderGoodsPage(); if (state.page === 'home') renderHomePage(); return; }
         try {
@@ -885,7 +934,6 @@
         } catch(e) { state.myResumes = []; }
     }
 
-    // ========== FAVORITES ==========
     async function loadFavorites() {
         try {
             const data = await apiRequest(`favorites?user_id=eq.${state.user.id}&select=*,goods(*)`);
@@ -944,7 +992,6 @@
         setActiveNav('favorites');
     }
 
-    // ========== CHATS ==========
     async function loadMyChats() {
         try {
             const chats1 = await apiRequest(`chats?buyer_id=eq.${state.user.id}&order=last_message_time.desc&select=*,goods(title)`);
@@ -1058,7 +1105,6 @@
 
     function goToChats() { state.page = 'chats'; renderChatsPage(); loadMyChats(); }
 
-    // ========== RATING ==========
     function renderRating(userId, targetUserId, adId) {
         apiRequest(`ratings?from_user_id=eq.${userId}&to_user_id=eq.${targetUserId}&ad_id=eq.${adId}&select=*`)
             .then(existing => {
@@ -1102,7 +1148,6 @@
             });
     }
 
-    // ========== AVATAR ==========
     function uploadAvatar() {
         const input = document.getElementById('avatarInput');
         const file = input?.files?.[0];
@@ -1118,7 +1163,6 @@
         reader.readAsDataURL(file);
     }
 
-    // ========== NOTIFICATIONS ==========
     async function loadNotifications() {
         try {
             const data = await apiRequest(`notifications?user_id=eq.${state.user.id}&order=created_at.desc&limit=50`);
@@ -1129,7 +1173,6 @@
         } catch(e) { state.notifications = []; }
     }
 
-    // ========== REPORTS ==========
     function reportAd(adId) {
         const reason = prompt('Опишіть причину скарги:');
         if (!reason || reason.trim() === '') return;
@@ -1142,7 +1185,6 @@
         try { apiRequest('ad_views', { method: 'POST', body: JSON.stringify({ ad_id: adId, user_id: state.user?.id || null }) }).catch(()=>{}); } catch(e) {}
     }
 
-    // ========== CRUD ==========
     async function deleteToTrash(id) {
         await apiRequest(`goods?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'deleted' }) });
         showMessage('🗑 Товар переміщено у видалені');
@@ -1297,7 +1339,6 @@
         renderProfilePage();
     }
 
-    // ========== RENDER ==========
     const allCategories = [
         { icon: '📱', name: 'Електроніка', id: 'Електроніка' },
         { icon: '🚗', name: 'Авто', id: 'Авто' },
@@ -1325,28 +1366,23 @@
         });
         items.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
         const recent = items.slice(0, 10);
-        const rows = [];
-        for (let i = 0; i < allCategories.length; i += 2) {
-            rows.push(allCategories.slice(i, i + 2));
-        }
+
         document.getElementById('app').innerHTML = `
             <div class="app-container">
                 <div class="header-home">
-                    <div class="search-container">
-                        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук...">
-                        <button class="notif-btn" onclick="loadNotifications(); switchProfileTab('notifications');">🔔</button>
-                    </div>
-                    <div class="search-hint">Допомога з пошуком?</div>
+                    <span class="logo-text">UAMO</span>
+                    <button class="notif-btn" onclick="loadNotifications(); switchProfileTab('notifications');">🔔</button>
                 </div>
-                <div class="categories-grid">
-                    ${rows.map(row => `
-                        <div class="category-row">
-                            ${row.map(c => `
-                                <div class="category-item" onclick="selectCategory('${c.id}')">
-                                    <span class="category-icon">${c.icon}</span>
-                                    <span class="category-name">${c.name}</span>
-                                </div>
-                            `).join('')}
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Пошук...">
+                </div>
+                <div class="search-hint">🔍 Допомога з пошуком?</div>
+                <div class="section-title">📂 Категорії</div>
+                <div class="categories-scroll">
+                    ${allCategories.map(c => `
+                        <div class="category-item" onclick="selectCategory('${c.id}')">
+                            <span class="category-icon">${c.icon}</span>
+                            <span class="category-name">${c.name}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -1375,10 +1411,6 @@
     function renderGoodsPage() {
         const categoryName = state.categoryPage || 'Всі товари';
         const goodsToShow = state.categoryPage ? state.goods.filter(item => item.category === state.categoryPage) : state.goods;
-        const rows = [];
-        for (let i = 0; i < allCategories.length; i += 2) {
-            rows.push(allCategories.slice(i, i + 2));
-        }
         document.getElementById('app').innerHTML = `
             <div class="app-container">
                 <div class="header">
@@ -1387,15 +1419,11 @@
                 </div>
                 <input type="text" id="citySearch" class="search-box" placeholder="🏙 Пошук за містом..." oninput="searchByCity()" list="citiesList">
                 <datalist id="citiesList"></datalist>
-                <div class="categories-grid" style="margin-bottom:12px;">
-                    ${rows.map(row => `
-                        <div class="category-row">
-                            ${row.map(c => `
-                                <div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" onclick="selectCategory('${c.id}')">
-                                    <span class="category-icon">${c.icon}</span>
-                                    <span class="category-name">${c.name}</span>
-                                </div>
-                            `).join('')}
+                <div class="categories-scroll" style="margin-bottom:12px;">
+                    ${allCategories.map(c => `
+                        <div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" onclick="selectCategory('${c.id}')">
+                            <span class="category-icon">${c.icon}</span>
+                            <span class="category-name">${c.name}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -1549,11 +1577,11 @@
                 <div id="myGoodsList"></div>
                 <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
                     <button class="modal-btn btn-primary" onclick="showAddModal()" style="flex:1;">📤 Створити оголошення</button>
-                    <button class="modal-btn btn-secondary" onclick="switchProfileTab('jobs')" style="flex:1; background:var(--bg-card); border:1px solid var(--border-color);">📋 Панель роботодавця</button>
+                    <button class="modal-btn btn-secondary" onclick="switchProfileTab('jobs')" style="flex:1;">📋 Панель роботодавця</button>
                 </div>
-                <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
-                    <button class="modal-btn btn-secondary" onclick="showMessage('🆘 Допомога буде доступна найближчим часом')" style="flex:1; background:var(--bg-card); border:1px solid var(--border-color);">🆘 Допомога</button>
-                    <button class="modal-btn btn-secondary" onclick="reportAd()" style="flex:1; background:var(--bg-card); border:1px solid var(--border-color);">❓ Описати проблему</button>
+                <div class="help-buttons">
+                    <button class="btn-secondary" onclick="showMessage('🆘 Допомога буде доступна найближчим часом')">🆘 Допомога</button>
+                    <button class="btn-secondary" onclick="reportAd()">❓ Описати проблему</button>
                 </div>
                 <div style="margin-top:16px; text-align:center; font-size:12px; color:var(--text-dim);">Рейтинг: ${user.rating ? '⭐'.repeat(Math.min(Math.round(user.rating),5)) : '⭐'} (${user.rating || 0})</div>
             </div>
@@ -1640,7 +1668,6 @@
         setActiveNav('profile');
     }
 
-    // ========== OPEN DETAIL ==========
     async function openDetail(id, type) {
         let item;
         if (type === 'goods') item = state.goods.find(g => g.id === id) || state.myGoods.find(g => g.id === id);
@@ -1743,7 +1770,6 @@
         } else showMessage('❌ Номер не вказано', true);
     }
 
-    // ========== NAVIGATION ==========
     async function goBack() {
         state.categoryPage = null;
         state.page = 'home';
@@ -1774,9 +1800,7 @@
     function confirmDeleteJob(id) { confirmAction('🗑 Видалення', 'Видалити вакансію?', ()=>deleteJobItem(id)); }
     function confirmDeleteResume(id) { confirmAction('🗑 Видалення', 'Видалити резюме?', ()=>deleteResumeItem(id)); }
 
-    // ========== ADD MODAL ==========
     function showAddModal() {
-        hideFab();
         document.getElementById('goodsTitle').value = '';
         document.getElementById('goodsPrice').value = '';
         document.getElementById('goodsCity').value = localStorage.getItem('userCity') || '';
@@ -1790,9 +1814,8 @@
         document.getElementById('addModal').style.display = 'flex';
         detectUserCity();
     }
-    function closeModal() { document.getElementById('addModal').style.display = 'none'; selectedPhotos = []; renderPhotoList(); isSubmitting = false; showFab(); }
+    function closeModal() { document.getElementById('addModal').style.display = 'none'; selectedPhotos = []; renderPhotoList(); isSubmitting = false; }
 
-    // ========== SUBMIT ==========
     async function submitGoods() {
         if (isSubmitting) { showMessage('⏳ Зачекайте...', true); return; }
         isSubmitting = true;
@@ -1824,7 +1847,6 @@
         if (state.page === 'goods') renderGoodsPage();
     }
 
-    // ========== PHOTO ZOOM ==========
     function openFullScreenPhoto(photos, index) {
         window.currentPhotoIndex = index;
         const overlay = document.createElement('div');
@@ -1882,7 +1904,6 @@
         }
     }
 
-    // ========== INIT ==========
     function initProfileTabsScroll() {
         const c = document.querySelector('.profile-tabs');
         if (!c) return;
@@ -1983,7 +2004,7 @@
     window.loadFavorites = loadFavorites;
 
     (async () => {
-        console.log('🚀 UAMO PRO OLX');
+        console.log('🚀 UAMO 2.0 OLX');
         await loadUser();
         await loadGoods(true);
         await loadJobs(true);
