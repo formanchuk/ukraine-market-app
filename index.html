@@ -7,6 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="icon" href="data:,">
     <style>
+        /* ===== БАЗОВІ СТИЛІ ===== */
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #111118;
@@ -29,6 +30,7 @@
         .app-container { padding: 14px; padding-bottom: 80px; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* КАРТКИ */
         .goods-card, .my-goods-card, .fresh-card, .job-card, .resume-card, .chat-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -65,6 +67,7 @@
             border: 1px solid var(--border-color);
             transition: 0.2s;
         }
+        .btn-secondary:hover { border-color: var(--blue-primary); }
 
         .goods-price, .job-salary { color: var(--blue-primary); }
         .section-title {
@@ -82,7 +85,7 @@
             text-shadow: 0 0 20px rgba(0, 163, 255, 0.1);
         }
 
-        /* НАВІГАЦІЯ (5 кнопок) */
+        /* НАВІГАЦІЯ */
         .bottom-nav {
             background: rgba(10, 10, 15, 0.95);
             border-top: 1px solid var(--border-color);
@@ -218,6 +221,31 @@
         .category-item .category-icon { font-size: 28px; }
         .category-item .category-name { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
 
+        /* МОДАЛЬНІ ВІКНА */
+        .modal, .detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content, .detail-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            width: 92%;
+            max-width: 450px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--text-primary); }
+
         .modal-input, .modal-select, .modal-textarea {
             background: var(--bg-input);
             border: 1px solid var(--border-color);
@@ -236,6 +264,60 @@
         }
         .modal-select option { background: var(--bg-primary); color: var(--text-primary); }
 
+        .modal-btn { 
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-top: 8px; 
+            transition: 0.2s; 
+        }
+        .btn-danger { background: #dc3545; color: white; }
+
+        .photo-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .photo-preview {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: var(--bg-input);
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .photo-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .add-photo {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        /* ПРОФІЛЬ */
         .profile-header {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -294,6 +376,7 @@
             border-color: var(--blue-primary);
         }
 
+        /* ЧАТИ */
         .chat-messages {
             display: flex;
             flex-direction: column;
@@ -380,45 +463,6 @@
         .action-archive { background: #9c27b0; }
         .action-restore { background: #00c853; }
 
-        .photo-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-        .photo-preview {
-            width: 70px;
-            height: 70px;
-            border-radius: 12px;
-            background: var(--bg-input);
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-        .photo-remove {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 22px;
-            height: 22px;
-            background: red;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .add-photo {
-            width: 70px;
-            height: 70px;
-            border-radius: 12px;
-            background: var(--bg-card);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            cursor: pointer;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
         .goods-image, .my-goods-image, .fresh-image {
             width: 80px;
             height: 80px;
@@ -534,30 +578,6 @@
         }
         .fab { display: none; }
 
-        .modal, .detail-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content, .detail-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 20px;
-            width: 92%;
-            max-width: 450px;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--text-primary); }
-
         .confirm-dialog {
             position: fixed;
             top: 0;
@@ -602,37 +622,6 @@
         .favorite-btn.active { color: #ff3355; }
         .favorite-btn:active { transform: scale(0.9); }
 
-        @keyframes ripple {
-            0% { width: 80px; height: 80px; opacity: 0.8; }
-            100% { width: 280px; height: 280px; opacity: 0; }
-        }
-        ::-webkit-scrollbar { width: 3px; background: transparent; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--blue-primary), #0077cc); border-radius: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        
-        input, textarea, select {
-            -webkit-user-select: text;
-            user-select: text;
-        }
-        input:focus, textarea:focus, select:focus {
-            outline: 2px solid var(--blue-primary);
-            outline-offset: 2px;
-        }
-
-        .help-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 12px;
-        }
-        .help-buttons .btn-secondary {
-            padding: 16px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
         .favorites-empty {
             text-align: center;
             padding: 60px 20px;
@@ -650,6 +639,38 @@
         .favorites-empty .favorites-sub {
             font-size: 14px;
             color: var(--text-dim);
+        }
+
+        .help-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .help-buttons .btn-secondary {
+            padding: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        @keyframes ripple {
+            0% { width: 80px; height: 80px; opacity: 0.8; }
+            100% { width: 280px; height: 280px; opacity: 0; }
+        }
+        ::-webkit-scrollbar { width: 3px; background: transparent; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--blue-primary), #0077cc); border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        
+        input, textarea, select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: 2px solid var(--blue-primary);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -676,6 +697,7 @@
 
 <div id="message" class="message-toast"></div>
 
+<!-- МОДАЛКА СТВОРЕННЯ -->
 <div id="addModal" class="modal">
     <div class="modal-content">
         <div class="modal-title">📝 Деталі оголошення</div>
@@ -708,6 +730,7 @@
     </div>
 </div>
 
+<!-- ДЕТАЛЬНИЙ ПЕРЕГЛЯД -->
 <div id="detailModal" class="detail-modal">
     <div class="detail-card">
         <div id="detailContent"></div>
@@ -1823,6 +1846,14 @@
 
     // ========== SHOW ADD MODAL ==========
     function showAddModal() {
+        // Перевіряємо, чи є модалка в DOM
+        const modal = document.getElementById('addModal');
+        if (!modal) {
+            console.error('❌ Модалка не знайдена в DOM');
+            showMessage('❌ Помилка: форма не завантажена', true);
+            return;
+        }
+
         const title = document.getElementById('goodsTitle');
         const price = document.getElementById('goodsPrice');
         const city = document.getElementById('goodsCity');
@@ -1830,11 +1861,11 @@
         const desc = document.getElementById('goodsDesc');
         const category = document.getElementById('goodsCategory');
         const submitBtn = document.getElementById('submitGoodsBtn');
-        const modal = document.getElementById('addModal');
+        const photoList = document.getElementById('photoList');
         
-        if (!title || !price || !city || !phone || !desc || !category || !submitBtn || !modal) {
-            console.error('❌ Помилка: елементи модалки не знайдені');
-            showMessage('❌ Помилка відкриття форми', true);
+        if (!title || !price || !city || !phone || !desc || !category || !submitBtn || !photoList) {
+            console.error('❌ Помилка: елементи модалки не знайдені', { title, price, city, phone, desc, category, submitBtn, photoList });
+            showMessage('❌ Помилка відкриття форми. Спробуйте оновити сторінку.', true);
             return;
         }
         
@@ -1853,7 +1884,8 @@
     }
 
     function closeModal() { 
-        document.getElementById('addModal').style.display = 'none'; 
+        const modal = document.getElementById('addModal');
+        if (modal) modal.style.display = 'none'; 
         selectedPhotos = []; 
         renderPhotoList(); 
         isSubmitting = false; 
