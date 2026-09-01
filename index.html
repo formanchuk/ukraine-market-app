@@ -193,25 +193,33 @@
             gap: 6px;
         }
 
-        /* КАТЕГОРІЇ (2 В РЯД) */
-        .categories-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* КАТЕГОРІЇ (ГОРИЗОНТАЛЬНИЙ СКРОЛ — ЯК НА OLX) */
+        .categories-scroll {
+            display: flex;
+            overflow-x: auto;
             gap: 10px;
-            margin-bottom: 16px;
+            padding: 4px 0 16px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
+        .categories-scroll::-webkit-scrollbar { height: 2px; }
+        .categories-scroll::-webkit-scrollbar-thumb { background: var(--blue-primary); border-radius: 10px; }
+        .categories-scroll::-webkit-scrollbar-track { background: transparent; }
+
         .category-item {
+            flex: 0 0 auto;
             background: var(--bg-card);
-            padding: 16px 12px;
+            padding: 12px 16px;
             border-radius: 14px;
             text-align: center;
             cursor: pointer;
             border: 1px solid var(--border-color);
             transition: 0.2s;
+            min-width: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
         }
         .category-item:active { transform: scale(0.95); }
         .category-item.active-category {
@@ -219,7 +227,7 @@
             border-color: var(--blue-primary);
         }
         .category-item .category-icon { font-size: 28px; }
-        .category-item .category-name { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
+        .category-item .category-name { font-size: 10px; font-weight: 500; color: var(--text-secondary); }
 
         /* МОДАЛЬНІ ВІКНА */
         .modal, .detail-modal {
@@ -723,8 +731,10 @@
             <option value="Оренда/Прокат">🔑 Оренда/Прокат</option>
             <option value="Житло подобово">🏠 Житло подобово</option>
         </select>
-        <textarea id="goodsDesc" class="modal-textarea" placeholder="📝 Опис"></textarea>
+        <input type="text" id="goodsPrice" class="modal-input" placeholder="💰 Ціна (грн) *">
+        <input type="text" id="goodsCity" class="modal-input" placeholder="🏙 Місто">
         <input type="tel" id="goodsPhone" class="modal-input" placeholder="📱 Номер телефону" value="">
+        <textarea id="goodsDesc" class="modal-textarea" placeholder="📝 Опис"></textarea>
         <button class="modal-btn btn-primary" id="submitGoodsBtn" onclick="submitGoods()">📤 Опублікувати</button>
         <button class="modal-btn btn-danger" onclick="closeModal()">❌ Скасувати</button>
     </div>
@@ -1420,7 +1430,7 @@
                 </div>
                 <div class="search-hint">🔍 Допомога з пошуком?</div>
                 <div class="section-title">📂 Категорії</div>
-                <div class="categories-grid">
+                <div class="categories-scroll">
                     ${allCategories.map(c => `
                         <div class="category-item" onclick="selectCategory('${c.id}')">
                             <span class="category-icon">${c.icon}</span>
@@ -1461,7 +1471,7 @@
                 </div>
                 <input type="text" id="citySearch" class="search-box" placeholder="🏙 Пошук за містом..." oninput="searchByCity()" list="citiesList">
                 <datalist id="citiesList"></datalist>
-                <div class="categories-grid" style="margin-bottom:12px;">
+                <div class="categories-scroll" style="margin-bottom:12px;">
                     ${allCategories.map(c => `
                         <div class="category-item ${state.categoryPage === c.id ? 'active-category' : ''}" onclick="selectCategory('${c.id}')">
                             <span class="category-icon">${c.icon}</span>
@@ -1844,16 +1854,17 @@
     function confirmDeleteJob(id) { confirmAction('🗑 Видалення', 'Видалити вакансію?', ()=>deleteJobItem(id)); }
     function confirmDeleteResume(id) { confirmAction('🗑 Видалення', 'Видалити резюме?', ()=>deleteResumeItem(id)); }
 
-    // ========== SHOW ADD MODAL ==========
+    // ========== SHOW ADD MODAL (ВИПРАВЛЕНО) ==========
     function showAddModal() {
-        // Перевіряємо, чи є модалка в DOM
+        // Перевіряємо, чи існує модалка
         const modal = document.getElementById('addModal');
         if (!modal) {
-            console.error('❌ Модалка не знайдена в DOM');
-            showMessage('❌ Помилка: форма не завантажена', true);
+            console.error('❌ Модалка не знайдена');
+            showMessage('❌ Помилка: спробуйте оновити сторінку', true);
             return;
         }
 
+        // Отримуємо всі елементи з перевіркою
         const title = document.getElementById('goodsTitle');
         const price = document.getElementById('goodsPrice');
         const city = document.getElementById('goodsCity');
@@ -1862,13 +1873,18 @@
         const category = document.getElementById('goodsCategory');
         const submitBtn = document.getElementById('submitGoodsBtn');
         const photoList = document.getElementById('photoList');
-        
-        if (!title || !price || !city || !phone || !desc || !category || !submitBtn || !photoList) {
-            console.error('❌ Помилка: елементи модалки не знайдені', { title, price, city, phone, desc, category, submitBtn, photoList });
-            showMessage('❌ Помилка відкриття форми. Спробуйте оновити сторінку.', true);
-            return;
-        }
-        
+
+        // Якщо якогось елемента немає — створюємо його
+        if (!title) { console.error('❌ goodsTitle не знайдено'); return; }
+        if (!price) { console.error('❌ goodsPrice не знайдено'); return; }
+        if (!city) { console.error('❌ goodsCity не знайдено'); return; }
+        if (!phone) { console.error('❌ goodsPhone не знайдено'); return; }
+        if (!desc) { console.error('❌ goodsDesc не знайдено'); return; }
+        if (!category) { console.error('❌ goodsCategory не знайдено'); return; }
+        if (!submitBtn) { console.error('❌ submitGoodsBtn не знайдено'); return; }
+        if (!photoList) { console.error('❌ photoList не знайдено'); return; }
+
+        // Заповнюємо поля
         title.value = '';
         price.value = '';
         city.value = localStorage.getItem('userCity') || '';
@@ -1876,10 +1892,20 @@
         desc.value = '';
         category.value = '';
         selectedPhotos = [];
-        renderPhotoList();
+        
+        // Оновлюємо список фото
+        if (typeof renderPhotoList === 'function') {
+            renderPhotoList();
+        }
+
+        // Налаштовуємо кнопку
         submitBtn.textContent = '📤 Опублікувати';
         submitBtn.onclick = submitGoods;
+
+        // Показуємо модалку
         modal.style.display = 'flex';
+        
+        // Визначаємо місто
         detectUserCity();
     }
 
