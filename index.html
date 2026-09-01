@@ -144,7 +144,7 @@
         }
         .auth-box input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px 44px 12px 14px;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             font-family: var(--font);
@@ -169,6 +169,7 @@
             cursor: pointer;
             font-size: 18px;
             padding: 4px;
+            z-index: 2;
         }
         .password-toggle:hover { color: var(--text); }
         .btn-primary {
@@ -240,79 +241,6 @@
             text-decoration: none;
         }
         .forgot-password a:hover { color: var(--accent); }
-
-        /* BOTTOM NAV */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border);
-            display: none;
-            justify-content: space-around;
-            padding: 6px 0 12px 0;
-            z-index: 50;
-            backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.94);
-        }
-        .bottom-nav.show { display: flex; }
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1px;
-            background: none;
-            border: none;
-            font-family: var(--font);
-            font-size: 9px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            padding: 4px 12px;
-            position: relative;
-        }
-        .bottom-nav-item i { font-size: 20px; transition: var(--transition); }
-        .bottom-nav-item span { font-weight: 500; }
-        .bottom-nav-item:hover { color: var(--primary); }
-        .bottom-nav-item.active { color: var(--accent); }
-        .bottom-nav-item.active i { transform: scale(1.05); }
-        .bottom-nav-item .badge-count {
-            position: absolute;
-            top: -2px;
-            right: -4px;
-            background: #EF4444;
-            color: #fff;
-            font-size: 9px;
-            font-weight: 700;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .bottom-nav-item.add-btn i {
-            font-size: 26px;
-            color: #fff;
-            background: var(--accent);
-            border-radius: 50%;
-            padding: 8px;
-            width: 46px;
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -10px;
-            box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);
-        }
-
-        .page { display: none; animation: fadeUp 0.25s ease; }
-        .page.active { display: block; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* SEARCH BAR */
         .search-bar { padding: 4px 0 12px 0; }
@@ -463,6 +391,79 @@
         }
         .cta-add button:hover { background: var(--accent-hover); transform: scale(1.01); }
 
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: none;
+            justify-content: space-around;
+            padding: 6px 0 12px 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.94);
+        }
+        .bottom-nav.show { display: flex; }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            background: none;
+            border: none;
+            font-family: var(--font);
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px 12px;
+            position: relative;
+        }
+        .bottom-nav-item i { font-size: 20px; transition: var(--transition); }
+        .bottom-nav-item span { font-weight: 500; }
+        .bottom-nav-item:hover { color: var(--primary); }
+        .bottom-nav-item.active { color: var(--accent); }
+        .bottom-nav-item.active i { transform: scale(1.05); }
+        .bottom-nav-item .badge-count {
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            background: #EF4444;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bottom-nav-item.add-btn i {
+            font-size: 26px;
+            color: #fff;
+            background: var(--accent);
+            border-radius: 50%;
+            padding: 8px;
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -10px;
+            box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);
+        }
+
+        .page { display: none; animation: fadeUp 0.25s ease; }
+        .page.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* SEARCH PAGE */
         .search-filters {
             display: flex;
@@ -589,67 +590,6 @@
         .profile-menu-item i { width: 20px; color: var(--text-secondary); font-size: 16px; }
         .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
         .profile-menu-item.danger { color: var(--danger); }
-
-        /* BACK HEADER */
-        .back-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0 12px 0;
-        }
-        .back-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            padding: 4px 0;
-            transition: var(--transition);
-        }
-        .back-btn:hover { color: var(--primary); }
-        .back-header .title { font-weight: 600; font-size: 16px; color: var(--text); }
-
-        /* SUCCESS MODAL */
-        .success-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-        .success-modal.show { display: flex; }
-        .success-modal .modal-box {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 32px 24px;
-            max-width: 360px;
-            width: 90%;
-            text-align: center;
-        }
-        .success-modal .modal-box .icon { font-size: 56px; color: var(--success); margin-bottom: 12px; }
-        .success-modal .modal-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-        .success-modal .modal-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
-        .success-modal .modal-box .btn-group { display: flex; gap: 10px; }
-        .success-modal .modal-box .btn-group button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .success-modal .modal-box .btn-group .btn-primary-modal { background: var(--accent); color: #fff; }
-        .success-modal .modal-box .btn-group .btn-primary-modal:hover { background: var(--accent-hover); }
-        .success-modal .modal-box .btn-group .btn-secondary-modal { background: var(--bg); color: var(--text); }
-        .success-modal .modal-box .btn-group .btn-secondary-modal:hover { background: var(--border); }
 
         /* ADD LISTING */
         .add-listing-form .form-group { margin-bottom: 14px; }
@@ -892,6 +832,145 @@
         }
         .chat-input button:hover { background: var(--accent-hover); }
 
+        /* SETTINGS */
+        .settings-group { margin-bottom: 20px; }
+        .settings-group .settings-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item .settings-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .settings-item .settings-value {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active { background: var(--accent); }
+        .toggle-switch .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .toggle-switch.active .toggle-thumb { left: 22px; }
+        .settings-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 14px;
+            outline: none;
+        }
+        .settings-select:focus { border-color: var(--accent); }
+        .radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .radio-item input[type="radio"] {
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .radio-item.active { color: var(--text); }
+
+        /* BACK HEADER */
+        .back-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0 12px 0;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            transition: var(--transition);
+        }
+        .back-btn:hover { color: var(--primary); }
+        .back-header .title { font-weight: 600; font-size: 16px; color: var(--text); }
+
+        /* SUCCESS MODAL */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .success-modal.show { display: flex; }
+        .success-modal .modal-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+        }
+        .success-modal .modal-box .icon { font-size: 56px; color: var(--success); margin-bottom: 12px; }
+        .success-modal .modal-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .success-modal .modal-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+        .success-modal .modal-box .btn-group { display: flex; gap: 10px; }
+        .success-modal .modal-box .btn-group button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .success-modal .modal-box .btn-group .btn-primary-modal { background: var(--accent); color: #fff; }
+        .success-modal .modal-box .btn-group .btn-primary-modal:hover { background: var(--accent-hover); }
+        .success-modal .modal-box .btn-group .btn-secondary-modal { background: var(--bg); color: var(--text); }
+        .success-modal .modal-box .btn-group .btn-secondary-modal:hover { background: var(--border); }
+
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
         .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
 
@@ -919,6 +998,9 @@
             <div id="connectionStatus" style="font-size:11px; display:flex; align-items:center; gap:6px; margin-right:8px;">
                 <span class="status-badge status-waiting" id="statusBadge">⏳</span>
             </div>
+            <button onclick="navigateTo('settings')" title="Налаштування">
+                <i class="fas fa-cog"></i>
+            </button>
             <div class="avatar-small" id="headerAvatar" onclick="navigateTo('profile')">
                 <span id="avatarLetter">К</span>
             </div>
@@ -1072,6 +1154,37 @@
         </div>
     </div>
 
+    <!-- CHATS -->
+    <div class="page" id="page-chats">
+        <div class="app-container">
+            <div class="back-header">
+                <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                <span class="title"><i class="fas fa-comment-dots" style="color:var(--accent);"></i> Чати</span>
+            </div>
+            <div id="chatsList"></div>
+        </div>
+    </div>
+
+    <!-- CHAT DETAIL -->
+    <div class="page" id="page-chat-detail">
+        <div class="app-container">
+            <div class="back-header">
+                <button class="back-btn" onclick="navigateTo('chats')"><i class="fas fa-arrow-left"></i></button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="avatar-small" id="chatPartnerAvatar" style="width:32px; height:32px;">👤</div>
+                    <span class="title" id="chatPartnerName">Продавець</span>
+                </div>
+            </div>
+            <div id="chatMessagesContainer">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeydown="if(event.key==='Enter') sendMessage()" />
+                    <button onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- PROFILE -->
     <div class="page" id="page-profile">
         <div class="app-container">
@@ -1085,12 +1198,74 @@
                     <p id="profileEmail">user@example.com</p>
                 </div>
             </div>
+            <button class="btn-submit" style="background:var(--accent); margin-bottom:12px;" onclick="navigateTo('profile-edit')">
+                <i class="fas fa-edit"></i> Редагувати профіль
+            </button>
+            <div class="profile-stats" id="profileStats">
+                <div class="stat"><div class="num" id="statActive">0</div><div class="label">Оголошень</div></div>
+                <div class="stat"><div class="num" id="statFavorites">0</div><div class="label">В обраному</div></div>
+                <div class="stat"><div class="num" id="statMessages">0</div><div class="label">Повідомлень</div></div>
+            </div>
             <div class="profile-menu">
                 <div class="profile-menu-item" onclick="navigateTo('my-listings')"><i class="fas fa-list-ul"></i> Мої оголошення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="profile-menu-item" onclick="navigateTo('favorites')"><i class="fas fa-heart"></i> Обране <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('chats')"><i class="fas fa-comment-dots"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="profile-menu-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Налаштування <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="showHelp()"><i class="fas fa-question-circle"></i> Допомога <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="showAbout()"><i class="fas fa-info-circle"></i> Про UAMO <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="profile-menu-item danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Вийти <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
             </div>
+        </div>
+    </div>
+
+    <!-- PROFILE EDIT -->
+    <div class="page" id="page-profile-edit">
+        <div class="app-container">
+            <div class="back-header">
+                <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
+                <span class="title">Редагувати профіль</span>
+            </div>
+            <div style="text-align:center; margin-bottom:16px;">
+                <div class="profile-avatar" id="editAvatar" style="width:80px; height:80px; margin:0 auto; cursor:pointer;" onclick="document.getElementById('editAvatarInput').click()">
+                    <span id="editAvatarLetter">К</span>
+                </div>
+                <input type="file" id="editAvatarInput" accept="image/*" style="display:none;" onchange="editUploadAvatar(event)" />
+                <button style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; margin-top:4px;" onclick="document.getElementById('editAvatarInput').click()">Змінити фото</button>
+            </div>
+            <div class="add-listing-form">
+                <div class="form-group">
+                    <label>Ім'я</label>
+                    <input type="text" id="editName" placeholder="Ваше ім'я" />
+                </div>
+                <div class="form-group">
+                    <label>Прізвище</label>
+                    <input type="text" id="editLastName" placeholder="Ваше прізвище" />
+                </div>
+                <div class="form-group">
+                    <label>Нікнейм</label>
+                    <input type="text" id="editUsername" placeholder="@username" />
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="editPhone" placeholder="+380XXXXXXXXX" />
+                </div>
+                <div class="form-group">
+                    <label>Місто</label>
+                    <select id="editCity" class="settings-select" style="width:100%;"></select>
+                </div>
+                <button class="btn-submit" onclick="saveProfile()">💾 Зберегти зміни</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MY LISTINGS -->
+    <div class="page" id="page-my-listings">
+        <div class="app-container">
+            <div class="back-header">
+                <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
+                <span class="title">Мої оголошення</span>
+            </div>
+            <div id="myListingsContainer"></div>
         </div>
     </div>
 
@@ -1107,6 +1282,8 @@
                 <div class="profile-menu-item" onclick="navigateTo('settings-city')"><i class="fas fa-map-marker-alt"></i> Місто <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="profile-menu-item" onclick="navigateTo('settings-language')"><i class="fas fa-globe"></i> Мова <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="profile-menu-item" onclick="navigateTo('settings-privacy')"><i class="fas fa-lock"></i> Конфіденційність <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-messages')"><i class="fas fa-comment"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-security')"><i class="fas fa-shield-alt"></i> Безпека <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
             </div>
         </div>
     </div>
@@ -1304,6 +1481,74 @@
                     <span class="settings-label">Показувати активність</span>
                     <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
                 </div>
+                <div class="profile-menu-item" onclick="alert('Заблоковані користувачі: поки що порожньо')">
+                    <i class="fas fa-ban"></i> Заблоковані користувачі
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Керування даними: видалити всі дані, експорт даних')">
+                    <i class="fas fa-database"></i> Керування даними
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: MESSAGES -->
+    <div class="page" id="page-settings-messages">
+        <div class="app-container">
+            <div class="back-header">
+                <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
+                <span class="title">Повідомлення</span>
+            </div>
+            <div class="settings-group">
+                <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:8px; padding:12px 0;">
+                    <span class="settings-label">Хто може написати мені:</span>
+                    <div class="radio-group">
+                        <label class="radio-item active"><input type="radio" name="who_can_message" value="all" checked /> Усі</label>
+                        <label class="radio-item"><input type="radio" name="who_can_message" value="users" /> Користувачі UAMO</label>
+                        <label class="radio-item"><input type="radio" name="who_can_message" value="none" /> Ніхто</label>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Дозволити повідомлення від користувачів</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: SECURITY -->
+    <div class="page" id="page-settings-security">
+        <div class="app-container">
+            <div class="back-header">
+                <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
+                <span class="title">Безпека</span>
+            </div>
+            <div class="settings-group">
+                <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
+                    <span class="settings-label">Email</span>
+                    <span class="settings-value" id="securityEmail">user@example.com</span>
+                </div>
+                <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
+                    <span class="settings-label">Телефон</span>
+                    <span class="settings-value" id="securityPhone">+380 XX XXX XX XX</span>
+                </div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-password')">
+                    <i class="fas fa-key"></i> Змінити пароль
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-email')">
+                    <i class="fas fa-envelope"></i> Змінити email
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-phone')">
+                    <i class="fas fa-phone"></i> Змінити номер телефону
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Активні сеанси: ви ввійшли з 2 пристроїв')">
+                    <i class="fas fa-laptop"></i> Активні сеанси
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
             </div>
         </div>
     </div>
@@ -1316,6 +1561,7 @@
                 <span class="title">Оголошення</span>
                 <div style="margin-left:auto; display:flex; gap:12px;">
                     <i class="far fa-heart" id="detailFavoriteBtn" style="font-size:20px; color:var(--text-secondary); cursor:pointer;" onclick="toggleDetailFavorite()"></i>
+                    <i class="fas fa-ellipsis-v" style="font-size:20px; color:var(--text-secondary); cursor:pointer;"></i>
                 </div>
             </div>
             <div class="detail-gallery" id="detailGallery">
@@ -1328,19 +1574,23 @@
                 <div class="price" id="detailPrice">8 500 грн</div>
                 <div class="title" id="detailTitle">Диван сучасний</div>
                 <div class="meta" id="detailMeta">
-                    <span><i class="fas fa-map-marker-alt"></i> Київ</span>
-                    <span><i class="far fa-clock"></i> Сьогодні</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Київ, Оболонь</span>
+                    <span><i class="far fa-clock"></i> Сьогодні о 14:30</span>
                 </div>
                 <div class="divider"></div>
-                <div class="description" id="detailDesc">Опис оголошення</div>
+                <div class="description" id="detailDesc">Зручний кутовий диван із тканинною оббивкою. Стан — новий.</div>
+                <div class="specs" id="detailSpecs">
+                    <div class="spec-item"><span class="label">Стан</span> <span>Новий</span></div>
+                    <div class="spec-item"><span class="label">Категорія</span> <span>Меблі</span></div>
+                </div>
                 <div class="divider"></div>
                 <button class="btn-submit" style="background:var(--accent);" onclick="openChatFromDetail()">
                     <i class="fas fa-comment"></i> Написати продавцю
                 </button>
                 <div class="seller-box" id="detailSeller">
-                    <div class="avatar" id="sellerAvatar">👤</div>
+                    <div class="avatar" id="sellerAvatar">А</div>
                     <div class="info">
-                        <div class="name" id="sellerName">Продавець</div>
+                        <div class="name" id="sellerName">Анна Коваленко</div>
                         <div class="since" id="sellerSince">На UAMO з 2024</div>
                     </div>
                     <div class="actions">
@@ -1362,6 +1612,10 @@
         <button class="bottom-nav-item add-btn" data-page="add" onclick="navigateTo('add')">
             <i class="fas fa-plus"></i><span>Додати</span>
         </button>
+        <button class="bottom-nav-item" data-page="chats" onclick="navigateTo('chats')" id="chatsNavBtn">
+            <i class="fas fa-comment-dots"></i><span>Чати</span>
+            <span class="badge-count" id="chatBadge" style="display:none;">0</span>
+        </button>
         <button class="bottom-nav-item" data-page="profile" onclick="navigateTo('profile')">
             <i class="fas fa-user"></i><span>Профіль</span>
         </button>
@@ -1375,15 +1629,14 @@
         <h3 id="successTitle">✓ Оголошення опубліковано!</h3>
         <p id="successMessage">Ваше оголошення вже доступне на UAMO.</p>
         <div class="btn-group">
-            <button class="btn-primary-modal" onclick="closeSuccessModal()">На головну</button>
-            <button class="btn-secondary-modal" onclick="closeSuccessModal()">Переглянути</button>
+            <button class="btn-primary-modal" id="successPrimaryBtn" onclick="closeSuccessModal()">На головну</button>
+            <button class="btn-secondary-modal" id="successSecondaryBtn" onclick="closeSuccessModal()">Переглянути</button>
         </div>
     </div>
 </div>
 
-<!-- Підключаємо Supabase SDK безпосередньо в HTML -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js">
-</script>
+<!-- Підключаємо Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 
 <script>
     // ================================================================
@@ -1391,8 +1644,7 @@
     // ================================================================
 
     const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
-    const SUPABASE_ANON_KEY =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cHNtZWxwc3Nnbml3b2hqYnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUwMDAwMDAsImV4cCI6MjA1MDU3NjAwMH0.';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cHNtZWxwc3Nnbml3b2hqYnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUwMDAwMDAsImV4cCI6MjA1MDU3NjAwMH0.';
 
     let supabase = null;
     let currentUser = null;
@@ -1403,18 +1655,29 @@
     let favorites = [];
     let listings = [];
     let myListings = [];
-    let userData = {
-        id: null,
-        name: 'Користувач',
-        email: '',
-        phone: '',
-        city: 'Київ',
-        avatar: 'К'
-    };
+    let chats = [];
+    let chatMessages = [];
+    let currentChatId = null;
+    let currentDetailId = null;
+    let detailPhotos = [];
+    let detailIndex = 0;
+    let currentDetailListing = null;
     let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця',
         'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк',
         'Ужгород', 'Хмельницький'
     ];
+    let userData = {
+        id: null,
+        name: 'Користувач',
+        last_name: '',
+        username: '',
+        phone: '',
+        email: '',
+        city: 'Київ',
+        avatar: 'К',
+        language: 'uk'
+    };
+    let unreadCount = 0;
 
     // ================================================================
     // TOGGLE PASSWORD VISIBILITY
@@ -1629,9 +1892,11 @@
                     if (error.message.includes('Invalid login credentials')) {
                         showAuthError('Невірний email або пароль');
                     } else if (error.message.includes('Email not confirmed')) {
-                        showAuthError('Email не підтверджено. Перевірте вашу пошту.');
+                        showAuthError('Email не підтверджено. Перевірте вашу пошту та підтвердіть акаунт.');
                     } else if (error.message.includes('network') || error.message.includes('fetch')) {
                         showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
+                    } else if (error.message.includes('rate limit')) {
+                        showAuthError('Забагато спроб. Зачекайте кілька хвилин.');
                     } else {
                         showAuthError(`Помилка: ${error.message}`);
                     }
@@ -1646,6 +1911,8 @@
 
                     await loadUserData();
                     await loadListings();
+                    await loadFavorites();
+                    await loadChats();
 
                     setTimeout(() => {
                         navigateTo('home');
@@ -1679,6 +1946,8 @@
                         showAuthError('Цей email вже зареєстровано. Увійдіть у свій акаунт.');
                     } else if (error.message.includes('network') || error.message.includes('fetch')) {
                         showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
+                    } else if (error.message.includes('rate limit')) {
+                        showAuthError('Забагато спроб. Зачекайте кілька хвилин.');
                     } else {
                         showAuthError(`Помилка: ${error.message}`);
                     }
@@ -1689,7 +1958,6 @@
                     console.log('✅ Registration successful:', data.user.email);
                     updateStatus('connected', 'Реєстрація успішна');
 
-                    // Створюємо запис у users через API
                     try {
                         await createUserRecord(data.user.id, email, email.split('@')[0]);
                     } catch (e) {
@@ -1719,7 +1987,7 @@
             setLoading(false);
             console.error('❌ Unexpected auth error:', e);
             updateStatus('error', 'Несподівана помилка');
-            showAuthError('Несподівана помилка. Спробуйте ще раз.');
+            showAuthError('Несподівана помилка. Спробуйте ще раз або перезавантажте сторінку.');
         }
     }
 
@@ -1878,10 +2146,13 @@
                     const u = data[0];
                     userData.id = u.id;
                     userData.name = u.first_name || 'Користувач';
-                    userData.email = u.email || currentUser.email || '';
+                    userData.last_name = u.last_name || '';
+                    userData.username = u.username || '';
                     userData.phone = u.phone || '';
+                    userData.email = u.email || currentUser.email || '';
                     userData.city = u.city || 'Київ';
                     userData.avatar = u.avatar_url || userData.avatar;
+                    userData.language = u.language || 'uk';
                     updateUI();
                     console.log('✅ User data loaded');
                 }
@@ -1905,11 +2176,52 @@
             isFeatured: item.is_featured || false,
             createdAt: item.created_at || new Date().toISOString(),
             description: item.description || 'Без опису',
+            specs: item.specs || {},
+            seller: item.seller || { name: 'Продавець', since: '2024', avatar: '👤' },
             user_id: item.user_id,
             phone: item.phone || '',
             status: item.status || 'active'
         }));
         renderAll();
+    }
+
+    async function loadMyListings() {
+        if (!currentUser) return;
+        const data = await apiRequest(
+            `listings?select=*&user_id=eq.${currentUser.id}&order=created_at.desc&limit=500`);
+        myListings = data.map(item => ({
+            id: item.id,
+            title: item.title || 'Без назви',
+            price: item.price ? String(item.price) : '0',
+            location: item.city || 'не вказано',
+            image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+            photos: item.photos || null,
+            category: item.category || 'Інше',
+            createdAt: item.created_at || new Date().toISOString(),
+            description: item.description || 'Без опису',
+            phone: item.phone || '',
+            status: item.status || 'active'
+        }));
+        if (currentPage === 'my-listings') renderMyListings();
+        updateProfileStats();
+    }
+
+    async function loadFavorites() {
+        if (!currentUser) return;
+        const data = await apiRequest(`favorites?user_id=eq.${currentUser.id}&select=listing_id`);
+        favorites = data.map(f => f.listing_id);
+        renderAll();
+        updateProfileStats();
+    }
+
+    async function loadChats() {
+        if (!currentUser) return;
+        const data = await apiRequest(
+            `chats?buyer_id=eq.${currentUser.id}&order=updated_at.desc&select=*,listings(title),buyer:users!chats_buyer_id_fkey(first_name,avatar_url),seller:users!chats_seller_id_fkey(first_name,avatar_url)`
+            );
+        chats = data || [];
+        if (currentPage === 'chats') renderChats();
+        updateChatBadge();
     }
 
     // ================================================================
@@ -1943,10 +2255,42 @@
         document.getElementById('profileName').textContent = userData.name || 'Користувач';
         document.getElementById('profileEmail').textContent = userData.email || 'user@example.com';
         document.getElementById('profileAvatarLetter').textContent = userData.avatar || 'К';
+        document.getElementById('editAvatarLetter').textContent = userData.avatar || 'К';
         document.getElementById('avatarLetter').textContent = userData.avatar || 'К';
+        document.getElementById('editName').value = userData.name || '';
+        document.getElementById('editLastName').value = userData.last_name || '';
+        document.getElementById('editUsername').value = userData.username || '';
+        document.getElementById('editPhone').value = userData.phone || '';
+        document.getElementById('editCity').value = userData.city || 'Київ';
         document.getElementById('currentEmail').value = userData.email || '';
         document.getElementById('currentPhone').value = userData.phone || '';
+        document.getElementById('securityEmail').textContent = userData.email || 'user@example.com';
+        document.getElementById('securityPhone').textContent = userData.phone || '+380 XX XXX XX XX';
+        renderCitySelect();
     }
+
+    function updateChatBadge() {
+        const badge = document.getElementById('chatBadge');
+        if (!badge) return;
+        const count = chats.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+        unreadCount = count;
+        if (count > 0) {
+            badge.style.display = 'flex';
+            badge.textContent = count > 9 ? '9+' : count;
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function updateProfileStats() {
+        document.getElementById('statActive').textContent = myListings.length;
+        document.getElementById('statFavorites').textContent = favorites.length;
+        document.getElementById('statMessages').textContent = chats.length;
+    }
+
+    // ================================================================
+    // RENDER PAGES
+    // ================================================================
 
     function renderCategories() {
         const categories = [
@@ -2059,10 +2403,93 @@
         updateNav('favorites');
     }
 
-    function renderProfile() {
-        updateUI();
-        updateNav('profile');
-        document.getElementById('bottomNav').classList.add('show');
+    function renderChats() {
+        const container = document.getElementById('chatsList');
+        if (!container) return;
+        if (chats.length === 0) {
+            container.innerHTML = `
+                <div class="favorites-empty">
+                    <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
+                    <h3>Немає чатів</h3>
+                    <p style="margin-top:4px; color:var(--text-secondary);">Напишіть продавцю, щоб почати діалог</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = chats.map(chat => {
+                const isBuyer = chat.buyer_id === currentUser.id;
+                const partner = isBuyer ? chat.seller : chat.buyer;
+                const partnerName = partner?.first_name || 'Користувач';
+                const partnerAvatar = partner?.avatar_url || partnerName?.[0] || '👤';
+                const unread = chat.unread_count || 0;
+                return `
+                    <div class="search-result-card" onclick="openChatDetail('${chat.id}')">
+                        <div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">
+                            ${partnerAvatar}
+                        </div>
+                        <div class="info">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-weight:600;">${partnerName}</span>
+                                ${unread > 0 ? `<span style="background:#EF4444; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">${unread}</span>` : ''}
+                            </div>
+                            <div style="font-size:13px; color:var(--text-secondary);">${chat.last_message || 'Немає повідомлень'}</div>
+                            <div class="meta">
+                                <span><i class="fas fa-clock"></i> ${chat.last_message_time ? timeAgo(chat.last_message_time) : 'нещодавно'}</span>
+                                <span>📦 ${chat.listings?.title || 'Оголошення'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        updateNav('chats');
+        updateChatBadge();
+    }
+
+    function renderMyListings() {
+        const container = document.getElementById('myListingsContainer');
+        if (!container) return;
+        if (myListings.length === 0) {
+            container.innerHTML = `
+                <div class="favorites-empty">
+                    <i class="fas fa-list-ul" style="color:var(--accent);"></i>
+                    <h3>У вас поки немає оголошень</h3>
+                    <p style="margin-top:4px; color:var(--text-secondary);">Створіть своє перше оголошення</p>
+                    <button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo('add')">+ Додати оголошення</button>
+                </div>
+            `;
+        } else {
+            container.innerHTML = myListings.map(item => {
+                const photo = getFirstPhoto(item);
+                return `
+                    <div class="search-result-card" style="flex-wrap:wrap;">
+                        <div class="img" style="${photo ? `background-image:url('${photo}')` : `display:flex; align-items:center; justify-content:center; font-size:24px;`}">
+                            ${!photo ? '📦' : ''}
+                        </div>
+                        <div class="info" style="flex:1;">
+                            <div class="price">${item.price} грн</div>
+                            <div class="title">${item.title}</div>
+                            <div class="meta">
+                                <span><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
+                                <span><i class="far fa-clock"></i> ${timeAgo(item.createdAt)}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:6px; width:100%; margin-top:8px;">
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail('${item.id}')">👁 Відкрити</button>
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing('${item.id}')">✏️ Редагувати</button>
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1;" onclick="deleteListing('${item.id}')">🗑 Видалити</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    function renderCitySelect() {
+        const select = document.getElementById('editCity');
+        if (!select) return;
+        select.innerHTML = cities.map(c =>
+            `<option value="${c}" ${c === userData.city ? 'selected' : ''}>${c}</option>`
+        ).join('');
     }
 
     function renderCities() {
@@ -2084,7 +2511,10 @@
         if (currentPage === 'home') renderHome();
         else if (currentPage === 'search') renderSearch(document.getElementById('searchInput')?.value || '');
         else if (currentPage === 'favorites') renderFavorites();
-        else if (currentPage === 'profile') renderProfile();
+        else if (currentPage === 'chats') renderChats();
+        else if (currentPage === 'profile') { updateUI();
+            updateProfileStats();
+            updateNav('profile'); } else if (currentPage === 'my-listings') renderMyListings();
         else if (currentPage === 'settings-city') renderCities();
     }
 
@@ -2110,6 +2540,7 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         const target = document.getElementById(`page-${page}`);
         if (target) target.classList.add('active');
+        document.getElementById('bottomNav').classList.add('show');
         currentPage = page;
 
         if (historyStack[historyStack.length - 1] !== page) {
@@ -2190,6 +2621,7 @@
             favorites.push(listingId);
         }
         renderAll();
+        updateProfileStats();
     }
 
     async function submitListing() {
@@ -2218,7 +2650,7 @@
             created_at: new Date().toISOString()
         };
 
-        await apiRequest('listings', {
+        const result = await apiRequest('listings', {
             method: 'POST',
             body: JSON.stringify(newItem)
         });
@@ -2231,15 +2663,35 @@
         document.getElementById('addPhone').value = '';
         document.getElementById('addDesc').value = '';
 
-        showSuccessModal('✓ Оголошення опубліковано!', 'Ваше оголошення вже доступне на UAMO.');
+        showSuccessModal(
+            '✓ Оголошення опубліковано!',
+            'Ваше оголошення вже доступне на UAMO.',
+            () => navigateTo('home'),
+            () => { if (result && result.length > 0) openDetail(result[0].id);
+                    else navigateTo('home'); }
+        );
+
         await loadListings();
-        navigateTo('home');
+        await loadMyListings();
     }
 
-    function showSuccessModal(title, message) {
+    function showSuccessModal(title, message, primaryAction, secondaryAction) {
         const modal = document.getElementById('successModal');
         document.getElementById('successTitle').textContent = title;
         document.getElementById('successMessage').textContent = message;
+
+        const primaryBtn = document.getElementById('successPrimaryBtn');
+        const secondaryBtn = document.getElementById('successSecondaryBtn');
+
+        primaryBtn.onclick = () => {
+            closeSuccessModal();
+            if (primaryAction) primaryAction();
+        };
+        secondaryBtn.onclick = () => {
+            closeSuccessModal();
+            if (secondaryAction) secondaryAction();
+        };
+
         modal.classList.add('show');
     }
 
@@ -2250,11 +2702,6 @@
     // ================================================================
     // DETAIL
     // ================================================================
-
-    let currentDetailId = null;
-    let detailPhotos = [];
-    let detailIndex = 0;
-    let currentDetailListing = null;
 
     function openDetail(id) {
         const listing = listings.find(l => l.id === id);
@@ -2272,8 +2719,21 @@
         `;
         document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
 
-        document.getElementById('sellerName').textContent = 'Продавець';
-        document.getElementById('sellerSince').textContent = `На UAMO з 2024`;
+        const specsContainer = document.getElementById('detailSpecs');
+        if (listing.specs && Object.keys(listing.specs).length > 0) {
+            specsContainer.innerHTML = Object.entries(listing.specs)
+                .map(([key, val]) => `<div class="spec-item"><span class="label">${key}</span> <span>${val}</span></div>`)
+                .join('');
+            specsContainer.style.display = 'grid';
+        } else {
+            specsContainer.style.display = 'none';
+        }
+
+        if (listing.seller) {
+            document.getElementById('sellerName').textContent = listing.seller.name || 'Продавець';
+            document.getElementById('sellerSince').textContent = `На UAMO з ${listing.seller.since || '2024'}`;
+            document.getElementById('sellerAvatar').textContent = listing.seller.avatar || '👤';
+        }
 
         const favBtn = document.getElementById('detailFavoriteBtn');
         favBtn.className = isFavorite(id) ? 'fas fa-heart' : 'far fa-heart';
@@ -2331,8 +2791,105 @@
         }
     }
 
+    // ================================================================
+    // CHAT
+    // ================================================================
+
     function openChatFromDetail() {
-        alert('💬 Чат з продавцем буде доступний найближчим часом');
+        if (!currentDetailListing) return;
+        if (!currentUser) { navigateTo('auth'); return; }
+        const sellerId = currentDetailListing.user_id || '1';
+        const adId = currentDetailListing.id;
+        apiRequest(`chats?buyer_id=eq.${currentUser.id}&seller_id=eq.${sellerId}&listing_id=eq.${adId}`)
+            .then(chats => {
+                if (chats && chats.length > 0) {
+                    openChatDetail(chats[0].id);
+                } else {
+                    apiRequest('chats', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            listing_id: adId,
+                            buyer_id: currentUser.id,
+                            seller_id: sellerId,
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        })
+                    }).then(newChat => {
+                        if (newChat && newChat.length > 0) {
+                            openChatDetail(newChat[0].id);
+                        }
+                    });
+                }
+            });
+    }
+
+    function openChatDetail(chatId) {
+        currentChatId = chatId;
+        apiRequest(`messages?chat_id=eq.${chatId}&order=created_at.asc&limit=200`)
+            .then(messages => {
+                chatMessages = messages || [];
+                apiRequest(
+                        `chats?id=eq.${chatId}&select=*,buyer:users!chats_buyer_id_fkey(first_name,avatar_url),seller:users!chats_seller_id_fkey(first_name,avatar_url)`
+                        )
+                    .then(chatData => {
+                        const chat = chatData[0];
+                        if (!chat) return;
+                        const isBuyer = chat.buyer_id === currentUser.id;
+                        const partner = isBuyer ? chat.seller : chat.buyer;
+                        const partnerName = partner?.first_name || 'Користувач';
+                        const partnerAvatar = partner?.avatar_url || partnerName?.[0] || '👤';
+                        document.getElementById('chatPartnerName').textContent = partnerName;
+                        document.getElementById('chatPartnerAvatar').innerHTML = partnerAvatar;
+                        renderChatMessages();
+                        navigateTo('chat-detail');
+                        apiRequest(`messages?chat_id=eq.${chatId}&is_read=eq.false`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({ is_read: true, read_at: new Date().toISOString() })
+                        }).then(() => loadChats());
+                    });
+            });
+    }
+
+    function renderChatMessages() {
+        const container = document.getElementById('chatMessages');
+        if (!container) return;
+        container.innerHTML = chatMessages.map(msg => {
+            const isOwn = msg.sender_id === currentUser.id;
+            return `
+                <div class="chat-message ${isOwn ? 'own' : 'other'}">
+                    ${msg.text}
+                    <span class="chat-time">${new Date(msg.created_at).toLocaleTimeString()}</span>
+                </div>
+            `;
+        }).join('');
+        setTimeout(() => container.scrollTop = container.scrollHeight, 100);
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input?.value?.trim();
+        if (!text || !currentChatId || !currentUser) return;
+        apiRequest('messages', {
+            method: 'POST',
+            body: JSON.stringify({
+                chat_id: currentChatId,
+                sender_id: currentUser.id,
+                text: text,
+                created_at: new Date().toISOString()
+            })
+        }).then(() => {
+            input.value = '';
+            apiRequest(`chats?id=eq.${currentChatId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    last_message: text,
+                    last_message_time: new Date().toISOString()
+                })
+            }).then(() => {
+                openChatDetail(currentChatId);
+                loadChats();
+            });
+        });
     }
 
     // ================================================================
@@ -2377,6 +2934,7 @@
             const data = e.target.result;
             userData.avatar = data;
             document.getElementById('profileAvatarLetter').innerHTML = `<img src="${data}" />`;
+            document.getElementById('editAvatarLetter').innerHTML = `<img src="${data}" />`;
             document.getElementById('avatarLetter').innerHTML = `<img src="${data}" />`;
             apiRequest(`users?id=eq.${currentUser.id}`, {
                 method: 'PATCH',
@@ -2384,6 +2942,56 @@
             });
         };
         reader.readAsDataURL(file);
+    }
+
+    function editUploadAvatar(event) {
+        const file = event.target.files[0];
+        if (!file || !currentUser) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = e.target.result;
+            userData.avatar = data;
+            document.getElementById('editAvatarLetter').innerHTML = `<img src="${data}" />`;
+            document.getElementById('profileAvatarLetter').innerHTML = `<img src="${data}" />`;
+            document.getElementById('avatarLetter').innerHTML = `<img src="${data}" />`;
+            apiRequest(`users?id=eq.${currentUser.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ avatar_url: data })
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function saveProfile() {
+        if (!currentUser) { navigateTo('auth'); return; }
+        const name = document.getElementById('editName').value.trim();
+        const lastName = document.getElementById('editLastName').value.trim();
+        const username = document.getElementById('editUsername').value.trim();
+        const phone = document.getElementById('editPhone').value.trim();
+        const city = document.getElementById('editCity').value;
+
+        if (!name) { alert('Введіть ім\'я'); return; }
+
+        await apiRequest(`users?id=eq.${currentUser.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                first_name: name,
+                last_name: lastName,
+                username: username,
+                phone: phone,
+                city: city
+            })
+        });
+
+        userData.name = name;
+        userData.last_name = lastName;
+        userData.username = username;
+        userData.phone = phone;
+        userData.city = city;
+
+        updateUI();
+        alert('✅ Профіль оновлено!');
+        navigateTo('profile');
     }
 
     function selectCity(city) {
@@ -2410,14 +3018,25 @@
     }
 
     function saveLanguage() {
+        if (!currentUser) { navigateTo('auth'); return; }
         const selected = document.querySelector('input[name="language"]:checked');
         if (selected) {
-            alert(`✅ Мову змінено на ${selected.value}`);
+            userData.language = selected.value;
+            apiRequest(`users?id=eq.${currentUser.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ language: selected.value })
+            });
+            alert('✅ Мову змінено!');
         }
     }
 
     function toggleSetting(el) {
         el.classList.toggle('active');
+        const isActive = el.classList.contains('active');
+        if (currentUser) {
+            // Тут можна зберігати конкретне налаштування
+        }
+        console.log('Налаштування змінено:', isActive);
     }
 
     // ================================================================
@@ -2431,7 +3050,9 @@
         if (newEmail === userData.email) { alert('Email не змінився'); return; }
 
         try {
-            const { error } = await supabase.auth.updateUser({ email: newEmail });
+            const { error } = await supabase.auth.updateUser({
+                email: newEmail
+            });
             if (error) {
                 alert('Помилка: ' + error.message);
                 return;
@@ -2491,7 +3112,9 @@
                 return;
             }
 
-            const { error } = await supabase.auth.updateUser({ password: newPassword });
+            const { error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
             if (error) {
                 alert('Помилка: ' + error.message);
                 return;
@@ -2522,15 +3145,92 @@
     }
 
     // ================================================================
+    // LISTING EDIT/DELETE
+    // ================================================================
+
+    function editListing(id) {
+        const listing = myListings.find(l => l.id === id);
+        if (!listing) return;
+        document.getElementById('addTitle').value = listing.title;
+        document.getElementById('addPrice').value = listing.price;
+        document.getElementById('addCity').value = listing.location;
+        document.getElementById('addPhone').value = listing.phone || '';
+        document.getElementById('addDesc').value = listing.description || '';
+        document.getElementById('addCategory').value = listing.category || 'Товари';
+        selectedPhotos = listing.photos || [];
+        renderPhotoPreviews();
+        const btn = document.querySelector('.add-listing-form .btn-submit');
+        btn.textContent = '✏️ Оновити оголошення';
+        btn.onclick = () => updateListing(id);
+        navigateTo('add');
+    }
+
+    async function updateListing(id) {
+        if (!currentUser) { navigateTo('auth'); return; }
+        const title = document.getElementById('addTitle').value.trim();
+        const price = document.getElementById('addPrice').value.trim();
+        const city = document.getElementById('addCity').value.trim() || userData.city;
+        const phone = document.getElementById('addPhone').value.trim() || userData.phone;
+        const desc = document.getElementById('addDesc').value.trim();
+        const category = document.getElementById('addCategory').value;
+
+        if (!title || !price) { alert('Заповніть назву та ціну'); return; }
+
+        await apiRequest(`listings?id=eq.${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                title: title,
+                price: parseFloat(price),
+                city: city,
+                phone: phone,
+                description: desc || '',
+                category: category,
+                photos: selectedPhotos.length > 0 ? selectedPhotos : null
+            })
+        });
+
+        selectedPhotos = [];
+        renderPhotoPreviews();
+        alert('✅ Оголошення оновлено!');
+        const btn = document.querySelector('.add-listing-form .btn-submit');
+        btn.textContent = 'Опублікувати оголошення';
+        btn.onclick = submitListing;
+        document.getElementById('addTitle').value = '';
+        document.getElementById('addPrice').value = '';
+        document.getElementById('addCity').value = '';
+        document.getElementById('addPhone').value = '';
+        document.getElementById('addDesc').value = '';
+        await loadListings();
+        await loadMyListings();
+        navigateTo('my-listings');
+    }
+
+    async function deleteListing(id) {
+        if (!confirm('Ви впевнені, що хочете видалити це оголошення?')) return;
+        await apiRequest(`listings?id=eq.${id}`, { method: 'DELETE' });
+        alert('🗑 Оголошення видалено');
+        await loadListings();
+        await loadMyListings();
+        if (currentPage === 'my-listings') renderMyListings();
+    }
+
+    // ================================================================
     // HELPERS
     // ================================================================
+
+    function showHelp() { alert(
+            '🆘 Допомога\n\nЯкщо у вас виникли питання, зверніться до служби підтримки: support@uamo.com'); }
+
+    function showAbout() { alert('ℹ️ Про UAMO\n\nUAMO — універсальна платформа оголошень.\nВерсія 2.0\n\n© 2026 UAMO'); }
 
     async function handleLogout() {
         if (!confirm('Ви впевнені, що хочете вийти?')) return;
         await supabase.auth.signOut();
         currentUser = null;
         listings = [];
+        myListings = [];
         favorites = [];
+        chats = [];
         navigateTo('auth');
         document.getElementById('authEmail').value = '';
         document.getElementById('authPassword').value = '';
@@ -2562,6 +3262,8 @@
                 updateStatus('connected', 'Сесія активна');
                 await loadUserData();
                 await loadListings();
+                await loadFavorites();
+                await loadChats();
                 navigateTo('home');
             } else {
                 console.log('ℹ️ No active session');
@@ -2626,12 +3328,22 @@
     window.handlePhotos = handlePhotos;
     window.submitListing = submitListing;
     window.uploadAvatar = uploadAvatar;
+    window.editUploadAvatar = editUploadAvatar;
+    window.saveProfile = saveProfile;
     window.selectCity = selectCity;
     window.filterCities = filterCities;
     window.saveLanguage = saveLanguage;
     window.toggleSetting = toggleSetting;
+    window.showHelp = showHelp;
+    window.showAbout = showAbout;
     window.handleLogout = handleLogout;
     window.renderAll = renderAll;
+    window.openChatDetail = openChatDetail;
+    window.sendMessage = sendMessage;
+    window.editListing = editListing;
+    window.deleteListing = deleteListing;
+    window.updateListing = updateListing;
+    window.goBackFromDetail = goBackFromDetail;
     window.openChatFromDetail = openChatFromDetail;
     window.changeEmail = changeEmail;
     window.changePhone = changePhone;
