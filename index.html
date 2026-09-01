@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ========== GLOBAL ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A;
@@ -56,21 +55,10 @@
             top: 0;
             z-index: 20;
         }
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .logo { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; }
         .logo span { color: var(--accent); }
         .logo i { color: var(--gold); font-size: 18px; }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
         .header-actions button {
             background: none;
             border: none;
@@ -123,10 +111,7 @@
             border: 1px solid var(--border);
             transition: var(--transition);
         }
-        .search-bar-inner:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.10);
-        }
+        .search-bar-inner:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.10); }
         .search-bar-inner i { color: var(--text-secondary); font-size: 16px; }
         .search-bar-inner input {
             flex: 1;
@@ -168,7 +153,6 @@
             gap: 4px;
         }
         .category-item:hover { transform: translateY(-2px); border-color: var(--accent); }
-        .category-item.active-category { border-color: var(--accent); background: rgba(0, 102, 255, 0.05); }
         .category-item i { font-size: 22px; color: var(--primary); }
         .category-item span { font-size: 10px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
 
@@ -237,9 +221,7 @@
         }
         .listing-card-image .favorite-icon:hover { color: #EF4444; }
         .listing-card-image .favorite-icon.active { color: #EF4444; }
-        .listing-card-body {
-            padding: 8px 10px 10px 10px;
-        }
+        .listing-card-body { padding: 8px 10px 10px 10px; }
         .listing-card-body .price { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 1px; }
         .listing-card-body .title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
         .listing-card-body .location { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
@@ -297,12 +279,28 @@
             cursor: pointer;
             transition: var(--transition);
             padding: 4px 12px;
+            position: relative;
         }
         .bottom-nav-item i { font-size: 20px; transition: var(--transition); }
         .bottom-nav-item span { font-weight: 500; }
         .bottom-nav-item:hover { color: var(--primary); }
         .bottom-nav-item.active { color: var(--accent); }
         .bottom-nav-item.active i { transform: scale(1.05); }
+        .bottom-nav-item .badge-count {
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            background: #EF4444;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .bottom-nav-item.add-btn i {
             font-size: 26px;
             color: #fff;
@@ -628,10 +626,162 @@
         .seller-box .actions .btn-call { background: var(--border); color: var(--text); }
         .seller-box .actions .btn-call:hover { background: #d1d8e0; }
 
-        /* UTILITY */
+        /* CHAT */
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 12px 0;
+            max-height: 55vh;
+            overflow-y: auto;
+        }
+        .chat-message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        .chat-message.own {
+            align-self: flex-end;
+            background: var(--accent);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message.other {
+            align-self: flex-start;
+            background: var(--card-bg);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border);
+        }
+        .chat-message .chat-time { font-size: 10px; opacity: 0.6; margin-left: 6px; }
+        .chat-input {
+            display: flex;
+            gap: 8px;
+            padding: 10px 12px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            position: sticky;
+            bottom: 0;
+            margin-top: 8px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            font-family: var(--font);
+        }
+        .chat-input button {
+            padding: 10px 18px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+        .chat-input button:hover { background: var(--accent-hover); }
+
+        /* SETTINGS */
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        .settings-group .settings-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item .settings-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .settings-item .settings-value {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active {
+            background: var(--accent);
+        }
+        .toggle-switch .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .toggle-switch.active .toggle-thumb {
+            left: 22px;
+        }
+        .settings-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 14px;
+            outline: none;
+        }
+        .settings-select:focus { border-color: var(--accent); }
+
+        .radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .radio-item input[type="radio"] {
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .radio-item.active { color: var(--text); }
+
+        /* EMPTY STATE */
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
         .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
+
+        /* UTILITY */
         .hidden { display: none !important; }
+        .mt-8 { margin-top: 8px; }
+        .mb-8 { margin-bottom: 8px; }
 
         @media (min-width: 640px) {
             .app-container { max-width: 600px; padding: 0 24px 80px 24px; }
@@ -647,758 +797,1593 @@
 </head>
 <body>
 
-    <div id="app">
-        <!-- HEADER -->
-        <div class="header" id="globalHeader">
-            <div class="logo"><i class="fas fa-cube"></i> UAM<span>O</span></div>
-            <div class="header-actions">
-                <button id="notifBtn" onclick="showNotifications()">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge-dot" id="notifBadge" style="display:none;"></span>
-                </button>
-                <div class="avatar-small" id="headerAvatar" onclick="navigateTo('profile')">
-                    <span id="avatarLetter">К</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- HOME -->
-        <div class="page active" id="page-home">
-            <div class="app-container">
-                <div class="search-bar">
-                    <div class="search-bar-inner">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Що ви шукаєте?" id="globalSearch" onkeydown="if(event.key==='Enter'){navigateTo('search'); document.getElementById('searchInput').value=this.value; renderSearch(this.value);}" />
-                    </div>
-                </div>
-                <div class="category-slider" id="categorySlider"></div>
-                <div class="section-header"><h2>Рекомендовані</h2><a onclick="navigateTo('search')">Усі →</a></div>
-                <div class="listing-scroll" id="recommendedScroll"></div>
-                <div class="section-header"><h2>Нові оголошення</h2><a onclick="navigateTo('search')">Усі →</a></div>
-                <div class="listing-scroll" id="newListingsScroll"></div>
-                <div class="cta-add"><button onclick="navigateTo('add')"><i class="fas fa-plus"></i> Додати оголошення</button></div>
-            </div>
-        </div>
-
-        <!-- SEARCH -->
-        <div class="page search-page" id="page-search">
-            <div class="app-container">
-                <div class="search-bar">
-                    <div class="search-bar-inner">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Пошук..." id="searchInput" oninput="renderSearch(this.value)" />
-                    </div>
-                </div>
-                <div class="search-filters">
-                    <button onclick="filterByCategory('all')"><i class="fas fa-list"></i> Усі</button>
-                    <button onclick="filterByCategory('products')"><i class="fas fa-tag"></i> Товари</button>
-                    <button onclick="filterByCategory('jobs')"><i class="fas fa-briefcase"></i> Робота</button>
-                    <button onclick="filterByCategory('services')"><i class="fas fa-wrench"></i> Послуги</button>
-                    <button onclick="filterByCategory('realestate')"><i class="fas fa-building"></i> Нерухом.</button>
-                    <button onclick="filterByCategory('transport')"><i class="fas fa-car"></i> Транспорт</button>
-                    <button onclick="showFilters()"><i class="fas fa-sliders-h"></i> Фільтри</button>
-                </div>
-                <div class="search-results" id="searchResults"></div>
-            </div>
-        </div>
-
-        <!-- ADD -->
-        <div class="page" id="page-add">
-            <div class="app-container">
-                <div class="add-listing-form">
-                    <h3 style="font-size:19px; font-weight:600; margin-bottom:14px;">
-                        <i class="fas fa-plus-circle" style="color:var(--accent);"></i> Нове оголошення
-                    </h3>
-                    <div class="form-group">
-                        <label>Категорія</label>
-                        <select id="addCategory">
-                            <option value="Товари">🛍️ Товари</option>
-                            <option value="Робота">💼 Робота</option>
-                            <option value="Послуги">🛠️ Послуги</option>
-                            <option value="Нерухомість">🏢 Нерухомість</option>
-                            <option value="Транспорт">🚗 Транспорт</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Назва *</label>
-                        <input type="text" id="addTitle" placeholder="Наприклад: iPhone 14 Pro" />
-                    </div>
-                    <div class="form-group">
-                        <label>Опис</label>
-                        <textarea id="addDesc" placeholder="Детальний опис..." rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Фото</label>
-                        <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                            <i class="fas fa-cloud-upload-alt"></i> Додати фото (до 8 шт.)
-                        </div>
-                        <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" onchange="handlePhotos(event)" />
-                        <div class="photo-preview-grid" id="photoPreviewGrid"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Ціна (грн) *</label>
-                        <input type="number" id="addPrice" placeholder="8000" />
-                    </div>
-                    <div class="form-group">
-                        <label>Місто</label>
-                        <input type="text" id="addCity" placeholder="Київ" />
-                    </div>
-                    <div class="form-group">
-                        <label>Телефон</label>
-                        <input type="tel" id="addPhone" placeholder="+380XXXXXXXXX" />
-                    </div>
-                    <button class="btn-submit" onclick="submitListing()">Опублікувати</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- FAVORITES -->
-        <div class="page" id="page-favorites">
-            <div class="app-container">
-                <div style="padding: 8px 0 12px 0;">
-                    <h2 style="font-size:20px; font-weight:600;"><i class="fas fa-heart" style="color:#EF4444;"></i> Обране</h2>
-                </div>
-                <div id="favoritesContent"></div>
-            </div>
-        </div>
-
-        <!-- PROFILE -->
-        <div class="page" id="page-profile">
-            <div class="app-container">
-                <div class="profile-header">
-                    <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarFileInput').click()">
-                        <span id="profileAvatarLetter">К</span>
-                    </div>
-                    <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadAvatar(event)" />
-                    <div class="profile-info">
-                        <h3 id="profileName">Користувач</h3>
-                        <p id="profileEmail">user@example.com</p>
-                    </div>
-                </div>
-                <div class="profile-stats" id="profileStats">
-                    <div class="stat"><div class="num" id="statActive">0</div><div class="label">Активні</div></div>
-                    <div class="stat"><div class="num" id="statFavorites">0</div><div class="label">В обраному</div></div>
-                    <div class="stat"><div class="num" id="statMessages">0</div><div class="label">Повідомлень</div></div>
-                </div>
-                <div class="profile-menu">
-                    <div class="profile-menu-item" onclick="navigateTo('myListings')"><i class="fas fa-list-ul"></i> Мої оголошення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('favorites')"><i class="fas fa-heart"></i> Обране <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="showMessages()"><i class="fas fa-envelope"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="showSettings()"><i class="fas fa-cog"></i> Налаштування <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Вийти <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- DETAIL -->
-        <div class="page" id="page-detail">
-            <div class="app-container">
-                <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
-                    <button onclick="navigateTo('home')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <span style="font-weight:600; font-size:16px;">Оголошення</span>
-                    <div style="margin-left:auto; display:flex; gap:12px;">
-                        <i class="far fa-heart" id="detailFavoriteBtn" style="font-size:20px; color:var(--text-secondary); cursor:pointer;" onclick="toggleDetailFavorite()"></i>
-                        <i class="fas fa-ellipsis-v" style="font-size:20px; color:var(--text-secondary); cursor:pointer;"></i>
-                    </div>
-                </div>
-                <div class="detail-gallery" id="detailGallery">
-                    <i class="fas fa-image"></i>
-                    <button class="nav-arrow left" id="detailArrowLeft" onclick="changeDetailPhoto(-1)">‹</button>
-                    <button class="nav-arrow right" id="detailArrowRight" onclick="changeDetailPhoto(1)">›</button>
-                    <div class="dots" id="detailDots"></div>
-                </div>
-                <div class="detail-content" id="detailContent">
-                    <div class="price" id="detailPrice">8 500 грн</div>
-                    <div class="title" id="detailTitle">Диван сучасний</div>
-                    <div class="meta" id="detailMeta">
-                        <span><i class="fas fa-map-marker-alt"></i> Київ, Оболонь</span>
-                        <span><i class="far fa-clock"></i> Сьогодні о 14:30</span>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="description" id="detailDesc">Зручний кутовий диван із тканинною оббивкою. Стан — новий.</div>
-                    <div class="specs" id="detailSpecs">
-                        <div class="spec-item"><span class="label">Стан</span> <span>Новий</span></div>
-                        <div class="spec-item"><span class="label">Категорія</span> <span>Меблі</span></div>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="seller-box" id="detailSeller">
-                        <div class="avatar" id="sellerAvatar">А</div>
-                        <div class="info">
-                            <div class="name" id="sellerName">Анна Коваленко</div>
-                            <div class="since" id="sellerSince">На UAMO з 2024</div>
-                        </div>
-                        <div class="actions">
-                            <button class="btn-chat" id="sellerChatBtn"><i class="fas fa-comment"></i> Написати</button>
-                            <button class="btn-call" id="sellerCallBtn"><i class="fas fa-phone"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTTOM NAV -->
-        <nav class="bottom-nav" id="bottomNav">
-            <button class="bottom-nav-item active" data-page="home" onclick="navigateTo('home')">
-                <i class="fas fa-home"></i><span>Головна</span>
+<div id="app">
+    <!-- HEADER -->
+    <div class="header" id="globalHeader">
+        <div class="logo"><i class="fas fa-cube"></i> UAM<span>O</span></div>
+        <div class="header-actions">
+            <button onclick="navigateTo('settings')" title="Налаштування">
+                <i class="fas fa-cog"></i>
             </button>
-            <button class="bottom-nav-item" data-page="search" onclick="navigateTo('search')">
-                <i class="fas fa-search"></i><span>Пошук</span>
-            </button>
-            <button class="bottom-nav-item add-btn" data-page="add" onclick="navigateTo('add')">
-                <i class="fas fa-plus"></i><span>Додати</span>
-            </button>
-            <button class="bottom-nav-item" data-page="favorites" onclick="navigateTo('favorites')">
-                <i class="fas fa-heart"></i><span>Обране</span>
-            </button>
-            <button class="bottom-nav-item" data-page="profile" onclick="navigateTo('profile')">
-                <i class="fas fa-user"></i><span>Профіль</span>
-            </button>
-        </nav>
+            <div class="avatar-small" id="headerAvatar" onclick="navigateTo('profile')">
+                <span id="avatarLetter">К</span>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // ================================================================
-        // SUPABASE CONFIG
-        // ================================================================
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+        <div class="app-container">
+            <div class="search-bar">
+                <div class="search-bar-inner">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Що ви шукаєте?" id="globalSearch" onkeydown="if(event.key==='Enter'){navigateTo('search'); document.getElementById('searchInput').value=this.value; renderSearch(this.value);}" />
+                </div>
+            </div>
+            <div class="category-slider" id="categorySlider"></div>
+            <div class="section-header"><h2>Рекомендовані</h2><a onclick="navigateTo('search')">Усі →</a></div>
+            <div class="listing-scroll" id="recommendedScroll"></div>
+            <div class="section-header"><h2>Нові оголошення</h2><a onclick="navigateTo('search')">Усі →</a></div>
+            <div class="listing-scroll" id="newListingsScroll"></div>
+            <div class="cta-add"><button onclick="navigateTo('add')"><i class="fas fa-plus"></i> Додати оголошення</button></div>
+        </div>
+    </div>
 
-        const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_qm9h6LpIJAqwvH6-Q9yxZw_VhmgZbvq';
+    <!-- SEARCH -->
+    <div class="page search-page" id="page-search">
+        <div class="app-container">
+            <div class="search-bar">
+                <div class="search-bar-inner">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Пошук..." id="searchInput" oninput="renderSearch(this.value)" />
+                </div>
+            </div>
+            <div class="search-filters">
+                <button onclick="filterByCategory('all')"><i class="fas fa-list"></i> Усі</button>
+                <button onclick="filterByCategory('products')"><i class="fas fa-tag"></i> Товари</button>
+                <button onclick="filterByCategory('jobs')"><i class="fas fa-briefcase"></i> Робота</button>
+                <button onclick="filterByCategory('services')"><i class="fas fa-wrench"></i> Послуги</button>
+                <button onclick="filterByCategory('realestate')"><i class="fas fa-building"></i> Нерухом.</button>
+                <button onclick="filterByCategory('transport')"><i class="fas fa-car"></i> Транспорт</button>
+                <button onclick="showFilters()"><i class="fas fa-sliders-h"></i> Фільтри</button>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
 
-        let CURRENT_USER_ID = '1';
-        let currentPage = 'home';
-        let selectedPhotos = [];
-        let favorites = [];
-        let currentDetailId = null;
-        let detailPhotos = [];
-        let detailIndex = 0;
-        let listings = [];
+    <!-- ADD LISTING -->
+    <div class="page" id="page-add">
+        <div class="app-container">
+            <div class="add-listing-form">
+                <h3 style="font-size:19px; font-weight:600; margin-bottom:14px;">
+                    <i class="fas fa-plus-circle" style="color:var(--accent);"></i> Нове оголошення
+                </h3>
+                <div class="form-group">
+                    <label>Категорія</label>
+                    <select id="addCategory">
+                        <option value="Товари">🛍️ Товари</option>
+                        <option value="Робота">💼 Робота</option>
+                        <option value="Послуги">🛠️ Послуги</option>
+                        <option value="Нерухомість">🏢 Нерухомість</option>
+                        <option value="Транспорт">🚗 Транспорт</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Назва *</label>
+                    <input type="text" id="addTitle" placeholder="Наприклад: iPhone 14 Pro" />
+                </div>
+                <div class="form-group">
+                    <label>Опис</label>
+                    <textarea id="addDesc" placeholder="Детальний опис..." rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Фото</label>
+                    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i> Додати фото (до 8 шт.)
+                    </div>
+                    <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" onchange="handlePhotos(event)" />
+                    <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+                </div>
+                <div class="form-group">
+                    <label>Ціна (грн) *</label>
+                    <input type="number" id="addPrice" placeholder="8000" />
+                </div>
+                <div class="form-group">
+                    <label>Місто</label>
+                    <input type="text" id="addCity" placeholder="Київ" />
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="addPhone" placeholder="+380XXXXXXXXX" />
+                </div>
+                <button class="btn-submit" onclick="submitListing()">Опублікувати оголошення</button>
+            </div>
+        </div>
+    </div>
 
-        // ================================================================
-        // TELEGRAM WEBAPP
-        // ================================================================
+    <!-- FAVORITES -->
+    <div class="page" id="page-favorites">
+        <div class="app-container">
+            <div style="padding: 8px 0 12px 0;">
+                <h2 style="font-size:20px; font-weight:600;"><i class="fas fa-heart" style="color:#EF4444;"></i> Обране</h2>
+            </div>
+            <div id="favoritesContent"></div>
+        </div>
+    </div>
 
-        try {
-            const tg = window.Telegram?.WebApp;
-            if (tg) {
-                tg.expand();
-                const user = tg.initDataUnsafe?.user;
-                if (user) {
-                    CURRENT_USER_ID = String(user.id);
-                    document.getElementById('profileName').textContent = user.first_name || 'Користувач';
-                    document.getElementById('profileEmail').textContent = user.username ? `@${user.username}` : 'user@telegram';
-                    document.getElementById('profileAvatarLetter').textContent = user.first_name?.[0] || 'К';
-                    document.getElementById('avatarLetter').textContent = user.first_name?.[0] || 'К';
-                }
+    <!-- CHATS -->
+    <div class="page" id="page-chats">
+        <div class="app-container">
+            <div style="padding: 8px 0 12px 0;">
+                <h2 style="font-size:20px; font-weight:600;"><i class="fas fa-comment-dots" style="color:var(--accent);"></i> Чати</h2>
+            </div>
+            <div id="chatsList"></div>
+        </div>
+    </div>
+
+    <!-- CHAT DETAIL -->
+    <div class="page" id="page-chat-detail">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('chats')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="avatar-small" id="chatPartnerAvatar" style="width:32px; height:32px;">👤</div>
+                    <span style="font-weight:600; font-size:16px;" id="chatPartnerName">Продавець</span>
+                </div>
+            </div>
+            <div id="chatMessagesContainer">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeydown="if(event.key==='Enter') sendMessage()" />
+                    <button onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page" id="page-profile">
+        <div class="app-container">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarFileInput').click()">
+                    <span id="profileAvatarLetter">К</span>
+                </div>
+                <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadAvatar(event)" />
+                <div class="profile-info">
+                    <h3 id="profileName">Користувач</h3>
+                    <p id="profileUsername">@username</p>
+                </div>
+            </div>
+            <button class="btn-submit" style="background:var(--accent); margin-bottom:12px;" onclick="navigateTo('profile-edit')">
+                <i class="fas fa-edit"></i> Редагувати профіль
+            </button>
+            <div class="profile-stats" id="profileStats">
+                <div class="stat"><div class="num" id="statActive">0</div><div class="label">Оголошень</div></div>
+                <div class="stat"><div class="num" id="statFavorites">0</div><div class="label">В обраному</div></div>
+                <div class="stat"><div class="num" id="statMessages">0</div><div class="label">Повідомлень</div></div>
+            </div>
+            <div class="profile-menu">
+                <div class="profile-menu-item" onclick="navigateTo('my-listings')"><i class="fas fa-list-ul"></i> Мої оголошення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('favorites')"><i class="fas fa-heart"></i> Обране <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('chats')"><i class="fas fa-comment-dots"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Налаштування <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="showHelp()"><i class="fas fa-question-circle"></i> Допомога <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="showAbout()"><i class="fas fa-info-circle"></i> Про UAMO <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Вийти <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE EDIT -->
+    <div class="page" id="page-profile-edit">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('profile')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Редагувати профіль</span>
+            </div>
+            <div style="text-align:center; margin-bottom:16px;">
+                <div class="profile-avatar" id="editAvatar" style="width:80px; height:80px; margin:0 auto; cursor:pointer;" onclick="document.getElementById('editAvatarInput').click()">
+                    <span id="editAvatarLetter">К</span>
+                </div>
+                <input type="file" id="editAvatarInput" accept="image/*" style="display:none;" onchange="editUploadAvatar(event)" />
+                <button style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; margin-top:4px;" onclick="document.getElementById('editAvatarInput').click()">Змінити фото</button>
+            </div>
+            <div class="add-listing-form">
+                <div class="form-group">
+                    <label>Ім'я</label>
+                    <input type="text" id="editName" placeholder="Ваше ім'я" />
+                </div>
+                <div class="form-group">
+                    <label>Прізвище</label>
+                    <input type="text" id="editLastName" placeholder="Ваше прізвище" />
+                </div>
+                <div class="form-group">
+                    <label>Нікнейм</label>
+                    <input type="text" id="editUsername" placeholder="@username" />
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="editPhone" placeholder="+380XXXXXXXXX" />
+                </div>
+                <div class="form-group">
+                    <label>Місто</label>
+                    <select id="editCity" class="settings-select" style="width:100%;"></select>
+                </div>
+                <button class="btn-submit" onclick="saveProfile()">💾 Зберегти зміни</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MY LISTINGS -->
+    <div class="page" id="page-my-listings">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('profile')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Мої оголошення</span>
+            </div>
+            <div id="myListingsContainer"></div>
+        </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('profile')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Налаштування</span>
+            </div>
+            <div class="profile-menu" style="margin-top:0;">
+                <div class="profile-menu-item" onclick="navigateTo('settings-account')"><i class="fas fa-user"></i> Обліковий запис <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-notifications')"><i class="fas fa-bell"></i> Сповіщення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-city')"><i class="fas fa-map-marker-alt"></i> Місто <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-language')"><i class="fas fa-globe"></i> Мова <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-privacy')"><i class="fas fa-lock"></i> Конфіденційність <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-messages')"><i class="fas fa-comment"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-security')"><i class="fas fa-shield-alt"></i> Безпека <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: NOTIFICATIONS -->
+    <div class="page" id="page-settings-notifications">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('settings')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Сповіщення</span>
+            </div>
+            <div class="settings-group">
+                <div class="settings-item">
+                    <span class="settings-label">Повідомлення</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Нові повідомлення в чаті</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Відповіді на мої оголошення</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Обране оголошення змінило ціну</span>
+                    <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Нові оголошення</span>
+                    <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Рекомендації UAMO</span>
+                    <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: CITY -->
+    <div class="page" id="page-settings-city">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('settings')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Місто</span>
+            </div>
+            <div class="search-bar" style="padding:0 0 12px 0;">
+                <div class="search-bar-inner">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="🔍 Пошук міста" id="citySearchInput" oninput="filterCities(this.value)" />
+                </div>
+            </div>
+            <div id="citiesList"></div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: LANGUAGE -->
+    <div class="page" id="page-settings-language">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('settings')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Мова</span>
+            </div>
+            <div class="settings-group">
+                <div class="radio-group">
+                    <label class="radio-item active"><input type="radio" name="language" value="uk" checked /> 🇺🇦 Українська</label>
+                    <label class="radio-item"><input type="radio" name="language" value="en" /> 🇬🇧 English</label>
+                    <label class="radio-item"><input type="radio" name="language" value="ru" /> 🇷🇺 Русский</label>
+                </div>
+                <button class="btn-submit" style="margin-top:16px;" onclick="saveLanguage()">💾 Зберегти мову</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: PRIVACY -->
+    <div class="page" id="page-settings-privacy">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('settings')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Конфіденційність</span>
+            </div>
+            <div class="settings-group">
+                <div class="settings-item">
+                    <span class="settings-label">Показувати номер телефону</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Показувати місто</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Дозволити повідомлення від інших</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Показувати мій профіль</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Показувати активність</span>
+                    <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Заблоковані користувачі: поки що порожньо')">
+                    <i class="fas fa-ban"></i> Заблоковані користувачі
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Керування даними: видалити всі дані, експорт даних')">
+                    <i class="fas fa-database"></i> Керування даними
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: MESSAGES -->
+    <div class="page" id="page-settings-messages">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('settings')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Повідомлення</span>
+            </div>
+            <div class="settings-group">
+                <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:8px; padding:12px 0;">
+                    <span class="settings-label">Хто може написати мені:</span>
+                    <div class="radio-group">
+                        <label class="radio-item active"><input type="radio" name="who_can_message" value="all" checked /> Усі</label>
+                        <label class="radio-item"><input type="radio" name="who_can_message" value="users" /> Користувачі UAMO</label>
+                        <label class="radio-item"><input type="radio" name="who_can_message" value="none" /> Ніхто</label>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <span class="settings-label">Дозволити повідомлення від користувачів</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: SECURITY -->
+    <div class="page" id="page-settings-security">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('settings')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Безпека</span>
+            </div>
+            <div class="settings-group">
+                <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
+                    <span class="settings-label">Email</span>
+                    <span class="settings-value" id="securityEmail">user@example.com</span>
+                </div>
+                <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
+                    <span class="settings-label">Телефон</span>
+                    <span class="settings-value" id="securityPhone">+380 XX XXX XX XX</span>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Зміна пароля: надішлемо код на ваш email')">
+                    <i class="fas fa-key"></i> Змінити пароль
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Зміна email: введіть новий email')">
+                    <i class="fas fa-envelope"></i> Змінити email
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Зміна телефону: введіть новий номер')">
+                    <i class="fas fa-phone"></i> Змінити номер телефону
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+                <div class="profile-menu-item" onclick="alert('Активні сеанси: ви ввійшли з 2 пристроїв')">
+                    <i class="fas fa-laptop"></i> Активні сеанси
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS: ACCOUNT -->
+    <div class="page" id="page-settings-account">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="navigateTo('settings')" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Обліковий запис</span>
+            </div>
+            <div class="profile-menu">
+                <div class="profile-menu-item" onclick="navigateTo('profile-edit')"><i class="fas fa-user-edit"></i> Редагувати профіль <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="navigateTo('settings-security')"><i class="fas fa-shield-alt"></i> Безпека <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="profile-menu-item" onclick="alert('Статистика вашого акаунта')"><i class="fas fa-chart-bar"></i> Статистика <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETAIL -->
+    <div class="page" id="page-detail">
+        <div class="app-container">
+            <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
+                <button onclick="goBackFromDetail()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-secondary);">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <span style="font-weight:600; font-size:16px;">Оголошення</span>
+                <div style="margin-left:auto; display:flex; gap:12px;">
+                    <i class="far fa-heart" id="detailFavoriteBtn" style="font-size:20px; color:var(--text-secondary); cursor:pointer;" onclick="toggleDetailFavorite()"></i>
+                    <i class="fas fa-ellipsis-v" style="font-size:20px; color:var(--text-secondary); cursor:pointer;"></i>
+                </div>
+            </div>
+            <div class="detail-gallery" id="detailGallery">
+                <i class="fas fa-image"></i>
+                <button class="nav-arrow left" id="detailArrowLeft" onclick="changeDetailPhoto(-1)">‹</button>
+                <button class="nav-arrow right" id="detailArrowRight" onclick="changeDetailPhoto(1)">›</button>
+                <div class="dots" id="detailDots"></div>
+            </div>
+            <div class="detail-content" id="detailContent">
+                <div class="price" id="detailPrice">8 500 грн</div>
+                <div class="title" id="detailTitle">Диван сучасний</div>
+                <div class="meta" id="detailMeta">
+                    <span><i class="fas fa-map-marker-alt"></i> Київ, Оболонь</span>
+                    <span><i class="far fa-clock"></i> Сьогодні о 14:30</span>
+                </div>
+                <div class="divider"></div>
+                <div class="description" id="detailDesc">Зручний кутовий диван із тканинною оббивкою. Стан — новий.</div>
+                <div class="specs" id="detailSpecs">
+                    <div class="spec-item"><span class="label">Стан</span> <span>Новий</span></div>
+                    <div class="spec-item"><span class="label">Категорія</span> <span>Меблі</span></div>
+                </div>
+                <div class="divider"></div>
+                <button class="btn-submit" style="background:var(--accent);" onclick="openChatFromDetail()">
+                    <i class="fas fa-comment"></i> Написати продавцю
+                </button>
+                <div class="seller-box" id="detailSeller">
+                    <div class="avatar" id="sellerAvatar">А</div>
+                    <div class="info">
+                        <div class="name" id="sellerName">Анна Коваленко</div>
+                        <div class="since" id="sellerSince">На UAMO з 2024</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-call" id="sellerCallBtn"><i class="fas fa-phone"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="bottom-nav-item active" data-page="home" onclick="navigateTo('home')">
+            <i class="fas fa-home"></i><span>Головна</span>
+        </button>
+        <button class="bottom-nav-item" data-page="search" onclick="navigateTo('search')">
+            <i class="fas fa-search"></i><span>Пошук</span>
+        </button>
+        <button class="bottom-nav-item add-btn" data-page="add" onclick="navigateTo('add')">
+            <i class="fas fa-plus"></i><span>Додати</span>
+        </button>
+        <button class="bottom-nav-item" data-page="chats" onclick="navigateTo('chats')" id="chatsNavBtn">
+            <i class="fas fa-comment-dots"></i><span>Чати</span>
+            <span class="badge-count" id="chatBadge" style="display:none;">0</span>
+        </button>
+        <button class="bottom-nav-item" data-page="profile" onclick="navigateTo('profile')">
+            <i class="fas fa-user"></i><span>Профіль</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    // ================================================================
+    // SUPABASE CONFIG
+    // ================================================================
+
+    const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_qm9h6LpIJAqwvH6-Q9yxZw_VhmgZbvq';
+
+    let CURRENT_USER_ID = '1';
+    let currentPage = 'home';
+    let selectedPhotos = [];
+    let favorites = [];
+    let currentDetailId = null;
+    let detailPhotos = [];
+    let detailIndex = 0;
+    let listings = [];
+    let myListings = [];
+    let chats = [];
+    let currentChatId = null;
+    let unreadCount = 0;
+    let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця', 'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк', 'Ужгород', 'Хмельницький'];
+    let userData = {
+        id: CURRENT_USER_ID,
+        name: 'Користувач',
+        last_name: '',
+        username: 'username',
+        phone: '',
+        city: 'Київ',
+        avatar: 'К',
+        language: 'uk',
+        settings: {
+            push_notifications: true,
+            message_notifications: true,
+            listing_notifications: true,
+            price_alerts: false,
+            recommendation_notifications: false,
+            show_phone: true,
+            show_city: true,
+            show_profile: true,
+            show_activity: false,
+            allow_messages: true,
+            who_can_message: 'all'
+        }
+    };
+
+    // ================================================================
+    // TELEGRAM WEBAPP
+    // ================================================================
+
+    try {
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            const user = tg.initDataUnsafe?.user;
+            if (user) {
+                CURRENT_USER_ID = String(user.id);
+                userData.id = CURRENT_USER_ID;
+                userData.name = user.first_name || 'Користувач';
+                userData.username = user.username || 'username';
+                userData.avatar = user.first_name?.[0] || 'К';
+                document.getElementById('profileName').textContent = userData.name;
+                document.getElementById('profileUsername').textContent = `@${userData.username}`;
+                document.getElementById('profileAvatarLetter').textContent = userData.avatar;
+                document.getElementById('editAvatarLetter').textContent = userData.avatar;
+                document.getElementById('avatarLetter').textContent = userData.avatar;
+                document.getElementById('editName').value = userData.name;
+                document.getElementById('editUsername').value = userData.username;
             }
-        } catch (e) { console.log('Telegram WebApp not available'); }
+        }
+    } catch (e) { console.log('Telegram WebApp not available'); }
 
-        // ================================================================
-        // API HELPER
-        // ================================================================
+    // ================================================================
+    // API HELPER
+    // ================================================================
 
-        async function apiRequest(endpoint, options = {}) {
-            try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
-                    ...options,
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Content-Type': 'application/json',
-                        ...options.headers
-                    }
-                });
-                if (res.status === 204) return [];
-                if (res.status === 201 || res.status === 200) {
-                    const text = await res.text();
-                    if (text && text.length > 0) { try { return JSON.parse(text); } catch(e){ return []; } }
-                    return [];
+    async function apiRequest(endpoint, options = {}) {
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+                ...options,
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
                 }
-                if (!res.ok) return [];
+            });
+            if (res.status === 204) return [];
+            if (res.status === 201 || res.status === 200) {
                 const text = await res.text();
                 if (text && text.length > 0) { try { return JSON.parse(text); } catch(e){ return []; } }
                 return [];
-            } catch(e) { console.error('Fetch error:', e); return []; }
-        }
-
-        // ================================================================
-        // LOAD DATA
-        // ================================================================
-
-        async function loadListings() {
-            const data = await apiRequest('listings?select=*&status=eq.active&order=created_at.desc&limit=500');
-            listings = data.map(item => ({
-                id: item.id,
-                title: item.title || 'Без назви',
-                price: item.price ? String(item.price) : '0',
-                location: item.city || 'не вказано',
-                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                photos: item.photos || null,
-                category: item.category || 'Інше',
-                isNew: new Date(item.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000),
-                isFeatured: item.is_featured || false,
-                createdAt: item.created_at || new Date().toISOString(),
-                description: item.description || 'Без опису',
-                specs: {},
-                seller: { 
-                    name: 'Продавець', 
-                    since: '2024', 
-                    avatar: '👤' 
-                },
-                user_id: item.user_id,
-                phone: item.phone || '',
-                status: item.status || 'active'
-            }));
-            renderAll();
-        }
-
-        async function loadFavoritesFromDB() {
-            if (!CURRENT_USER_ID) return;
-            const data = await apiRequest(`favorites?user_id=eq.${CURRENT_USER_ID}&select=listing_id`);
-            favorites = data.map(f => f.listing_id);
-            renderAll();
-        }
-
-        async function toggleFavoriteDB(listingId) {
-            const isFav = favorites.includes(listingId);
-            if (isFav) {
-                await apiRequest(`favorites?user_id=eq.${CURRENT_USER_ID}&listing_id=eq.${listingId}`, { method: 'DELETE' });
-                favorites = favorites.filter(id => id !== listingId);
-            } else {
-                await apiRequest('favorites', {
-                    method: 'POST',
-                    body: JSON.stringify({ user_id: CURRENT_USER_ID, listing_id: listingId })
-                });
-                favorites.push(listingId);
             }
-            renderAll();
+            if (!res.ok) return [];
+            const text = await res.text();
+            if (text && text.length > 0) { try { return JSON.parse(text); } catch(e){ return []; } }
+            return [];
+        } catch(e) { console.error('Fetch error:', e); return []; }
+    }
+
+    // ================================================================
+    // LOAD DATA
+    // ================================================================
+
+    async function loadListings() {
+        const data = await apiRequest('listings?select=*&status=eq.active&order=created_at.desc&limit=500');
+        listings = data.map(item => ({
+            id: item.id,
+            title: item.title || 'Без назви',
+            price: item.price ? String(item.price) : '0',
+            location: item.city || 'не вказано',
+            image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+            photos: item.photos || null,
+            category: item.category || 'Інше',
+            isNew: new Date(item.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000),
+            isFeatured: item.is_featured || false,
+            createdAt: item.created_at || new Date().toISOString(),
+            description: item.description || 'Без опису',
+            specs: {},
+            seller: { name: 'Продавець', since: '2024', avatar: '👤' },
+            user_id: item.user_id,
+            phone: item.phone || '',
+            status: item.status || 'active'
+        }));
+        renderAll();
+    }
+
+    async function loadMyListings() {
+        if (!CURRENT_USER_ID) return;
+        const data = await apiRequest(`listings?select=*&user_id=eq.${CURRENT_USER_ID}&order=created_at.desc&limit=500`);
+        myListings = data.map(item => ({
+            id: item.id,
+            title: item.title || 'Без назви',
+            price: item.price ? String(item.price) : '0',
+            location: item.city || 'не вказано',
+            image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+            photos: item.photos || null,
+            category: item.category || 'Інше',
+            createdAt: item.created_at || new Date().toISOString(),
+            description: item.description || 'Без опису',
+            phone: item.phone || '',
+            status: item.status || 'active'
+        }));
+        if (currentPage === 'my-listings') renderMyListings();
+        updateProfileStats();
+    }
+
+    async function loadFavorites() {
+        if (!CURRENT_USER_ID) return;
+        const data = await apiRequest(`favorites?user_id=eq.${CURRENT_USER_ID}&select=listing_id`);
+        favorites = data.map(f => f.listing_id);
+        renderAll();
+        updateProfileStats();
+    }
+
+    async function toggleFavorite(listingId) {
+        const isFav = favorites.includes(listingId);
+        if (isFav) {
+            await apiRequest(`favorites?user_id=eq.${CURRENT_USER_ID}&listing_id=eq.${listingId}`, { method: 'DELETE' });
+            favorites = favorites.filter(id => id !== listingId);
+        } else {
+            await apiRequest('favorites', {
+                method: 'POST',
+                body: JSON.stringify({ user_id: CURRENT_USER_ID, listing_id: listingId })
+            });
+            favorites.push(listingId);
         }
+        renderAll();
+        updateProfileStats();
+    }
 
-        // ================================================================
-        // RENDER HELPERS
-        // ================================================================
+    async function loadChats() {
+        if (!CURRENT_USER_ID) return;
+        const data = await apiRequest(`chats?buyer_id=eq.${CURRENT_USER_ID}&order=updated_at.desc&select=*,listings(title),buyer:users!chats_buyer_id_fkey(first_name),seller:users!chats_seller_id_fkey(first_name)`);
+        chats = data || [];
+        if (currentPage === 'chats') renderChats();
+        updateChatBadge();
+    }
 
-        function timeAgo(dateStr) {
-            const diff = Date.now() - new Date(dateStr).getTime();
-            const min = Math.floor(diff / 60000);
-            if (min < 1) return 'щойно';
-            if (min < 60) return `${min} хв тому`;
-            const hrs = Math.floor(min / 60);
-            if (hrs < 24) return `${hrs} год тому`;
-            const days = Math.floor(hrs / 24);
-            return `${days} дн тому`;
+    async function loadUserData() {
+        if (!CURRENT_USER_ID) return;
+        const data = await apiRequest(`users?id=eq.${CURRENT_USER_ID}&select=*`);
+        if (data && data.length > 0) {
+            const u = data[0];
+            userData.name = u.first_name || userData.name;
+            userData.last_name = u.last_name || '';
+            userData.username = u.username || userData.username;
+            userData.phone = u.phone || '';
+            userData.city = u.city || 'Київ';
+            userData.avatar = u.avatar_url || userData.avatar;
+            userData.language = u.language || 'uk';
+            if (u.settings) {
+                try { userData.settings = typeof u.settings === 'string' ? JSON.parse(u.settings) : u.settings; } catch(e) {}
+            }
+            document.getElementById('profileName').textContent = userData.name;
+            document.getElementById('profileUsername').textContent = `@${userData.username}`;
+            document.getElementById('profileAvatarLetter').textContent = userData.avatar;
+            document.getElementById('editAvatarLetter').textContent = userData.avatar;
+            document.getElementById('avatarLetter').textContent = userData.avatar;
+            document.getElementById('editName').value = userData.name;
+            document.getElementById('editLastName').value = userData.last_name;
+            document.getElementById('editUsername').value = userData.username;
+            document.getElementById('editPhone').value = userData.phone;
+            document.getElementById('editCity').value = userData.city;
+            document.getElementById('securityEmail').textContent = `${userData.username}@uamo.com`;
+            document.getElementById('securityPhone').textContent = userData.phone || '+380 XX XXX XX XX';
+            renderCitySelect();
         }
+    }
 
-        function getFirstPhoto(listing) {
-            if (listing.photos && listing.photos.length > 0) return listing.photos[0];
-            if (listing.image) return listing.image;
-            return '';
-        }
+    // ================================================================
+    // RENDER HELPERS
+    // ================================================================
 
-        function isFavorite(id) {
-            return favorites.some(f => f === id);
-        }
+    function timeAgo(dateStr) {
+        const diff = Date.now() - new Date(dateStr).getTime();
+        const min = Math.floor(diff / 60000);
+        if (min < 1) return 'щойно';
+        if (min < 60) return `${min} хв тому`;
+        const hrs = Math.floor(min / 60);
+        if (hrs < 24) return `${hrs} год тому`;
+        const days = Math.floor(hrs / 24);
+        if (days < 7) return `${days} дн тому`;
+        return new Date(dateStr).toLocaleDateString();
+    }
 
-        function renderListingCard(listing) {
-            const fav = isFavorite(listing.id);
-            const photo = getFirstPhoto(listing);
-            return `
-                <div class="listing-card" onclick="openDetail('${listing.id}')">
-                    <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);`}">
-                        ${!photo ? listing.image || '📦' : ''}
-                        <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavoriteDB('${listing.id}')">
-                            <i class="${fav ? 'fas' : 'far'} fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="listing-card-body">
-                        <div class="price">${listing.price} грн</div>
-                        <div class="title">${listing.title}</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> ${listing.location}</div>
+    function getFirstPhoto(listing) {
+        if (listing.photos && listing.photos.length > 0) return listing.photos[0];
+        if (listing.image) return listing.image;
+        return '';
+    }
+
+    function isFavorite(id) {
+        return favorites.some(f => f === id);
+    }
+
+    function renderListingCard(listing) {
+        const fav = isFavorite(listing.id);
+        const photo = getFirstPhoto(listing);
+        return `
+            <div class="listing-card" onclick="openDetail('${listing.id}')">
+                <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);`}">
+                    ${!photo ? listing.image || '📦' : ''}
+                    <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${listing.id}')">
+                        <i class="${fav ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                </div>
+                <div class="listing-card-body">
+                    <div class="price">${listing.price} грн</div>
+                    <div class="title">${listing.title}</div>
+                    <div class="location"><i class="fas fa-map-marker-alt"></i> ${listing.location}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderSearchResult(listing) {
+        const photo = getFirstPhoto(listing);
+        return `
+            <div class="search-result-card" onclick="openDetail('${listing.id}')">
+                <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;`}">
+                    ${!photo ? listing.image || '📦' : ''}
+                </div>
+                <div class="info">
+                    <div class="price">${listing.price} грн</div>
+                    <div class="title">${listing.title}</div>
+                    <div class="meta">
+                        <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
+                        <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
                     </div>
                 </div>
-            `;
-        }
+            </div>
+        `;
+    }
 
-        function renderSearchResult(listing) {
-            const photo = getFirstPhoto(listing);
-            return `
-                <div class="search-result-card" onclick="openDetail('${listing.id}')">
-                    <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;`}">
-                        ${!photo ? listing.image || '📦' : ''}
-                    </div>
-                    <div class="info">
-                        <div class="price">${listing.price} грн</div>
-                        <div class="title">${listing.title}</div>
-                        <div class="meta">
-                            <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
-                            <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
+    function updateChatBadge() {
+        const badge = document.getElementById('chatBadge');
+        if (!badge) return;
+        // Рахуємо непрочитані повідомлення (заглушка)
+        const count = chats.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+        unreadCount = count;
+        if (count > 0) {
+            badge.style.display = 'flex';
+            badge.textContent = count > 9 ? '9+' : count;
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    function updateProfileStats() {
+        document.getElementById('statActive').textContent = myListings.length;
+        document.getElementById('statFavorites').textContent = favorites.length;
+        document.getElementById('statMessages').textContent = chats.length;
+    }
+
+    // ================================================================
+    // RENDER PAGES
+    // ================================================================
+
+    function renderCategories() {
+        const categories = [
+            { id: 'products', icon: 'fa-tag', name: 'Товари' },
+            { id: 'jobs', icon: 'fa-briefcase', name: 'Робота' },
+            { id: 'services', icon: 'fa-wrench', name: 'Послуги' },
+            { id: 'realestate', icon: 'fa-building', name: 'Нерухом.' },
+            { id: 'transport', icon: 'fa-car', name: 'Транспорт' }
+        ];
+        const container = document.getElementById('categorySlider');
+        container.innerHTML = categories.map(c =>
+            `<div class="category-item" onclick="filterByCategory('${c.id}'); navigateTo('search')">
+                <i class="fas ${c.icon}"></i>
+                <span>${c.name}</span>
+            </div>`
+        ).join('');
+    }
+
+    function renderHome() {
+        const recommended = listings.filter(l => l.isFeatured).slice(0, 6);
+        const newListings = listings.filter(l => l.isNew).slice(0, 6);
+
+        document.getElementById('recommendedScroll').innerHTML =
+            recommended.map(renderListingCard).join('') ||
+            '<div class="empty-state">Немає рекомендованих</div>';
+
+        document.getElementById('newListingsScroll').innerHTML =
+            newListings.map(renderListingCard).join('') ||
+            '<div class="empty-state">Немає нових оголошень</div>';
+
+        renderCategories();
+        updateNav('home');
+    }
+
+    function renderSearch(query = '') {
+        const container = document.getElementById('searchResults');
+        let results = listings;
+        if (query.trim()) {
+            const q = query.trim().toLowerCase();
+            results = results.filter(l =>
+                l.title.toLowerCase().includes(q) ||
+                l.location.toLowerCase().includes(q) ||
+                l.category.toLowerCase().includes(q)
+            );
+        }
+        if (results.length === 0) {
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>`;
+        } else {
+            container.innerHTML = results.map(renderSearchResult).join('');
+        }
+        updateNav('search');
+    }
+
+    function renderFavorites() {
+        const container = document.getElementById('favoritesContent');
+        const favList = listings.filter(l => isFavorite(l.id));
+        if (favList.length === 0) {
+            container.innerHTML = `
+                <div class="favorites-empty">
+                    <i class="fas fa-heart" style="color:#EF4444;"></i>
+                    <h3>Тут поки що порожньо</h3>
+                    <p style="margin-top:4px; color:var(--text-secondary);">Зберігайте оголошення, щоб повернутися до них пізніше.</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = favList.map(l => renderSearchResult(l)).join('');
+        }
+        updateNav('favorites');
+    }
+
+    function renderChats() {
+        const container = document.getElementById('chatsList');
+        if (!container) return;
+        if (chats.length === 0) {
+            container.innerHTML = `
+                <div class="favorites-empty">
+                    <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
+                    <h3>Немає чатів</h3>
+                    <p style="margin-top:4px; color:var(--text-secondary);">Напишіть продавцю, щоб почати діалог</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = chats.map(chat => {
+                const isBuyer = chat.buyer_id === CURRENT_USER_ID;
+                const partner = isBuyer ? chat.seller : chat.buyer;
+                const partnerName = partner?.first_name || 'Користувач';
+                const partnerAvatar = partnerName?.[0] || '👤';
+                const unread = chat.unread_count || 0;
+                return `
+                    <div class="search-result-card" onclick="openChatDetail('${chat.id}')">
+                        <div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">
+                            ${partnerAvatar}
+                        </div>
+                        <div class="info">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-weight:600;">${partnerName}</span>
+                                ${unread > 0 ? `<span style="background:#EF4444; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">${unread}</span>` : ''}
+                            </div>
+                            <div style="font-size:13px; color:var(--text-secondary);">${chat.last_message || 'Немає повідомлень'}</div>
+                            <div class="meta">
+                                <span><i class="fas fa-clock"></i> ${chat.last_message_time ? timeAgo(chat.last_message_time) : 'нещодавно'}</span>
+                                <span>📦 ${chat.listings?.title || 'Оголошення'}</span>
+                            </div>
                         </div>
                     </div>
+                `;
+            }).join('');
+        }
+        updateNav('chats');
+        updateChatBadge();
+    }
+
+    function renderProfile() {
+        document.getElementById('profileName').textContent = userData.name;
+        document.getElementById('profileUsername').textContent = `@${userData.username}`;
+        document.getElementById('profileAvatarLetter').textContent = userData.avatar;
+        document.getElementById('avatarLetter').textContent = userData.avatar;
+        updateProfileStats();
+        updateNav('profile');
+    }
+
+    function renderMyListings() {
+        const container = document.getElementById('myListingsContainer');
+        if (!container) return;
+        if (myListings.length === 0) {
+            container.innerHTML = `
+                <div class="favorites-empty">
+                    <i class="fas fa-list-ul" style="color:var(--accent);"></i>
+                    <h3>У вас поки немає оголошень</h3>
+                    <p style="margin-top:4px; color:var(--text-secondary);">Створіть своє перше оголошення</p>
+                    <button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo('add')">+ Додати оголошення</button>
                 </div>
             `;
-        }
-
-        // ================================================================
-        // RENDER PAGES
-        // ================================================================
-
-        function renderCategories() {
-            const categories = [
-                { id: 'products', icon: 'fa-tag', name: 'Товари' },
-                { id: 'jobs', icon: 'fa-briefcase', name: 'Робота' },
-                { id: 'services', icon: 'fa-wrench', name: 'Послуги' },
-                { id: 'realestate', icon: 'fa-building', name: 'Нерухом.' },
-                { id: 'transport', icon: 'fa-car', name: 'Транспорт' }
-            ];
-            const container = document.getElementById('categorySlider');
-            container.innerHTML = categories.map(c =>
-                `<div class="category-item" onclick="filterByCategory('${c.id}'); navigateTo('search')">
-                    <i class="fas ${c.icon}"></i>
-                    <span>${c.name}</span>
-                </div>`
-            ).join('');
-        }
-
-        function renderHome() {
-            const recommended = listings.filter(l => l.isFeatured).slice(0, 6);
-            const newListings = listings.filter(l => l.isNew).slice(0, 6);
-
-            document.getElementById('recommendedScroll').innerHTML =
-                recommended.map(renderListingCard).join('') ||
-                '<div class="empty-state">Немає рекомендованих</div>';
-
-            document.getElementById('newListingsScroll').innerHTML =
-                newListings.map(renderListingCard).join('') ||
-                '<div class="empty-state">Немає нових оголошень</div>';
-
-            renderCategories();
-            updateNav('home');
-        }
-
-        function renderSearch(query = '') {
-            const container = document.getElementById('searchResults');
-            let results = listings;
-            if (query.trim()) {
-                const q = query.trim().toLowerCase();
-                results = results.filter(l =>
-                    l.title.toLowerCase().includes(q) ||
-                    l.location.toLowerCase().includes(q) ||
-                    l.category.toLowerCase().includes(q)
-                );
-            }
-            if (results.length === 0) {
-                container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>`;
-            } else {
-                container.innerHTML = results.map(renderSearchResult).join('');
-            }
-            updateNav('search');
-        }
-
-        function renderFavorites() {
-            const container = document.getElementById('favoritesContent');
-            const favList = listings.filter(l => isFavorite(l.id));
-            if (favList.length === 0) {
-                container.innerHTML = `
-                    <div class="favorites-empty">
-                        <i class="fas fa-heart" style="color:#EF4444;"></i>
-                        <h3>Тут поки що порожньо</h3>
-                        <p style="margin-top:4px; color:var(--text-secondary);">Зберігайте оголошення, щоб повернутися до них пізніше.</p>
+        } else {
+            container.innerHTML = myListings.map(item => {
+                const photo = getFirstPhoto(item);
+                return `
+                    <div class="search-result-card" style="flex-wrap:wrap;">
+                        <div class="img" style="${photo ? `background-image:url('${photo}')` : `display:flex; align-items:center; justify-content:center; font-size:24px;`}">
+                            ${!photo ? '📦' : ''}
+                        </div>
+                        <div class="info" style="flex:1;">
+                            <div class="price">${item.price} грн</div>
+                            <div class="title">${item.title}</div>
+                            <div class="meta">
+                                <span><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
+                                <span><i class="far fa-clock"></i> ${timeAgo(item.createdAt)}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:6px; width:100%; margin-top:8px;">
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail('${item.id}')">👁 Відкрити</button>
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing('${item.id}')">✏️ Редагувати</button>
+                            <button class="btn-submit" style="padding:8px 12px; background:#EF4444; flex:1;" onclick="deleteListing('${item.id}')">🗑 Видалити</button>
+                        </div>
                     </div>
                 `;
-            } else {
-                container.innerHTML = favList.map(l => renderSearchResult(l)).join('');
-            }
-            updateNav('favorites');
+            }).join('');
         }
+    }
 
-        function renderProfile() {
-            const activeCount = listings.filter(l => l.isNew).length;
-            document.getElementById('statActive').textContent = activeCount;
-            document.getElementById('statFavorites').textContent = favorites.length;
-            document.getElementById('statMessages').textContent = '3';
-            updateNav('profile');
-        }
+    function renderCitySelect() {
+        const select = document.getElementById('editCity');
+        if (!select) return;
+        select.innerHTML = cities.map(c =>
+            `<option value="${c}" ${c === userData.city ? 'selected' : ''}>${c}</option>`
+        ).join('');
+    }
 
-        function renderAll() {
-            if (currentPage === 'home') renderHome();
-            else if (currentPage === 'search') renderSearch(document.getElementById('searchInput')?.value || '');
-            else if (currentPage === 'favorites') renderFavorites();
-            else if (currentPage === 'profile') renderProfile();
-        }
+    function renderCities() {
+        const container = document.getElementById('citiesList');
+        if (!container) return;
+        container.innerHTML = cities.map(c =>
+            `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;">
+                <span class="settings-label">${c}</span>
+                ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
+            </div>`
+        ).join('');
+    }
 
-        // ================================================================
-        // NAVIGATION
-        // ================================================================
+    function renderAll() {
+        if (currentPage === 'home') renderHome();
+        else if (currentPage === 'search') renderSearch(document.getElementById('searchInput')?.value || '');
+        else if (currentPage === 'favorites') renderFavorites();
+        else if (currentPage === 'chats') renderChats();
+        else if (currentPage === 'profile') renderProfile();
+        else if (currentPage === 'my-listings') renderMyListings();
+        else if (currentPage === 'settings-city') renderCities();
+    }
 
-        function navigateTo(page) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById(`page-${page}`);
-            if (target) target.classList.add('active');
-            currentPage = page;
-            renderAll();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    // ================================================================
+    // NAVIGATION
+    // ================================================================
 
-        function updateNav(page) {
-            document.querySelectorAll('.bottom-nav-item').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.page === page);
-            });
-        }
+    function navigateTo(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById(`page-${page}`);
+        if (target) target.classList.add('active');
+        currentPage = page;
+        renderAll();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-        // ================================================================
-        // FILTERS
-        // ================================================================
+    function updateNav(page) {
+        document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.page === page);
+        });
+    }
 
-        let currentFilter = 'all';
-
-        function filterByCategory(cat) {
-            currentFilter = cat;
-            const input = document.getElementById('searchInput');
-            if (input) {
-                if (cat === 'all') {
-                    input.value = '';
-                } else {
-                    const names = {
-                        products: 'Товари',
-                        jobs: 'Робота',
-                        services: 'Послуги',
-                        realestate: 'Нерухомість',
-                        transport: 'Транспорт'
-                    };
-                    input.value = names[cat] || '';
-                }
-                renderSearch(input.value);
-            }
-        }
-
-        function showFilters() {
-            alert('🔍 Фільтри:\n- Ціна від/до\n- Місто\n- Стан (новий/б/в)\n- Дата публікації');
-        }
-
-        // ================================================================
-        // DETAIL
-        // ================================================================
-
-        function openDetail(id) {
-            const listing = listings.find(l => l.id === id);
-            if (!listing) { alert('Оголошення не знайдено'); return; }
-
-            currentDetailId = id;
-            detailPhotos = listing.photos || (listing.image ? [listing.image] : []);
-            detailIndex = 0;
-
-            document.getElementById('detailPrice').textContent = `${listing.price} грн`;
-            document.getElementById('detailTitle').textContent = listing.title;
-            document.getElementById('detailMeta').innerHTML = `
-                <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
-                <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
-            `;
-            document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
-
-            const specsContainer = document.getElementById('detailSpecs');
-            if (listing.specs && Object.keys(listing.specs).length > 0) {
-                specsContainer.innerHTML = Object.entries(listing.specs)
-                    .map(([key, val]) => `<div class="spec-item"><span class="label">${key}</span> <span>${val}</span></div>`)
-                    .join('');
-                specsContainer.style.display = 'grid';
-            } else {
-                specsContainer.style.display = 'none';
-            }
-
-            if (listing.seller) {
-                document.getElementById('sellerName').textContent = listing.seller.name;
-                document.getElementById('sellerSince').textContent = `На UAMO з ${listing.seller.since}`;
-                document.getElementById('sellerAvatar').textContent = listing.seller.avatar || '👤';
-            }
-
-            const favBtn = document.getElementById('detailFavoriteBtn');
-            favBtn.className = isFavorite(id) ? 'fas fa-heart' : 'far fa-heart';
-            favBtn.style.color = isFavorite(id) ? '#EF4444' : 'var(--text-secondary)';
-
-            updateDetailGallery();
-            navigateTo('detail');
-        }
-
-        function updateDetailGallery() {
-            const gallery = document.getElementById('detailGallery');
-            const dots = document.getElementById('detailDots');
-            const arrowLeft = document.getElementById('detailArrowLeft');
-            const arrowRight = document.getElementById('detailArrowRight');
-
-            if (detailPhotos.length > 0) {
-                gallery.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
-                gallery.style.backgroundSize = 'cover';
-                gallery.style.backgroundPosition = 'center';
-                const icon = gallery.querySelector('i');
-                if (icon) icon.style.display = 'none';
-
-                dots.innerHTML = detailPhotos.map((_, i) =>
-                    `<span class="${i === detailIndex ? 'active' : ''}" onclick="detailIndex=${i}; updateDetailGallery();"></span>`
-                ).join('');
-
-                arrowLeft.style.display = detailPhotos.length > 1 ? 'block' : 'none';
-                arrowRight.style.display = detailPhotos.length > 1 ? 'block' : 'none';
-            } else {
-                gallery.style.backgroundImage = 'none';
-                gallery.style.background = 'var(--border)';
-                const icon = gallery.querySelector('i');
-                if (icon) icon.style.display = 'block';
-                dots.innerHTML = '';
-                arrowLeft.style.display = 'none';
-                arrowRight.style.display = 'none';
-            }
-        }
-
-        function changeDetailPhoto(dir) {
-            if (detailPhotos.length === 0) return;
-            detailIndex += dir;
-            if (detailIndex < 0) detailIndex = detailPhotos.length - 1;
-            if (detailIndex >= detailPhotos.length) detailIndex = 0;
-            updateDetailGallery();
-        }
-
-        function toggleDetailFavorite() {
-            if (currentDetailId) {
-                toggleFavoriteDB(currentDetailId);
-                const favBtn = document.getElementById('detailFavoriteBtn');
-                const isFav = isFavorite(currentDetailId);
-                favBtn.className = isFav ? 'fas fa-heart' : 'far fa-heart';
-                favBtn.style.color = isFav ? '#EF4444' : 'var(--text-secondary)';
-            }
-        }
-
-        // ================================================================
-        // ADD LISTING
-        // ================================================================
-
-        function handlePhotos(event) {
-            const files = event.target.files;
-            for (let file of files) {
-                if (selectedPhotos.length >= 8) {
-                    alert('Максимум 8 фото');
-                    break;
-                }
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    selectedPhotos.push(e.target.result);
-                    renderPhotoPreviews();
-                };
-                reader.readAsDataURL(file);
-            }
-            event.target.value = '';
-        }
-
-        function renderPhotoPreviews() {
-            const container = document.getElementById('photoPreviewGrid');
-            container.innerHTML = selectedPhotos.map((p, i) =>
-                `<div class="photo-preview-item" style="background-image:url('${p}')">
-                    <button class="remove-photo" onclick="selectedPhotos.splice(${i},1); renderPhotoPreviews();">×</button>
-                </div>`
-            ).join('');
-        }
-
-        async function submitListing() {
-            const title = document.getElementById('addTitle').value.trim();
-            const price = document.getElementById('addPrice').value.trim();
-            const city = document.getElementById('addCity').value.trim();
-            const phone = document.getElementById('addPhone').value.trim();
-            const desc = document.getElementById('addDesc').value.trim();
-            const category = document.getElementById('addCategory').value;
-
-            if (!title) { alert('Введіть назву'); return; }
-            if (!price) { alert('Введіть ціну'); return; }
-
-            const newItem = {
-                user_id: CURRENT_USER_ID,
-                title: title,
-                price: parseFloat(price),
-                city: city || '',
-                phone: phone || '',
-                description: desc || '',
-                category: category,
-                photos: selectedPhotos.length > 0 ? selectedPhotos : null,
-                status: 'active',
-                created_at: new Date().toISOString()
-            };
-
-            await apiRequest('listings', {
-                method: 'POST',
-                body: JSON.stringify(newItem)
-            });
-
-            selectedPhotos = [];
-            renderPhotoPreviews();
-            document.getElementById('addTitle').value = '';
-            document.getElementById('addPrice').value = '';
-            document.getElementById('addCity').value = '';
-            document.getElementById('addPhone').value = '';
-            document.getElementById('addDesc').value = '';
-
-            alert('✅ Оголошення опубліковано!');
-            await loadListings();
+    function goBackFromDetail() {
+        if (currentPage === 'detail') {
             navigateTo('home');
         }
+    }
 
-        // ================================================================
-        // PROFILE ACTIONS
-        // ================================================================
+    // ================================================================
+    // FILTERS
+    // ================================================================
 
-        function uploadAvatar(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+    let currentFilter = 'all';
+
+    function filterByCategory(cat) {
+        currentFilter = cat;
+        const input = document.getElementById('searchInput');
+        if (input) {
+            if (cat === 'all') {
+                input.value = '';
+            } else {
+                const names = {
+                    products: 'Товари',
+                    jobs: 'Робота',
+                    services: 'Послуги',
+                    realestate: 'Нерухомість',
+                    transport: 'Транспорт'
+                };
+                input.value = names[cat] || '';
+            }
+            renderSearch(input.value);
+        }
+    }
+
+    function showFilters() {
+        alert('🔍 Фільтри:\n- Ціна від/до\n- Місто\n- Стан (новий/б/в)\n- Дата публікації');
+    }
+
+    // ================================================================
+    // DETAIL
+    // ================================================================
+
+    let currentDetailListing = null;
+
+    function openDetail(id) {
+        const listing = listings.find(l => l.id === id);
+        if (!listing) { alert('Оголошення не знайдено'); return; }
+        currentDetailListing = listing;
+        currentDetailId = id;
+        detailPhotos = listing.photos || (listing.image ? [listing.image] : []);
+        detailIndex = 0;
+
+        document.getElementById('detailPrice').textContent = `${listing.price} грн`;
+        document.getElementById('detailTitle').textContent = listing.title;
+        document.getElementById('detailMeta').innerHTML = `
+            <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
+            <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
+        `;
+        document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
+
+        const specsContainer = document.getElementById('detailSpecs');
+        if (listing.specs && Object.keys(listing.specs).length > 0) {
+            specsContainer.innerHTML = Object.entries(listing.specs)
+                .map(([key, val]) => `<div class="spec-item"><span class="label">${key}</span> <span>${val}</span></div>`)
+                .join('');
+            specsContainer.style.display = 'grid';
+        } else {
+            specsContainer.style.display = 'none';
+        }
+
+        if (listing.seller) {
+            document.getElementById('sellerName').textContent = listing.seller.name;
+            document.getElementById('sellerSince').textContent = `На UAMO з ${listing.seller.since}`;
+            document.getElementById('sellerAvatar').textContent = listing.seller.avatar || '👤';
+        }
+
+        const favBtn = document.getElementById('detailFavoriteBtn');
+        favBtn.className = isFavorite(id) ? 'fas fa-heart' : 'far fa-heart';
+        favBtn.style.color = isFavorite(id) ? '#EF4444' : 'var(--text-secondary)';
+
+        updateDetailGallery();
+        navigateTo('detail');
+    }
+
+    function updateDetailGallery() {
+        const gallery = document.getElementById('detailGallery');
+        const dots = document.getElementById('detailDots');
+        const arrowLeft = document.getElementById('detailArrowLeft');
+        const arrowRight = document.getElementById('detailArrowRight');
+
+        if (detailPhotos.length > 0) {
+            gallery.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
+            gallery.style.backgroundSize = 'cover';
+            gallery.style.backgroundPosition = 'center';
+            const icon = gallery.querySelector('i');
+            if (icon) icon.style.display = 'none';
+
+            dots.innerHTML = detailPhotos.map((_, i) =>
+                `<span class="${i === detailIndex ? 'active' : ''}" onclick="detailIndex=${i}; updateDetailGallery();"></span>`
+            ).join('');
+
+            arrowLeft.style.display = detailPhotos.length > 1 ? 'block' : 'none';
+            arrowRight.style.display = detailPhotos.length > 1 ? 'block' : 'none';
+        } else {
+            gallery.style.backgroundImage = 'none';
+            gallery.style.background = 'var(--border)';
+            const icon = gallery.querySelector('i');
+            if (icon) icon.style.display = 'block';
+            dots.innerHTML = '';
+            arrowLeft.style.display = 'none';
+            arrowRight.style.display = 'none';
+        }
+    }
+
+    function changeDetailPhoto(dir) {
+        if (detailPhotos.length === 0) return;
+        detailIndex += dir;
+        if (detailIndex < 0) detailIndex = detailPhotos.length - 1;
+        if (detailIndex >= detailPhotos.length) detailIndex = 0;
+        updateDetailGallery();
+    }
+
+    function toggleDetailFavorite() {
+        if (currentDetailId) {
+            toggleFavorite(currentDetailId);
+            const favBtn = document.getElementById('detailFavoriteBtn');
+            const isFav = isFavorite(currentDetailId);
+            favBtn.className = isFav ? 'fas fa-heart' : 'far fa-heart';
+            favBtn.style.color = isFav ? '#EF4444' : 'var(--text-secondary)';
+        }
+    }
+
+    function openChatFromDetail() {
+        if (!currentDetailListing) return;
+        // Створюємо чат з продавцем
+        const sellerId = currentDetailListing.user_id || '1';
+        const adId = currentDetailListing.id;
+        // Перевіряємо чи є вже чат
+        apiRequest(`chats?buyer_id=eq.${CURRENT_USER_ID}&seller_id=eq.${sellerId}&listing_id=eq.${adId}`)
+            .then(chats => {
+                if (chats && chats.length > 0) {
+                    openChatDetail(chats[0].id);
+                } else {
+                    apiRequest('chats', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            listing_id: adId,
+                            buyer_id: CURRENT_USER_ID,
+                            seller_id: sellerId,
+                            created_at: new Date().toISOString()
+                        })
+                    }).then(newChat => {
+                        if (newChat && newChat.length > 0) {
+                            openChatDetail(newChat[0].id);
+                        }
+                    });
+                }
+            });
+    }
+
+    // ================================================================
+    // CHAT
+    // ================================================================
+
+    let chatMessages = [];
+
+    function openChatDetail(chatId) {
+        currentChatId = chatId;
+        // Завантажуємо повідомлення
+        apiRequest(`messages?chat_id=eq.${chatId}&order=created_at.asc&limit=200`)
+            .then(messages => {
+                chatMessages = messages || [];
+                // Отримуємо інформацію про чат
+                apiRequest(`chats?id=eq.${chatId}&select=*,buyer:users!chats_buyer_id_fkey(first_name),seller:users!chats_seller_id_fkey(first_name)`)
+                    .then(chatData => {
+                        const chat = chatData[0];
+                        if (!chat) return;
+                        const isBuyer = chat.buyer_id === CURRENT_USER_ID;
+                        const partner = isBuyer ? chat.seller : chat.buyer;
+                        const partnerName = partner?.first_name || 'Користувач';
+                        document.getElementById('chatPartnerName').textContent = partnerName;
+                        document.getElementById('chatPartnerAvatar').textContent = partnerName?.[0] || '👤';
+                        renderChatMessages();
+                        navigateTo('chat-detail');
+                        // Відмічаємо повідомлення як прочитані
+                        apiRequest(`messages?chat_id=eq.${chatId}&is_read=eq.false`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({ is_read: true, read_at: new Date().toISOString() })
+                        }).then(() => loadChats());
+                    });
+            });
+    }
+
+    function renderChatMessages() {
+        const container = document.getElementById('chatMessages');
+        if (!container) return;
+        container.innerHTML = chatMessages.map(msg => {
+            const isOwn = msg.sender_id === CURRENT_USER_ID;
+            return `
+                <div class="chat-message ${isOwn ? 'own' : 'other'}">
+                    ${msg.text}
+                    <span class="chat-time">${new Date(msg.created_at).toLocaleTimeString()}</span>
+                </div>
+            `;
+        }).join('');
+        setTimeout(() => container.scrollTop = container.scrollHeight, 100);
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input?.value?.trim();
+        if (!text || !currentChatId) return;
+        apiRequest('messages', {
+            method: 'POST',
+            body: JSON.stringify({
+                chat_id: currentChatId,
+                sender_id: CURRENT_USER_ID,
+                text: text,
+                created_at: new Date().toISOString()
+            })
+        }).then(() => {
+            input.value = '';
+            // Оновлюємо last_message в чаті
+            apiRequest(`chats?id=eq.${currentChatId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    last_message: text,
+                    last_message_time: new Date().toISOString()
+                })
+            }).then(() => {
+                openChatDetail(currentChatId);
+                loadChats();
+            });
+        });
+    }
+
+    // ================================================================
+    // ADD LISTING
+    // ================================================================
+
+    function handlePhotos(event) {
+        const files = event.target.files;
+        for (let file of files) {
+            if (selectedPhotos.length >= 8) {
+                alert('Максимум 8 фото');
+                break;
+            }
             const reader = new FileReader();
             reader.onload = (e) => {
-                document.getElementById('profileAvatarLetter').innerHTML = `<img src="${e.target.result}" />`;
-                document.getElementById('avatarLetter').innerHTML = `<img src="${e.target.result}" />`;
+                selectedPhotos.push(e.target.result);
+                renderPhotoPreviews();
             };
             reader.readAsDataURL(file);
         }
+        event.target.value = '';
+    }
 
-        function showMessages() { alert('💬 Повідомлення\n\nЧат з продавцем: 3 непрочитаних'); }
-        function showSettings() { alert('⚙️ Налаштування\n\n- Сповіщення\n- Місто\n- Мова\n- Конфіденційність'); }
-        function showNotifications() { alert('🔔 Сповіщення\n\n- Нове повідомлення від продавця\n- Ваше оголошення переглянули 5 разів'); }
-        function logout() { if (confirm('Ви впевнені?')) { alert('👋 До побачення!'); } }
+    function renderPhotoPreviews() {
+        const container = document.getElementById('photoPreviewGrid');
+        container.innerHTML = selectedPhotos.map((p, i) =>
+            `<div class="photo-preview-item" style="background-image:url('${p}')">
+                <button class="remove-photo" onclick="selectedPhotos.splice(${i},1); renderPhotoPreviews();">×</button>
+            </div>`
+        ).join('');
+    }
 
-        // ================================================================
-        // INIT
-        // ================================================================
+    async function submitListing() {
+        const title = document.getElementById('addTitle').value.trim();
+        const price = document.getElementById('addPrice').value.trim();
+        const city = document.getElementById('addCity').value.trim() || userData.city;
+        const phone = document.getElementById('addPhone').value.trim() || userData.phone;
+        const desc = document.getElementById('addDesc').value.trim();
+        const category = document.getElementById('addCategory').value;
 
-        async function init() {
-            try {
-                const tg = window.Telegram?.WebApp;
-                if (tg) tg.expand();
-            } catch (e) {}
+        if (!title) { alert('Введіть назву'); return; }
+        if (!price) { alert('Введіть ціну'); return; }
 
-            await loadListings();
-            await loadFavoritesFromDB();
-            renderHome();
+        const newItem = {
+            user_id: CURRENT_USER_ID,
+            title: title,
+            price: parseFloat(price),
+            city: city,
+            phone: phone,
+            description: desc || '',
+            category: category,
+            photos: selectedPhotos.length > 0 ? selectedPhotos : null,
+            status: 'active',
+            created_at: new Date().toISOString()
+        };
+
+        await apiRequest('listings', {
+            method: 'POST',
+            body: JSON.stringify(newItem)
+        });
+
+        selectedPhotos = [];
+        renderPhotoPreviews();
+        document.getElementById('addTitle').value = '';
+        document.getElementById('addPrice').value = '';
+        document.getElementById('addCity').value = '';
+        document.getElementById('addPhone').value = '';
+        document.getElementById('addDesc').value = '';
+
+        alert('✅ Оголошення опубліковано!');
+        await loadListings();
+        await loadMyListings();
+        navigateTo('home');
+    }
+
+    // ================================================================
+    // EDIT / DELETE LISTING
+    // ================================================================
+
+    function editListing(id) {
+        const listing = myListings.find(l => l.id === id);
+        if (!listing) return;
+        document.getElementById('addTitle').value = listing.title;
+        document.getElementById('addPrice').value = listing.price;
+        document.getElementById('addCity').value = listing.location;
+        document.getElementById('addPhone').value = listing.phone || '';
+        document.getElementById('addDesc').value = listing.description || '';
+        document.getElementById('addCategory').value = listing.category || 'Товари';
+        selectedPhotos = listing.photos || [];
+        renderPhotoPreviews();
+        // Змінюємо кнопку
+        const btn = document.querySelector('.add-listing-form .btn-submit');
+        btn.textContent = '✏️ Оновити оголошення';
+        btn.onclick = () => updateListing(id);
+        navigateTo('add');
+    }
+
+    async function updateListing(id) {
+        const title = document.getElementById('addTitle').value.trim();
+        const price = document.getElementById('addPrice').value.trim();
+        const city = document.getElementById('addCity').value.trim() || userData.city;
+        const phone = document.getElementById('addPhone').value.trim() || userData.phone;
+        const desc = document.getElementById('addDesc').value.trim();
+        const category = document.getElementById('addCategory').value;
+
+        if (!title || !price) { alert('Заповніть назву та ціну'); return; }
+
+        await apiRequest(`listings?id=eq.${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                title: title,
+                price: parseFloat(price),
+                city: city,
+                phone: phone,
+                description: desc || '',
+                category: category,
+                photos: selectedPhotos.length > 0 ? selectedPhotos : null
+            })
+        });
+
+        selectedPhotos = [];
+        renderPhotoPreviews();
+        alert('✅ Оголошення оновлено!');
+        // Відновлюємо кнопку
+        const btn = document.querySelector('.add-listing-form .btn-submit');
+        btn.textContent = 'Опублікувати оголошення';
+        btn.onclick = submitListing;
+        document.getElementById('addTitle').value = '';
+        document.getElementById('addPrice').value = '';
+        document.getElementById('addCity').value = '';
+        document.getElementById('addPhone').value = '';
+        document.getElementById('addDesc').value = '';
+        await loadListings();
+        await loadMyListings();
+        navigateTo('my-listings');
+    }
+
+    async function deleteListing(id) {
+        if (!confirm('Ви впевнені, що хочете видалити це оголошення?')) return;
+        await apiRequest(`listings?id=eq.${id}`, { method: 'DELETE' });
+        alert('🗑 Оголошення видалено');
+        await loadListings();
+        await loadMyListings();
+        if (currentPage === 'my-listings') renderMyListings();
+    }
+
+    // ================================================================
+    // PROFILE ACTIONS
+    // ================================================================
+
+    function uploadAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = e.target.result;
+            userData.avatar = data;
+            document.getElementById('profileAvatarLetter').innerHTML = `<img src="${data}" />`;
+            document.getElementById('editAvatarLetter').innerHTML = `<img src="${data}" />`;
+            document.getElementById('avatarLetter').innerHTML = `<img src="${data}" />`;
+            // Зберігаємо в БД
+            apiRequest(`users?id=eq.${CURRENT_USER_ID}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ avatar_url: data })
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function editUploadAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = e.target.result;
+            userData.avatar = data;
+            document.getElementById('editAvatarLetter').innerHTML = `<img src="${data}" />`;
+            document.getElementById('profileAvatarLetter').innerHTML = `<img src="${data}" />`;
+            document.getElementById('avatarLetter').innerHTML = `<img src="${data}" />`;
+            apiRequest(`users?id=eq.${CURRENT_USER_ID}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ avatar_url: data })
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function saveProfile() {
+        const name = document.getElementById('editName').value.trim();
+        const lastName = document.getElementById('editLastName').value.trim();
+        const username = document.getElementById('editUsername').value.trim();
+        const phone = document.getElementById('editPhone').value.trim();
+        const city = document.getElementById('editCity').value;
+
+        if (!name) { alert('Введіть ім\'я'); return; }
+
+        await apiRequest(`users?id=eq.${CURRENT_USER_ID}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                first_name: name,
+                last_name: lastName,
+                username: username,
+                phone: phone,
+                city: city
+            })
+        });
+
+        userData.name = name;
+        userData.last_name = lastName;
+        userData.username = username;
+        userData.phone = phone;
+        userData.city = city;
+
+        document.getElementById('profileName').textContent = name;
+        document.getElementById('profileUsername').textContent = `@${username}`;
+        document.getElementById('securityEmail').textContent = `${username}@uamo.com`;
+        document.getElementById('securityPhone').textContent = phone || '+380 XX XXX XX XX';
+
+        alert('✅ Профіль оновлено!');
+        navigateTo('profile');
+    }
+
+    function selectCity(city) {
+        userData.city = city;
+        apiRequest(`users?id=eq.${CURRENT_USER_ID}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ city: city })
+        });
+        renderCities();
+        alert(`✅ Місто змінено на ${city}`);
+    }
+
+    function filterCities(query) {
+        const container = document.getElementById('citiesList');
+        if (!container) return;
+        const filtered = cities.filter(c => c.toLowerCase().includes(query.toLowerCase()));
+        container.innerHTML = filtered.map(c =>
+            `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;">
+                <span class="settings-label">${c}</span>
+                ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
+            </div>`
+        ).join('');
+    }
+
+    function saveLanguage() {
+        const selected = document.querySelector('input[name="language"]:checked');
+        if (selected) {
+            userData.language = selected.value;
+            apiRequest(`users?id=eq.${CURRENT_USER_ID}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ language: selected.value })
+            });
+            alert('✅ Мову змінено!');
         }
+    }
 
-        // ================================================================
-        // EXPOSE GLOBALS
-        // ================================================================
+    function toggleSetting(el) {
+        el.classList.toggle('active');
+        const isActive = el.classList.contains('active');
+        // Тут можна зберігати налаштування в БД
+        console.log('Налаштування змінено:', isActive);
+    }
 
-        window.navigateTo = navigateTo;
-        window.filterByCategory = filterByCategory;
-        window.showFilters = showFilters;
-        window.openDetail = openDetail;
-        window.changeDetailPhoto = changeDetailPhoto;
-        window.toggleDetailFavorite = toggleDetailFavorite;
-        window.toggleFavoriteDB = toggleFavoriteDB;
-        window.renderSearch = renderSearch;
-        window.handlePhotos = handlePhotos;
-        window.submitListing = submitListing;
-        window.uploadAvatar = uploadAvatar;
-        window.showMessages = showMessages;
-        window.showSettings = showSettings;
-        window.showNotifications = showNotifications;
-        window.logout = logout;
-        window.renderAll = renderAll;
+    function showHelp() { alert('🆘 Допомога\n\nЯкщо у вас виникли питання, зверніться до служби підтримки: support@uamo.com'); }
+    function showAbout() { alert('ℹ️ Про UAMO\n\nUAMO — універсальна платформа оголошень.\nВерсія 2.0\n\n© 2026 UAMO'); }
+    function logout() { if (confirm('Ви впевнені?')) { alert('👋 До побачення!'); } }
 
-        // START
-        document.addEventListener('DOMContentLoaded', init);
-        console.log('🚀 UAMO 2.0 з Supabase завантажено!');
-    </script>
+    // ================================================================
+    // INIT
+    // ================================================================
+
+    async function init() {
+        try {
+            const tg = window.Telegram?.WebApp;
+            if (tg) tg.expand();
+        } catch (e) {}
+
+        await loadUserData();
+        await loadListings();
+        await loadMyListings();
+        await loadFavorites();
+        await loadChats();
+        renderHome();
+
+        // Встановлюємо місто в полі додавання
+        document.getElementById('addCity').value = userData.city;
+    }
+
+    // ================================================================
+    // EXPOSE GLOBALS
+    // ================================================================
+
+    window.navigateTo = navigateTo;
+    window.filterByCategory = filterByCategory;
+    window.showFilters = showFilters;
+    window.openDetail = openDetail;
+    window.changeDetailPhoto = changeDetailPhoto;
+    window.toggleDetailFavorite = toggleDetailFavorite;
+    window.toggleFavorite = toggleFavorite;
+    window.renderSearch = renderSearch;
+    window.handlePhotos = handlePhotos;
+    window.submitListing = submitListing;
+    window.uploadAvatar = uploadAvatar;
+    window.editUploadAvatar = editUploadAvatar;
+    window.saveProfile = saveProfile;
+    window.selectCity = selectCity;
+    window.filterCities = filterCities;
+    window.saveLanguage = saveLanguage;
+    window.toggleSetting = toggleSetting;
+    window.showHelp = showHelp;
+    window.showAbout = showAbout;
+    window.logout = logout;
+    window.renderAll = renderAll;
+    window.openChatDetail = openChatDetail;
+    window.sendMessage = sendMessage;
+    window.editListing = editListing;
+    window.deleteListing = deleteListing;
+    window.updateListing = updateListing;
+    window.goBackFromDetail = goBackFromDetail;
+    window.openChatFromDetail = openChatFromDetail;
+
+    // START
+    document.addEventListener('DOMContentLoaded', init);
+    console.log('🚀 UAMO 2.0 з новою логікою завантажено!');
+</script>
 </body>
 </html>
