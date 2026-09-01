@@ -10,11 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         /* ========== GLOBAL ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A;
             --primary-light: #1A3A6B;
@@ -33,8 +29,7 @@
             --transition: 0.2s ease;
             --font: 'Inter', -apple-system, system-ui, sans-serif;
         }
-        html,
-        body {
+        html, body {
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
@@ -48,18 +43,9 @@
             padding: 0 16px 80px 16px;
             animation: fadeIn 0.25s ease;
         }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ========== HEADER ========== */
+        /* HEADER */
         .header {
             display: flex;
             align-items: center;
@@ -78,13 +64,8 @@
             align-items: center;
             gap: 6px;
         }
-        .logo span {
-            color: var(--accent);
-        }
-        .logo i {
-            color: var(--gold);
-            font-size: 18px;
-        }
+        .logo span { color: var(--accent); }
+        .logo i { color: var(--gold); font-size: 18px; }
         .header-actions {
             display: flex;
             align-items: center;
@@ -100,9 +81,7 @@
             position: relative;
             padding: 4px;
         }
-        .header-actions button:hover {
-            color: var(--primary);
-        }
+        .header-actions button:hover { color: var(--primary); }
         .badge-dot {
             width: 8px;
             height: 8px;
@@ -129,19 +108,11 @@
             transition: var(--transition);
             overflow: hidden;
         }
-        .avatar-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .avatar-small:hover {
-            border-color: var(--accent);
-        }
+        .avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-small:hover { border-color: var(--accent); }
 
-        /* ========== SEARCH BAR ========== */
-        .search-bar {
-            padding: 4px 0 12px 0;
-        }
+        /* SEARCH */
+        .search-bar { padding: 4px 0 12px 0; }
         .search-bar-inner {
             display: flex;
             align-items: center;
@@ -156,10 +127,7 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.10);
         }
-        .search-bar-inner i {
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
+        .search-bar-inner i { color: var(--text-secondary); font-size: 16px; }
         .search-bar-inner input {
             flex: 1;
             border: none;
@@ -170,12 +138,9 @@
             background: transparent;
             color: var(--text);
         }
-        .search-bar-inner input::placeholder {
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
+        .search-bar-inner input::placeholder { color: var(--text-secondary); font-weight: 400; }
 
-        /* ========== CATEGORY SLIDER ========== */
+        /* CATEGORIES */
         .category-slider {
             padding: 4px 0 14px 0;
             overflow-x: auto;
@@ -185,9 +150,7 @@
             display: flex;
             gap: 10px;
         }
-        .category-slider::-webkit-scrollbar {
-            display: none;
-        }
+        .category-slider::-webkit-scrollbar { display: none; }
         .category-item {
             flex: 0 0 auto;
             display: flex;
@@ -204,50 +167,23 @@
             cursor: pointer;
             gap: 4px;
         }
-        .category-item:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent);
-        }
-        .category-item.active-category {
-            border-color: var(--accent);
-            background: rgba(0, 102, 255, 0.05);
-        }
-        .category-item i {
-            font-size: 22px;
-            color: var(--primary);
-        }
-        .category-item span {
-            font-size: 10px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
+        .category-item:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .category-item.active-category { border-color: var(--accent); background: rgba(0, 102, 255, 0.05); }
+        .category-item i { font-size: 22px; color: var(--primary); }
+        .category-item span { font-size: 10px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
 
-        /* ========== SECTION HEADER ========== */
+        /* SECTION HEADER */
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 6px 0 4px 0;
         }
-        .section-header h2 {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        .section-header a {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--accent);
-            text-decoration: none;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        .section-header a:hover {
-            color: var(--accent-hover);
-        }
+        .section-header h2 { font-size: 17px; font-weight: 600; color: var(--primary); }
+        .section-header a { font-size: 13px; font-weight: 500; color: var(--accent); text-decoration: none; transition: var(--transition); cursor: pointer; }
+        .section-header a:hover { color: var(--accent-hover); }
 
-        /* ========== LISTING CARDS (horizontal scroll) ========== */
+        /* LISTING CARDS */
         .listing-scroll {
             display: flex;
             gap: 12px;
@@ -256,10 +192,7 @@
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
         }
-        .listing-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
+        .listing-scroll::-webkit-scrollbar { display: none; }
         .listing-card {
             flex: 0 0 160px;
             background: var(--card-bg);
@@ -270,11 +203,7 @@
             transition: var(--transition);
             cursor: pointer;
         }
-        .listing-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-        }
-
+        .listing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07); }
         .listing-card-image {
             height: 110px;
             background: var(--border);
@@ -306,57 +235,17 @@
             transition: var(--transition);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
-        .listing-card-image .favorite-icon:hover {
-            color: #EF4444;
-        }
-        .listing-card-image .favorite-icon.active {
-            color: #EF4444;
-        }
-        .listing-card-image .status-badge {
-            position: absolute;
-            bottom: 6px;
-            left: 6px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 600;
-            padding: 2px 10px;
-            border-radius: 20px;
-        }
-
+        .listing-card-image .favorite-icon:hover { color: #EF4444; }
+        .listing-card-image .favorite-icon.active { color: #EF4444; }
         .listing-card-body {
             padding: 8px 10px 10px 10px;
         }
-        .listing-card-body .price {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1px;
-        }
-        .listing-card-body .title {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 1px;
-        }
-        .listing-card-body .location {
-            font-size: 11px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .listing-card-body .location i {
-            font-size: 10px;
-        }
+        .listing-card-body .price { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 1px; }
+        .listing-card-body .title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
+        .listing-card-body .location { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
 
-        /* ========== CTA BUTTON ========== */
-        .cta-add {
-            margin: 4px 0 16px 0;
-        }
+        /* CTA */
+        .cta-add { margin: 4px 0 16px 0; }
         .cta-add button {
             width: 100%;
             padding: 15px;
@@ -375,15 +264,9 @@
             transition: var(--transition);
             box-shadow: 0 6px 20px rgba(0, 102, 255, 0.25);
         }
-        .cta-add button:hover {
-            background: var(--accent-hover);
-            transform: scale(1.01);
-        }
-        .cta-add button i {
-            font-size: 17px;
-        }
+        .cta-add button:hover { background: var(--accent-hover); transform: scale(1.01); }
 
-        /* ========== BOTTOM NAVIGATION ========== */
+        /* BOTTOM NAV */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -414,25 +297,12 @@
             cursor: pointer;
             transition: var(--transition);
             padding: 4px 12px;
-            position: relative;
         }
-        .bottom-nav-item i {
-            font-size: 20px;
-            transition: var(--transition);
-        }
-        .bottom-nav-item span {
-            font-weight: 500;
-        }
-        .bottom-nav-item:hover {
-            color: var(--primary);
-        }
-        .bottom-nav-item.active {
-            color: var(--accent);
-        }
-        .bottom-nav-item.active i {
-            transform: scale(1.05);
-        }
-
+        .bottom-nav-item i { font-size: 20px; transition: var(--transition); }
+        .bottom-nav-item span { font-weight: 500; }
+        .bottom-nav-item:hover { color: var(--primary); }
+        .bottom-nav-item.active { color: var(--accent); }
+        .bottom-nav-item.active i { transform: scale(1.05); }
         .bottom-nav-item.add-btn i {
             font-size: 26px;
             color: #fff;
@@ -447,33 +317,13 @@
             margin-top: -10px;
             box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);
         }
-        .bottom-nav-item.add-btn span {
-            margin-top: 2px;
-        }
 
-        /* ========== PAGES ========== */
-        .page {
-            display: none;
-            animation: fadeUp 0.25s ease;
-        }
-        .page.active {
-            display: block;
-        }
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        /* PAGES */
+        .page { display: none; animation: fadeUp 0.25s ease; }
+        .page.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ========== SEARCH PAGE ========== */
-        .search-page .search-bar {
-            padding-top: 4px;
-        }
+        /* SEARCH PAGE */
         .search-filters {
             display: flex;
             gap: 8px;
@@ -495,21 +345,8 @@
             align-items: center;
             gap: 5px;
         }
-        .search-filters button:hover {
-            border-color: var(--accent);
-            color: var(--primary);
-        }
-        .search-filters button i {
-            font-size: 12px;
-        }
-
-        .search-results {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 16px;
-        }
-
+        .search-filters button:hover { border-color: var(--accent); color: var(--primary); }
+        .search-results { display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
         .search-result-card {
             display: flex;
             gap: 12px;
@@ -521,9 +358,7 @@
             transition: var(--transition);
             cursor: pointer;
         }
-        .search-result-card:hover {
-            border-color: var(--accent);
-        }
+        .search-result-card:hover { border-color: var(--accent); }
         .search-result-card .img {
             flex: 0 0 72px;
             height: 72px;
@@ -537,47 +372,17 @@
             background-size: cover;
             background-position: center;
         }
-        .search-result-card .info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .search-result-card .info .price {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--primary);
-        }
-        .search-result-card .info .title {
-            font-weight: 500;
-            font-size: 13px;
-        }
-        .search-result-card .info .meta {
-            font-size: 11px;
-            color: var(--text-secondary);
-            display: flex;
-            gap: 12px;
-            margin-top: 2px;
-        }
+        .search-result-card .info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .search-result-card .info .price { font-weight: 700; font-size: 15px; color: var(--primary); }
+        .search-result-card .info .title { font-weight: 500; font-size: 13px; }
+        .search-result-card .info .meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 12px; margin-top: 2px; }
 
-        /* ========== FAVORITES PAGE ========== */
-        .favorites-empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-        .favorites-empty i {
-            font-size: 48px;
-            color: var(--border);
-            margin-bottom: 16px;
-        }
-        .favorites-empty h3 {
-            font-weight: 600;
-            font-size: 18px;
-            color: var(--text);
-        }
+        /* FAVORITES */
+        .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+        .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; }
+        .favorites-empty h3 { font-weight: 600; font-size: 18px; color: var(--text); }
 
-        /* ========== PROFILE PAGE ========== */
+        /* PROFILE */
         .profile-header {
             padding: 16px 0 12px 0;
             display: flex;
@@ -600,20 +405,9 @@
             flex-shrink: 0;
             cursor: pointer;
         }
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .profile-info h3 {
-            font-size: 17px;
-            font-weight: 600;
-        }
-        .profile-info p {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-info h3 { font-size: 17px; font-weight: 600; }
+        .profile-info p { font-size: 13px; color: var(--text-secondary); }
         .profile-stats {
             display: flex;
             gap: 8px;
@@ -629,16 +423,8 @@
             border: 1px solid var(--border);
             min-width: 50px;
         }
-        .profile-stats .stat .num {
-            font-weight: 700;
-            font-size: 17px;
-            color: var(--primary);
-        }
-        .profile-stats .stat .label {
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-
+        .profile-stats .stat .num { font-weight: 700; font-size: 17px; color: var(--primary); }
+        .profile-stats .stat .label { font-size: 10px; color: var(--text-secondary); }
         .profile-menu {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -658,42 +444,16 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .profile-menu-item:last-child {
-            border-bottom: none;
-        }
-        .profile-menu-item:hover {
-            background: var(--bg);
-        }
-        .profile-menu-item i {
-            width: 20px;
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
-        .profile-menu-item .arrow {
-            margin-left: auto;
-            color: var(--border);
-        }
-        .profile-menu-item.danger {
-            color: #EF4444;
-        }
+        .profile-menu-item:last-child { border-bottom: none; }
+        .profile-menu-item:hover { background: var(--bg); }
+        .profile-menu-item i { width: 20px; color: var(--text-secondary); font-size: 16px; }
+        .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
+        .profile-menu-item.danger { color: #EF4444; }
 
-        /* ========== ADD LISTING PAGE ========== */
-        .add-listing-form {
-            padding: 8px 0 16px 0;
-        }
-        .add-listing-form .form-group {
-            margin-bottom: 14px;
-        }
-        .add-listing-form label {
-            display: block;
-            font-weight: 600;
-            font-size: 13px;
-            margin-bottom: 4px;
-            color: var(--primary);
-        }
-        .add-listing-form input,
-        .add-listing-form textarea,
-        .add-listing-form select {
+        /* ADD LISTING */
+        .add-listing-form .form-group { margin-bottom: 14px; }
+        .add-listing-form label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--primary); }
+        .add-listing-form input, .add-listing-form textarea, .add-listing-form select {
             width: 100%;
             padding: 11px 14px;
             border: 1px solid var(--border);
@@ -705,16 +465,11 @@
             outline: none;
             color: var(--text);
         }
-        .add-listing-form input:focus,
-        .add-listing-form textarea:focus,
-        .add-listing-form select:focus {
+        .add-listing-form input:focus, .add-listing-form textarea:focus, .add-listing-form select:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.08);
         }
-        .add-listing-form textarea {
-            resize: vertical;
-            min-height: 70px;
-        }
+        .add-listing-form textarea { resize: vertical; min-height: 70px; }
         .add-listing-form .photo-upload {
             border: 2px dashed var(--border);
             border-radius: var(--radius-sm);
@@ -724,21 +479,9 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .add-listing-form .photo-upload:hover {
-            border-color: var(--accent);
-            background: rgba(0, 102, 255, 0.02);
-        }
-        .add-listing-form .photo-upload i {
-            font-size: 24px;
-            margin-bottom: 4px;
-            display: block;
-        }
-        .add-listing-form .photo-preview-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
+        .add-listing-form .photo-upload:hover { border-color: var(--accent); background: rgba(0, 102, 255, 0.02); }
+        .add-listing-form .photo-upload i { font-size: 24px; margin-bottom: 4px; display: block; }
+        .add-listing-form .photo-preview-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         .add-listing-form .photo-preview-item {
             width: 64px;
             height: 64px;
@@ -764,7 +507,6 @@
             align-items: center;
             justify-content: center;
         }
-
         .btn-submit {
             width: 100%;
             padding: 15px;
@@ -778,11 +520,9 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .btn-submit:hover {
-            background: var(--primary-light);
-        }
+        .btn-submit:hover { background: var(--primary-light); }
 
-        /* ========== DETAIL PAGE ========== */
+        /* DETAIL */
         .detail-gallery {
             height: 220px;
             background: var(--border);
@@ -813,11 +553,7 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .detail-gallery .dots span.active {
-            background: #fff;
-            width: 18px;
-            border-radius: 4px;
-        }
+        .detail-gallery .dots span.active { background: #fff; width: 18px; border-radius: 4px; }
         .detail-gallery .nav-arrow {
             position: absolute;
             top: 50%;
@@ -832,64 +568,23 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .detail-gallery .nav-arrow:hover {
-            background: rgba(0, 0, 0, 0.6);
-        }
-        .detail-gallery .nav-arrow.left {
-            left: 8px;
-        }
-        .detail-gallery .nav-arrow.right {
-            right: 8px;
-        }
-
-        .detail-content {
-            padding: 14px 0 16px 0;
-        }
-        .detail-content .price {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        .detail-content .title {
-            font-size: 19px;
-            font-weight: 600;
-            margin: 2px 0 2px 0;
-        }
-        .detail-content .meta {
-            font-size: 13px;
-            color: var(--text-secondary);
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .detail-content .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 14px 0;
-        }
-        .detail-content .description {
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text);
-        }
+        .detail-gallery .nav-arrow:hover { background: rgba(0, 0, 0, 0.6); }
+        .detail-gallery .nav-arrow.left { left: 8px; }
+        .detail-gallery .nav-arrow.right { right: 8px; }
+        .detail-content { padding: 14px 0 16px 0; }
+        .detail-content .price { font-size: 26px; font-weight: 700; color: var(--primary); }
+        .detail-content .title { font-size: 19px; font-weight: 600; margin: 2px 0 2px 0; }
+        .detail-content .meta { font-size: 13px; color: var(--text-secondary); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+        .detail-content .divider { height: 1px; background: var(--border); margin: 14px 0; }
+        .detail-content .description { font-size: 14px; line-height: 1.6; color: var(--text); }
         .detail-content .specs {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px 12px;
             margin: 10px 0;
         }
-        .detail-content .specs .spec-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 4px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .detail-content .specs .spec-item .label {
-            color: var(--text-secondary);
-        }
-
+        .detail-content .specs .spec-item { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+        .detail-content .specs .spec-item .label { color: var(--text-secondary); }
         .seller-box {
             display: flex;
             align-items: center;
@@ -913,26 +608,11 @@
             overflow: hidden;
             flex-shrink: 0;
         }
-        .seller-box .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .seller-box .info {
-            flex: 1;
-        }
-        .seller-box .info .name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .seller-box .info .since {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .seller-box .actions {
-            display: flex;
-            gap: 6px;
-        }
+        .seller-box .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .seller-box .info { flex: 1; }
+        .seller-box .info .name { font-weight: 600; font-size: 14px; }
+        .seller-box .info .since { font-size: 12px; color: var(--text-secondary); }
+        .seller-box .actions { display: flex; gap: 6px; }
         .seller-box .actions button {
             padding: 7px 12px;
             border: none;
@@ -943,84 +623,36 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .seller-box .actions .btn-chat {
-            background: var(--accent);
-            color: #fff;
-        }
-        .seller-box .actions .btn-chat:hover {
-            background: var(--accent-hover);
-        }
-        .seller-box .actions .btn-call {
-            background: var(--border);
-            color: var(--text);
-        }
-        .seller-box .actions .btn-call:hover {
-            background: #d1d8e0;
-        }
+        .seller-box .actions .btn-chat { background: var(--accent); color: #fff; }
+        .seller-box .actions .btn-chat:hover { background: var(--accent-hover); }
+        .seller-box .actions .btn-call { background: var(--border); color: var(--text); }
+        .seller-box .actions .btn-call:hover { background: #d1d8e0; }
 
-        /* ========== UTILITY ========== */
-        .text-center {
-            text-align: center;
-        }
-        .mt-8 {
-            margin-top: 8px;
-        }
-        .mb-8 {
-            margin-bottom: 8px;
-        }
-        .hidden {
-            display: none !important;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-        }
-        .empty-state i {
-            font-size: 40px;
-            color: var(--border);
-            display: block;
-            margin-bottom: 12px;
-        }
+        /* UTILITY */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+        .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
+        .hidden { display: none !important; }
 
-        /* ========== RESPONSIVE ========== */
         @media (min-width: 640px) {
-            .app-container {
-                max-width: 600px;
-                padding: 0 24px 80px 24px;
-            }
-            .bottom-nav {
-                max-width: 600px;
-                border-radius: 16px 16px 0 0;
-            }
+            .app-container { max-width: 600px; padding: 0 24px 80px 24px; }
+            .bottom-nav { max-width: 600px; border-radius: 16px 16px 0 0; }
         }
         @media (max-width: 400px) {
-            .listing-card {
-                flex: 0 0 140px;
-            }
-            .listing-card-image {
-                height: 95px;
-            }
-            .category-item {
-                min-width: 56px;
-                padding: 8px 12px;
-            }
-            .category-item i {
-                font-size: 18px;
-            }
+            .listing-card { flex: 0 0 140px; }
+            .listing-card-image { height: 95px; }
+            .category-item { min-width: 56px; padding: 8px 12px; }
+            .category-item i { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
     <div id="app">
-        <!-- ==================== HEADER (спільний) ==================== -->
+        <!-- HEADER -->
         <div class="header" id="globalHeader">
-            <div class="logo">
-                <i class="fas fa-cube"></i> UAM<span>O</span>
-            </div>
+            <div class="logo"><i class="fas fa-cube"></i> UAM<span>O</span></div>
             <div class="header-actions">
-                <button id="notifBtn" aria-label="Сповіщення" onclick="showNotifications()">
+                <button id="notifBtn" onclick="showNotifications()">
                     <i class="fas fa-bell"></i>
                     <span class="badge-dot" id="notifBadge" style="display:none;"></span>
                 </button>
@@ -1030,50 +662,25 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- ==================== PAGE: HOME ============================== -->
-        <!-- ============================================================ -->
+        <!-- HOME -->
         <div class="page active" id="page-home">
             <div class="app-container">
-                <!-- Пошук -->
                 <div class="search-bar">
                     <div class="search-bar-inner">
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="Що ви шукаєте?" id="globalSearch" onkeydown="if(event.key==='Enter'){navigateTo('search'); document.getElementById('searchInput').value=this.value; renderSearch(this.value);}" />
                     </div>
                 </div>
-
-                <!-- Категорії -->
-                <div class="category-slider" id="categorySlider">
-                    <!-- рендериться з JS -->
-                </div>
-
-                <!-- Рекомендовані -->
-                <div class="section-header">
-                    <h2>Рекомендовані</h2>
-                    <a onclick="navigateTo('search')">Усі →</a>
-                </div>
+                <div class="category-slider" id="categorySlider"></div>
+                <div class="section-header"><h2>Рекомендовані</h2><a onclick="navigateTo('search')">Усі →</a></div>
                 <div class="listing-scroll" id="recommendedScroll"></div>
-
-                <!-- Нові -->
-                <div class="section-header">
-                    <h2>Нові оголошення</h2>
-                    <a onclick="navigateTo('search')">Усі →</a>
-                </div>
+                <div class="section-header"><h2>Нові оголошення</h2><a onclick="navigateTo('search')">Усі →</a></div>
                 <div class="listing-scroll" id="newListingsScroll"></div>
-
-                <!-- CTA -->
-                <div class="cta-add">
-                    <button onclick="navigateTo('add')">
-                        <i class="fas fa-plus"></i> Додати оголошення
-                    </button>
-                </div>
+                <div class="cta-add"><button onclick="navigateTo('add')"><i class="fas fa-plus"></i> Додати оголошення</button></div>
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- ==================== PAGE: SEARCH ============================ -->
-        <!-- ============================================================ -->
+        <!-- SEARCH -->
         <div class="page search-page" id="page-search">
             <div class="app-container">
                 <div class="search-bar">
@@ -1082,7 +689,6 @@
                         <input type="text" placeholder="Пошук..." id="searchInput" oninput="renderSearch(this.value)" />
                     </div>
                 </div>
-
                 <div class="search-filters">
                     <button onclick="filterByCategory('all')"><i class="fas fa-list"></i> Усі</button>
                     <button onclick="filterByCategory('products')"><i class="fas fa-tag"></i> Товари</button>
@@ -1092,23 +698,17 @@
                     <button onclick="filterByCategory('transport')"><i class="fas fa-car"></i> Транспорт</button>
                     <button onclick="showFilters()"><i class="fas fa-sliders-h"></i> Фільтри</button>
                 </div>
-
-                <div class="search-results" id="searchResults">
-                    <!-- рендериться з JS -->
-                </div>
+                <div class="search-results" id="searchResults"></div>
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- ==================== PAGE: ADD LISTING ====================== -->
-        <!-- ============================================================ -->
+        <!-- ADD -->
         <div class="page" id="page-add">
             <div class="app-container">
                 <div class="add-listing-form">
                     <h3 style="font-size:19px; font-weight:600; margin-bottom:14px;">
                         <i class="fas fa-plus-circle" style="color:var(--accent);"></i> Нове оголошення
                     </h3>
-
                     <div class="form-group">
                         <label>Категорія</label>
                         <select id="addCategory">
@@ -1119,50 +719,40 @@
                             <option value="Транспорт">🚗 Транспорт</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label>Назва *</label>
                         <input type="text" id="addTitle" placeholder="Наприклад: iPhone 14 Pro" />
                     </div>
-
                     <div class="form-group">
                         <label>Опис</label>
                         <textarea id="addDesc" placeholder="Детальний опис..." rows="3"></textarea>
                     </div>
-
                     <div class="form-group">
                         <label>Фото</label>
                         <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            Додати фото (до 8 шт.)
+                            <i class="fas fa-cloud-upload-alt"></i> Додати фото (до 8 шт.)
                         </div>
                         <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" onchange="handlePhotos(event)" />
                         <div class="photo-preview-grid" id="photoPreviewGrid"></div>
                     </div>
-
                     <div class="form-group">
                         <label>Ціна (грн) *</label>
                         <input type="number" id="addPrice" placeholder="8000" />
                     </div>
-
                     <div class="form-group">
                         <label>Місто</label>
                         <input type="text" id="addCity" placeholder="Київ" />
                     </div>
-
                     <div class="form-group">
                         <label>Телефон</label>
                         <input type="tel" id="addPhone" placeholder="+380XXXXXXXXX" />
                     </div>
-
                     <button class="btn-submit" onclick="submitListing()">Опублікувати</button>
                 </div>
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- ==================== PAGE: FAVORITES ======================== -->
-        <!-- ============================================================ -->
+        <!-- FAVORITES -->
         <div class="page" id="page-favorites">
             <div class="app-container">
                 <div style="padding: 8px 0 12px 0;">
@@ -1172,9 +762,7 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- ==================== PAGE: PROFILE =========================== -->
-        <!-- ============================================================ -->
+        <!-- PROFILE -->
         <div class="page" id="page-profile">
             <div class="app-container">
                 <div class="profile-header">
@@ -1187,41 +775,22 @@
                         <p id="profileEmail">user@example.com</p>
                     </div>
                 </div>
-
                 <div class="profile-stats" id="profileStats">
                     <div class="stat"><div class="num" id="statActive">0</div><div class="label">Активні</div></div>
                     <div class="stat"><div class="num" id="statFavorites">0</div><div class="label">В обраному</div></div>
                     <div class="stat"><div class="num" id="statMessages">0</div><div class="label">Повідомлень</div></div>
                 </div>
-
                 <div class="profile-menu">
-                    <div class="profile-menu-item" onclick="navigateTo('myListings')">
-                        <i class="fas fa-list-ul"></i> Мої оголошення
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="navigateTo('favorites')">
-                        <i class="fas fa-heart"></i> Обране
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="showMessages()">
-                        <i class="fas fa-envelope"></i> Повідомлення
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="showSettings()">
-                        <i class="fas fa-cog"></i> Налаштування
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item danger" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Вийти
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
+                    <div class="profile-menu-item" onclick="navigateTo('myListings')"><i class="fas fa-list-ul"></i> Мої оголошення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('favorites')"><i class="fas fa-heart"></i> Обране <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="showMessages()"><i class="fas fa-envelope"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="showSettings()"><i class="fas fa-cog"></i> Налаштування <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Вийти <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- ==================== PAGE: DETAIL (прихована) =============== -->
-        <!-- ============================================================ -->
+        <!-- DETAIL -->
         <div class="page" id="page-detail">
             <div class="app-container">
                 <div style="display:flex; align-items:center; gap:12px; padding:8px 0 12px 0;">
@@ -1234,14 +803,12 @@
                         <i class="fas fa-ellipsis-v" style="font-size:20px; color:var(--text-secondary); cursor:pointer;"></i>
                     </div>
                 </div>
-
                 <div class="detail-gallery" id="detailGallery">
                     <i class="fas fa-image"></i>
                     <button class="nav-arrow left" id="detailArrowLeft" onclick="changeDetailPhoto(-1)">‹</button>
                     <button class="nav-arrow right" id="detailArrowRight" onclick="changeDetailPhoto(1)">›</button>
                     <div class="dots" id="detailDots"></div>
                 </div>
-
                 <div class="detail-content" id="detailContent">
                     <div class="price" id="detailPrice">8 500 грн</div>
                     <div class="title" id="detailTitle">Диван сучасний</div>
@@ -1249,20 +816,13 @@
                         <span><i class="fas fa-map-marker-alt"></i> Київ, Оболонь</span>
                         <span><i class="far fa-clock"></i> Сьогодні о 14:30</span>
                     </div>
-
                     <div class="divider"></div>
-
-                    <div class="description" id="detailDesc">
-                        Зручний кутовий диван із тканинною оббивкою. Стан — новий.
-                    </div>
-
+                    <div class="description" id="detailDesc">Зручний кутовий диван із тканинною оббивкою. Стан — новий.</div>
                     <div class="specs" id="detailSpecs">
                         <div class="spec-item"><span class="label">Стан</span> <span>Новий</span></div>
                         <div class="spec-item"><span class="label">Категорія</span> <span>Меблі</span></div>
                     </div>
-
                     <div class="divider"></div>
-
                     <div class="seller-box" id="detailSeller">
                         <div class="avatar" id="sellerAvatar">А</div>
                         <div class="info">
@@ -1278,159 +838,142 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!-- ==================== BOTTOM NAVIGATION ====================== -->
-        <!-- ============================================================ -->
+        <!-- BOTTOM NAV -->
         <nav class="bottom-nav" id="bottomNav">
             <button class="bottom-nav-item active" data-page="home" onclick="navigateTo('home')">
-                <i class="fas fa-home"></i>
-                <span>Головна</span>
+                <i class="fas fa-home"></i><span>Головна</span>
             </button>
             <button class="bottom-nav-item" data-page="search" onclick="navigateTo('search')">
-                <i class="fas fa-search"></i>
-                <span>Пошук</span>
+                <i class="fas fa-search"></i><span>Пошук</span>
             </button>
             <button class="bottom-nav-item add-btn" data-page="add" onclick="navigateTo('add')">
-                <i class="fas fa-plus"></i>
-                <span>Додати</span>
+                <i class="fas fa-plus"></i><span>Додати</span>
             </button>
             <button class="bottom-nav-item" data-page="favorites" onclick="navigateTo('favorites')">
-                <i class="fas fa-heart"></i>
-                <span>Обране</span>
+                <i class="fas fa-heart"></i><span>Обране</span>
             </button>
             <button class="bottom-nav-item" data-page="profile" onclick="navigateTo('profile')">
-                <i class="fas fa-user"></i>
-                <span>Профіль</span>
+                <i class="fas fa-user"></i><span>Профіль</span>
             </button>
         </nav>
     </div>
 
     <script>
         // ================================================================
-        // DATA
+        // SUPABASE CONFIG
         // ================================================================
 
-        const categories = [
-            { id: 'products', icon: 'fa-tag', name: 'Товари' },
-            { id: 'jobs', icon: 'fa-briefcase', name: 'Робота' },
-            { id: 'services', icon: 'fa-wrench', name: 'Послуги' },
-            { id: 'realestate', icon: 'fa-building', name: 'Нерухом.' },
-            { id: 'transport', icon: 'fa-car', name: 'Транспорт' }
-        ];
+        const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_qm9h6LpIJAqwvH6-Q9yxZw_VhmgZbvq';
 
-        let listings = [{
-            id: 1,
-            title: 'iPhone 14 Pro 256GB',
-            price: '32 500',
-            location: 'Київ',
-            image: '📱',
-            category: 'products',
-            isNew: true,
-            isFeatured: true,
-            createdAt: '2026-08-30T14:00:00',
-            description: 'Смартфон у відмінному стані, повний комплект.',
-            specs: { Стан: 'Б/В', Категорія: 'Електроніка' },
-            seller: { name: 'Олександр', since: '2024', avatar: 'О' }
-        }, {
-            id: 2,
-            title: 'Диван кутовий новий',
-            price: '8 500',
-            location: 'Київ',
-            image: '🛋️',
-            category: 'products',
-            isNew: true,
-            isFeatured: true,
-            createdAt: '2026-08-31T10:00:00',
-            description: 'Зручний кутовий диван із тканинною оббивкою. Стан — новий.',
-            specs: { Стан: 'Новий', Категорія: 'Меблі', Матеріал: 'Тканина' },
-            seller: { name: 'Анна Коваленко', since: '2024', avatar: 'А' }
-        }, {
-            id: 3,
-            title: 'Менеджер з продажу',
-            price: 'від 25 000',
-            location: 'Львів',
-            image: '💼',
-            category: 'jobs',
-            isNew: true,
-            isFeatured: false,
-            createdAt: '2026-08-31T12:00:00',
-            description: 'Шукаємо досвідченого менеджера в активний відділ продажів.',
-            specs: { Графік: 'Повний день', Досвід: 'від 2 років' },
-            seller: { name: 'ТОВ Компанія', since: '2023', avatar: 'К' }
-        }, {
-            id: 4,
-            title: 'Ремонт квартир під ключ',
-            price: 'договірна',
-            location: 'Одеса',
-            image: '🔧',
-            category: 'services',
-            isNew: true,
-            isFeatured: true,
-            createdAt: '2026-09-01T09:00:00',
-            description: 'Комплексний ремонт квартир і офісів. Висока якість.',
-            specs: { Тип: 'Комплексний', Гарантія: '1 рік' },
-            seller: { name: 'Будівельна група', since: '2022', avatar: 'Б' }
-        }, {
-            id: 5,
-            title: '1-к. квартира, Печерськ',
-            price: '12 500/міс',
-            location: 'Київ',
-            image: '🏠',
-            category: 'realestate',
-            isNew: false,
-            isFeatured: true,
-            createdAt: '2026-08-28T16:00:00',
-            description: 'Затишна квартира в центрі Києва. Євроремонт.',
-            specs: { Кімнат: '1', Поверх: '5/9', Площа: '42 м²' },
-            seller: { name: 'Ірина', since: '2025', avatar: 'І' }
-        }, {
-            id: 6,
-            title: 'BMW X5 2023',
-            price: '1 250 000',
-            location: 'Дніпро',
-            image: '🚗',
-            category: 'transport',
-            isNew: false,
-            isFeatured: false,
-            createdAt: '2026-08-27T11:00:00',
-            description: 'BMW X5 2023 року, пробіг 15 000 км, повний комплект.',
-            specs: { Рік: '2023', Пробіг: '15 000 км', Паливо: 'Бензин' },
-            seller: { name: 'Микола', since: '2023', avatar: 'М' }
-        }, {
-            id: 7,
-            title: 'Ноутбук MacBook Air M2',
-            price: '38 000',
-            location: 'Харків',
-            image: '💻',
-            category: 'products',
-            isNew: false,
-            isFeatured: false,
-            createdAt: '2026-08-26T08:00:00',
-            description: 'MacBook Air M2, 16GB RAM, 512GB SSD, у відмінному стані.',
-            specs: { Стан: 'Б/В', Пам\'ять: '16GB/512GB' },
-            seller: { name: 'Дмитро', since: '2024', avatar: 'Д' }
-        }, {
-            id: 8,
-            title: 'Веб-дизайнер (віддалено)',
-            price: 'від 30 000',
-            location: 'Україна',
-            image: '🎨',
-            category: 'jobs',
-            isNew: false,
-            isFeatured: false,
-            createdAt: '2026-08-25T13:00:00',
-            description: 'Потрібен досвідчений веб-дизайнер для роботи над проєктами.',
-            specs: { Графік: 'Віддалено', Досвід: 'від 3 років' },
-            seller: { name: 'Digital Agency', since: '2023', avatar: 'D' }
-        }];
-
-        let favorites = [];
-        let currentUser = { name: 'Користувач', id: 'user1', avatar: 'К' };
+        let CURRENT_USER_ID = '1';
         let currentPage = 'home';
         let selectedPhotos = [];
+        let favorites = [];
         let currentDetailId = null;
         let detailPhotos = [];
         let detailIndex = 0;
+        let listings = [];
+
+        // ================================================================
+        // TELEGRAM WEBAPP
+        // ================================================================
+
+        try {
+            const tg = window.Telegram?.WebApp;
+            if (tg) {
+                tg.expand();
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    CURRENT_USER_ID = String(user.id);
+                    document.getElementById('profileName').textContent = user.first_name || 'Користувач';
+                    document.getElementById('profileEmail').textContent = user.username ? `@${user.username}` : 'user@telegram';
+                    document.getElementById('profileAvatarLetter').textContent = user.first_name?.[0] || 'К';
+                    document.getElementById('avatarLetter').textContent = user.first_name?.[0] || 'К';
+                }
+            }
+        } catch (e) { console.log('Telegram WebApp not available'); }
+
+        // ================================================================
+        // API HELPER
+        // ================================================================
+
+        async function apiRequest(endpoint, options = {}) {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+                    ...options,
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                if (res.status === 204) return [];
+                if (res.status === 201 || res.status === 200) {
+                    const text = await res.text();
+                    if (text && text.length > 0) { try { return JSON.parse(text); } catch(e){ return []; } }
+                    return [];
+                }
+                if (!res.ok) return [];
+                const text = await res.text();
+                if (text && text.length > 0) { try { return JSON.parse(text); } catch(e){ return []; } }
+                return [];
+            } catch(e) { console.error('Fetch error:', e); return []; }
+        }
+
+        // ================================================================
+        // LOAD DATA
+        // ================================================================
+
+        async function loadListings() {
+            const data = await apiRequest('listings?select=*&status=eq.active&order=created_at.desc&limit=500');
+            listings = data.map(item => ({
+                id: item.id,
+                title: item.title || 'Без назви',
+                price: item.price ? String(item.price) : '0',
+                location: item.city || 'не вказано',
+                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                photos: item.photos || null,
+                category: item.category || 'Інше',
+                isNew: new Date(item.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000),
+                isFeatured: item.is_featured || false,
+                createdAt: item.created_at || new Date().toISOString(),
+                description: item.description || 'Без опису',
+                specs: {},
+                seller: { 
+                    name: 'Продавець', 
+                    since: '2024', 
+                    avatar: '👤' 
+                },
+                user_id: item.user_id,
+                phone: item.phone || '',
+                status: item.status || 'active'
+            }));
+            renderAll();
+        }
+
+        async function loadFavoritesFromDB() {
+            if (!CURRENT_USER_ID) return;
+            const data = await apiRequest(`favorites?user_id=eq.${CURRENT_USER_ID}&select=listing_id`);
+            favorites = data.map(f => f.listing_id);
+            renderAll();
+        }
+
+        async function toggleFavoriteDB(listingId) {
+            const isFav = favorites.includes(listingId);
+            if (isFav) {
+                await apiRequest(`favorites?user_id=eq.${CURRENT_USER_ID}&listing_id=eq.${listingId}`, { method: 'DELETE' });
+                favorites = favorites.filter(id => id !== listingId);
+            } else {
+                await apiRequest('favorites', {
+                    method: 'POST',
+                    body: JSON.stringify({ user_id: CURRENT_USER_ID, listing_id: listingId })
+                });
+                favorites.push(listingId);
+            }
+            renderAll();
+        }
 
         // ================================================================
         // RENDER HELPERS
@@ -1457,28 +1000,16 @@
             return favorites.some(f => f === id);
         }
 
-        function toggleFavorite(id) {
-            const idx = favorites.indexOf(id);
-            if (idx > -1) {
-                favorites.splice(idx, 1);
-            } else {
-                favorites.push(id);
-            }
-            renderAll();
-        }
-
         function renderListingCard(listing) {
             const fav = isFavorite(listing.id);
             const photo = getFirstPhoto(listing);
-            const isNew = listing.isNew;
             return `
-                <div class="listing-card" onclick="openDetail(${listing.id})">
+                <div class="listing-card" onclick="openDetail('${listing.id}')">
                     <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);`}">
                         ${!photo ? listing.image || '📦' : ''}
-                        <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite(${listing.id})">
+                        <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavoriteDB('${listing.id}')">
                             <i class="${fav ? 'fas' : 'far'} fa-heart"></i>
                         </button>
-                        ${isNew ? '<span class="status-badge">НОВЕ</span>' : ''}
                     </div>
                     <div class="listing-card-body">
                         <div class="price">${listing.price} грн</div>
@@ -1492,7 +1023,7 @@
         function renderSearchResult(listing) {
             const photo = getFirstPhoto(listing);
             return `
-                <div class="search-result-card" onclick="openDetail(${listing.id})">
+                <div class="search-result-card" onclick="openDetail('${listing.id}')">
                     <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;`}">
                         ${!photo ? listing.image || '📦' : ''}
                     </div>
@@ -1513,6 +1044,13 @@
         // ================================================================
 
         function renderCategories() {
+            const categories = [
+                { id: 'products', icon: 'fa-tag', name: 'Товари' },
+                { id: 'jobs', icon: 'fa-briefcase', name: 'Робота' },
+                { id: 'services', icon: 'fa-wrench', name: 'Послуги' },
+                { id: 'realestate', icon: 'fa-building', name: 'Нерухом.' },
+                { id: 'transport', icon: 'fa-car', name: 'Транспорт' }
+            ];
             const container = document.getElementById('categorySlider');
             container.innerHTML = categories.map(c =>
                 `<div class="category-item" onclick="filterByCategory('${c.id}'); navigateTo('search')">
@@ -1550,15 +1088,11 @@
                 );
             }
             if (results.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-search"></i>
-                        Нічого не знайдено
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>`;
             } else {
                 container.innerHTML = results.map(renderSearchResult).join('');
             }
+            updateNav('search');
         }
 
         function renderFavorites() {
@@ -1579,16 +1113,10 @@
         }
 
         function renderProfile() {
-            document.getElementById('profileName').textContent = currentUser.name;
-            document.getElementById('profileEmail').textContent = `${currentUser.id}@uamo.com`;
-            document.getElementById('profileAvatarLetter').textContent = currentUser.avatar || 'К';
-            document.getElementById('avatarLetter').textContent = currentUser.avatar || 'К';
-
             const activeCount = listings.filter(l => l.isNew).length;
             document.getElementById('statActive').textContent = activeCount;
             document.getElementById('statFavorites').textContent = favorites.length;
             document.getElementById('statMessages').textContent = '3';
-
             updateNav('profile');
         }
 
@@ -1604,16 +1132,11 @@
         // ================================================================
 
         function navigateTo(page) {
-            // ховаємо всі сторінки
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // показуємо потрібну
             const target = document.getElementById(`page-${page}`);
             if (target) target.classList.add('active');
-
             currentPage = page;
             renderAll();
-
-            // скрол до верху
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1659,13 +1182,12 @@
 
         function openDetail(id) {
             const listing = listings.find(l => l.id === id);
-            if (!listing) return;
+            if (!listing) { alert('Оголошення не знайдено'); return; }
 
             currentDetailId = id;
             detailPhotos = listing.photos || (listing.image ? [listing.image] : []);
             detailIndex = 0;
 
-            // Заповнюємо дані
             document.getElementById('detailPrice').textContent = `${listing.price} грн`;
             document.getElementById('detailTitle').textContent = listing.title;
             document.getElementById('detailMeta').innerHTML = `
@@ -1674,34 +1196,27 @@
             `;
             document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
 
-            // Специфікації
             const specsContainer = document.getElementById('detailSpecs');
             if (listing.specs && Object.keys(listing.specs).length > 0) {
                 specsContainer.innerHTML = Object.entries(listing.specs)
-                    .map(([key, val]) =>
-                        `<div class="spec-item"><span class="label">${key}</span> <span>${val}</span></div>`
-                    ).join('');
+                    .map(([key, val]) => `<div class="spec-item"><span class="label">${key}</span> <span>${val}</span></div>`)
+                    .join('');
                 specsContainer.style.display = 'grid';
             } else {
                 specsContainer.style.display = 'none';
             }
 
-            // Продавець
             if (listing.seller) {
                 document.getElementById('sellerName').textContent = listing.seller.name;
                 document.getElementById('sellerSince').textContent = `На UAMO з ${listing.seller.since}`;
                 document.getElementById('sellerAvatar').textContent = listing.seller.avatar || '👤';
             }
 
-            // Кнопка обраного
             const favBtn = document.getElementById('detailFavoriteBtn');
             favBtn.className = isFavorite(id) ? 'fas fa-heart' : 'far fa-heart';
             favBtn.style.color = isFavorite(id) ? '#EF4444' : 'var(--text-secondary)';
 
-            // Фото
             updateDetailGallery();
-
-            // Переходимо на сторінку деталей
             navigateTo('detail');
         }
 
@@ -1712,36 +1227,23 @@
             const arrowRight = document.getElementById('detailArrowRight');
 
             if (detailPhotos.length > 0) {
-                const photo = detailPhotos[detailIndex];
-                gallery.style.backgroundImage = `url('${photo}')`;
+                gallery.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
                 gallery.style.backgroundSize = 'cover';
                 gallery.style.backgroundPosition = 'center';
-                gallery.querySelector('i')?.remove();
+                const icon = gallery.querySelector('i');
+                if (icon) icon.style.display = 'none';
 
-                // Dots
                 dots.innerHTML = detailPhotos.map((_, i) =>
                     `<span class="${i === detailIndex ? 'active' : ''}" onclick="detailIndex=${i}; updateDetailGallery();"></span>`
                 ).join('');
 
                 arrowLeft.style.display = detailPhotos.length > 1 ? 'block' : 'none';
                 arrowRight.style.display = detailPhotos.length > 1 ? 'block' : 'none';
-
-                // Свайп на фото
-                let startX = 0;
-                gallery.ontouchstart = (e) => { startX = e.touches[0].clientX; };
-                gallery.ontouchend = (e) => {
-                    const diff = e.changedTouches[0].clientX - startX;
-                    if (Math.abs(diff) > 50) {
-                        changeDetailPhoto(diff > 0 ? -1 : 1);
-                    }
-                };
             } else {
                 gallery.style.backgroundImage = 'none';
                 gallery.style.background = 'var(--border)';
-                gallery.innerHTML = `<i class="fas fa-image"></i>
-                    <div class="dots" id="detailDots"></div>
-                    <button class="nav-arrow left" id="detailArrowLeft" style="display:none;" onclick="changeDetailPhoto(-1)">‹</button>
-                    <button class="nav-arrow right" id="detailArrowRight" style="display:none;" onclick="changeDetailPhoto(1)">›</button>`;
+                const icon = gallery.querySelector('i');
+                if (icon) icon.style.display = 'block';
                 dots.innerHTML = '';
                 arrowLeft.style.display = 'none';
                 arrowRight.style.display = 'none';
@@ -1758,12 +1260,11 @@
 
         function toggleDetailFavorite() {
             if (currentDetailId) {
-                toggleFavorite(currentDetailId);
+                toggleFavoriteDB(currentDetailId);
                 const favBtn = document.getElementById('detailFavoriteBtn');
                 const isFav = isFavorite(currentDetailId);
                 favBtn.className = isFav ? 'fas fa-heart' : 'far fa-heart';
                 favBtn.style.color = isFav ? '#EF4444' : 'var(--text-secondary)';
-                renderFavorites();
             }
         }
 
@@ -1797,7 +1298,7 @@
             ).join('');
         }
 
-        function submitListing() {
+        async function submitListing() {
             const title = document.getElementById('addTitle').value.trim();
             const price = document.getElementById('addPrice').value.trim();
             const city = document.getElementById('addCity').value.trim();
@@ -1808,23 +1309,24 @@
             if (!title) { alert('Введіть назву'); return; }
             if (!price) { alert('Введіть ціну'); return; }
 
-            const newListing = {
-                id: Date.now(),
+            const newItem = {
+                user_id: CURRENT_USER_ID,
                 title: title,
-                price: price,
-                location: city || 'не вказано',
-                image: selectedPhotos.length > 0 ? selectedPhotos[0] : '📦',
-                photos: selectedPhotos.length > 0 ? selectedPhotos : null,
+                price: parseFloat(price),
+                city: city || '',
+                phone: phone || '',
+                description: desc || '',
                 category: category,
-                isNew: true,
-                isFeatured: false,
-                createdAt: new Date().toISOString(),
-                description: desc || 'Без опису',
-                specs: {},
-                seller: { name: currentUser.name, since: '2026', avatar: currentUser.avatar || 'К' }
+                photos: selectedPhotos.length > 0 ? selectedPhotos : null,
+                status: 'active',
+                created_at: new Date().toISOString()
             };
 
-            listings.unshift(newListing);
+            await apiRequest('listings', {
+                method: 'POST',
+                body: JSON.stringify(newItem)
+            });
+
             selectedPhotos = [];
             renderPhotoPreviews();
             document.getElementById('addTitle').value = '';
@@ -1834,6 +1336,7 @@
             document.getElementById('addDesc').value = '';
 
             alert('✅ Оголошення опубліковано!');
+            await loadListings();
             navigateTo('home');
         }
 
@@ -1846,62 +1349,34 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
-                currentUser.avatar = e.target.result;
-                renderProfile();
+                document.getElementById('profileAvatarLetter').innerHTML = `<img src="${e.target.result}" />`;
+                document.getElementById('avatarLetter').innerHTML = `<img src="${e.target.result}" />`;
             };
             reader.readAsDataURL(file);
         }
 
-        function showMessages() {
-            alert('💬 Повідомлення\n\nЧат з продавцем: 3 непрочитаних');
-        }
-
-        function showSettings() {
-            alert('⚙️ Налаштування\n\n- Сповіщення\n- Місто\n- Мова\n- Конфіденційність');
-        }
-
-        function showNotifications() {
-            alert('🔔 Сповіщення\n\n- Нове повідомлення від продавця\n- Ваше оголошення переглянули 5 разів');
-        }
-
-        function logout() {
-            if (confirm('Ви впевнені, що хочете вийти?')) {
-                alert('👋 До побачення!');
-            }
-        }
+        function showMessages() { alert('💬 Повідомлення\n\nЧат з продавцем: 3 непрочитаних'); }
+        function showSettings() { alert('⚙️ Налаштування\n\n- Сповіщення\n- Місто\n- Мова\n- Конфіденційність'); }
+        function showNotifications() { alert('🔔 Сповіщення\n\n- Нове повідомлення від продавця\n- Ваше оголошення переглянули 5 разів'); }
+        function logout() { if (confirm('Ви впевнені?')) { alert('👋 До побачення!'); } }
 
         // ================================================================
         // INIT
         // ================================================================
 
-        // Ініціалізуємо сторінку
-        document.addEventListener('DOMContentLoaded', function() {
-            // Telegram WebApp
+        async function init() {
             try {
                 const tg = window.Telegram?.WebApp;
                 if (tg) tg.expand();
             } catch (e) {}
 
-            // Завантажуємо збережені фаворити
-            try {
-                const saved = localStorage.getItem('uamo_favorites');
-                if (saved) favorites = JSON.parse(saved);
-            } catch (e) {}
-
-            // Зберігаємо фаворити при зміні
-            const origToggle = toggleFavorite;
-            toggleFavorite = function(id) {
-                origToggle(id);
-                try {
-                    localStorage.setItem('uamo_favorites', JSON.stringify(favorites));
-                } catch (e) {}
-            };
-
+            await loadListings();
+            await loadFavoritesFromDB();
             renderHome();
-        });
+        }
 
         // ================================================================
-        // ГЛОБАЛЬНІ ФУНКЦІЇ
+        // EXPOSE GLOBALS
         // ================================================================
 
         window.navigateTo = navigateTo;
@@ -1910,7 +1385,7 @@
         window.openDetail = openDetail;
         window.changeDetailPhoto = changeDetailPhoto;
         window.toggleDetailFavorite = toggleDetailFavorite;
-        window.toggleFavorite = toggleFavorite;
+        window.toggleFavoriteDB = toggleFavoriteDB;
         window.renderSearch = renderSearch;
         window.handlePhotos = handlePhotos;
         window.submitListing = submitListing;
@@ -1921,8 +1396,9 @@
         window.logout = logout;
         window.renderAll = renderAll;
 
-        console.log('🚀 UAMO 2.0 — новий дизайн завантажено!');
+        // START
+        document.addEventListener('DOMContentLoaded', init);
+        console.log('🚀 UAMO 2.0 з Supabase завантажено!');
     </script>
-
 </body>
 </html>
