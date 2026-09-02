@@ -1062,11 +1062,11 @@
                     </div>
                 </div>
                 <div class="category-slider" id="categorySlider"></div>
-                <div class="section-header"><h2>Рекомендовані</h2><a onclick="navigateTo('search')">Усі →</a></div>
+                <div class="section-header"><h2 id="recommendedTitle">Рекомендовані</h2><a onclick="navigateTo('search')" id="recommendedAll">Усі →</a></div>
                 <div class="listing-scroll" id="recommendedScroll"></div>
-                <div class="section-header"><h2>Нові оголошення</h2><a onclick="navigateTo('search')">Усі →</a></div>
+                <div class="section-header"><h2 id="newListingsTitle">Нові оголошення</h2><a onclick="navigateTo('search')" id="newListingsAll">Усі →</a></div>
                 <div class="listing-scroll" id="newListingsScroll"></div>
-                <div class="cta-add"><button onclick="navigateTo('add')"><i class="fas fa-plus"></i> Додати оголошення</button></div>
+                <div class="cta-add"><button onclick="navigateTo('add')" id="addListingBtn"><i class="fas fa-plus"></i> Додати оголошення</button></div>
             </div>
         </div>
 
@@ -1080,13 +1080,13 @@
                     </div>
                 </div>
                 <div class="search-filters">
-                    <button onclick="filterByCategory('all')"><i class="fas fa-list"></i> Усі</button>
-                    <button onclick="filterByCategory('products')"><i class="fas fa-tag"></i> Товари</button>
-                    <button onclick="filterByCategory('jobs')"><i class="fas fa-briefcase"></i> Робота</button>
-                    <button onclick="filterByCategory('services')"><i class="fas fa-wrench"></i> Послуги</button>
-                    <button onclick="filterByCategory('realestate')"><i class="fas fa-building"></i> Нерухом.</button>
-                    <button onclick="filterByCategory('transport')"><i class="fas fa-car"></i> Транспорт</button>
-                    <button onclick="showFilters()"><i class="fas fa-sliders-h"></i> Фільтри</button>
+                    <button onclick="filterByCategory('all')"><i class="fas fa-list"></i> <span id="filterAll">Усі</span></button>
+                    <button onclick="filterByCategory('products')"><i class="fas fa-tag"></i> <span id="filterProducts">Товари</span></button>
+                    <button onclick="filterByCategory('jobs')"><i class="fas fa-briefcase"></i> <span id="filterJobs">Робота</span></button>
+                    <button onclick="filterByCategory('services')"><i class="fas fa-wrench"></i> <span id="filterServices">Послуги</span></button>
+                    <button onclick="filterByCategory('realestate')"><i class="fas fa-building"></i> <span id="filterRealestate">Нерухом.</span></button>
+                    <button onclick="filterByCategory('transport')"><i class="fas fa-car"></i> <span id="filterTransport">Транспорт</span></button>
+                    <button onclick="showFilters()"><i class="fas fa-sliders-h"></i> <span id="filterFilters">Фільтри</span></button>
                 </div>
                 <div class="search-results" id="searchResults"></div>
             </div>
@@ -1097,48 +1097,48 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Додати оголошення</span>
+                    <span class="title" id="addListingTitle">Додати оголошення</span>
                 </div>
                 <div class="add-listing-form">
                     <div class="form-group">
-                        <label>Категорія</label>
+                        <label id="addCategoryLabel">Категорія</label>
                         <select id="addCategory">
-                            <option value="Товари">🛍️ Товари</option>
-                            <option value="Робота">💼 Робота</option>
-                            <option value="Послуги">🛠️ Послуги</option>
-                            <option value="Нерухомість">🏢 Нерухомість</option>
-                            <option value="Транспорт">🚗 Транспорт</option>
+                            <option value="Товари">🛍️ <span id="catProducts">Товари</span></option>
+                            <option value="Робота">💼 <span id="catJobs">Робота</span></option>
+                            <option value="Послуги">🛠️ <span id="catServices">Послуги</span></option>
+                            <option value="Нерухомість">🏢 <span id="catRealestate">Нерухомість</span></option>
+                            <option value="Транспорт">🚗 <span id="catTransport">Транспорт</span></option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Назва *</label>
+                        <label id="addTitleLabel">Назва *</label>
                         <input type="text" id="addTitle" placeholder="Наприклад: iPhone 14 Pro" />
                     </div>
                     <div class="form-group">
-                        <label>Опис</label>
+                        <label id="addDescLabel">Опис</label>
                         <textarea id="addDesc" placeholder="Детальний опис..." rows="3"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Фото</label>
+                        <label id="addPhotoLabel">Фото</label>
                         <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                            <i class="fas fa-cloud-upload-alt"></i> Додати фото (до 8 шт.)
+                            <i class="fas fa-cloud-upload-alt"></i> <span id="addPhotoText">Додати фото (до 8 шт.)</span>
                         </div>
                         <input type="file" id="photoInput" accept="image/*" multiple style="display:none;" onchange="handlePhotos(event)" />
                         <div class="photo-preview-grid" id="photoPreviewGrid"></div>
                     </div>
                     <div class="form-group">
-                        <label>Ціна (грн) *</label>
+                        <label id="addPriceLabel">Ціна (грн) *</label>
                         <input type="number" id="addPrice" placeholder="8000" />
                     </div>
                     <div class="form-group">
-                        <label>Місто</label>
+                        <label id="addCityLabel">Місто</label>
                         <input type="text" id="addCity" placeholder="Київ" />
                     </div>
                     <div class="form-group">
-                        <label>Телефон</label>
+                        <label id="addPhoneLabel">Телефон</label>
                         <input type="tel" id="addPhone" placeholder="+380XXXXXXXXX" />
                     </div>
-                    <button class="btn-submit" onclick="submitListing()">Опублікувати оголошення</button>
+                    <button class="btn-submit" id="publishBtn" onclick="submitListing()">Опублікувати оголошення</button>
                 </div>
             </div>
         </div>
@@ -1148,7 +1148,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title"><i class="fas fa-heart" style="color:#EF4444;"></i> Обране</span>
+                    <span class="title"><i class="fas fa-heart" style="color:#EF4444;"></i> <span id="favoritesTitle">Обране</span></span>
                 </div>
                 <div id="favoritesContent"></div>
             </div>
@@ -1159,7 +1159,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title"><i class="fas fa-comment-dots" style="color:var(--accent);"></i> Чати</span>
+                    <span class="title"><i class="fas fa-comment-dots" style="color:var(--accent);"></i> <span id="chatsTitle">Чати</span></span>
                 </div>
                 <div id="chatsList"></div>
             </div>
@@ -1199,21 +1199,21 @@
                     </div>
                 </div>
                 <button class="btn-submit" style="background:var(--accent); margin-bottom:12px;" onclick="navigateTo('profile-edit')">
-                    <i class="fas fa-edit"></i> Редагувати профіль
+                    <i class="fas fa-edit"></i> <span id="editProfileBtn">Редагувати профіль</span>
                 </button>
                 <div class="profile-stats" id="profileStats">
-                    <div class="stat"><div class="num" id="statActive">0</div><div class="label">Оголошень</div></div>
-                    <div class="stat"><div class="num" id="statFavorites">0</div><div class="label">В обраному</div></div>
-                    <div class="stat"><div class="num" id="statMessages">0</div><div class="label">Повідомлень</div></div>
+                    <div class="stat"><div class="num" id="statActive">0</div><div class="label" id="statActiveLabel">Оголошень</div></div>
+                    <div class="stat"><div class="num" id="statFavorites">0</div><div class="label" id="statFavoritesLabel">В обраному</div></div>
+                    <div class="stat"><div class="num" id="statMessages">0</div><div class="label" id="statMessagesLabel">Повідомлень</div></div>
                 </div>
                 <div class="profile-menu">
-                    <div class="profile-menu-item" onclick="navigateTo('my-listings')"><i class="fas fa-list-ul"></i> Мої оголошення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('favorites')"><i class="fas fa-heart"></i> Обране <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('chats')"><i class="fas fa-comment-dots"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Налаштування <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="showHelp()"><i class="fas fa-question-circle"></i> Допомога <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="showAbout()"><i class="fas fa-info-circle"></i> Про UAMO <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Вийти <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('my-listings')"><i class="fas fa-list-ul"></i> <span id="profileMyListings">Мої оголошення</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('favorites')"><i class="fas fa-heart"></i> <span id="profileFavorites">Обране</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('chats')"><i class="fas fa-comment-dots"></i> <span id="profileMessages">Повідомлення</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> <span id="profileSettings">Налаштування</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="showHelp()"><i class="fas fa-question-circle"></i> <span id="profileHelp">Допомога</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="showAbout()"><i class="fas fa-info-circle"></i> <span id="profileAbout">Про UAMO</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> <span id="profileLogout">Вийти</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
             </div>
         </div>
@@ -1223,37 +1223,37 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Редагувати профіль</span>
+                    <span class="title" id="editProfileTitle">Редагувати профіль</span>
                 </div>
                 <div style="text-align:center; margin-bottom:16px;">
                     <div class="profile-avatar" id="editAvatar" style="width:80px; height:80px; margin:0 auto; cursor:pointer;" onclick="document.getElementById('editAvatarInput').click()">
                         <span id="editAvatarLetter">К</span>
                     </div>
                     <input type="file" id="editAvatarInput" accept="image/*" style="display:none;" onchange="editUploadAvatar(event)" />
-                    <button style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; margin-top:4px;" onclick="document.getElementById('editAvatarInput').click()">Змінити фото</button>
+                    <button style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; margin-top:4px;" onclick="document.getElementById('editAvatarInput').click()"><span id="changePhotoText">Змінити фото</span></button>
                 </div>
                 <div class="add-listing-form">
                     <div class="form-group">
-                        <label>Ім'я</label>
+                        <label id="editNameLabel">Ім'я</label>
                         <input type="text" id="editName" placeholder="Ваше ім'я" />
                     </div>
                     <div class="form-group">
-                        <label>Прізвище</label>
+                        <label id="editLastNameLabel">Прізвище</label>
                         <input type="text" id="editLastName" placeholder="Ваше прізвище" />
                     </div>
                     <div class="form-group">
-                        <label>Нікнейм</label>
+                        <label id="editUsernameLabel">Нікнейм</label>
                         <input type="text" id="editUsername" placeholder="@username" />
                     </div>
                     <div class="form-group">
-                        <label>Телефон</label>
+                        <label id="editPhoneLabel">Телефон</label>
                         <input type="tel" id="editPhone" placeholder="+380XXXXXXXXX" />
                     </div>
                     <div class="form-group">
-                        <label>Місто</label>
+                        <label id="editCityLabel">Місто</label>
                         <select id="editCity" class="settings-select" style="width:100%;"></select>
                     </div>
-                    <button class="btn-submit" onclick="saveProfile()">💾 Зберегти зміни</button>
+                    <button class="btn-submit" onclick="saveProfile()"><span id="saveProfileBtn">💾 Зберегти зміни</span></button>
                 </div>
             </div>
         </div>
@@ -1263,7 +1263,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Мої оголошення</span>
+                    <span class="title" id="myListingsTitle">Мої оголошення</span>
                 </div>
                 <div id="myListingsContainer"></div>
             </div>
@@ -1274,164 +1274,17 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Налаштування</span>
+                    <span class="title" id="settingsTitle">Налаштування</span>
                 </div>
                 <div class="profile-menu" style="margin-top:0;">
-                    <div class="profile-menu-item" onclick="navigateTo('settings-account')"><i class="fas fa-user"></i> Обліковий запис <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-notifications')"><i class="fas fa-bell"></i> Сповіщення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-city')"><i class="fas fa-map-marker-alt"></i> Місто <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-language')"><i class="fas fa-globe"></i> Мова <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-privacy')"><i class="fas fa-lock"></i> Конфіденційність <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-messages')"><i class="fas fa-comment"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-security')"><i class="fas fa-shield-alt"></i> Безпека <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-account')"><i class="fas fa-user"></i> <span id="settingsAccount">Обліковий запис</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-notifications')"><i class="fas fa-bell"></i> <span id="settingsNotifications">Сповіщення</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-city')"><i class="fas fa-map-marker-alt"></i> <span id="settingsCity">Місто</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-language')"><i class="fas fa-globe"></i> <span id="settingsLanguage">Мова</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-privacy')"><i class="fas fa-lock"></i> <span id="settingsPrivacy">Конфіденційність</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-messages')"><i class="fas fa-comment"></i> <span id="settingsMessages">Повідомлення</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-security')"><i class="fas fa-shield-alt"></i> <span id="settingsSecurity">Безпека</span> <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: ACCOUNT -->
-        <div class="page" id="page-settings-account">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Обліковий запис</span>
-                </div>
-                <div class="profile-menu">
-                    <div class="profile-menu-item" onclick="navigateTo('settings-email')"><i class="fas fa-envelope"></i> Email <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-phone')"><i class="fas fa-phone"></i> Телефон <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-password')"><i class="fas fa-key"></i> Пароль <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: EMAIL -->
-        <div class="page" id="page-settings-email">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings-account')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Зміна email</span>
-                </div>
-                <div class="add-listing-form">
-                    <div class="form-group">
-                        <label>Поточний email</label>
-                        <input type="email" id="currentEmail" disabled style="background:var(--bg);" />
-                    </div>
-                    <div class="form-group">
-                        <label>Новий email</label>
-                        <input type="email" id="newEmail" placeholder="new@email.com" />
-                    </div>
-                    <button class="btn-submit" onclick="changeEmail()">Змінити email</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: PHONE -->
-        <div class="page" id="page-settings-phone">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings-account')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Зміна телефону</span>
-                </div>
-                <div class="add-listing-form">
-                    <div class="form-group">
-                        <label>Поточний номер</label>
-                        <input type="tel" id="currentPhone" disabled style="background:var(--bg);" />
-                    </div>
-                    <div class="form-group">
-                        <label>Новий номер</label>
-                        <input type="tel" id="newPhone" placeholder="+380XXXXXXXXX" />
-                    </div>
-                    <button class="btn-submit" onclick="changePhone()">Надіслати код</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: PASSWORD -->
-        <div class="page" id="page-settings-password">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings-account')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Зміна пароля</span>
-                </div>
-                <div class="add-listing-form">
-                    <div class="form-group" style="position:relative;">
-                        <label>Поточний пароль</label>
-                        <input type="password" id="currentPassword" placeholder="••••••••" />
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('currentPassword', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="form-group" style="position:relative;">
-                        <label>Новий пароль</label>
-                        <input type="password" id="newPassword" placeholder="••••••••" />
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('newPassword', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="form-group" style="position:relative;">
-                        <label>Повторіть пароль</label>
-                        <input type="password" id="confirmPassword" placeholder="••••••••" />
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <button class="btn-submit" onclick="changePassword()">Змінити пароль</button>
-                    <div class="auth-link" style="margin-top:12px;">
-                        <a onclick="showForgotPassword()">Забули пароль?</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: NOTIFICATIONS -->
-        <div class="page" id="page-settings-notifications">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Сповіщення</span>
-                </div>
-                <div class="settings-group">
-                    <div class="settings-item">
-                        <span class="settings-label">Повідомлення</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Нові повідомлення в чаті</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Відповіді на мої оголошення</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Обране оголошення змінило ціну</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Нові оголошення</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Рекомендації UAMO</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: CITY -->
-        <div class="page" id="page-settings-city">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Місто</span>
-                </div>
-                <div class="search-bar" style="padding:0 0 12px 0;">
-                    <div class="search-bar-inner">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="🔍 Пошук міста" id="citySearchInput" oninput="filterCities(this.value)" />
-                    </div>
-                </div>
-                <div id="citiesList"></div>
             </div>
         </div>
 
@@ -1440,163 +1293,23 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Мова</span>
+                    <span class="title" id="languageTitle">Мова</span>
                 </div>
                 <div class="settings-group">
-                    <div class="radio-group">
-                        <label class="radio-item active"><input type="radio" name="language" value="uk" checked /> 🇺🇦 Українська</label>
+                    <div class="radio-group" id="languageOptions">
+                        <label class="radio-item"><input type="radio" name="language" value="uk" /> 🇺🇦 Українська</label>
                         <label class="radio-item"><input type="radio" name="language" value="en" /> 🇬🇧 English</label>
-                        <label class="radio-item"><input type="radio" name="language" value="ru" /> 🇷🇺 Русский</label>
+                        <label class="radio-item"><input type="radio" name="language" value="pl" /> 🇵🇱 Polski</label>
+                        <label class="radio-item"><input type="radio" name="language" value="de" /> 🇩🇪 Deutsch</label>
+                        <label class="radio-item"><input type="radio" name="language" value="fr" /> 🇫🇷 Français</label>
+                        <label class="radio-item"><input type="radio" name="language" value="es" /> 🇪🇸 Español</label>
+                        <label class="radio-item"><input type="radio" name="language" value="it" /> 🇮🇹 Italiano</label>
+                        <label class="radio-item"><input type="radio" name="language" value="cs" /> 🇨🇿 Čeština</label>
+                        <label class="radio-item"><input type="radio" name="language" value="sk" /> 🇸🇰 Slovenčina</label>
+                        <label class="radio-item"><input type="radio" name="language" value="ro" /> 🇷🇴 Română</label>
+                        <label class="radio-item"><input type="radio" name="language" value="tr" /> 🇹🇷 Türkçe</label>
                     </div>
-                    <button class="btn-submit" style="margin-top:16px;" onclick="saveLanguage()">💾 Зберегти мову</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: PRIVACY -->
-        <div class="page" id="page-settings-privacy">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Конфіденційність</span>
-                </div>
-                <div class="settings-group">
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати номер телефону</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати місто</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Дозволити повідомлення від інших</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати мій профіль</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати активність</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="profile-menu-item" onclick="alert('Заблоковані користувачі: поки що порожньо')">
-                        <i class="fas fa-ban"></i> Заблоковані користувачі
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="alert('Керування даними: видалити всі дані, експорт даних')">
-                        <i class="fas fa-database"></i> Керування даними
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: MESSAGES -->
-        <div class="page" id="page-settings-messages">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Повідомлення</span>
-                </div>
-                <div class="settings-group">
-                    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:8px; padding:12px 0;">
-                        <span class="settings-label">Хто може написати мені:</span>
-                        <div class="radio-group">
-                            <label class="radio-item active"><input type="radio" name="who_can_message" value="all" checked /> Усі</label>
-                            <label class="radio-item"><input type="radio" name="who_can_message" value="users" /> Користувачі UAMO</label>
-                            <label class="radio-item"><input type="radio" name="who_can_message" value="none" /> Ніхто</label>
-                        </div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Дозволити повідомлення від користувачів</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SETTINGS: SECURITY -->
-        <div class="page" id="page-settings-security">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Безпека</span>
-                </div>
-                <div class="settings-group">
-                    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
-                        <span class="settings-label">Email</span>
-                        <span class="settings-value" id="securityEmail">user@example.com</span>
-                    </div>
-                    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
-                        <span class="settings-label">Телефон</span>
-                        <span class="settings-value" id="securityPhone">+380 XX XXX XX XX</span>
-                    </div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-password')">
-                        <i class="fas fa-key"></i> Змінити пароль
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-email')">
-                        <i class="fas fa-envelope"></i> Змінити email
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-phone')">
-                        <i class="fas fa-phone"></i> Змінити номер телефону
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="alert('Активні сеанси: ви ввійшли з 2 пристроїв')">
-                        <i class="fas fa-laptop"></i> Активні сеанси
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- DETAIL -->
-        <div class="page" id="page-detail">
-            <div class="app-container">
-                <div class="back-header">
-                    <button class="back-btn" onclick="goBackFromDetail()"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">Оголошення</span>
-                    <div style="margin-left:auto; display:flex; gap:12px;">
-                        <i class="far fa-heart" id="detailFavoriteBtn" style="font-size:20px; color:var(--text-secondary); cursor:pointer;" onclick="toggleDetailFavorite()"></i>
-                        <i class="fas fa-ellipsis-v" style="font-size:20px; color:var(--text-secondary); cursor:pointer;"></i>
-                    </div>
-                </div>
-                <div class="detail-gallery" id="detailGallery">
-                    <i class="fas fa-image"></i>
-                    <button class="nav-arrow left" id="detailArrowLeft" onclick="changeDetailPhoto(-1)">‹</button>
-                    <button class="nav-arrow right" id="detailArrowRight" onclick="changeDetailPhoto(1)">›</button>
-                    <div class="dots" id="detailDots"></div>
-                </div>
-                <div class="detail-content" id="detailContent">
-                    <div class="price" id="detailPrice">8 500 грн</div>
-                    <div class="title" id="detailTitle">Диван сучасний</div>
-                    <div class="meta" id="detailMeta">
-                        <span><i class="fas fa-map-marker-alt"></i> Київ, Оболонь</span>
-                        <span><i class="far fa-clock"></i> Сьогодні о 14:30</span>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="description" id="detailDesc">Зручний кутовий диван із тканинною оббивкою. Стан — новий.</div>
-                    <div class="specs" id="detailSpecs">
-                        <div class="spec-item"><span class="label">Стан</span> <span>Новий</span></div>
-                        <div class="spec-item"><span class="label">Категорія</span> <span>Меблі</span></div>
-                    </div>
-                    <div class="divider"></div>
-                    <button class="btn-submit" style="background:var(--accent);" onclick="openChatFromDetail()">
-                        <i class="fas fa-comment"></i> Написати продавцю
-                    </button>
-                    <div class="seller-box" id="detailSeller">
-                        <div class="avatar" id="sellerAvatar">А</div>
-                        <div class="info">
-                            <div class="name" id="sellerName">Анна Коваленко</div>
-                            <div class="since" id="sellerSince">На UAMO з 2024</div>
-                        </div>
-                        <div class="actions">
-                            <button class="btn-call" id="sellerCallBtn"><i class="fas fa-phone"></i></button>
-                        </div>
-                    </div>
+                    <button class="btn-submit" style="margin-top:16px;" onclick="saveLanguage()"><span id="saveLanguageBtn">💾 Зберегти мову</span></button>
                 </div>
             </div>
         </div>
@@ -1604,20 +1317,20 @@
         <!-- BOTTOM NAV -->
         <nav class="bottom-nav" id="bottomNav">
             <button class="bottom-nav-item active" data-page="home" onclick="navigateTo('home')">
-                <i class="fas fa-home"></i><span>Головна</span>
+                <i class="fas fa-home"></i><span id="navHome">Головна</span>
             </button>
             <button class="bottom-nav-item" data-page="search" onclick="navigateTo('search')">
-                <i class="fas fa-search"></i><span>Пошук</span>
+                <i class="fas fa-search"></i><span id="navSearch">Пошук</span>
             </button>
             <button class="bottom-nav-item add-btn" data-page="add" onclick="navigateTo('add')">
-                <i class="fas fa-plus"></i><span>Додати</span>
+                <i class="fas fa-plus"></i><span id="navAdd">Додати</span>
             </button>
             <button class="bottom-nav-item" data-page="chats" onclick="navigateTo('chats')" id="chatsNavBtn">
-                <i class="fas fa-comment-dots"></i><span>Чати</span>
+                <i class="fas fa-comment-dots"></i><span id="navChats">Чати</span>
                 <span class="badge-count" id="chatBadge" style="display:none;">0</span>
             </button>
             <button class="bottom-nav-item" data-page="profile" onclick="navigateTo('profile')">
-                <i class="fas fa-user"></i><span>Профіль</span>
+                <i class="fas fa-user"></i><span id="navProfile">Профіль</span>
             </button>
         </nav>
     </div>
@@ -1629,19 +1342,658 @@
             <h3 id="successTitle">✓ Оголошення опубліковано!</h3>
             <p id="successMessage">Ваше оголошення вже доступне на UAMO.</p>
             <div class="btn-group">
-                <button class="btn-primary-modal" id="successPrimaryBtn" onclick="closeSuccessModal()">На головну</button>
-                <button class="btn-secondary-modal" id="successSecondaryBtn" onclick="closeSuccessModal()">Переглянути</button>
+                <button class="btn-primary-modal" id="successPrimaryBtn" onclick="closeSuccessModal()"><span id="successHomeBtn">На головну</span></button>
+                <button class="btn-secondary-modal" id="successSecondaryBtn" onclick="closeSuccessModal()"><span id="successViewBtn">Переглянути</span></button>
             </div>
         </div>
     </div>
 
-    <!-- ПІДКЛЮЧЕННЯ SUPABASE SDK (ПРАВИЛЬНИЙ ПОРЯДОК) -->
+    <!-- ПІДКЛЮЧЕННЯ SUPABASE SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js">
     </script>
 
     <script>
         // ================================================================
-        // SUPABASE CONFIG - ВИПРАВЛЕНО З НОВИМ PUBLISHABLE KEY
+        // ПЕРЕКЛАДИ (11 МОВ)
+        // ================================================================
+
+        const translations = {
+            uk: {
+                home: 'Головна',
+                search: 'Пошук',
+                addListing: 'Додати оголошення',
+                messages: 'Повідомлення',
+                profile: 'Профіль',
+                settings: 'Налаштування',
+                listings: 'Оголошення',
+                favorites: 'Обране',
+                myListings: 'Мої оголошення',
+                recommended: 'Рекомендовані',
+                newListings: 'Нові оголошення',
+                all: 'Усі →',
+                products: 'Товари',
+                jobs: 'Робота',
+                services: 'Послуги',
+                realestate: 'Нерухомість',
+                transport: 'Транспорт',
+                publish: 'Опублікувати оголошення',
+                listingPublished: '✅ Оголошення опубліковано!',
+                enterTitle: 'Введіть назву',
+                enterPrice: 'Введіть ціну',
+                invalidPrice: 'Введіть коректну ціну',
+                publishError: '❌ Не вдалося опублікувати оголошення',
+                category: 'Категорія',
+                title: 'Назва *',
+                description: 'Опис',
+                photo: 'Фото',
+                addPhoto: 'Додати фото (до 8 шт.)',
+                price: 'Ціна (грн) *',
+                city: 'Місто',
+                phone: 'Телефон',
+                editProfile: 'Редагувати профіль',
+                logout: 'Вийти',
+                help: 'Допомога',
+                about: 'Про UAMO',
+                settingsAccount: 'Обліковий запис',
+                settingsNotifications: 'Сповіщення',
+                settingsCity: 'Місто',
+                settingsLanguage: 'Мова',
+                settingsPrivacy: 'Конфіденційність',
+                settingsMessages: 'Повідомлення',
+                settingsSecurity: 'Безпека',
+                saveChanges: '💾 Зберегти зміни',
+                changePhoto: 'Змінити фото',
+                filters: 'Фільтри',
+                noResults: 'Нічого не знайдено',
+                noFavorites: 'Тут поки що порожньо',
+                noChats: 'Немає чатів',
+                noListings: 'У вас поки немає оголошень',
+                createFirst: 'Створіть своє перше оголошення',
+                add: 'Додати',
+                chats: 'Чати',
+                language: 'Мова',
+                saveLanguage: '💾 Зберегти мову',
+                back: 'Назад'
+            },
+            en: {
+                home: 'Home',
+                search: 'Search',
+                addListing: 'Add listing',
+                messages: 'Messages',
+                profile: 'Profile',
+                settings: 'Settings',
+                listings: 'Listings',
+                favorites: 'Favorites',
+                myListings: 'My listings',
+                recommended: 'Recommended',
+                newListings: 'New listings',
+                all: 'All →',
+                products: 'Products',
+                jobs: 'Jobs',
+                services: 'Services',
+                realestate: 'Real estate',
+                transport: 'Transport',
+                publish: 'Publish listing',
+                listingPublished: '✅ Listing published!',
+                enterTitle: 'Enter a title',
+                enterPrice: 'Enter a price',
+                invalidPrice: 'Enter a valid price',
+                publishError: '❌ Failed to publish listing',
+                category: 'Category',
+                title: 'Title *',
+                description: 'Description',
+                photo: 'Photo',
+                addPhoto: 'Add photo (up to 8)',
+                price: 'Price (UAH) *',
+                city: 'City',
+                phone: 'Phone',
+                editProfile: 'Edit profile',
+                logout: 'Logout',
+                help: 'Help',
+                about: 'About UAMO',
+                settingsAccount: 'Account',
+                settingsNotifications: 'Notifications',
+                settingsCity: 'City',
+                settingsLanguage: 'Language',
+                settingsPrivacy: 'Privacy',
+                settingsMessages: 'Messages',
+                settingsSecurity: 'Security',
+                saveChanges: '💾 Save changes',
+                changePhoto: 'Change photo',
+                filters: 'Filters',
+                noResults: 'Nothing found',
+                noFavorites: 'Nothing here yet',
+                noChats: 'No chats',
+                noListings: 'You have no listings yet',
+                createFirst: 'Create your first listing',
+                add: 'Add',
+                chats: 'Chats',
+                language: 'Language',
+                saveLanguage: '💾 Save language',
+                back: 'Back'
+            },
+            pl: {
+                home: 'Strona główna',
+                search: 'Szukaj',
+                addListing: 'Dodaj ogłoszenie',
+                messages: 'Wiadomości',
+                profile: 'Profil',
+                settings: 'Ustawienia',
+                listings: 'Ogłoszenia',
+                favorites: 'Ulubione',
+                myListings: 'Moje ogłoszenia',
+                recommended: 'Polecane',
+                newListings: 'Nowe ogłoszenia',
+                all: 'Wszystkie →',
+                products: 'Produkty',
+                jobs: 'Praca',
+                services: 'Usługi',
+                realestate: 'Nieruchomości',
+                transport: 'Transport',
+                publish: 'Opublikuj ogłoszenie',
+                listingPublished: '✅ Ogłoszenie opublikowane!',
+                enterTitle: 'Wprowadź tytuł',
+                enterPrice: 'Wprowadź cenę',
+                invalidPrice: 'Wprowadź poprawną cenę',
+                publishError: '❌ Nie udało się opublikować ogłoszenia',
+                category: 'Kategoria',
+                title: 'Tytuł *',
+                description: 'Opis',
+                photo: 'Zdjęcie',
+                addPhoto: 'Dodaj zdjęcie (do 8)',
+                price: 'Cena (UAH) *',
+                city: 'Miasto',
+                phone: 'Telefon',
+                editProfile: 'Edytuj profil',
+                logout: 'Wyloguj',
+                help: 'Pomoc',
+                about: 'O UAMO',
+                settingsAccount: 'Konto',
+                settingsNotifications: 'Powiadomienia',
+                settingsCity: 'Miasto',
+                settingsLanguage: 'Język',
+                settingsPrivacy: 'Prywatność',
+                settingsMessages: 'Wiadomości',
+                settingsSecurity: 'Bezpieczeństwo',
+                saveChanges: '💾 Zapisz zmiany',
+                changePhoto: 'Zmień zdjęcie',
+                filters: 'Filtry',
+                noResults: 'Nic nie znaleziono',
+                noFavorites: 'Nic tu nie ma',
+                noChats: 'Brak czatów',
+                noListings: 'Nie masz jeszcze ogłoszeń',
+                createFirst: 'Utwórz swoje pierwsze ogłoszenie',
+                add: 'Dodaj',
+                chats: 'Czaty',
+                language: 'Język',
+                saveLanguage: '💾 Zapisz język',
+                back: 'Wstecz'
+            },
+            de: {
+                home: 'Startseite',
+                search: 'Suche',
+                addListing: 'Anzeige hinzufügen',
+                messages: 'Nachrichten',
+                profile: 'Profil',
+                settings: 'Einstellungen',
+                listings: 'Anzeigen',
+                favorites: 'Favoriten',
+                myListings: 'Meine Anzeigen',
+                recommended: 'Empfohlen',
+                newListings: 'Neue Anzeigen',
+                all: 'Alle →',
+                products: 'Produkte',
+                jobs: 'Arbeit',
+                services: 'Dienstleistungen',
+                realestate: 'Immobilien',
+                transport: 'Transport',
+                publish: 'Anzeige veröffentlichen',
+                listingPublished: '✅ Anzeige veröffentlicht!',
+                enterTitle: 'Titel eingeben',
+                enterPrice: 'Preis eingeben',
+                invalidPrice: 'Gültigen Preis eingeben',
+                publishError: '❌ Fehler beim Veröffentlichen',
+                category: 'Kategorie',
+                title: 'Titel *',
+                description: 'Beschreibung',
+                photo: 'Foto',
+                addPhoto: 'Foto hinzufügen (bis 8)',
+                price: 'Preis (UAH) *',
+                city: 'Stadt',
+                phone: 'Telefon',
+                editProfile: 'Profil bearbeiten',
+                logout: 'Abmelden',
+                help: 'Hilfe',
+                about: 'Über UAMO',
+                settingsAccount: 'Konto',
+                settingsNotifications: 'Benachrichtigungen',
+                settingsCity: 'Stadt',
+                settingsLanguage: 'Sprache',
+                settingsPrivacy: 'Datenschutz',
+                settingsMessages: 'Nachrichten',
+                settingsSecurity: 'Sicherheit',
+                saveChanges: '💾 Änderungen speichern',
+                changePhoto: 'Foto ändern',
+                filters: 'Filter',
+                noResults: 'Nichts gefunden',
+                noFavorites: 'Nichts hier',
+                noChats: 'Keine Chats',
+                noListings: 'Keine Anzeigen',
+                createFirst: 'Erste Anzeige erstellen',
+                add: 'Hinzufügen',
+                chats: 'Chats',
+                language: 'Sprache',
+                saveLanguage: '💾 Sprache speichern',
+                back: 'Zurück'
+            },
+            fr: {
+                home: 'Accueil',
+                search: 'Recherche',
+                addListing: 'Ajouter une annonce',
+                messages: 'Messages',
+                profile: 'Profil',
+                settings: 'Paramètres',
+                listings: 'Annonces',
+                favorites: 'Favoris',
+                myListings: 'Mes annonces',
+                recommended: 'Recommandé',
+                newListings: 'Nouvelles annonces',
+                all: 'Tout →',
+                products: 'Produits',
+                jobs: 'Emploi',
+                services: 'Services',
+                realestate: 'Immobilier',
+                transport: 'Transport',
+                publish: 'Publier une annonce',
+                listingPublished: '✅ Annonce publiée!',
+                enterTitle: 'Entrez un titre',
+                enterPrice: 'Entrez un prix',
+                invalidPrice: 'Entrez un prix valide',
+                publishError: '❌ Échec de la publication',
+                category: 'Catégorie',
+                title: 'Titre *',
+                description: 'Description',
+                photo: 'Photo',
+                addPhoto: 'Ajouter une photo (jusqu\'à 8)',
+                price: 'Prix (UAH) *',
+                city: 'Ville',
+                phone: 'Téléphone',
+                editProfile: 'Modifier le profil',
+                logout: 'Déconnexion',
+                help: 'Aide',
+                about: 'À propos de UAMO',
+                settingsAccount: 'Compte',
+                settingsNotifications: 'Notifications',
+                settingsCity: 'Ville',
+                settingsLanguage: 'Langue',
+                settingsPrivacy: 'Confidentialité',
+                settingsMessages: 'Messages',
+                settingsSecurity: 'Sécurité',
+                saveChanges: '💾 Enregistrer',
+                changePhoto: 'Changer la photo',
+                filters: 'Filtres',
+                noResults: 'Aucun résultat',
+                noFavorites: 'Rien ici',
+                noChats: 'Aucun chat',
+                noListings: 'Aucune annonce',
+                createFirst: 'Créez votre première annonce',
+                add: 'Ajouter',
+                chats: 'Chats',
+                language: 'Langue',
+                saveLanguage: '💾 Enregistrer la langue',
+                back: 'Retour'
+            },
+            es: {
+                home: 'Inicio',
+                search: 'Buscar',
+                addListing: 'Añadir anuncio',
+                messages: 'Mensajes',
+                profile: 'Perfil',
+                settings: 'Ajustes',
+                listings: 'Anuncios',
+                favorites: 'Favoritos',
+                myListings: 'Mis anuncios',
+                recommended: 'Recomendado',
+                newListings: 'Nuevos anuncios',
+                all: 'Todos →',
+                products: 'Productos',
+                jobs: 'Trabajo',
+                services: 'Servicios',
+                realestate: 'Inmuebles',
+                transport: 'Transporte',
+                publish: 'Publicar anuncio',
+                listingPublished: '✅ ¡Anuncio publicado!',
+                enterTitle: 'Ingrese un título',
+                enterPrice: 'Ingrese un precio',
+                invalidPrice: 'Ingrese un precio válido',
+                publishError: '❌ Error al publicar',
+                category: 'Categoría',
+                title: 'Título *',
+                description: 'Descripción',
+                photo: 'Foto',
+                addPhoto: 'Añadir foto (hasta 8)',
+                price: 'Precio (UAH) *',
+                city: 'Ciudad',
+                phone: 'Teléfono',
+                editProfile: 'Editar perfil',
+                logout: 'Cerrar sesión',
+                help: 'Ayuda',
+                about: 'Acerca de UAMO',
+                settingsAccount: 'Cuenta',
+                settingsNotifications: 'Notificaciones',
+                settingsCity: 'Ciudad',
+                settingsLanguage: 'Idioma',
+                settingsPrivacy: 'Privacidad',
+                settingsMessages: 'Mensajes',
+                settingsSecurity: 'Seguridad',
+                saveChanges: '💾 Guardar cambios',
+                changePhoto: 'Cambiar foto',
+                filters: 'Filtros',
+                noResults: 'No se encontraron resultados',
+                noFavorites: 'Nada aquí',
+                noChats: 'Sin chats',
+                noListings: 'Sin anuncios',
+                createFirst: 'Crea tu primer anuncio',
+                add: 'Añadir',
+                chats: 'Chats',
+                language: 'Idioma',
+                saveLanguage: '💾 Guardar idioma',
+                back: 'Volver'
+            },
+            it: {
+                home: 'Home',
+                search: 'Cerca',
+                addListing: 'Aggiungi annuncio',
+                messages: 'Messaggi',
+                profile: 'Profilo',
+                settings: 'Impostazioni',
+                listings: 'Annunci',
+                favorites: 'Preferiti',
+                myListings: 'I miei annunci',
+                recommended: 'Consigliati',
+                newListings: 'Nuovi annunci',
+                all: 'Tutti →',
+                products: 'Prodotti',
+                jobs: 'Lavoro',
+                services: 'Servizi',
+                realestate: 'Immobili',
+                transport: 'Trasporto',
+                publish: 'Pubblica annuncio',
+                listingPublished: '✅ Annuncio pubblicato!',
+                enterTitle: 'Inserisci un titolo',
+                enterPrice: 'Inserisci un prezzo',
+                invalidPrice: 'Inserisci un prezzo valido',
+                publishError: '❌ Errore nella pubblicazione',
+                category: 'Categoria',
+                title: 'Titolo *',
+                description: 'Descrizione',
+                photo: 'Foto',
+                addPhoto: 'Aggiungi foto (fino a 8)',
+                price: 'Prezzo (UAH) *',
+                city: 'Città',
+                phone: 'Telefono',
+                editProfile: 'Modifica profilo',
+                logout: 'Esci',
+                help: 'Aiuto',
+                about: 'Informazioni su UAMO',
+                settingsAccount: 'Account',
+                settingsNotifications: 'Notifiche',
+                settingsCity: 'Città',
+                settingsLanguage: 'Lingua',
+                settingsPrivacy: 'Privacy',
+                settingsMessages: 'Messaggi',
+                settingsSecurity: 'Sicurezza',
+                saveChanges: '💾 Salva modifiche',
+                changePhoto: 'Cambia foto',
+                filters: 'Filtri',
+                noResults: 'Nessun risultato',
+                noFavorites: 'Niente qui',
+                noChats: 'Nessuna chat',
+                noListings: 'Nessun annuncio',
+                createFirst: 'Crea il tuo primo annuncio',
+                add: 'Aggiungi',
+                chats: 'Chat',
+                language: 'Lingua',
+                saveLanguage: '💾 Salva lingua',
+                back: 'Indietro'
+            },
+            cs: {
+                home: 'Domů',
+                search: 'Hledat',
+                addListing: 'Přidat inzerát',
+                messages: 'Zprávy',
+                profile: 'Profil',
+                settings: 'Nastavení',
+                listings: 'Inzeráty',
+                favorites: 'Oblíbené',
+                myListings: 'Moje inzeráty',
+                recommended: 'Doporučené',
+                newListings: 'Nové inzeráty',
+                all: 'Vše →',
+                products: 'Produkty',
+                jobs: 'Práce',
+                services: 'Služby',
+                realestate: 'Nemovitosti',
+                transport: 'Doprava',
+                publish: 'Zveřejnit inzerát',
+                listingPublished: '✅ Inzerát zveřejněn!',
+                enterTitle: 'Zadejte název',
+                enterPrice: 'Zadejte cenu',
+                invalidPrice: 'Zadejte platnou cenu',
+                publishError: '❌ Nepodařilo se zveřejnit',
+                category: 'Kategorie',
+                title: 'Název *',
+                description: 'Popis',
+                photo: 'Foto',
+                addPhoto: 'Přidat foto (až 8)',
+                price: 'Cena (UAH) *',
+                city: 'Město',
+                phone: 'Telefon',
+                editProfile: 'Upravit profil',
+                logout: 'Odhlásit',
+                help: 'Nápověda',
+                about: 'O UAMO',
+                settingsAccount: 'Účet',
+                settingsNotifications: 'Notifikace',
+                settingsCity: 'Město',
+                settingsLanguage: 'Jazyk',
+                settingsPrivacy: 'Soukromí',
+                settingsMessages: 'Zprávy',
+                settingsSecurity: 'Bezpečnost',
+                saveChanges: '💾 Uložit změny',
+                changePhoto: 'Změnit foto',
+                filters: 'Filtry',
+                noResults: 'Nic nenalezeno',
+                noFavorites: 'Zatím nic',
+                noChats: 'Žádné chaty',
+                noListings: 'Žádné inzeráty',
+                createFirst: 'Vytvořte svůj první inzerát',
+                add: 'Přidat',
+                chats: 'Chaty',
+                language: 'Jazyk',
+                saveLanguage: '💾 Uložit jazyk',
+                back: 'Zpět'
+            },
+            sk: {
+                home: 'Domov',
+                search: 'Hľadať',
+                addListing: 'Pridať inzerát',
+                messages: 'Správy',
+                profile: 'Profil',
+                settings: 'Nastavenia',
+                listings: 'Inzeráty',
+                favorites: 'Obľúbené',
+                myListings: 'Moje inzeráty',
+                recommended: 'Odporúčané',
+                newListings: 'Nové inzeráty',
+                all: 'Všetky →',
+                products: 'Produkty',
+                jobs: 'Práca',
+                services: 'Služby',
+                realestate: 'Nehnuteľnosti',
+                transport: 'Doprava',
+                publish: 'Zverejniť inzerát',
+                listingPublished: '✅ Inzerát zverejnený!',
+                enterTitle: 'Zadajte názov',
+                enterPrice: 'Zadajte cenu',
+                invalidPrice: 'Zadajte platnú cenu',
+                publishError: '❌ Nepodarilo sa zverejniť',
+                category: 'Kategória',
+                title: 'Názov *',
+                description: 'Popis',
+                photo: 'Foto',
+                addPhoto: 'Pridať foto (až 8)',
+                price: 'Cena (UAH) *',
+                city: 'Mesto',
+                phone: 'Telefón',
+                editProfile: 'Upraviť profil',
+                logout: 'Odhlásiť',
+                help: 'Pomoc',
+                about: 'O UAMO',
+                settingsAccount: 'Účet',
+                settingsNotifications: 'Notifikácie',
+                settingsCity: 'Mesto',
+                settingsLanguage: 'Jazyk',
+                settingsPrivacy: 'Súkromie',
+                settingsMessages: 'Správy',
+                settingsSecurity: 'Bezpečnosť',
+                saveChanges: '💾 Uložiť zmeny',
+                changePhoto: 'Zmeniť foto',
+                filters: 'Filtre',
+                noResults: 'Nič nenájdené',
+                noFavorites: 'Zatiaľ nič',
+                noChats: 'Žiadne chaty',
+                noListings: 'Žiadne inzeráty',
+                createFirst: 'Vytvorte svoj prvý inzerát',
+                add: 'Pridať',
+                chats: 'Chaty',
+                language: 'Jazyk',
+                saveLanguage: '💾 Uložiť jazyk',
+                back: 'Späť'
+            },
+            ro: {
+                home: 'Acasă',
+                search: 'Căutare',
+                addListing: 'Adaugă anunț',
+                messages: 'Mesaje',
+                profile: 'Profil',
+                settings: 'Setări',
+                listings: 'Anunțuri',
+                favorites: 'Favorite',
+                myListings: 'Anunțurile mele',
+                recommended: 'Recomandate',
+                newListings: 'Anunțuri noi',
+                all: 'Toate →',
+                products: 'Produse',
+                jobs: 'Locuri de muncă',
+                services: 'Servicii',
+                realestate: 'Imobiliare',
+                transport: 'Transport',
+                publish: 'Publică anunț',
+                listingPublished: '✅ Anunț publicat!',
+                enterTitle: 'Introduceți un titlu',
+                enterPrice: 'Introduceți un preț',
+                invalidPrice: 'Introduceți un preț valid',
+                publishError: '❌ Eroare la publicare',
+                category: 'Categorie',
+                title: 'Titlu *',
+                description: 'Descriere',
+                photo: 'Foto',
+                addPhoto: 'Adaugă foto (până la 8)',
+                price: 'Preț (UAH) *',
+                city: 'Oraș',
+                phone: 'Telefon',
+                editProfile: 'Editează profil',
+                logout: 'Deconectare',
+                help: 'Ajutor',
+                about: 'Despre UAMO',
+                settingsAccount: 'Cont',
+                settingsNotifications: 'Notificări',
+                settingsCity: 'Oraș',
+                settingsLanguage: 'Limbă',
+                settingsPrivacy: 'Confidențialitate',
+                settingsMessages: 'Mesaje',
+                settingsSecurity: 'Securitate',
+                saveChanges: '💾 Salvează modificările',
+                changePhoto: 'Schimbă foto',
+                filters: 'Filtre',
+                noResults: 'Nu s-au găsit rezultate',
+                noFavorites: 'Nimic aici',
+                noChats: 'Niciun chat',
+                noListings: 'Niciun anunț',
+                createFirst: 'Creează primul anunț',
+                add: 'Adaugă',
+                chats: 'Chat-uri',
+                language: 'Limbă',
+                saveLanguage: '💾 Salvează limba',
+                back: 'Înapoi'
+            },
+            tr: {
+                home: 'Ana Sayfa',
+                search: 'Ara',
+                addListing: 'İlan Ekle',
+                messages: 'Mesajlar',
+                profile: 'Profil',
+                settings: 'Ayarlar',
+                listings: 'İlanlar',
+                favorites: 'Favoriler',
+                myListings: 'İlanlarım',
+                recommended: 'Önerilenler',
+                newListings: 'Yeni İlanlar',
+                all: 'Tümü →',
+                products: 'Ürünler',
+                jobs: 'İş',
+                services: 'Hizmetler',
+                realestate: 'Gayrimenkul',
+                transport: 'Taşımacılık',
+                publish: 'İlanı Yayınla',
+                listingPublished: '✅ İlan yayınlandı!',
+                enterTitle: 'Başlık girin',
+                enterPrice: 'Fiyat girin',
+                invalidPrice: 'Geçerli bir fiyat girin',
+                publishError: '❌ İlan yayınlanamadı',
+                category: 'Kategori',
+                title: 'Başlık *',
+                description: 'Açıklama',
+                photo: 'Fotoğraf',
+                addPhoto: 'Fotoğraf ekle (8\'e kadar)',
+                price: 'Fiyat (UAH) *',
+                city: 'Şehir',
+                phone: 'Telefon',
+                editProfile: 'Profili Düzenle',
+                logout: 'Çıkış Yap',
+                help: 'Yardım',
+                about: 'UAMO Hakkında',
+                settingsAccount: 'Hesap',
+                settingsNotifications: 'Bildirimler',
+                settingsCity: 'Şehir',
+                settingsLanguage: 'Dil',
+                settingsPrivacy: 'Gizlilik',
+                settingsMessages: 'Mesajlar',
+                settingsSecurity: 'Güvenlik',
+                saveChanges: '💾 Değişiklikleri Kaydet',
+                changePhoto: 'Fotoğrafı Değiştir',
+                filters: 'Filtreler',
+                noResults: 'Sonuç bulunamadı',
+                noFavorites: 'Henüz bir şey yok',
+                noChats: 'Sohbet yok',
+                noListings: 'Henüz ilanınız yok',
+                createFirst: 'İlk ilanınızı oluşturun',
+                add: 'Ekle',
+                chats: 'Sohbetler',
+                language: 'Dil',
+                saveLanguage: '💾 Dili Kaydet',
+                back: 'Geri'
+            }
+        };
+
+        let currentLang = 'uk';
+        let t = function(key) {
+            return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
+        };
+
+        // ================================================================
+        // SUPABASE CONFIG
         // ================================================================
 
         const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
@@ -1681,18 +2033,121 @@
         let unreadCount = 0;
 
         // ================================================================
-        // ПРАВИЛЬНА ФУНКЦІЯ ОЧІКУВАННЯ SUPABASE
+        // ФУНКЦІЇ ПЕРЕКЛАДУ
+        // ================================================================
+
+        function applyTranslations() {
+            const lang = currentLang;
+            const tr = translations[lang] || translations.uk;
+
+            // Навігація
+            document.getElementById('navHome').textContent = tr.home;
+            document.getElementById('navSearch').textContent = tr.search;
+            document.getElementById('navAdd').textContent = tr.add;
+            document.getElementById('navChats').textContent = tr.chats;
+            document.getElementById('navProfile').textContent = tr.profile;
+
+            // Головна
+            document.getElementById('recommendedTitle').textContent = tr.recommended;
+            document.getElementById('newListingsTitle').textContent = tr.newListings;
+            document.getElementById('recommendedAll').textContent = tr.all;
+            document.getElementById('newListingsAll').textContent = tr.all;
+            document.getElementById('addListingBtn').innerHTML = '<i class="fas fa-plus"></i> ' + tr.addListing;
+
+            // Пошук
+            document.getElementById('filterAll').textContent = tr.all.replace(' →', '');
+            document.getElementById('filterProducts').textContent = tr.products;
+            document.getElementById('filterJobs').textContent = tr.jobs;
+            document.getElementById('filterServices').textContent = tr.services;
+            document.getElementById('filterRealestate').textContent = tr.realestate;
+            document.getElementById('filterTransport').textContent = tr.transport;
+            document.getElementById('filterFilters').textContent = tr.filters;
+
+            // Додати оголошення
+            document.getElementById('addListingTitle').textContent = tr.addListing;
+            document.getElementById('addCategoryLabel').textContent = tr.category;
+            document.getElementById('addTitleLabel').textContent = tr.title;
+            document.getElementById('addDescLabel').textContent = tr.description;
+            document.getElementById('addPhotoLabel').textContent = tr.photo;
+            document.getElementById('addPhotoText').textContent = tr.addPhoto;
+            document.getElementById('addPriceLabel').textContent = tr.price;
+            document.getElementById('addCityLabel').textContent = tr.city;
+            document.getElementById('addPhoneLabel').textContent = tr.phone;
+            document.getElementById('publishBtn').textContent = tr.publish;
+
+            // Обране
+            document.getElementById('favoritesTitle').textContent = tr.favorites;
+
+            // Чати
+            document.getElementById('chatsTitle').textContent = tr.chats;
+
+            // Профіль
+            document.getElementById('editProfileBtn').textContent = tr.editProfile;
+            document.getElementById('statActiveLabel').textContent = tr.listings;
+            document.getElementById('statFavoritesLabel').textContent = tr.favorites;
+            document.getElementById('statMessagesLabel').textContent = tr.messages;
+            document.getElementById('profileMyListings').textContent = tr.myListings;
+            document.getElementById('profileFavorites').textContent = tr.favorites;
+            document.getElementById('profileMessages').textContent = tr.messages;
+            document.getElementById('profileSettings').textContent = tr.settings;
+            document.getElementById('profileHelp').textContent = tr.help;
+            document.getElementById('profileAbout').textContent = tr.about;
+            document.getElementById('profileLogout').textContent = tr.logout;
+
+            // Редагувати профіль
+            document.getElementById('editProfileTitle').textContent = tr.editProfile;
+            document.getElementById('changePhotoText').textContent = tr.changePhoto;
+            document.getElementById('editNameLabel').textContent = 'Ім\'я';
+            document.getElementById('editLastNameLabel').textContent = 'Прізвище';
+            document.getElementById('editUsernameLabel').textContent = 'Нікнейм';
+            document.getElementById('editPhoneLabel').textContent = tr.phone;
+            document.getElementById('editCityLabel').textContent = tr.city;
+            document.getElementById('saveProfileBtn').textContent = tr.saveChanges;
+
+            // Мої оголошення
+            document.getElementById('myListingsTitle').textContent = tr.myListings;
+
+            // Налаштування
+            document.getElementById('settingsTitle').textContent = tr.settings;
+            document.getElementById('settingsAccount').textContent = tr.settingsAccount;
+            document.getElementById('settingsNotifications').textContent = tr.settingsNotifications;
+            document.getElementById('settingsCity').textContent = tr.settingsCity;
+            document.getElementById('settingsLanguage').textContent = tr.settingsLanguage;
+            document.getElementById('settingsPrivacy').textContent = tr.settingsPrivacy;
+            document.getElementById('settingsMessages').textContent = tr.settingsMessages;
+            document.getElementById('settingsSecurity').textContent = tr.settingsSecurity;
+
+            // Мова
+            document.getElementById('languageTitle').textContent = tr.language;
+            document.getElementById('saveLanguageBtn').textContent = tr.saveLanguage;
+
+            // Success Modal
+            document.getElementById('successHomeBtn').textContent = tr.home;
+            document.getElementById('successViewBtn').textContent = 'Переглянути';
+
+            // Місця для категорій
+            const catMap = { 'Товари': tr.products, 'Робота': tr.jobs, 'Послуги': tr.services, 'Нерухомість': tr
+                    .realestate, 'Транспорт': tr.transport };
+            const select = document.getElementById('addCategory');
+            if (select) {
+                for (let opt of select.options) {
+                    const val = opt.value;
+                    if (catMap[val]) opt.text = catMap[val];
+                }
+            }
+        }
+
+        // ================================================================
+        // SUPABASE ОЧІКУВАННЯ
         // ================================================================
 
         function waitForSupabase(callback, attempts) {
             attempts = attempts || 0;
-
             if (window.supabase && typeof window.supabase.createClient === 'function') {
                 console.log('✅ Supabase SDK завантажено!');
                 callback();
                 return;
             }
-
             if (attempts < 20) {
                 console.log('⏳ Очікування Supabase SDK... спроба ' + (attempts + 1) + '/20');
                 setTimeout(function() {
@@ -1700,7 +2155,6 @@
                 }, 300);
                 return;
             }
-
             console.error('❌ Не вдалося завантажити Supabase SDK');
             document.getElementById('statusBadge').textContent = '❌';
             document.getElementById('statusBadge').className = 'status-badge status-error';
@@ -1709,7 +2163,7 @@
         }
 
         // ================================================================
-        // ПРАВИЛЬНА ІНІЦІАЛІЗАЦІЯ SUPABASE
+        // ІНІЦІАЛІЗАЦІЯ SUPABASE
         // ================================================================
 
         function initSupabase() {
@@ -1717,13 +2171,10 @@
                 if (!window.supabase || typeof window.supabase.createClient !== 'function') {
                     throw new Error('Supabase SDK не завантажений');
                 }
-
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 console.log('✅ Supabase client initialized successfully');
-
                 document.getElementById('statusBadge').textContent = '✅';
                 document.getElementById('statusBadge').className = 'status-badge status-connected';
-
                 return true;
             } catch (e) {
                 console.error('❌ Failed to init Supabase:', e);
@@ -1778,7 +2229,6 @@
             const btn = document.getElementById('authSubmitBtn');
             const el = document.getElementById('authLoading');
             const inputs = document.querySelectorAll('#authForm input');
-
             if (loading) {
                 btn.disabled = true;
                 btn.textContent = '⏳ Завантаження...';
@@ -1799,7 +2249,6 @@
         function toggleAuthMode() {
             hideAuthMessages();
             isAuthMode = isAuthMode === 'login' ? 'register' : 'login';
-
             const btn = document.getElementById('authSubmitBtn');
             const toggleText = document.getElementById('authToggleText');
             const link = document.getElementById('authToggleLink');
@@ -1807,7 +2256,6 @@
             const confirmGroup = document.getElementById('confirmPasswordGroup');
             const forgotLink = document.getElementById('forgotPasswordLink');
             const passwordInput = document.getElementById('authPassword');
-
             if (isAuthMode === 'login') {
                 btn.textContent = 'Увійти';
                 toggleText.textContent = 'Немає акаунта?';
@@ -1835,40 +2283,33 @@
 
         async function handleAuth() {
             hideAuthMessages();
-
             if (!supabase) {
                 showAuthError('Підключення до сервера не встановлено. Спробуйте перезавантажити сторінку.');
                 return;
             }
-
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
             const confirmPassword = document.getElementById('authConfirmPassword')?.value;
-
             if (!email) {
                 showAuthError('Введіть email');
                 document.getElementById('authEmail').focus();
                 return;
             }
-
             if (!email.includes('@') || !email.includes('.')) {
                 showAuthError('Введіть коректний email');
                 document.getElementById('authEmail').focus();
                 return;
             }
-
             if (!password) {
                 showAuthError('Введіть пароль');
                 document.getElementById('authPassword').focus();
                 return;
             }
-
             if (password.length < 6) {
                 showAuthError('Пароль має бути не менше 6 символів');
                 document.getElementById('authPassword').focus();
                 return;
             }
-
             if (isAuthMode === 'register') {
                 if (!confirmPassword) {
                     showAuthError('Підтвердіть пароль');
@@ -1881,52 +2322,38 @@
                     return;
                 }
             }
-
             setLoading(true);
-
             try {
                 if (isAuthMode === 'login') {
                     console.log('🔐 Attempting login for:', email);
-
                     const { data, error } = await supabase.auth.signInWithPassword({
                         email: email,
                         password: password
                     });
-
                     setLoading(false);
-
                     if (error) {
                         console.error('❌ Login error:', error);
                         if (error.message.includes('Invalid login credentials')) {
                             showAuthError('Невірний email або пароль');
                         } else if (error.message.includes('Email not confirmed')) {
-                            showAuthError('Email не підтверджено. Перевірте вашу пошту та підтвердіть акаунт.');
-                        } else if (error.message.includes('network') || error.message.includes('fetch')) {
-                            showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
+                            showAuthError('Email не підтверджено. Перевірте вашу пошту.');
                         } else {
                             showAuthError('Помилка: ' + error.message);
                         }
                         return;
                     }
-
                     if (data?.user) {
                         console.log('✅ Login successful:', data.user.email);
                         currentUser = data.user;
                         showAuthSuccess('✅ Вхід виконано успішно!');
-
                         await loadUserData();
                         await loadListings();
                         await loadFavorites();
                         await loadChats();
-
-                        setTimeout(() => {
-                            navigateTo('home');
-                        }, 500);
+                        setTimeout(() => { navigateTo('home'); }, 500);
                     }
-
                 } else {
                     console.log('📝 Attempting registration for:', email);
-
                     const { data, error } = await supabase.auth.signUp({
                         email: email,
                         password: password,
@@ -1939,30 +2366,21 @@
                             emailRedirectTo: window.location.origin + '/'
                         }
                     });
-
                     setLoading(false);
-
                     if (error) {
                         console.error('❌ Registration error:', error);
                         if (error.message.includes('User already registered')) {
                             showAuthError('Цей email вже зареєстровано. Увійдіть у свій акаунт.');
-                        } else if (error.message.includes('network') || error.message.includes('fetch')) {
-                            showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
                         } else {
                             showAuthError('Помилка: ' + error.message);
                         }
                         return;
                     }
-
                     if (data?.user) {
                         console.log('✅ Registration successful:', data.user.email);
-
                         try {
                             await createUserRecord(data.user.id, email, email.split('@')[0]);
-                        } catch (e) {
-                            console.warn('⚠️ User record creation warning:', e);
-                        }
-
+                        } catch (e) { console.warn('⚠️ User record creation warning:', e); }
                         if (data.user.confirmed_at) {
                             showAuthSuccess('✅ Реєстрація успішна! Ви можете увійти.');
                             setTimeout(() => {
@@ -1972,9 +2390,8 @@
                                 showAuthSuccess('Тепер увійдіть у свій акаунт');
                             }, 1500);
                         } else {
-                            showAuthSuccess('✅ Реєстрація успішна! Перевірте вашу пошту для підтвердження акаунта.');
+                            showAuthSuccess('✅ Реєстрація успішна! Перевірте вашу пошту для підтвердження.');
                         }
-
                         document.getElementById('authPassword').value = '';
                         if (document.getElementById('authConfirmPassword')) {
                             document.getElementById('authConfirmPassword').value = '';
@@ -1984,7 +2401,7 @@
             } catch (e) {
                 setLoading(false);
                 console.error('❌ Unexpected auth error:', e);
-                showAuthError('Несподівана помилка. Спробуйте ще раз або перезавантажте сторінку.');
+                showAuthError('Несподівана помилка. Спробуйте ще раз.');
             }
         }
 
@@ -1997,31 +2414,24 @@
                 showAuthError('Підключення до сервера не встановлено');
                 return;
             }
-
             const email = document.getElementById('authEmail').value.trim();
-
             if (!email) {
                 showAuthError('Введіть email для відновлення пароля');
                 document.getElementById('authEmail').focus();
                 return;
             }
-
             if (!email.includes('@') || !email.includes('.')) {
                 showAuthError('Введіть коректний email');
                 document.getElementById('authEmail').focus();
                 return;
             }
-
             hideAuthMessages();
             setLoading(true);
-
             try {
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                     redirectTo: window.location.origin + '/'
                 });
-
                 setLoading(false);
-
                 if (error) {
                     console.error('❌ Reset password error:', error);
                     if (error.message.includes('User not found')) {
@@ -2031,7 +2441,6 @@
                     }
                     return;
                 }
-
                 showAuthSuccess('✅ Лист з посиланням для відновлення надіслано на ' + email);
                 document.getElementById('authPassword').value = '';
             } catch (e) {
@@ -2060,10 +2469,10 @@
                         first_name: username,
                         username: username,
                         city: 'Київ',
+                        language: currentLang || 'uk',
                         created_at: new Date().toISOString()
                     })
                 });
-
                 if (!response.ok) {
                     console.warn('⚠️ User record creation failed:', response.status);
                 } else {
@@ -2075,51 +2484,43 @@
         }
 
         // ================================================================
-        // API REQUEST HELPER
+        // API REQUEST HELPER (З ПРАВИЛЬНОЮ ОБРОБКОЮ ПОМИЛОК)
         // ================================================================
 
         async function apiRequest(endpoint, options = {}) {
             try {
+                const session = supabase ? (await supabase.auth.getSession()).data.session : null;
                 const headers = {
                     'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
                     'Content-Type': 'application/json',
                     ...options.headers
                 };
-
+                if (session?.access_token) {
+                    headers['Authorization'] = 'Bearer ' + session.access_token;
+                }
                 const res = await fetch(SUPABASE_URL + '/rest/v1/' + endpoint, {
                     ...options,
                     headers: headers
                 });
-
-                if (res.status === 204) return [];
-                if (res.status === 404) {
-                    console.warn('⚠️ Endpoint not found:', endpoint);
-                    return [];
-                }
-                if (res.status === 401 || res.status === 403) {
-                    console.warn('⚠️ Unauthorized request');
-                    return [];
-                }
-                if (res.status === 201 || res.status === 200) {
-                    const text = await res.text();
-                    if (text && text.length > 0) {
-                        try { return JSON.parse(text); } catch (e) { return []; }
-                    }
-                    return [];
+                const text = await res.text();
+                let data = null;
+                try {
+                    data = text ? JSON.parse(text) : null;
+                } catch {
+                    data = text;
                 }
                 if (!res.ok) {
-                    console.warn('⚠️ API error ' + res.status + ':', endpoint);
-                    return [];
+                    console.error('❌ Supabase API error:', {
+                        status: res.status,
+                        endpoint: endpoint,
+                        response: data
+                    });
+                    throw new Error(data?.message || data?.hint || data?.details || 'HTTP ' + res.status);
                 }
-                const text = await res.text();
-                if (text && text.length > 0) {
-                    try { return JSON.parse(text); } catch (e) { return []; }
-                }
-                return [];
+                return data || [];
             } catch (e) {
-                console.error('Fetch error:', e);
-                return [];
+                console.error('❌ API request failed:', e);
+                throw e;
             }
         }
 
@@ -2136,7 +2537,6 @@
                         'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
                     }
                 });
-
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.length > 0) {
@@ -2150,6 +2550,10 @@
                         userData.city = u.city || 'Київ';
                         userData.avatar = u.avatar_url || userData.avatar;
                         userData.language = u.language || 'uk';
+                        // Застосовуємо мову
+                        currentLang = userData.language || 'uk';
+                        localStorage.setItem('uamo_lang', currentLang);
+                        applyTranslations();
                         updateUI();
                         console.log('✅ User data loaded');
                     }
@@ -2264,6 +2668,12 @@
             document.getElementById('securityEmail').textContent = userData.email || 'user@example.com';
             document.getElementById('securityPhone').textContent = userData.phone || '+380 XX XXX XX XX';
             renderCitySelect();
+            // Вибираємо мову в радіо
+            const radios = document.querySelectorAll('input[name="language"]');
+            radios.forEach(r => {
+                r.checked = r.value === currentLang;
+                r.parentElement.classList.toggle('active', r.checked);
+            });
         }
 
         function updateChatBadge() {
@@ -2291,11 +2701,11 @@
 
         function renderCategories() {
             const categories = [
-                { id: 'products', icon: 'fa-tag', name: 'Товари' },
-                { id: 'jobs', icon: 'fa-briefcase', name: 'Робота' },
-                { id: 'services', icon: 'fa-wrench', name: 'Послуги' },
-                { id: 'realestate', icon: 'fa-building', name: 'Нерухом.' },
-                { id: 'transport', icon: 'fa-car', name: 'Транспорт' }
+                { id: 'products', icon: 'fa-tag', name: t('products') },
+                { id: 'jobs', icon: 'fa-briefcase', name: t('jobs') },
+                { id: 'services', icon: 'fa-wrench', name: t('services') },
+                { id: 'realestate', icon: 'fa-building', name: t('realestate') },
+                { id: 'transport', icon: 'fa-car', name: t('transport') }
             ];
             const container = document.getElementById('categorySlider');
             container.innerHTML = categories.map(c =>
@@ -2351,18 +2761,16 @@
             if (!currentUser) { navigateTo('auth'); return; }
             const recommended = listings.filter(l => l.isFeatured).slice(0, 6);
             const newListings = listings.filter(l => l.isNew).slice(0, 6);
-
             document.getElementById('recommendedScroll').innerHTML =
                 recommended.map(renderListingCard).join('') ||
-                '<div class="empty-state">Немає рекомендованих</div>';
-
+                '<div class="empty-state">' + t('noResults') + '</div>';
             document.getElementById('newListingsScroll').innerHTML =
                 newListings.map(renderListingCard).join('') ||
-                '<div class="empty-state">Немає нових оголошень</div>';
-
+                '<div class="empty-state">' + t('noResults') + '</div>';
             renderCategories();
             updateNav('home');
             document.getElementById('bottomNav').classList.add('show');
+            applyTranslations();
         }
 
         function renderSearch(query) {
@@ -2378,11 +2786,13 @@
                 );
             }
             if (results.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>';
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i> ' + t('noResults') +
+                    '</div>';
             } else {
                 container.innerHTML = results.map(renderSearchResult).join('');
             }
             updateNav('search');
+            applyTranslations();
         }
 
         function renderFavorites() {
@@ -2392,13 +2802,15 @@
                 container.innerHTML =
                     '<div class="favorites-empty">' +
                     '<i class="fas fa-heart" style="color:#EF4444;"></i>' +
-                    '<h3>Тут поки що порожньо</h3>' +
-                    '<p style="margin-top:4px; color:var(--text-secondary);">Зберігайте оголошення, щоб повернутися до них пізніше.</p>' +
+                    '<h3>' + t('noFavorites') + '</h3>' +
+                    '<p style="margin-top:4px; color:var(--text-secondary);">' + t('noFavorites') +
+                    '</p>' +
                     '</div>';
             } else {
                 container.innerHTML = favList.map(l => renderSearchResult(l)).join('');
             }
             updateNav('favorites');
+            applyTranslations();
         }
 
         function renderChats() {
@@ -2408,8 +2820,9 @@
                 container.innerHTML =
                     '<div class="favorites-empty">' +
                     '<i class="fas fa-comment-dots" style="color:var(--accent);"></i>' +
-                    '<h3>Немає чатів</h3>' +
-                    '<p style="margin-top:4px; color:var(--text-secondary);">Напишіть продавцю, щоб почати діалог</p>' +
+                    '<h3>' + t('noChats') + '</h3>' +
+                    '<p style="margin-top:4px; color:var(--text-secondary);">' + t('noChats') +
+                    '</p>' +
                     '</div>';
             } else {
                 container.innerHTML = chats.map(chat => {
@@ -2418,7 +2831,8 @@
                     const partnerName = partner?.first_name || 'Користувач';
                     const partnerAvatar = partner?.avatar_url || partnerName?.[0] || '👤';
                     const unread = chat.unread_count || 0;
-                    return '<div class="search-result-card" onclick="openChatDetail(\'' + chat.id + '\')">' +
+                    return '<div class="search-result-card" onclick="openChatDetail(\'' + chat.id +
+                        '\')">' +
                         '<div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">' +
                         partnerAvatar +
                         '</div>' +
@@ -2442,6 +2856,7 @@
             }
             updateNav('chats');
             updateChatBadge();
+            applyTranslations();
         }
 
         function renderMyListings() {
@@ -2451,9 +2866,11 @@
                 container.innerHTML =
                     '<div class="favorites-empty">' +
                     '<i class="fas fa-list-ul" style="color:var(--accent);"></i>' +
-                    '<h3>У вас поки немає оголошень</h3>' +
-                    '<p style="margin-top:4px; color:var(--text-secondary);">Створіть своє перше оголошення</p>' +
-                    '<button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo(\'add\')">+ Додати оголошення</button>' +
+                    '<h3>' + t('noListings') + '</h3>' +
+                    '<p style="margin-top:4px; color:var(--text-secondary);">' + t('createFirst') +
+                    '</p>' +
+                    '<button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo(\'add\')">+ ' +
+                    t('addListing') + '</button>' +
                     '</div>';
             } else {
                 container.innerHTML = myListings.map(item => {
@@ -2474,15 +2891,16 @@
                         '</div>' +
                         '<div style="display:flex; gap:6px; width:100%; margin-top:8px;">' +
                         '<button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail(\'' +
-                        item.id + '\')">👁 Відкрити</button>' +
+                        item.id + '\')">👁 ' + t('listings') + '</button>' +
                         '<button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing(\'' +
-                        item.id + '\')">✏️ Редагувати</button>' +
+                        item.id + '\')">✏️</button>' +
                         '<button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1;" onclick="deleteListing(\'' +
-                        item.id + '\')">🗑 Видалити</button>' +
+                        item.id + '\')">🗑</button>' +
                         '</div>' +
                         '</div>';
                 }).join('');
             }
+            applyTranslations();
         }
 
         function renderCitySelect() {
@@ -2503,6 +2921,7 @@
                     '') +
                 '</div>'
             ).join('');
+            applyTranslations();
         }
 
         function renderAll() {
@@ -2518,8 +2937,14 @@
                 updateUI();
                 updateProfileStats();
                 updateNav('profile');
+                applyTranslations();
             } else if (currentPage === 'my-listings') renderMyListings();
             else if (currentPage === 'settings-city') renderCities();
+            else if (currentPage === 'settings-language') {
+                applyTranslations();
+                updateUI();
+            }
+            applyTranslations();
         }
 
         // ================================================================
@@ -2535,22 +2960,18 @@
                 currentPage = 'auth';
                 return;
             }
-
             if (!currentUser && page !== 'auth') {
                 navigateTo('auth');
                 return;
             }
-
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + page);
             if (target) target.classList.add('active');
             document.getElementById('bottomNav').classList.add('show');
             currentPage = page;
-
             if (historyStack[historyStack.length - 1] !== page) {
                 historyStack.push(page);
             }
-
             renderAll();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -2591,11 +3012,11 @@
                     input.value = '';
                 } else {
                     const names = {
-                        products: 'Товари',
-                        jobs: 'Робота',
-                        services: 'Послуги',
-                        realestate: 'Нерухомість',
-                        transport: 'Транспорт'
+                        products: t('products'),
+                        jobs: t('jobs'),
+                        services: t('services'),
+                        realestate: t('realestate'),
+                        transport: t('transport')
                     };
                     input.value = names[cat] || '';
                 }
@@ -2604,7 +3025,8 @@
         }
 
         function showFilters() {
-            alert('🔍 Фільтри:\n- Ціна від/до\n- Місто\n- Стан (новий/б/в)\n- Дата публікації');
+            alert('🔍 ' + t('filters') + ':\n- ' + t('price') + '\n- ' + t('city') + '\n- Стан (новий/б/в)\n- ' + t(
+                'newListings'));
         }
 
         // ================================================================
@@ -2630,8 +3052,15 @@
             updateProfileStats();
         }
 
+        // ================================================================
+        // SUBMIT LISTING - ВИПРАВЛЕНО
+        // ================================================================
+
         async function submitListing() {
-            if (!currentUser) { navigateTo('auth'); return; }
+            if (!currentUser) {
+                navigateTo('auth');
+                return;
+            }
 
             const title = document.getElementById('addTitle').value.trim();
             const price = document.getElementById('addPrice').value.trim();
@@ -2640,55 +3069,77 @@
             const desc = document.getElementById('addDesc').value.trim();
             const category = document.getElementById('addCategory').value;
 
-            if (!title) { alert('Введіть назву'); return; }
-            if (!price) { alert('Введіть ціну'); return; }
+            if (!title) {
+                alert(t('enterTitle'));
+                return;
+            }
+
+            if (!price) {
+                alert(t('enterPrice'));
+                return;
+            }
+
+            const numericPrice = Number(price.replace(',', '.'));
+
+            if (!Number.isFinite(numericPrice) || numericPrice < 0) {
+                alert(t('invalidPrice'));
+                return;
+            }
 
             const newItem = {
                 user_id: currentUser.id,
                 title: title,
-                price: parseFloat(price),
+                price: numericPrice,
                 city: city,
-                phone: phone,
-                description: desc || '',
+                phone: phone || null,
+                description: desc || null,
                 category: category,
                 photos: selectedPhotos.length > 0 ? selectedPhotos : null,
-                status: 'active',
-                created_at: new Date().toISOString()
+                status: 'active'
             };
 
-            const result = await apiRequest('listings', {
-                method: 'POST',
-                body: JSON.stringify(newItem)
-            });
+            try {
+                const result = await apiRequest('listings', {
+                    method: 'POST',
+                    headers: {
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(newItem)
+                });
 
-            selectedPhotos = [];
-            renderPhotoPreviews();
-            document.getElementById('addTitle').value = '';
-            document.getElementById('addPrice').value = '';
-            document.getElementById('addCity').value = '';
-            document.getElementById('addPhone').value = '';
-            document.getElementById('addDesc').value = '';
+                console.log('✅ Listing created:', result);
 
-            showSuccessModal(
-                '✓ Оголошення опубліковано!',
-                'Ваше оголошення вже доступне на UAMO.',
-                function() { navigateTo('home'); },
-                function() { if (result && result.length > 0) openDetail(result[0].id);
-                    else navigateTo('home'); }
-            );
+                selectedPhotos = [];
+                renderPhotoPreviews();
 
-            await loadListings();
-            await loadMyListings();
+                document.getElementById('addTitle').value = '';
+                document.getElementById('addPrice').value = '';
+                document.getElementById('addCity').value = '';
+                document.getElementById('addPhone').value = '';
+                document.getElementById('addDesc').value = '';
+
+                await loadListings();
+                await loadMyListings();
+
+                showSuccessModal(t('listingPublished'), t('listingPublished'), function() {
+                    navigateTo('home');
+                }, function() {
+                    if (result && result.length > 0) openDetail(result[0].id);
+                    else navigateTo('home');
+                });
+
+            } catch (error) {
+                console.error('❌ Listing publish failed:', error);
+                alert(t('publishError') + '\n\n' + error.message);
+            }
         }
 
         function showSuccessModal(title, message, primaryAction, secondaryAction) {
             const modal = document.getElementById('successModal');
             document.getElementById('successTitle').textContent = title;
             document.getElementById('successMessage').textContent = message;
-
             const primaryBtn = document.getElementById('successPrimaryBtn');
             const secondaryBtn = document.getElementById('successSecondaryBtn');
-
             primaryBtn.onclick = function() {
                 closeSuccessModal();
                 if (primaryAction) primaryAction();
@@ -2697,8 +3148,8 @@
                 closeSuccessModal();
                 if (secondaryAction) secondaryAction();
             };
-
             modal.classList.add('show');
+            applyTranslations();
         }
 
         function closeSuccessModal() {
@@ -2711,19 +3162,17 @@
 
         function openDetail(id) {
             const listing = listings.find(l => l.id === id);
-            if (!listing) { alert('Оголошення не знайдено'); return; }
+            if (!listing) { alert(t('noResults')); return; }
             currentDetailListing = listing;
             currentDetailId = id;
             detailPhotos = listing.photos || (listing.image ? [listing.image] : []);
             detailIndex = 0;
-
             document.getElementById('detailPrice').textContent = listing.price + ' грн';
             document.getElementById('detailTitle').textContent = listing.title;
             document.getElementById('detailMeta').innerHTML =
                 '<span><i class="fas fa-map-marker-alt"></i> ' + listing.location + '</span>' +
                 '<span><i class="far fa-clock"></i> ' + timeAgo(listing.createdAt) + '</span>';
             document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
-
             const specsContainer = document.getElementById('detailSpecs');
             if (listing.specs && Object.keys(listing.specs).length > 0) {
                 specsContainer.innerHTML = Object.entries(listing.specs)
@@ -2736,19 +3185,17 @@
             } else {
                 specsContainer.style.display = 'none';
             }
-
             if (listing.seller) {
                 document.getElementById('sellerName').textContent = listing.seller.name || 'Продавець';
                 document.getElementById('sellerSince').textContent = 'На UAMO з ' + (listing.seller.since || '2024');
                 document.getElementById('sellerAvatar').textContent = listing.seller.avatar || '👤';
             }
-
             const favBtn = document.getElementById('detailFavoriteBtn');
             favBtn.className = isFavorite(id) ? 'fas fa-heart' : 'far fa-heart';
             favBtn.style.color = isFavorite(id) ? '#EF4444' : 'var(--text-secondary)';
-
             updateDetailGallery();
             navigateTo('detail');
+            applyTranslations();
         }
 
         function updateDetailGallery() {
@@ -2756,19 +3203,16 @@
             const dots = document.getElementById('detailDots');
             const arrowLeft = document.getElementById('detailArrowLeft');
             const arrowRight = document.getElementById('detailArrowRight');
-
             if (detailPhotos.length > 0) {
                 gallery.style.backgroundImage = 'url(\'' + detailPhotos[detailIndex] + '\')';
                 gallery.style.backgroundSize = 'cover';
                 gallery.style.backgroundPosition = 'center';
                 const icon = gallery.querySelector('i');
                 if (icon) icon.style.display = 'none';
-
                 dots.innerHTML = detailPhotos.map(function(_, i) {
                     return '<span class="' + (i === detailIndex ? 'active' : '') +
                         '" onclick="detailIndex=' + i + '; updateDetailGallery();"></span>';
                 }).join('');
-
                 arrowLeft.style.display = detailPhotos.length > 1 ? 'block' : 'none';
                 arrowRight.style.display = detailPhotos.length > 1 ? 'block' : 'none';
             } else {
@@ -2980,9 +3424,7 @@
             const username = document.getElementById('editUsername').value.trim();
             const phone = document.getElementById('editPhone').value.trim();
             const city = document.getElementById('editCity').value;
-
             if (!name) { alert('Введіть ім\'я'); return; }
-
             await apiRequest('users?id=eq.' + currentUser.id, {
                 method: 'PATCH',
                 body: JSON.stringify({
@@ -2993,13 +3435,11 @@
                     city: city
                 })
             });
-
             userData.name = name;
             userData.last_name = lastName;
             userData.username = username;
             userData.phone = phone;
             userData.city = city;
-
             updateUI();
             alert('✅ Профіль оновлено!');
             navigateTo('profile');
@@ -3030,16 +3470,25 @@
             }).join('');
         }
 
+        // ================================================================
+        // SAVE LANGUAGE - З ПОВНИМ ПЕРЕКЛАДОМ
+        // ================================================================
+
         function saveLanguage() {
             if (!currentUser) { navigateTo('auth'); return; }
             const selected = document.querySelector('input[name="language"]:checked');
             if (selected) {
-                userData.language = selected.value;
+                const lang = selected.value;
+                currentLang = lang;
+                localStorage.setItem('uamo_lang', lang);
+                userData.language = lang;
                 apiRequest('users?id=eq.' + currentUser.id, {
                     method: 'PATCH',
-                    body: JSON.stringify({ language: selected.value })
+                    body: JSON.stringify({ language: lang })
                 });
-                alert('✅ Мову змінено!');
+                applyTranslations();
+                renderAll();
+                alert('✅ ' + (translations[lang]?.saveLanguage || 'Мову змінено!'));
             }
         }
 
@@ -3056,7 +3505,6 @@
             const newEmail = document.getElementById('newEmail').value.trim();
             if (!newEmail) { alert('Введіть новий email'); return; }
             if (newEmail === userData.email) { alert('Email не змінився'); return; }
-
             try {
                 const { error } = await supabase.auth.updateUser({ email: newEmail });
                 if (error) {
@@ -3077,12 +3525,10 @@
             const newPhone = document.getElementById('newPhone').value.trim();
             if (!newPhone) { alert('Введіть новий номер'); return; }
             if (newPhone === userData.phone) { alert('Номер не змінився'); return; }
-
             await apiRequest('users?id=eq.' + currentUser.id, {
                 method: 'PATCH',
                 body: JSON.stringify({ phone: newPhone })
             });
-
             userData.phone = newPhone;
             updateUI();
             alert('✅ Номер телефону оновлено!');
@@ -3094,7 +3540,6 @@
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-
             if (!currentPassword || !newPassword || !confirmPassword) {
                 alert('Заповніть всі поля');
                 return;
@@ -3107,7 +3552,6 @@
                 alert('Паролі не співпадають');
                 return;
             }
-
             try {
                 const { error: signInError } = await supabase.auth.signInWithPassword({
                     email: currentUser.email,
@@ -3117,7 +3561,6 @@
                     alert('Поточний пароль невірний');
                     return;
                 }
-
                 const { error } = await supabase.auth.updateUser({ password: newPassword });
                 if (error) {
                     alert('Помилка: ' + error.message);
@@ -3164,7 +3607,7 @@
             selectedPhotos = listing.photos || [];
             renderPhotoPreviews();
             const btn = document.querySelector('.add-listing-form .btn-submit');
-            btn.textContent = '✏️ Оновити оголошення';
+            btn.textContent = '✏️ ' + t('editProfile');
             btn.onclick = function() { updateListing(id); };
             navigateTo('add');
         }
@@ -3177,9 +3620,7 @@
             const phone = document.getElementById('addPhone').value.trim() || userData.phone;
             const desc = document.getElementById('addDesc').value.trim();
             const category = document.getElementById('addCategory').value;
-
-            if (!title || !price) { alert('Заповніть назву та ціну'); return; }
-
+            if (!title || !price) { alert(t('enterTitle') + ' та ' + t('enterPrice')); return; }
             await apiRequest('listings?id=eq.' + id, {
                 method: 'PATCH',
                 body: JSON.stringify({
@@ -3192,12 +3633,11 @@
                     photos: selectedPhotos.length > 0 ? selectedPhotos : null
                 })
             });
-
             selectedPhotos = [];
             renderPhotoPreviews();
-            alert('✅ Оголошення оновлено!');
+            alert('✅ ' + t('listingPublished'));
             const btn = document.querySelector('.add-listing-form .btn-submit');
-            btn.textContent = 'Опублікувати оголошення';
+            btn.textContent = t('publish');
             btn.onclick = submitListing;
             document.getElementById('addTitle').value = '';
             document.getElementById('addPrice').value = '';
@@ -3212,7 +3652,7 @@
         async function deleteListing(id) {
             if (!confirm('Ви впевнені, що хочете видалити це оголошення?')) return;
             await apiRequest('listings?id=eq.' + id, { method: 'DELETE' });
-            alert('🗑 Оголошення видалено');
+            alert('🗑 ' + t('listings') + ' видалено');
             await loadListings();
             await loadMyListings();
             if (currentPage === 'my-listings') renderMyListings();
@@ -3223,11 +3663,13 @@
         // ================================================================
 
         function showHelp() {
-            alert('🆘 Допомога\n\nЯкщо у вас виникли питання, зверніться до служби підтримки: support@uamo.com');
+            alert('🆘 ' + t('help') +
+                '\n\nЯкщо у вас виникли питання, зверніться до служби підтримки: support@uamo.com');
         }
 
         function showAbout() {
-            alert('ℹ️ Про UAMO\n\nUAMO — універсальна платформа оголошень.\nВерсія 2.0\n\n© 2026 UAMO');
+            alert('ℹ️ ' + t('about') +
+                '\n\nUAMO — універсальна платформа оголошень.\nВерсія 2.0\n\n© 2026 UAMO');
         }
 
         async function handleLogout() {
@@ -3255,29 +3697,33 @@
                 setTimeout(checkSession, 500);
                 return;
             }
-
             try {
                 const { data: { session }, error } = await supabase.auth.getSession();
-
                 if (error) {
                     console.error('❌ Session error:', error);
                     return;
                 }
-
                 if (session?.user) {
                     console.log('✅ Session found for:', session.user.email);
                     currentUser = session.user;
                     document.getElementById('statusBadge').textContent = '✅';
                     document.getElementById('statusBadge').className = 'status-badge status-connected';
+                    // Завантажуємо збережену мову
+                    const savedLang = localStorage.getItem('uamo_lang') || 'uk';
+                    currentLang = savedLang;
                     await loadUserData();
                     await loadListings();
                     await loadFavorites();
                     await loadChats();
+                    applyTranslations();
                     navigateTo('home');
                 } else {
                     console.log('ℹ️ No active session');
                     document.getElementById('statusBadge').textContent = '⏳';
                     document.getElementById('statusBadge').className = 'status-badge status-waiting';
+                    const savedLang = localStorage.getItem('uamo_lang') || 'uk';
+                    currentLang = savedLang;
+                    applyTranslations();
                     navigateTo('auth');
                 }
             } catch (e) {
@@ -3293,17 +3739,17 @@
         function init() {
             console.log('🚀 UAMO Auth Init');
             console.log('📡 Supabase URL:', SUPABASE_URL);
-            console.log('📡 Using publishable key');
 
-            // Чекаємо завантаження Supabase SDK
+            // Відновлюємо мову з localStorage
+            const savedLang = localStorage.getItem('uamo_lang') || 'uk';
+            currentLang = savedLang;
+            applyTranslations();
+
             waitForSupabase(function() {
-                // Ініціалізуємо Supabase клієнт
                 if (!initSupabase()) {
                     setTimeout(init, 500);
                     return;
                 }
-
-                // Налаштовуємо обробку Enter
                 document.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         const active = document.activeElement;
@@ -3313,8 +3759,6 @@
                         }
                     }
                 });
-
-                // Перевіряємо сесію
                 checkSession();
             });
         }
@@ -3362,7 +3806,6 @@
         window.closeSuccessModal = closeSuccessModal;
         window.togglePasswordVisibility = togglePasswordVisibility;
 
-        // Запускаємо додаток
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
