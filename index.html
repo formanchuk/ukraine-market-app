@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ===== ВЕСЬ ВАШ CSS (залиште без змін) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A;
@@ -51,7 +50,6 @@
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .hidden { display: none !important; }
 
-        /* HEADER */
         .header {
             display: flex;
             align-items: center;
@@ -106,7 +104,6 @@
         .status-error { background: var(--danger); color: white; }
         .status-waiting { background: #F59E0B; color: white; }
 
-        /* AUTH */
         .auth-container {
             display: flex;
             flex-direction: column;
@@ -260,7 +257,6 @@
         }
         .forgot-password a:hover { color: var(--accent); }
 
-        /* SEARCH BAR */
         .search-bar { padding: 4px 0 12px 0; }
         .search-bar-inner {
             display: flex;
@@ -286,7 +282,6 @@
         }
         .search-bar-inner input::placeholder { color: var(--text-secondary); font-weight: 400; }
 
-        /* CATEGORIES */
         .category-slider {
             padding: 4px 0 14px 0;
             overflow-x: auto;
@@ -317,7 +312,6 @@
         .category-item i { font-size: 22px; color: var(--primary); }
         .category-item span { font-size: 10px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
 
-        /* SECTION HEADER */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -328,7 +322,6 @@
         .section-header a { font-size: 13px; font-weight: 500; color: var(--accent); text-decoration: none; transition: var(--transition); cursor: pointer; }
         .section-header a:hover { color: var(--accent-hover); }
 
-        /* LISTING CARDS */
         .listing-scroll {
             display: flex;
             gap: 12px;
@@ -387,7 +380,6 @@
         .listing-card-body .title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
         .listing-card-body .location { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
 
-        /* CTA */
         .cta-add { margin: 4px 0 16px 0; }
         .cta-add button {
             width: 100%;
@@ -409,7 +401,6 @@
         }
         .cta-add button:hover { background: var(--accent-hover); transform: scale(1.01); }
 
-        /* BOTTOM NAV */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -482,7 +473,6 @@
         .page.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* SEARCH PAGE */
         .search-filters {
             display: flex;
             gap: 8px;
@@ -536,14 +526,12 @@
         .search-result-card .info .title { font-weight: 500; font-size: 13px; }
         .search-result-card .info .meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 12px; margin-top: 2px; }
 
-        /* FAVORITES */
         .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
         .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; }
         .favorites-empty h3 { font-weight: 600; font-size: 18px; color: var(--text); }
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
         .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
 
-        /* PROFILE */
         .profile-header {
             padding: 16px 0 12px 0;
             display: flex;
@@ -611,7 +599,6 @@
         .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
         .profile-menu-item.danger { color: var(--danger); }
 
-        /* ADD LISTING */
         .add-listing-form .form-group { margin-bottom: 14px; }
         .add-listing-form label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--primary); }
         .add-listing-form input, .add-listing-form textarea, .add-listing-form select {
@@ -669,7 +656,6 @@
             justify-content: center;
         }
 
-        /* DETAIL */
         .detail-gallery {
             height: 220px;
             background: var(--border);
@@ -775,7 +761,6 @@
         .seller-box .actions .btn-call { background: var(--border); color: var(--text); }
         .seller-box .actions .btn-call:hover { background: #d1d8e0; }
 
-        /* CHAT */
         .chat-messages {
             display: flex;
             flex-direction: column;
@@ -838,7 +823,6 @@
         }
         .chat-input button:hover { background: var(--accent-hover); }
 
-        /* SETTINGS */
         .settings-group { margin-bottom: 20px; }
         .settings-group .settings-title {
             font-size: 13px;
@@ -916,7 +900,6 @@
         }
         .radio-item.active { color: var(--text); }
 
-        /* BACK HEADER */
         .back-header {
             display: flex;
             align-items: center;
@@ -935,7 +918,6 @@
         .back-btn:hover { color: var(--primary); }
         .back-header .title { font-weight: 600; font-size: 16px; color: var(--text); }
 
-        /* SUCCESS MODAL */
         .success-modal {
             position: fixed;
             top: 0;
@@ -991,9 +973,7 @@
 </head>
 <body>
 
-<!-- ===== ВЕСЬ ВАШ HTML (залиште без змін) ===== -->
 <div id="app">
-    <!-- HEADER -->
     <div class="header" id="globalHeader">
         <div class="logo" onclick="navigateTo('home')">
             <i class="fas fa-cube"></i> UAM<span>O</span>
@@ -1011,18 +991,15 @@
         </div>
     </div>
 
-    <!-- AUTH PAGE -->
     <div class="page active" id="page-auth">
         <div class="app-container">
             <div class="auth-container">
                 <div class="auth-box">
                     <div class="auth-title">UAM<span>O</span></div>
                     <div class="auth-subtitle" id="authSubtitle">Увійдіть або зареєструйтеся</div>
-
                     <div id="authError" class="auth-error"></div>
                     <div id="authSuccess" class="auth-success"></div>
                     <div id="authLoading" class="auth-loading">⏳ Завантаження...</div>
-
                     <div id="authForm">
                         <div class="form-group">
                             <label>Email</label>
@@ -1056,7 +1033,6 @@
         </div>
     </div>
 
-    <!-- HOME -->
     <div class="page" id="page-home">
         <div class="app-container">
             <div class="search-bar">
@@ -1074,7 +1050,6 @@
         </div>
     </div>
 
-    <!-- SEARCH -->
     <div class="page search-page" id="page-search">
         <div class="app-container">
             <div class="search-bar">
@@ -1096,7 +1071,6 @@
         </div>
     </div>
 
-    <!-- ADD LISTING -->
     <div class="page" id="page-add">
         <div class="app-container">
             <div class="back-header">
@@ -1147,7 +1121,6 @@
         </div>
     </div>
 
-    <!-- FAVORITES -->
     <div class="page" id="page-favorites">
         <div class="app-container">
             <div class="back-header">
@@ -1158,7 +1131,6 @@
         </div>
     </div>
 
-    <!-- CHATS -->
     <div class="page" id="page-chats">
         <div class="app-container">
             <div class="back-header">
@@ -1169,7 +1141,6 @@
         </div>
     </div>
 
-    <!-- CHAT DETAIL -->
     <div class="page" id="page-chat-detail">
         <div class="app-container">
             <div class="back-header">
@@ -1189,7 +1160,6 @@
         </div>
     </div>
 
-    <!-- PROFILE -->
     <div class="page" id="page-profile">
         <div class="app-container">
             <div class="profile-header">
@@ -1222,7 +1192,6 @@
         </div>
     </div>
 
-    <!-- PROFILE EDIT -->
     <div class="page" id="page-profile-edit">
         <div class="app-container">
             <div class="back-header">
@@ -1262,7 +1231,6 @@
         </div>
     </div>
 
-    <!-- MY LISTINGS -->
     <div class="page" id="page-my-listings">
         <div class="app-container">
             <div class="back-header">
@@ -1273,7 +1241,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS -->
     <div class="page" id="page-settings">
         <div class="app-container">
             <div class="back-header">
@@ -1292,7 +1259,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: ACCOUNT -->
     <div class="page" id="page-settings-account">
         <div class="app-container">
             <div class="back-header">
@@ -1307,7 +1273,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: EMAIL -->
     <div class="page" id="page-settings-email">
         <div class="app-container">
             <div class="back-header">
@@ -1328,7 +1293,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: PHONE -->
     <div class="page" id="page-settings-phone">
         <div class="app-container">
             <div class="back-header">
@@ -1349,7 +1313,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: PASSWORD -->
     <div class="page" id="page-settings-password">
         <div class="app-container">
             <div class="back-header">
@@ -1386,7 +1349,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: NOTIFICATIONS -->
     <div class="page" id="page-settings-notifications">
         <div class="app-container">
             <div class="back-header">
@@ -1422,7 +1384,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: CITY -->
     <div class="page" id="page-settings-city">
         <div class="app-container">
             <div class="back-header">
@@ -1439,7 +1400,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: LANGUAGE -->
     <div class="page" id="page-settings-language">
         <div class="app-container">
             <div class="back-header">
@@ -1457,7 +1417,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: PRIVACY -->
     <div class="page" id="page-settings-privacy">
         <div class="app-container">
             <div class="back-header">
@@ -1497,7 +1456,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: MESSAGES -->
     <div class="page" id="page-settings-messages">
         <div class="app-container">
             <div class="back-header">
@@ -1521,7 +1479,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS: SECURITY -->
     <div class="page" id="page-settings-security">
         <div class="app-container">
             <div class="back-header">
@@ -1557,7 +1514,6 @@
         </div>
     </div>
 
-    <!-- DETAIL -->
     <div class="page" id="page-detail">
         <div class="app-container">
             <div class="back-header">
@@ -1605,7 +1561,6 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAV -->
     <nav class="bottom-nav" id="bottomNav">
         <button class="bottom-nav-item active" data-page="home" onclick="navigateTo('home')">
             <i class="fas fa-home"></i><span>Головна</span>
@@ -1626,7 +1581,6 @@
     </nav>
 </div>
 
-<!-- SUCCESS MODAL -->
 <div class="success-modal" id="successModal">
     <div class="modal-box">
         <div class="icon"><i class="fas fa-check-circle"></i></div>
@@ -1641,7 +1595,7 @@
 
 <script>
     // ================================================================
-    // SUPABASE CONFIG - ВАШІ КЛЮЧІ
+    // SUPABASE CONFIG
     // ================================================================
     const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cHNtZWxwc3Nnbml3b2hqYnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODYzNDksImV4cCI6MjEwMzc2MjM0OX0.I6oOuOn68QKJH_bAPUS9QG8CscEcFeeN_MQBzohWaEw';
@@ -1682,16 +1636,43 @@
     };
     let unreadCount = 0;
 
-    // ===== КЕШ ДЛЯ ШВИДКОСТІ =====
-    const cache = {
-        listings: null,
-        favorites: null,
-        chats: null,
-        users: {},
-        myListings: null
+    // ================================================================
+    // 🚀 СУПЕР-ШВИДКИЙ КЕШ
+    // ================================================================
+    const SuperCache = {
+        _data: {},
+        _timers: {},
+
+        set(key, value, ttl = 60000) {
+            this._data[key] = value;
+            this._timers[key] = Date.now() + ttl;
+        },
+
+        get(key) {
+            if (this._timers[key] && Date.now() > this._timers[key]) {
+                delete this._data[key];
+                delete this._timers[key];
+                return null;
+            }
+            return this._data[key] || null;
+        },
+
+        clear(key) {
+            if (key) {
+                delete this._data[key];
+                delete this._timers[key];
+            } else {
+                this._data = {};
+                this._timers = {};
+            }
+        },
+
+        has(key) {
+            return this.get(key) !== null;
+        }
     };
-    let cacheTime = 0;
-    const CACHE_DURATION = 30000; // 30 секунд
+
+    let isLoading = false;
 
     // ================================================================
     // ІНІЦІАЛІЗАЦІЯ SUPABASE
@@ -1835,8 +1816,8 @@
                 if (data?.user) {
                     currentUser = data.user;
                     showAuthSuccess('✅ Вхід виконано!');
-                    await Promise.all([loadUserData(), loadListings(), loadFavorites(), loadChats()]);
-                    setTimeout(() => navigateTo('home'), 300);
+                    await loadDataFast();
+                    setTimeout(() => navigateTo('home'), 200);
                 }
             } else {
                 const { data, error } = await supabase.auth.signUp({
@@ -1889,23 +1870,139 @@
     }
 
     // ================================================================
-    // ОПТИМІЗОВАНІ ЗАПИТИ ДО БАЗИ ДАНИХ
+    // ⚡ МИТТЄВЕ ЗАВАНТАЖЕННЯ ДАНИХ
     // ================================================================
+
+    async function loadDataFast() {
+        if (isLoading) return;
+
+        const cached = SuperCache.get('allData');
+        if (cached) {
+            console.log('⚡ Дані з кешу!');
+            listings = cached.listings || [];
+            favorites = cached.favorites || [];
+            chats = cached.chats || [];
+            myListings = cached.myListings || [];
+            renderAll();
+            updateProfileStats();
+            updateChatBadge();
+            return;
+        }
+
+        isLoading = true;
+
+        try {
+            console.log('📡 Завантаження даних...');
+            const startTime = Date.now();
+
+            // Завантажуємо оголошення через VIEW
+            const { data: listingsData, error: listingsError } = await supabase
+                .from('listings_with_users')
+                .select('*')
+                .limit(50);
+
+            if (listingsError) throw listingsError;
+
+            listings = listingsData.map(item => ({
+                id: item.id,
+                title: item.title || 'Без назви',
+                price: item.price ? String(item.price) : '0',
+                location: item.city || 'не вказано',
+                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                photos: item.photos || null,
+                category: item.category || 'Інше',
+                isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
+                isFeatured: item.is_featured || false,
+                createdAt: item.created_at || new Date().toISOString(),
+                description: item.description || 'Без опису',
+                specs: item.specs || {},
+                seller: {
+                    name: item.seller_name || 'Продавець',
+                    avatar: item.seller_avatar || '👤',
+                    since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
+                },
+                user_id: item.user_id,
+                phone: item.phone || '',
+                status: item.status || 'active'
+            }));
+
+            // Завантажуємо інші дані паралельно
+            if (currentUser) {
+                const [favResult, chatsResult, myResult] = await Promise.all([
+                    supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
+                    supabase.from('chats')
+                    .select(`
+                                *,
+                                listings:listing_id (title),
+                                buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
+                                seller:users!chats_seller_id_fkey (first_name, avatar_url)
+                            `)
+                    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+                    .order('updated_at', { ascending: false })
+                    .limit(20),
+                    supabase.from('listings')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false })
+                    .limit(20)
+                ]);
+
+                favorites = favResult.data?.map(f => f.listing_id) || [];
+                chats = chatsResult.data || [];
+                myListings = myResult.data?.map(item => ({
+                    id: item.id,
+                    title: item.title || 'Без назви',
+                    price: item.price ? String(item.price) : '0',
+                    location: item.city || 'не вказано',
+                    image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                    photos: item.photos || null,
+                    category: item.category || 'Інше',
+                    createdAt: item.created_at || new Date().toISOString(),
+                    description: item.description || 'Без опису',
+                    phone: item.phone || '',
+                    status: item.status || 'active'
+                })) || [];
+            }
+
+            // Зберігаємо в кеш
+            SuperCache.set('allData', {
+                listings: listings,
+                favorites: favorites,
+                chats: chats,
+                myListings: myListings
+            }, 30000);
+
+            const elapsed = Date.now() - startTime;
+            console.log(`✅ Завантажено за ${elapsed}ms (${listings.length} оголошень)`);
+
+            renderAll();
+            updateProfileStats();
+            updateChatBadge();
+
+        } catch (e) {
+            console.error('❌ Помилка завантаження:', e);
+            const fallback = SuperCache.get('allData');
+            if (fallback) {
+                listings = fallback.listings || [];
+                favorites = fallback.favorites || [];
+                chats = fallback.chats || [];
+                myListings = fallback.myListings || [];
+                renderAll();
+            }
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    // ================================================================
+    // ЗАВАНТАЖЕННЯ ДАНИХ КОРИСТУВАЧА
+    // ================================================================
+
     async function loadUserData() {
         if (!currentUser) return;
-        if (cache.users[currentUser.id]) {
-            const u = cache.users[currentUser.id];
-            userData = {
-                id: u.id,
-                name: u.first_name || 'Користувач',
-                last_name: u.last_name || '',
-                username: u.username || '',
-                phone: u.phone || '',
-                email: u.email || currentUser.email || '',
-                city: u.city || 'Київ',
-                avatar: u.avatar_url || 'К',
-                language: u.language || 'uk'
-            };
+        if (SuperCache.has('user_' + currentUser.id)) {
+            const u = SuperCache.get('user_' + currentUser.id);
+            userData = u;
             updateUI();
             return;
         }
@@ -1913,7 +2010,6 @@
             const { data, error } = await supabase.from('users').select('*').eq('id', currentUser.id).single();
             if (error) throw error;
             if (data) {
-                cache.users[currentUser.id] = data;
                 userData = {
                     id: data.id,
                     name: data.first_name || 'Користувач',
@@ -1925,153 +2021,16 @@
                     avatar: data.avatar_url || 'К',
                     language: data.language || 'uk'
                 };
+                SuperCache.set('user_' + currentUser.id, userData, 60000);
                 updateUI();
             }
         } catch (e) { console.warn('⚠️ Failed to load user data:', e); }
     }
 
-    async function loadListings() {
-        if (cache.listings && (Date.now() - cacheTime) < CACHE_DURATION) {
-            listings = cache.listings;
-            renderAll();
-            return;
-        }
-        try {
-            const { data, error } = await supabase
-                .from('listings')
-                .select(`*, users:user_id (first_name, avatar_url)`)
-                .eq('status', 'active')
-                .order('created_at', { ascending: false })
-                .limit(100);
-
-            if (error) throw error;
-
-            listings = data.map(item => ({
-                id: item.id,
-                title: item.title || 'Без назви',
-                price: item.price ? String(item.price) : '0',
-                location: item.city || 'не вказано',
-                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                photos: item.photos || null,
-                category: item.category || 'Інше',
-                isNew: new Date(item.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000),
-                isFeatured: item.is_featured || false,
-                createdAt: item.created_at || new Date().toISOString(),
-                description: item.description || 'Без опису',
-                specs: item.specs || {},
-                seller: {
-                    name: item.users?.first_name || 'Продавець',
-                    avatar: item.users?.avatar_url || '👤',
-                    since: '2024'
-                },
-                user_id: item.user_id,
-                phone: item.phone || '',
-                status: item.status || 'active'
-            }));
-
-            cache.listings = listings;
-            cacheTime = Date.now();
-            renderAll();
-        } catch (e) {
-            console.error('❌ Error loading listings:', e);
-            if (cache.listings) { listings = cache.listings;
-                renderAll(); }
-        }
-    }
-
-    async function loadMyListings() {
-        if (!currentUser) return;
-        if (cache.myListings && (Date.now() - cacheTime) < CACHE_DURATION) {
-            myListings = cache.myListings;
-            if (currentPage === 'my-listings') renderMyListings();
-            updateProfileStats();
-            return;
-        }
-        try {
-            const { data, error } = await supabase
-                .from('listings')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            myListings = data.map(item => ({
-                id: item.id,
-                title: item.title || 'Без назви',
-                price: item.price ? String(item.price) : '0',
-                location: item.city || 'не вказано',
-                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                photos: item.photos || null,
-                category: item.category || 'Інше',
-                createdAt: item.created_at || new Date().toISOString(),
-                description: item.description || 'Без опису',
-                phone: item.phone || '',
-                status: item.status || 'active'
-            }));
-
-            cache.myListings = myListings;
-            if (currentPage === 'my-listings') renderMyListings();
-            updateProfileStats();
-        } catch (e) { console.warn('⚠️ Failed to load my listings:', e); }
-    }
-
-    async function loadFavorites() {
-        if (!currentUser) return;
-        if (cache.favorites && (Date.now() - cacheTime) < CACHE_DURATION) {
-            favorites = cache.favorites;
-            renderAll();
-            updateProfileStats();
-            return;
-        }
-        try {
-            const { data, error } = await supabase
-                .from('favorites')
-                .select('listing_id')
-                .eq('user_id', currentUser.id);
-
-            if (error) throw error;
-
-            favorites = data.map(f => f.listing_id);
-            cache.favorites = favorites;
-            renderAll();
-            updateProfileStats();
-        } catch (e) { console.warn('⚠️ Failed to load favorites:', e); }
-    }
-
-    async function loadChats() {
-        if (!currentUser) return;
-        if (cache.chats && (Date.now() - cacheTime) < CACHE_DURATION) {
-            chats = cache.chats;
-            if (currentPage === 'chats') renderChats();
-            updateChatBadge();
-            return;
-        }
-        try {
-            const { data, error } = await supabase
-                .from('chats')
-                .select(`
-                    *,
-                    listings:listing_id (title),
-                    buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
-                    seller:users!chats_seller_id_fkey (first_name, avatar_url)
-                `)
-                .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
-                .order('updated_at', { ascending: false });
-
-            if (error) throw error;
-
-            chats = data || [];
-            cache.chats = chats;
-            if (currentPage === 'chats') renderChats();
-            updateChatBadge();
-        } catch (e) { console.warn('⚠️ Failed to load chats:', e);
-            chats = []; }
-    }
-
     // ================================================================
     // RENDER HELPERS
     // ================================================================
+
     function timeAgo(dateStr) {
         if (!dateStr) return 'нещодавно';
         const diff = Date.now() - new Date(dateStr).getTime();
@@ -2131,6 +2090,7 @@
     // ================================================================
     // RENDER PAGES
     // ================================================================
+
     function renderCategories() {
         const categories = [
             { id: 'products', icon: 'fa-tag', name: 'Товари' },
@@ -2383,7 +2343,25 @@
     // ================================================================
     // NAVIGATION
     // ================================================================
-    function navigateTo(page) {
+
+    const _originalNavigateTo = window.navigateTo || function() {};
+
+    window.navigateTo = function(page) {
+        if (page === 'home' || page === 'search' || page === 'favorites' || page === 'chats' || page === 'profile') {
+            if (!SuperCache.has('allData')) {
+                loadDataFast();
+            } else {
+                const cached = SuperCache.get('allData');
+                if (cached) {
+                    listings = cached.listings || [];
+                    favorites = cached.favorites || [];
+                    chats = cached.chats || [];
+                    myListings = cached.myListings || [];
+                    renderAll();
+                }
+            }
+        }
+
         if (page === 'auth') {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-auth');
@@ -2407,7 +2385,7 @@
 
         renderAll();
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    };
 
     function goBack() {
         if (historyStack.length > 1) { historyStack.pop();
@@ -2425,6 +2403,7 @@
     // ================================================================
     // FILTERS
     // ================================================================
+
     let currentFilter = 'all';
 
     function filterByCategory(cat) {
@@ -2445,6 +2424,7 @@
     // ================================================================
     // LISTING OPERATIONS
     // ================================================================
+
     async function toggleFavorite(listingId) {
         if (!currentUser) { navigateTo('auth'); return; }
         const isFav = favorites.includes(listingId);
@@ -2455,7 +2435,7 @@
             await supabase.from('favorites').insert({ user_id: currentUser.id, listing_id: listingId });
             favorites.push(listingId);
         }
-        cache.favorites = favorites;
+        SuperCache.clear('allData');
         renderAll();
         updateProfileStats();
     }
@@ -2502,10 +2482,8 @@
                 else navigateTo('home'); }
         );
 
-        cache.listings = null;
-        cache.myListings = null;
-        await loadListings();
-        await loadMyListings();
+        SuperCache.clear('allData');
+        setTimeout(loadDataFast, 500);
     }
 
     function showSuccessModal(title, message, primaryAction, secondaryAction) {
@@ -2532,6 +2510,7 @@
     // ================================================================
     // DETAIL
     // ================================================================
+
     function openDetail(id) {
         const listing = listings.find(l => l.id === id);
         if (!listing) { alert('Оголошення не знайдено'); return; }
@@ -2657,6 +2636,7 @@
     // ================================================================
     // CHAT FUNCTIONS
     // ================================================================
+
     async function createChat(sellerId, listingId) {
         if (!currentUser) return;
         try {
@@ -2670,8 +2650,8 @@
 
             if (error) throw error;
             if (data && data.length > 0) {
-                cache.chats = null;
-                await loadChats();
+                SuperCache.clear('allData');
+                await loadDataFast();
                 openChatDetail(data[0].id);
             }
         } catch (e) { console.error('❌ Error creating chat:', e);
@@ -2744,8 +2724,8 @@
             }).eq('id', currentChatId);
 
             input.value = '';
-            cache.chats = null;
-            await loadChats();
+            SuperCache.clear('allData');
+            await loadDataFast();
             await openChatDetail(currentChatId);
         } catch (e) { console.error('❌ Error sending message:', e);
             alert('Помилка відправки повідомлення'); }
@@ -2754,8 +2734,8 @@
     async function markChatRead(chatId) {
         try {
             await supabase.from('chats').update({ unread_count: 0 }).eq('id', chatId);
-            cache.chats = null;
-            await loadChats();
+            SuperCache.clear('allData');
+            await loadDataFast();
         } catch (e) { console.warn('⚠️ Failed to mark chat read:', e); }
     }
 
@@ -2767,6 +2747,7 @@
     // ================================================================
     // PHOTO HANDLING
     // ================================================================
+
     function handlePhotos(event) {
         const files = event.target.files;
         if (!files) return;
@@ -2795,6 +2776,7 @@
     // ================================================================
     // EDIT LISTING
     // ================================================================
+
     function editListing(id) {
         const listing = myListings.find(l => l.id === id) || listings.find(l => l.id === id);
         if (!listing) { alert('Оголошення не знайдено'); return; }
@@ -2839,10 +2821,8 @@
             if (error) throw error;
 
             alert('✅ Оголошення оновлено!');
-            cache.listings = null;
-            cache.myListings = null;
-            await loadListings();
-            await loadMyListings();
+            SuperCache.clear('allData');
+            await loadDataFast();
             navigateTo('my-listings');
         } catch (e) { console.error('❌ Error updating listing:', e);
             alert('Помилка оновлення'); }
@@ -2854,10 +2834,8 @@
             const { error } = await supabase.from('listings').delete().eq('id', id);
             if (error) throw error;
             alert('🗑 Оголошення видалено');
-            cache.listings = null;
-            cache.myListings = null;
-            await loadListings();
-            await loadMyListings();
+            SuperCache.clear('allData');
+            await loadDataFast();
             if (currentPage === 'my-listings') renderMyListings();
         } catch (e) { console.error('❌ Error deleting listing:', e);
             alert('Помилка видалення'); }
@@ -2866,6 +2844,7 @@
     // ================================================================
     // PROFILE FUNCTIONS
     // ================================================================
+
     async function saveProfile() {
         if (!currentUser) { navigateTo('auth'); return; }
 
@@ -2892,7 +2871,7 @@
             userData.username = username;
             userData.phone = phone;
             userData.city = city;
-            cache.users[currentUser.id] = null;
+            SuperCache.clear('user_' + currentUser.id);
             updateUI();
             alert('✅ Профіль оновлено!');
             navigateTo('profile');
@@ -2909,7 +2888,7 @@
             userData.avatar = avatarUrl;
             updateUI();
             supabase.from('users').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
-            cache.users[currentUser.id] = null;
+            SuperCache.clear('user_' + currentUser.id);
         };
         reader.readAsDataURL(file);
     }
@@ -2919,12 +2898,13 @@
     // ================================================================
     // SETTINGS FUNCTIONS
     // ================================================================
+
     function toggleSetting(el) { el.classList.toggle('active'); }
 
     function selectCity(city) {
         userData.city = city;
         supabase.from('users').update({ city: city }).eq('id', currentUser.id);
-        cache.users[currentUser.id] = null;
+        SuperCache.clear('user_' + currentUser.id);
         renderCities();
         updateUI();
         alert(`✅ Місто змінено на ${city}`);
@@ -2948,13 +2928,14 @@
         const lang = selected.value;
         userData.language = lang;
         supabase.from('users').update({ language: lang }).eq('id', currentUser.id);
-        cache.users[currentUser.id] = null;
+        SuperCache.clear('user_' + currentUser.id);
         alert(`✅ Мову змінено на ${selected.parentElement.textContent.trim()}`);
     }
 
     // ================================================================
     // CHANGE PASSWORD / EMAIL / PHONE
     // ================================================================
+
     async function changePassword() {
         if (!supabase) { alert('Підключення до сервера не встановлено'); return; }
 
@@ -2988,7 +2969,7 @@
             if (error) throw error;
             alert('✅ Email змінено! Перевірте нову пошту для підтвердження.');
             userData.email = newEmail;
-            cache.users[currentUser.id] = null;
+            SuperCache.clear('user_' + currentUser.id);
             updateUI();
         } catch (e) { console.error('❌ Error changing email:', e);
             alert('Помилка зміни email: ' + e.message); }
@@ -3005,7 +2986,7 @@
             if (error) throw error;
             alert('✅ Телефон змінено успішно!');
             userData.phone = newPhone;
-            cache.users[currentUser.id] = null;
+            SuperCache.clear('user_' + currentUser.id);
             updateUI();
         } catch (e) { console.error('❌ Error changing phone:', e);
             alert('Помилка зміни телефону: ' + e.message); }
@@ -3017,6 +2998,7 @@
     // ================================================================
     // HELP / ABOUT / LOGOUT
     // ================================================================
+
     function showHelp() {
         alert('📚 Допомога UAMO\n\n' +
             '• Як додати оголошення?\n' +
@@ -3040,11 +3022,8 @@
             if (supabase) await supabase.auth.signOut();
             currentUser = null;
             currentPage = 'auth';
-            cache.listings = null;
-            cache.favorites = null;
-            cache.chats = null;
-            cache.myListings = null;
-            cache.users = {};
+            SuperCache.clear('allData');
+            SuperCache.clear('user_' + (currentUser?.id || ''));
             navigateTo('auth');
             const bottomNav = document.getElementById('bottomNav');
             if (bottomNav) bottomNav.classList.remove('show');
@@ -3054,6 +3033,7 @@
     // ================================================================
     // TELEGRAM WEBAPP SUPPORT
     // ================================================================
+
     function initTelegramWebApp() {
         try {
             if (window.Telegram && window.Telegram.WebApp) {
@@ -3068,6 +3048,7 @@
     // ================================================================
     // INITIALIZATION
     // ================================================================
+
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🚀 UAMO App starting...');
         initTelegramWebApp();
@@ -3076,19 +3057,30 @@
             supabase.auth.getSession().then(({ data: { session } }) => {
                 if (session) {
                     currentUser = session.user;
-                    Promise.all([loadUserData(), loadListings(), loadFavorites(), loadChats()])
-                        .then(() => navigateTo('home'));
-                } else { navigateTo('auth'); }
+                    Promise.all([loadUserData(), loadDataFast()])
+                        .then(() => {
+                            navigateTo('home');
+                            console.log('✅ Все завантажено!');
+                        });
+                } else {
+                    navigateTo('auth');
+                }
             }).catch(() => navigateTo('auth'));
         } else {
             setTimeout(function retry() {
                 if (initSupabase()) {
                     supabase.auth.getSession().then(({ data: { session } }) => {
-                        if (session) { currentUser = session.user;
-                            Promise.all([loadUserData(), loadListings(), loadFavorites(), loadChats()])
-                                .then(() => navigateTo('home')); } else { navigateTo('auth'); }
+                        if (session) {
+                            currentUser = session.user;
+                            Promise.all([loadUserData(), loadDataFast()])
+                                .then(() => navigateTo('home'));
+                        } else {
+                            navigateTo('auth');
+                        }
                     });
-                } else { showAuthError('Не вдалося підключитися до сервера. Перевірте інтернет.'); }
+                } else {
+                    showAuthError('Не вдалося підключитися до сервера. Перевірте інтернет.');
+                }
             }, 1000);
         }
     });
@@ -3096,11 +3088,12 @@
     // ================================================================
     // EXPOSE FUNCTIONS TO GLOBAL SCOPE
     // ================================================================
+
     window.handleAuth = handleAuth;
     window.toggleAuthMode = toggleAuthMode;
     window.togglePasswordVisibility = togglePasswordVisibility;
     window.handleForgotPassword = handleForgotPassword;
-    window.navigateTo = navigateTo;
+    window.navigateTo = window.navigateTo;
     window.goBack = goBack;
     window.goBackFromDetail = goBackFromDetail;
     window.filterByCategory = filterByCategory;
@@ -3134,6 +3127,7 @@
     window.closeSuccessModal = closeSuccessModal;
     window.updateListing = updateListing;
     window.renderSearch = renderSearch;
+    window.loadDataFast = loadDataFast;
 </script>
 
 </body>
