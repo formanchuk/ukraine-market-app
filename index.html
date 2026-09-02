@@ -1635,18 +1635,17 @@
         </div>
     </div>
 
-    <!-- ПРАВИЛЬНЕ ПІДКЛЮЧЕННЯ SUPABASE SDK -->
+    <!-- ПІДКЛЮЧЕННЯ SUPABASE SDK (ПРАВИЛЬНИЙ ПОРЯДОК) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js">
     </script>
 
     <script>
         // ================================================================
-        // SUPABASE CONFIG
+        // SUPABASE CONFIG - ВИПРАВЛЕНО З НОВИМ PUBLISHABLE KEY
         // ================================================================
 
         const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
-        const SUPABASE_ANON_KEY =
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cHNtZWxwc3Nnbml3b2hqYnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUwMDAwMDAsImV4cCI6MjA1MDU3NjAwMH0.';
+        const SUPABASE_ANON_KEY = 'sb_publishable_O--QDl2DMLdrGfzxJllRfg_qlH401yR';
 
         let supabase = null;
         let currentUser = null;
@@ -1682,7 +1681,7 @@
         let unreadCount = 0;
 
         // ================================================================
-        // ВИПРАВЛЕНА ФУНКЦІЯ ОЧІКУВАННЯ SUPABASE
+        // ПРАВИЛЬНА ФУНКЦІЯ ОЧІКУВАННЯ SUPABASE
         // ================================================================
 
         function waitForSupabase(callback, attempts) {
@@ -1710,7 +1709,7 @@
         }
 
         // ================================================================
-        // ВИПРАВЛЕНА ІНІЦІАЛІЗАЦІЯ SUPABASE
+        // ПРАВИЛЬНА ІНІЦІАЛІЗАЦІЯ SUPABASE
         // ================================================================
 
         function initSupabase() {
@@ -3294,6 +3293,7 @@
         function init() {
             console.log('🚀 UAMO Auth Init');
             console.log('📡 Supabase URL:', SUPABASE_URL);
+            console.log('📡 Using publishable key');
 
             // Чекаємо завантаження Supabase SDK
             waitForSupabase(function() {
