@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ===== ВЕСЬ ВАШ CSS (залиште як є) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A;
@@ -48,7 +47,6 @@
             animation: fadeIn 0.25s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .hidden { display: none !important; }
 
         .header {
@@ -554,8 +552,14 @@
             overflow: hidden;
             flex-shrink: 0;
             cursor: pointer;
+            position: relative;
         }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-avatar .avatar-letter {
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--primary);
+        }
         .profile-info h3 { font-size: 17px; font-weight: 600; }
         .profile-info p { font-size: 13px; color: var(--text-secondary); }
         .profile-stats {
@@ -974,7 +978,6 @@
 </head>
 <body>
 
-<!-- ===== ВЕСЬ HTML (залиште як є) ===== -->
 <div id="app">
     <div class="header" id="globalHeader">
         <div class="logo" onclick="navigateTo('home')">
@@ -987,12 +990,17 @@
             <button onclick="navigateTo('settings')" title="Налаштування">
                 <i class="fas fa-cog"></i>
             </button>
+            <button onclick="toggleNotifications()" title="Сповіщення" id="notifBtn">
+                <i class="fas fa-bell"></i>
+                <span class="badge hidden" id="notif-badge">0</span>
+            </button>
             <div class="avatar-small" id="headerAvatar" onclick="navigateTo('profile')">
                 <span id="avatarLetter">К</span>
             </div>
         </div>
     </div>
 
+    <!-- AUTH -->
     <div class="page active" id="page-auth">
         <div class="app-container">
             <div class="auth-container">
@@ -1035,6 +1043,7 @@
         </div>
     </div>
 
+    <!-- HOME -->
     <div class="page" id="page-home">
         <div class="app-container">
             <div class="search-bar">
@@ -1052,6 +1061,7 @@
         </div>
     </div>
 
+    <!-- SEARCH -->
     <div class="page search-page" id="page-search">
         <div class="app-container">
             <div class="search-bar">
@@ -1073,6 +1083,7 @@
         </div>
     </div>
 
+    <!-- ADD LISTING -->
     <div class="page" id="page-add">
         <div class="app-container">
             <div class="back-header">
@@ -1123,6 +1134,7 @@
         </div>
     </div>
 
+    <!-- FAVORITES -->
     <div class="page" id="page-favorites">
         <div class="app-container">
             <div class="back-header">
@@ -1133,6 +1145,7 @@
         </div>
     </div>
 
+    <!-- CHATS -->
     <div class="page" id="page-chats">
         <div class="app-container">
             <div class="back-header">
@@ -1143,6 +1156,7 @@
         </div>
     </div>
 
+    <!-- CHAT DETAIL -->
     <div class="page" id="page-chat-detail">
         <div class="app-container">
             <div class="back-header">
@@ -1162,11 +1176,12 @@
         </div>
     </div>
 
+    <!-- PROFILE -->
     <div class="page" id="page-profile">
         <div class="app-container">
             <div class="profile-header">
                 <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarFileInput').click()">
-                    <span id="profileAvatarLetter">К</span>
+                    <span class="avatar-letter" id="profileAvatarLetter">К</span>
                 </div>
                 <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadAvatar(event)" />
                 <div class="profile-info">
@@ -1194,6 +1209,7 @@
         </div>
     </div>
 
+    <!-- PROFILE EDIT -->
     <div class="page" id="page-profile-edit">
         <div class="app-container">
             <div class="back-header">
@@ -1202,7 +1218,7 @@
             </div>
             <div style="text-align:center; margin-bottom:16px;">
                 <div class="profile-avatar" id="editAvatar" style="width:80px; height:80px; margin:0 auto; cursor:pointer;" onclick="document.getElementById('editAvatarInput').click()">
-                    <span id="editAvatarLetter">К</span>
+                    <span class="avatar-letter" id="editAvatarLetter">К</span>
                 </div>
                 <input type="file" id="editAvatarInput" accept="image/*" style="display:none;" onchange="editUploadAvatar(event)" />
                 <button style="background:none; border:none; color:var(--accent); cursor:pointer; font-size:13px; margin-top:4px;" onclick="document.getElementById('editAvatarInput').click()">Змінити фото</button>
@@ -1233,6 +1249,7 @@
         </div>
     </div>
 
+    <!-- MY LISTINGS -->
     <div class="page" id="page-my-listings">
         <div class="app-container">
             <div class="back-header">
@@ -1243,6 +1260,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS -->
     <div class="page" id="page-settings">
         <div class="app-container">
             <div class="back-header">
@@ -1261,6 +1279,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: ACCOUNT -->
     <div class="page" id="page-settings-account">
         <div class="app-container">
             <div class="back-header">
@@ -1275,6 +1294,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: EMAIL -->
     <div class="page" id="page-settings-email">
         <div class="app-container">
             <div class="back-header">
@@ -1295,6 +1315,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: PHONE -->
     <div class="page" id="page-settings-phone">
         <div class="app-container">
             <div class="back-header">
@@ -1315,6 +1336,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: PASSWORD -->
     <div class="page" id="page-settings-password">
         <div class="app-container">
             <div class="back-header">
@@ -1351,6 +1373,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: NOTIFICATIONS -->
     <div class="page" id="page-settings-notifications">
         <div class="app-container">
             <div class="back-header">
@@ -1386,6 +1409,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: CITY -->
     <div class="page" id="page-settings-city">
         <div class="app-container">
             <div class="back-header">
@@ -1402,6 +1426,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: LANGUAGE -->
     <div class="page" id="page-settings-language">
         <div class="app-container">
             <div class="back-header">
@@ -1419,6 +1444,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: PRIVACY -->
     <div class="page" id="page-settings-privacy">
         <div class="app-container">
             <div class="back-header">
@@ -1458,6 +1484,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: MESSAGES -->
     <div class="page" id="page-settings-messages">
         <div class="app-container">
             <div class="back-header">
@@ -1481,6 +1508,7 @@
         </div>
     </div>
 
+    <!-- SETTINGS: SECURITY -->
     <div class="page" id="page-settings-security">
         <div class="app-container">
             <div class="back-header">
@@ -1516,6 +1544,7 @@
         </div>
     </div>
 
+    <!-- DETAIL -->
     <div class="page" id="page-detail">
         <div class="app-container">
             <div class="back-header">
@@ -1835,7 +1864,7 @@
     }
 
     // ================================================================
-    // 🚀 ГОЛОВНА ФУНКЦІЯ ЗАВАНТАЖЕННЯ ВСІХ ДАНИХ (ОДИН РАЗ)
+    // 🚀 ГОЛОВНА ФУНКЦІЯ ЗАВАНТАЖЕННЯ ВСІХ ДАНИХ
     // ================================================================
 
     async function loadAllData() {
@@ -1846,15 +1875,10 @@
         const start = performance.now();
 
         try {
-            // Завантажуємо ВСІ дані паралельно
             const [listingsRes, userRes, favRes, chatsRes, myRes] = await Promise.all([
-                // Оголошення через VIEW
                 supabase.from('listings_with_users').select('*').limit(50),
-                // Дані користувача
                 supabase.from('users').select('*').eq('id', currentUser.id).single(),
-                // Обране
                 supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
-                // Чати
                 supabase.from('chats')
                 .select(`
                             *,
@@ -1865,7 +1889,6 @@
                 .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
                 .order('updated_at', { ascending: false })
                 .limit(30),
-                // Мої оголошення
                 supabase.from('listings')
                 .select('*')
                 .eq('user_id', currentUser.id)
@@ -1873,7 +1896,6 @@
                 .limit(30)
             ]);
 
-            // Обробляємо оголошення
             if (!listingsRes.error) {
                 listings = listingsRes.data.map(item => ({
                     id: item.id,
@@ -1899,7 +1921,6 @@
                 }));
             }
 
-            // Обробляємо користувача
             if (!userRes.error && userRes.data) {
                 const u = userRes.data;
                 userData = {
@@ -1914,19 +1935,17 @@
                     language: u.language || 'uk'
                 };
                 updateUI();
+                updateAvatar();
             }
 
-            // Обробляємо обране
             if (!favRes.error) {
                 favorites = favRes.data.map(f => f.listing_id);
             }
 
-            // Обробляємо чати
             if (!chatsRes.error) {
                 chats = chatsRes.data || [];
             }
 
-            // Обробляємо мої оголошення
             if (!myRes.error) {
                 myListings = myRes.data.map(item => ({
                     id: item.id,
@@ -1948,9 +1967,9 @@
             const elapsed = (performance.now() - start).toFixed(2);
             console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
 
-            // Оновлюємо UI
             updateProfileStats();
             updateChatBadge();
+            fixNotificationBadge();
             renderAll();
 
         } catch (e) {
@@ -1959,7 +1978,78 @@
     }
 
     // ================================================================
-    // ШВИДКІ ФУНКЦІЇ ЗАВАНТАЖЕННЯ (ВИКОРИСТОВУЮТЬ ВЖЕ ЗАВАНТАЖЕНІ ДАНІ)
+    // 🔧 ВИПРАВЛЕННЯ: КНОПКА "КОЛОКОЛЬЧИК"
+    // ================================================================
+
+    function fixNotificationBadge() {
+        const badge = document.getElementById('notif-badge');
+        if (badge) {
+            badge.textContent = '0';
+            badge.classList.add('hidden');
+        }
+    }
+
+    function toggleNotifications() {
+        const badge = document.getElementById('notif-badge');
+        if (badge) {
+            if (badge.classList.contains('hidden')) {
+                badge.textContent = '0';
+                badge.classList.add('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+        alert('📬 Сповіщень поки що немає');
+    }
+
+    // ================================================================
+    // 🔧 ВИПРАВЛЕННЯ: АВАТАРКИ В ПРОФІЛІ
+    // ================================================================
+
+    function updateAvatar() {
+        const avatarElements = document.querySelectorAll('.profile-avatar, .avatar-small, #profileAvatar, #editAvatar, #headerAvatar');
+        
+        avatarElements.forEach(el => {
+            // Шукаємо span з буквою
+            let letterSpan = el.querySelector('.avatar-letter') || el.querySelector('span');
+            
+            // Перевіряємо чи є фото
+            if (userData.avatar && (userData.avatar.startsWith('http') || userData.avatar.startsWith('data:image'))) {
+                // Є фото - показуємо img
+                let img = el.querySelector('img');
+                if (!img) {
+                    img = document.createElement('img');
+                    el.appendChild(img);
+                }
+                img.src = userData.avatar;
+                img.style.display = 'block';
+                if (letterSpan) letterSpan.style.display = 'none';
+            } else {
+                // Немає фото - показуємо букву
+                const img = el.querySelector('img');
+                if (img) img.style.display = 'none';
+                if (letterSpan) {
+                    letterSpan.style.display = 'block';
+                    letterSpan.textContent = userData.avatar || 'К';
+                }
+            }
+        });
+    }
+
+    // ================================================================
+    // 🔧 ВИПРАВЛЕННЯ: ФОТО ПРИ ДОДАВАННІ
+    // ================================================================
+
+    function resetPhotoForm() {
+        selectedPhotos = [];
+        const grid = document.getElementById('photoPreviewGrid');
+        if (grid) grid.innerHTML = '';
+        const input = document.getElementById('photoInput');
+        if (input) input.value = '';
+    }
+
+    // ================================================================
+    // ШВИДКІ ФУНКЦІЇ
     // ================================================================
 
     function loadListings() {
@@ -2026,9 +2116,6 @@
         const el = (id) => document.getElementById(id);
         if (el('profileName')) el('profileName').textContent = userData.name || 'Користувач';
         if (el('profileEmail')) el('profileEmail').textContent = userData.email || 'user@example.com';
-        if (el('profileAvatarLetter')) el('profileAvatarLetter').textContent = userData.avatar || 'К';
-        if (el('editAvatarLetter')) el('editAvatarLetter').textContent = userData.avatar || 'К';
-        if (el('avatarLetter')) el('avatarLetter').textContent = userData.avatar || 'К';
         if (el('editName')) el('editName').value = userData.name || '';
         if (el('editLastName')) el('editLastName').value = userData.last_name || '';
         if (el('editUsername')) el('editUsername').value = userData.username || '';
@@ -2039,6 +2126,7 @@
         if (el('securityEmail')) el('securityEmail').textContent = userData.email || 'user@example.com';
         if (el('securityPhone')) el('securityPhone').textContent = userData.phone || '+380 XX XXX XX XX';
         renderCitySelect();
+        updateAvatar();
     }
 
     function updateChatBadge() {
@@ -2420,8 +2508,8 @@
 
         if (error) { alert('Помилка: ' + error.message); return; }
 
-        selectedPhotos = [];
-        renderPhotoPreviews();
+        // Очищаємо фото
+        resetPhotoForm();
         document.getElementById('addTitle').value = '';
         document.getElementById('addPrice').value = '';
         document.getElementById('addCity').value = '';
@@ -2434,7 +2522,6 @@
                 else window.navigateTo('home'); }
         );
 
-        // Оновлюємо дані
         dataLoaded = false;
         setTimeout(loadAllData, 500);
     }
@@ -2774,6 +2861,7 @@
             if (error) throw error;
 
             alert('✅ Оголошення оновлено!');
+            resetPhotoForm();
             dataLoaded = false;
             await loadAllData();
             window.navigateTo('my-listings');
@@ -2825,6 +2913,7 @@
             userData.phone = phone;
             userData.city = city;
             updateUI();
+            updateAvatar();
             alert('✅ Профіль оновлено!');
             window.navigateTo('profile');
         } catch (e) { console.error('❌ Error saving profile:', e);
@@ -2839,6 +2928,7 @@
             const avatarUrl = e.target.result;
             userData.avatar = avatarUrl;
             updateUI();
+            updateAvatar();
             supabase.from('users').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
         };
         reader.readAsDataURL(file);
@@ -2998,6 +3088,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🚀 UAMO App starting...');
         initTelegramWebApp();
+        fixNotificationBadge();
 
         if (initSupabase()) {
             supabase.auth.getSession().then(({ data: { session } }) => {
@@ -3074,6 +3165,10 @@
     window.updateListing = updateListing;
     window.renderSearch = renderSearch;
     window.loadAllData = loadAllData;
+    window.toggleNotifications = toggleNotifications;
+    window.resetPhotoForm = resetPhotoForm;
+    window.fixNotificationBadge = fixNotificationBadge;
+    window.updateAvatar = updateAvatar;
 </script>
 
 </body>
