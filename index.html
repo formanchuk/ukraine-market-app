@@ -3132,3 +3132,458 @@
 
 </body>
 </html>
+// ================================================================
+// 🔥 СУПЕР-ШВИДКИЙ РЕЖИМ - ВСІ ДАНІ В ПАМ'ЯТІ
+// ================================================================
+
+(function() {
+    'use strict';
+    
+    // ================================================================
+    // 1. ХРАНИЛИЩЕ ДАНИХ В ПАМ'ЯТІ
+    // ================================================================
+    
+    const AppStore = {
+        // Дані
+        _data: {
+            listings: [],
+            favorites: [],
+            chats: [],
+            myListings: [],
+            user: null,
+            messages: {}
+        },
+        _loaded: false,
+        _loading: false,
+        _listeners: [],
+        
+        // Завантажити всі дані один раз
+        async loadAll() {
+            if (this._loaded) return;
+            if (this._loading) {
+                await new Promise(resolve => {
+                    const check = setInterval(() => {
+                        if (this._loaded) {
+                            clearInterval(check);
+                            resolve();
+                        }
+                    }, 50);
+                });
+                return;
+            }
+            
+            this._loading = true;
+            
+            try {
+                console.log('📡 Завантаження всіх даних...');
+                const start = Date.now();
+                
+                // Завантажуємо ВСІ дані одним пакетом
+                const promises = [];
+                
+                // Оголошення
+                promises.push(
+                    supabase
+                        .from('listings_with_users')
+                        .select('*')
+                        .limit(100)
+                );
+                
+                // Якщо є користувач - завантажуємо його дані
+                if (currentUser) {
+                    promises.push(
+                        supabase.from('users').select('*').eq('id', currentUser.id).single(),
+                        supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
+                        supabase.from('chats')
+                            .select(`
+                                *,
+                                listings:listing_id (title),
+                                buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
+                                seller:users!chats_seller_id_fkey (first_name, avatar_url)
+                            `)
+                            .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+                            .order('updated_at', { ascending: false })
+                            .limit(30),
+                        supabase.from('listings')
+                            .select('*')
+                            .eq('user_id', currentUser.id)
+                            .order('created_at', { ascending: false })
+                            .limit(30)
+                    );
+                }
+                
+                const results = await Promise.all(promises);
+                
+                // Розпаковуємо результати
+                let idx = 0;
+                
+                // Оголошення
+                const listingsResult = results[idx++];
+                if (!listingsResult.error) {
+                    this._data.listings = listingsResult.data.map(item => ({
+                        id: item.id,
+                        title: item.title || 'Без назви',
+                        price: item.price ? String(item.price) : '0',
+                        location: item.city || 'не вказано',
+                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                        photos: item.photos || null,
+                        category: item.category || 'Інше',
+                        isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
+                        isFeatured: item.is_featured || false,
+                        createdAt: item.created_at || new Date().toISOString(),
+                        description: item.description || 'Без опису',
+                        specs: item.specs || {},
+                        seller: {
+                            name: item.seller_name || 'Продавець',
+                            avatar: item.seller_avatar || '👤',
+                            since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
+                        },
+                        user_id: item.user_id,
+                        phone: item.phone || '',
+                        status: item.status || 'active'
+                    }));
+                }
+                
+                if (currentUser) {
+                    // Користувач
+                    const userResult = results[idx++];
+                    if (!userResult.error && userResult.data) {
+                        const u = userResult.data;
+                        this._data.user = {
+                            id: u.id,
+                            name: u.first_name || 'Користувач',
+                            last_name: u.last_name || '',
+                            username: u.username || '',
+                            phone: u.phone || '',
+                            email: u.email || currentUser.email || '',
+                            city: u.city || 'Київ',
+                            avatar: u.avatar_url || 'К',
+                            language: u.language || 'uk'
+                        };
+                        // Оновлюємо глобальний userData
+                        Object.assign(userData, this._data.user);
+                        updateUI();
+                    }
+                    
+                    // Обране
+                    const favResult = results[idx++];
+                    if (!favResult.error) {
+                        this._data.favorites = favResult.data.map(f => f.listing_id);
+                        favorites = this._data.favorites;
+                    }
+                    
+                    // Чати
+                    const chatsResult = results[idx++];
+                    if (!chatsResult.error) {
+                        this._data.chats = chatsResult.data || [];
+                        chats = this._data.chats;
+                    }
+                    
+                    // Мої оголошення
+                    const myResult = results[idx++];
+                    if (!myResult.error) {
+                        this._data.myListings = myResult.data.map(item => ({
+                            id: item.id,
+                            title: item.title || 'Без назви',
+                            price: item.price ? String(item.price) : '0',
+                            location: item.city || 'не вказано',
+                            image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                            photos: item.photos || null,
+                            category: item.category || 'Інше',
+                            createdAt: item.created_at || new Date().toISOString(),
+                            description: item.description || 'Без опису',
+                            phone: item.phone || '',
+                            status: item.status || 'active'
+                        }));
+                        myListings = this._data.myListings;
+                    }
+                }
+                
+                // Оновлюємо глобальні змінні
+                listings = this._data.listings;
+                
+                this._loaded = true;
+                this._loading = false;
+                
+                const elapsed = Date.now() - start;
+                console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
+                
+                // Оновлюємо UI
+                updateProfileStats();
+                updateChatBadge();
+                renderAll();
+                
+            } catch (e) {
+                console.error('❌ Помилка завантаження:', e);
+                this._loading = false;
+            }
+        },
+        
+        // Отримати дані миттєво (з кешу)
+        get(key) {
+            return this._data[key] || null;
+        },
+        
+        // Очистити кеш
+        clear() {
+            this._loaded = false;
+            this._data = {
+                listings: [],
+                favorites: [],
+                chats: [],
+                myListings: [],
+                user: null,
+                messages: {}
+            };
+        },
+        
+        // Перезавантажити дані
+        async refresh() {
+            this.clear();
+            await this.loadAll();
+        }
+    };
+    
+    // ================================================================
+    // 2. ПЕРЕВИЗНАЧАЄМО ВСІ ФУНКЦІЇ ДЛЯ ШВИДКОСТІ
+    // ================================================================
+    
+    // Зберігаємо оригінальні функції
+    const _origLoadListings = window.loadListings;
+    const _origLoadFavorites = window.loadFavorites;
+    const _origLoadChats = window.loadChats;
+    const _origLoadMyListings = window.loadMyListings;
+    const _origNavigateTo = window.navigateTo;
+    const _origRenderAll = window.renderAll;
+    
+    // Швидке завантаження - просто беремо з кешу
+    window.loadListings = function() {
+        const data = AppStore.get('listings');
+        if (data && data.length > 0) {
+            listings = data;
+            renderAll();
+            return;
+        }
+        AppStore.loadAll();
+    };
+    
+    window.loadFavorites = function() {
+        const data = AppStore.get('favorites');
+        if (data) {
+            favorites = data;
+            renderAll();
+            updateProfileStats();
+            return;
+        }
+        AppStore.loadAll();
+    };
+    
+    window.loadChats = function() {
+        const data = AppStore.get('chats');
+        if (data) {
+            chats = data;
+            if (currentPage === 'chats') renderChats();
+            updateChatBadge();
+            return;
+        }
+        AppStore.loadAll();
+    };
+    
+    window.loadMyListings = function() {
+        const data = AppStore.get('myListings');
+        if (data) {
+            myListings = data;
+            if (currentPage === 'my-listings') renderMyListings();
+            updateProfileStats();
+            return;
+        }
+        AppStore.loadAll();
+    };
+    
+    // Швидка навігація
+    window.navigateTo = function(page) {
+        if (page === 'auth') {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-auth');
+            if (target) target.classList.add('active');
+            const bottomNav = document.getElementById('bottomNav');
+            if (bottomNav) bottomNav.classList.remove('show');
+            currentPage = 'auth';
+            return;
+        }
+        
+        if (!currentUser && page !== 'auth') {
+            window.navigateTo('auth');
+            return;
+        }
+        
+        // Переключаємо сторінку
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById(`page-${page}`);
+        if (target) target.classList.add('active');
+        
+        const bottomNav = document.getElementById('bottomNav');
+        if (bottomNav) bottomNav.classList.add('show');
+        
+        currentPage = page;
+        if (historyStack[historyStack.length - 1] !== page) historyStack.push(page);
+        
+        // МИТТЄВИЙ РЕНДЕРИНГ - дані вже є в кеші
+        switch(page) {
+            case 'home':
+                renderHome();
+                break;
+            case 'search':
+                renderSearch(document.getElementById('searchInput')?.value || '');
+                break;
+            case 'favorites':
+                renderFavorites();
+                break;
+            case 'chats':
+                renderChats();
+                break;
+            case 'profile':
+                updateUI();
+                updateProfileStats();
+                updateNav('profile');
+                break;
+            case 'my-listings':
+                renderMyListings();
+                break;
+            case 'settings-city':
+                renderCities();
+                break;
+            case 'detail':
+                // Відкриваємо деталі
+                break;
+            default:
+                renderAll();
+        }
+        
+        updateNav(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    // ================================================================
+    // 3. ШВИДКИЙ РЕНДЕРИНГ (без запитів)
+    // ================================================================
+    
+    // Перевизначаємо renderAll для швидкості
+    window.renderAll = function() {
+        if (!currentUser && currentPage !== 'auth') {
+            window.navigateTo('auth');
+            return;
+        }
+        
+        // Дані вже є в глобальних змінних
+        switch(currentPage) {
+            case 'home':
+                renderHome();
+                break;
+            case 'search':
+                renderSearch(document.getElementById('searchInput')?.value || '');
+                break;
+            case 'favorites':
+                renderFavorites();
+                break;
+            case 'chats':
+                renderChats();
+                break;
+            case 'profile':
+                updateUI();
+                updateProfileStats();
+                updateNav('profile');
+                break;
+            case 'my-listings':
+                renderMyListings();
+                break;
+            case 'settings-city':
+                renderCities();
+                break;
+            default:
+                // Нічого не робимо
+        }
+    };
+    
+    // ================================================================
+    // 4. ОНОВЛЕННЯ ПРИ ЗМІНІ ДАНИХ
+    // ================================================================
+    
+    // Перевизначаємо функції, які змінюють дані
+    const _origSubmitListing = window.submitListing;
+    window.submitListing = async function() {
+        await _origSubmitListing.apply(this, arguments);
+        AppStore.clear();
+        setTimeout(() => AppStore.loadAll(), 300);
+    };
+    
+    const _origToggleFavorite = window.toggleFavorite;
+    window.toggleFavorite = async function(id) {
+        await _origToggleFavorite.apply(this, arguments);
+        AppStore.clear();
+        setTimeout(() => AppStore.loadAll(), 300);
+    };
+    
+    const _origSendMessage = window.sendMessage;
+    window.sendMessage = async function() {
+        await _origSendMessage.apply(this, arguments);
+        AppStore.clear();
+        setTimeout(() => AppStore.loadAll(), 300);
+    };
+    
+    const _origSaveProfile = window.saveProfile;
+    window.saveProfile = async function() {
+        await _origSaveProfile.apply(this, arguments);
+        AppStore.clear();
+        setTimeout(() => AppStore.loadAll(), 300);
+    };
+    
+    // ================================================================
+    // 5. ІНІЦІАЛІЗАЦІЯ
+    // ================================================================
+    
+    // Зберігаємо оригінальний DOMContentLoaded
+    const origInit = window.initApp || function() {};
+    
+    // Нова ініціалізація
+    window.initApp = function() {
+        console.log('🚀 Швидкий режим UAMO активовано!');
+        
+        // Завантажуємо дані в фоні
+        if (currentUser) {
+            AppStore.loadAll().then(() => {
+                console.log('✅ Готово до роботи!');
+                // Оновлюємо UI після завантаження
+                renderAll();
+                updateProfileStats();
+                updateChatBadge();
+            });
+        }
+    };
+    
+    // Патчимо DOMContentLoaded
+    const origDOMReady = document.addEventListener;
+    document.addEventListener = function(event, callback) {
+        if (event === 'DOMContentLoaded') {
+            // Замінюємо оригінальний callback
+            const wrapped = function() {
+                callback();
+                // Запускаємо швидкий режим після завантаження
+                setTimeout(() => {
+                    if (currentUser) {
+                        AppStore.loadAll();
+                    }
+                }, 100);
+            };
+            origDOMReady.call(document, event, wrapped);
+        } else {
+            origDOMReady.call(document, event, callback);
+        }
+    };
+    
+    // Експортуємо AppStore
+    window.AppStore = AppStore;
+    
+    console.log('🔥 Супер-швидкий режим увімкнено!');
+    
+})();
