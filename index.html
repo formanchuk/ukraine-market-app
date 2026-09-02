@@ -140,7 +140,7 @@
         .search-result-card .info .price { font-weight: 700; font-size: 15px; color: var(--primary); }
         .search-result-card .info .title { font-weight: 500; font-size: 13px; }
         .search-result-card .info .meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 12px; margin-top: 2px; }
-        .search-result-card .info .condition { font-size: 11px; color: var(--text-secondary); background: var(--bg); padding: 2px 8px; border-radius: 12px; display: inline-block; margin-top: 2px; }
+        .search-result-card .info .condition { font-size: 11px; color: var(--text-secondary); background: var(--bg); padding: 2px 10px; border-radius: 12px; display: inline-block; margin-top: 2px; }
 
         .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
         .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; }
@@ -255,21 +255,7 @@
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
         .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
 
-        /* Filter Modal */
-        .filter-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .filter-modal.show { display: flex; }
-        .filter-modal .filter-content { background: var(--card-bg); border-radius: var(--radius); padding: 24px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        .filter-modal .filter-content h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-        .filter-modal .filter-content .filter-group { margin-bottom: 16px; }
-        .filter-modal .filter-content .filter-group label { display: block; font-weight: 500; font-size: 13px; margin-bottom: 4px; color: var(--text-secondary); }
-        .filter-modal .filter-content .filter-group input, .filter-modal .filter-content .filter-group select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 14px; background: var(--bg); outline: none; }
-        .filter-modal .filter-content .filter-group input:focus, .filter-modal .filter-content .filter-group select:focus { border-color: var(--accent); }
-        .filter-modal .filter-content .filter-actions { display: flex; gap: 10px; margin-top: 16px; }
-        .filter-modal .filter-content .filter-actions button { flex: 1; padding: 12px; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: var(--transition); }
-        .filter-modal .filter-content .filter-actions .apply-btn { background: var(--accent); color: #fff; }
-        .filter-modal .filter-content .filter-actions .apply-btn:hover { background: var(--accent-hover); }
-        .filter-modal .filter-content .filter-actions .reset-btn { background: var(--bg); color: var(--text); }
-        .filter-modal .filter-content .filter-actions .reset-btn:hover { background: var(--border); }
+        .condition-badge { background: var(--bg); padding: 2px 10px; border-radius: 12px; font-size: 11px; color: var(--text-secondary); }
 
         @media (min-width: 640px) { .app-container { max-width: 600px; padding: 0 24px 80px 24px; } .bottom-nav { max-width: 600px; border-radius: 16px 16px 0 0; } }
         @media (max-width: 400px) { .listing-card { flex: 0 0 140px; } .listing-card-image { height: 95px; } .category-item { min-width: 56px; padding: 8px 12px; } .category-item i { font-size: 18px; } }
@@ -373,48 +359,8 @@
                 <button onclick="filterByCategory('services')"><i class="fas fa-wrench"></i> <span id="filterServices">Послуги</span></button>
                 <button onclick="filterByCategory('realestate')"><i class="fas fa-building"></i> <span id="filterRealestate">Нерухом.</span></button>
                 <button onclick="filterByCategory('transport')"><i class="fas fa-car"></i> <span id="filterTransport">Транспорт</span></button>
-                <button onclick="openFilterModal()"><i class="fas fa-sliders-h"></i> <span id="filterFilters">Фільтри</span></button>
             </div>
             <div class="search-results" id="searchResults"></div>
-        </div>
-    </div>
-
-    <!-- FILTER MODAL -->
-    <div class="filter-modal" id="filterModal">
-        <div class="filter-content">
-            <h3 id="filterTitle">🔍 Фільтри</h3>
-            <div class="filter-group">
-                <label id="filterPriceLabel">Ціна (грн)</label>
-                <div style="display:flex; gap:8px;">
-                    <input type="number" id="filterPriceMin" placeholder="від" style="width:50%;" />
-                    <input type="number" id="filterPriceMax" placeholder="до" style="width:50%;" />
-                </div>
-            </div>
-            <div class="filter-group">
-                <label id="filterCityLabel">Місто</label>
-                <input type="text" id="filterCity" placeholder="Введіть місто" />
-            </div>
-            <div class="filter-group">
-                <label id="filterConditionLabel">Стан</label>
-                <select id="filterCondition">
-                    <option value="all">Всі</option>
-                    <option value="new">Новий</option>
-                    <option value="used">Б/В</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label id="filterDateLabel">Дата</label>
-                <select id="filterDate">
-                    <option value="all">За весь час</option>
-                    <option value="today">Сьогодні</option>
-                    <option value="week">Цей тиждень</option>
-                    <option value="month">Цей місяць</option>
-                </select>
-            </div>
-            <div class="filter-actions">
-                <button class="apply-btn" onclick="applyFilters()" id="filterApplyBtn">Застосувати</button>
-                <button class="reset-btn" onclick="resetFilters()" id="filterResetBtn">Скинути</button>
-            </div>
         </div>
     </div>
 
@@ -861,7 +807,7 @@
                 <div class="meta" id="detailMeta">
                     <span><i class="fas fa-map-marker-alt"></i> <span id="detailLocation">Київ</span></span>
                     <span><i class="far fa-clock"></i> <span id="detailTime">Сьогодні</span></span>
-                    <span id="detailCondition"><span class="condition-badge">Новий</span></span>
+                    <span><span class="condition-badge" id="detailConditionBadge">Новий</span></span>
                 </div>
                 <div class="divider"></div>
                 <div class="description" id="detailDesc">Опис оголошення</div>
@@ -925,7 +871,39 @@
 
 <script>
 // ================================================================
-// ПЕРЕКЛАДИ (11 МОВ) - ПОВНА ВЕРСІЯ
+// SUPABASE CONFIG - ВИПРАВЛЕНО З НОВИМ PUBLISHABLE KEY
+// ================================================================
+
+const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_O--QDl2DMLdrGfzxJllRfg_qlH401yR';
+
+let supabase = null;
+let currentUser = null;
+let isAuthMode = 'login';
+let currentPage = 'auth';
+let historyStack = ['auth'];
+let selectedPhotos = [];
+let favorites = [];
+let listings = [];
+let myListings = [];
+let chats = [];
+let chatMessages = [];
+let currentChatId = null;
+let currentDetailId = null;
+let detailPhotos = [];
+let detailIndex = 0;
+let currentDetailListing = null;
+let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця',
+    'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк',
+    'Ужгород', 'Хмельницький'
+];
+let userData = {
+    id: null, name: 'Користувач', last_name: '', username: '', phone: '', email: '', city: 'Київ', avatar: 'К', language: 'uk'
+};
+let unreadCount = 0;
+
+// ================================================================
+// ПЕРЕКЛАДИ (КОРОТКА ВЕРСІЯ)
 // ================================================================
 
 const translations = {
@@ -965,10 +943,7 @@ const translations = {
         writeSeller: 'Написати продавцю', detail: 'Оголошення',
         securityChangePassword: 'Змінити пароль', securityChangeEmail: 'Змінити email',
         securityChangePhone: 'Змінити номер телефону', securitySessions: 'Активні сеанси',
-        condition: 'Стан', new: 'Новий', used: 'Б/В', conditionNew: 'Новий', conditionUsed: 'Б/В',
-        filterTitle: 'Фільтри', filterPrice: 'Ціна (грн)', filterCity: 'Місто',
-        filterCondition: 'Стан', filterDate: 'Дата', filterApply: 'Застосувати', filterReset: 'Скинути',
-        allTime: 'За весь час', today: 'Сьогодні', week: 'Цей тиждень', month: 'Цей місяць'
+        condition: 'Стан', new: 'Новий', used: 'Б/В'
     },
     en: {
         home: 'Home', search: 'Search', add: 'Add', addListing: 'Add listing',
@@ -1006,387 +981,15 @@ const translations = {
         writeSeller: 'Write to seller', detail: 'Listing',
         securityChangePassword: 'Change password', securityChangeEmail: 'Change email',
         securityChangePhone: 'Change phone number', securitySessions: 'Active sessions',
-        condition: 'Condition', new: 'New', used: 'Used', conditionNew: 'New', conditionUsed: 'Used',
-        filterTitle: 'Filters', filterPrice: 'Price (UAH)', filterCity: 'City',
-        filterCondition: 'Condition', filterDate: 'Date', filterApply: 'Apply', filterReset: 'Reset',
-        allTime: 'All time', today: 'Today', week: 'This week', month: 'This month'
-    },
-    pl: {
-        home: 'Strona główna', search: 'Szukaj', add: 'Dodaj', addListing: 'Dodaj ogłoszenie',
-        messages: 'Wiadomości', profile: 'Profil', settings: 'Ustawienia',
-        listings: 'Ogłoszenia', favorites: 'Ulubione', myListings: 'Moje ogłoszenia',
-        recommended: 'Polecane', newListings: 'Nowe ogłoszenia', all: 'Wszystkie →',
-        products: 'Produkty', jobs: 'Praca', services: 'Usługi',
-        realestate: 'Nieruchomości', transport: 'Transport',
-        publish: 'Opublikuj ogłoszenie', listingPublished: '✅ Ogłoszenie opublikowane!',
-        enterTitle: 'Wprowadź tytuł', enterPrice: 'Wprowadź cenę', invalidPrice: 'Wprowadź poprawną cenę',
-        publishError: '❌ Nie udało się opublikować ogłoszenia',
-        category: 'Kategoria', title: 'Tytuł *', description: 'Opis', photo: 'Zdjęcie',
-        addPhoto: 'Dodaj zdjęcie (do 8)', price: 'Cena (UAH) *', city: 'Miasto', phone: 'Telefon',
-        editProfile: 'Edytuj profil', logout: 'Wyloguj', help: 'Pomoc', about: 'O UAMO',
-        account: 'Konto', notifications: 'Powiadomienia', citySettings: 'Miasto',
-        language: 'Język', privacy: 'Prywatność', messagesSettings: 'Wiadomości',
-        security: 'Bezpieczeństwo', saveChanges: '💾 Zapisz zmiany', changePhoto: 'Zmień zdjęcie',
-        filters: 'Filtry', noResults: 'Nic nie znaleziono', noFavorites: 'Nic tu nie ma',
-        noChats: 'Brak czatów', noListings: 'Nie masz jeszcze ogłoszeń',
-        createFirst: 'Utwórz swoje pierwsze ogłoszenie', chats: 'Czaty',
-        saveLanguage: '💾 Zapisz język', back: 'Wstecz', user: 'Użytkownik',
-        email: 'Email', phoneSettings: 'Telefon', password: 'Hasło',
-        changeEmail: 'Zmień email', changePhone: 'Wyślij kod', changePassword: 'Zmień hasło',
-        forgotPassword: 'Zapomniałeś hasła?', currentEmail: 'Obecny email', newEmail: 'Nowy email',
-        currentPhone: 'Obecny numer', newPhone: 'Nowy numer',
-        currentPassword: 'Obecne hasło', newPassword: 'Nowe hasło', confirmPassword: 'Potwierdź hasło',
-        whoCanMessage: 'Kto może do mnie napisać:', whoAll: 'Wszyscy', whoUsers: 'Użytkownicy UAMO', whoNone: 'Nikt',
-        allowMessages: 'Zezwól na wiadomości od użytkowników',
-        showPhone: 'Pokaż numer telefonu', showCity: 'Pokaż miasto',
-        allowMessagesFromOthers: 'Zezwól na wiadomości od innych',
-        showProfile: 'Pokaż mój profil', showActivity: 'Pokaż aktywność',
-        notifMessages: 'Wiadomości', notifChat: 'Nowe wiadomości w czacie',
-        notifReplies: 'Odpowiedzi na moje ogłoszenia', notifPrice: 'Ulubione ogłoszenie zmieniło cenę',
-        notifNew: 'Nowe ogłoszenia', notifRecommend: 'Rekomendacje UAMO',
-        writeSeller: 'Napisz do sprzedawcy', detail: 'Ogłoszenie',
-        securityChangePassword: 'Zmień hasło', securityChangeEmail: 'Zmień email',
-        securityChangePhone: 'Zmień numer telefonu', securitySessions: 'Aktywne sesje',
-        condition: 'Stan', new: 'Nowy', used: 'Używany', conditionNew: 'Nowy', conditionUsed: 'Używany',
-        filterTitle: 'Filtry', filterPrice: 'Cena (UAH)', filterCity: 'Miasto',
-        filterCondition: 'Stan', filterDate: 'Data', filterApply: 'Zastosuj', filterReset: 'Resetuj',
-        allTime: 'Cały czas', today: 'Dzisiaj', week: 'Ten tydzień', month: 'Ten miesiąc'
-    },
-    de: {
-        home: 'Startseite', search: 'Suche', add: 'Hinzufügen', addListing: 'Anzeige hinzufügen',
-        messages: 'Nachrichten', profile: 'Profil', settings: 'Einstellungen',
-        listings: 'Anzeigen', favorites: 'Favoriten', myListings: 'Meine Anzeigen',
-        recommended: 'Empfohlen', newListings: 'Neue Anzeigen', all: 'Alle →',
-        products: 'Produkte', jobs: 'Arbeit', services: 'Dienstleistungen',
-        realestate: 'Immobilien', transport: 'Transport',
-        publish: 'Anzeige veröffentlichen', listingPublished: '✅ Anzeige veröffentlicht!',
-        enterTitle: 'Titel eingeben', enterPrice: 'Preis eingeben', invalidPrice: 'Gültigen Preis eingeben',
-        publishError: '❌ Fehler beim Veröffentlichen',
-        category: 'Kategorie', title: 'Titel *', description: 'Beschreibung', photo: 'Foto',
-        addPhoto: 'Foto hinzufügen (bis 8)', price: 'Preis (UAH) *', city: 'Stadt', phone: 'Telefon',
-        editProfile: 'Profil bearbeiten', logout: 'Abmelden', help: 'Hilfe', about: 'Über UAMO',
-        account: 'Konto', notifications: 'Benachrichtigungen', citySettings: 'Stadt',
-        language: 'Sprache', privacy: 'Datenschutz', messagesSettings: 'Nachrichten',
-        security: 'Sicherheit', saveChanges: '💾 Änderungen speichern', changePhoto: 'Foto ändern',
-        filters: 'Filter', noResults: 'Nichts gefunden', noFavorites: 'Nichts hier',
-        noChats: 'Keine Chats', noListings: 'Keine Anzeigen',
-        createFirst: 'Erste Anzeige erstellen', chats: 'Chats',
-        saveLanguage: '💾 Sprache speichern', back: 'Zurück', user: 'Benutzer',
-        email: 'Email', phoneSettings: 'Telefon', password: 'Passwort',
-        changeEmail: 'Email ändern', changePhone: 'Code senden', changePassword: 'Passwort ändern',
-        forgotPassword: 'Passwort vergessen?', currentEmail: 'Aktuelle Email', newEmail: 'Neue Email',
-        currentPhone: 'Aktuelle Nummer', newPhone: 'Neue Nummer',
-        currentPassword: 'Aktuelles Passwort', newPassword: 'Neues Passwort', confirmPassword: 'Passwort bestätigen',
-        whoCanMessage: 'Wer kann mir schreiben:', whoAll: 'Alle', whoUsers: 'UAMO Nutzer', whoNone: 'Niemand',
-        allowMessages: 'Nachrichten von Nutzern erlauben',
-        showPhone: 'Telefonnummer anzeigen', showCity: 'Stadt anzeigen',
-        allowMessagesFromOthers: 'Nachrichten von anderen erlauben',
-        showProfile: 'Mein Profil anzeigen', showActivity: 'Aktivität anzeigen',
-        notifMessages: 'Nachrichten', notifChat: 'Neue Chat-Nachrichten',
-        notifReplies: 'Antworten auf meine Anzeigen', notifPrice: 'Favoritenpreis geändert',
-        notifNew: 'Neue Anzeigen', notifRecommend: 'UAMO Empfehlungen',
-        writeSeller: 'An Verkäufer schreiben', detail: 'Anzeige',
-        securityChangePassword: 'Passwort ändern', securityChangeEmail: 'Email ändern',
-        securityChangePhone: 'Telefonnummer ändern', securitySessions: 'Aktive Sitzungen',
-        condition: 'Zustand', new: 'Neu', used: 'Gebraucht', conditionNew: 'Neu', conditionUsed: 'Gebraucht',
-        filterTitle: 'Filter', filterPrice: 'Preis (UAH)', filterCity: 'Stadt',
-        filterCondition: 'Zustand', filterDate: 'Datum', filterApply: 'Anwenden', filterReset: 'Zurücksetzen',
-        allTime: 'Alle Zeiten', today: 'Heute', week: 'Diese Woche', month: 'Diesen Monat'
-    },
-    fr: {
-        home: 'Accueil', search: 'Recherche', add: 'Ajouter', addListing: 'Ajouter une annonce',
-        messages: 'Messages', profile: 'Profil', settings: 'Paramètres',
-        listings: 'Annonces', favorites: 'Favoris', myListings: 'Mes annonces',
-        recommended: 'Recommandé', newListings: 'Nouvelles annonces', all: 'Tout →',
-        products: 'Produits', jobs: 'Emploi', services: 'Services',
-        realestate: 'Immobilier', transport: 'Transport',
-        publish: 'Publier une annonce', listingPublished: '✅ Annonce publiée!',
-        enterTitle: 'Entrez un titre', enterPrice: 'Entrez un prix', invalidPrice: 'Entrez un prix valide',
-        publishError: '❌ Échec de la publication',
-        category: 'Catégorie', title: 'Titre *', description: 'Description', photo: 'Photo',
-        addPhoto: 'Ajouter une photo (jusqu\'à 8)', price: 'Prix (UAH) *', city: 'Ville', phone: 'Téléphone',
-        editProfile: 'Modifier le profil', logout: 'Déconnexion', help: 'Aide', about: 'À propos de UAMO',
-        account: 'Compte', notifications: 'Notifications', citySettings: 'Ville',
-        language: 'Langue', privacy: 'Confidentialité', messagesSettings: 'Messages',
-        security: 'Sécurité', saveChanges: '💾 Enregistrer', changePhoto: 'Changer la photo',
-        filters: 'Filtres', noResults: 'Aucun résultat', noFavorites: 'Rien ici',
-        noChats: 'Aucun chat', noListings: 'Aucune annonce',
-        createFirst: 'Créez votre première annonce', chats: 'Chats',
-        saveLanguage: '💾 Enregistrer la langue', back: 'Retour', user: 'Utilisateur',
-        email: 'Email', phoneSettings: 'Téléphone', password: 'Mot de passe',
-        changeEmail: 'Changer email', changePhone: 'Envoyer le code', changePassword: 'Changer mot de passe',
-        forgotPassword: 'Mot de passe oublié?', currentEmail: 'Email actuel', newEmail: 'Nouvel email',
-        currentPhone: 'Numéro actuel', newPhone: 'Nouveau numéro',
-        currentPassword: 'Mot de passe actuel', newPassword: 'Nouveau mot de passe', confirmPassword: 'Confirmer le mot de passe',
-        whoCanMessage: 'Qui peut m\'écrire:', whoAll: 'Tout le monde', whoUsers: 'Utilisateurs UAMO', whoNone: 'Personne',
-        allowMessages: 'Autoriser les messages des utilisateurs',
-        showPhone: 'Afficher le numéro de téléphone', showCity: 'Afficher la ville',
-        allowMessagesFromOthers: 'Autoriser les messages des autres',
-        showProfile: 'Afficher mon profil', showActivity: 'Afficher l\'activité',
-        notifMessages: 'Messages', notifChat: 'Nouveaux messages dans le chat',
-        notifReplies: 'Réponses à mes annonces', notifPrice: 'Prix de l\'annonce favorite modifié',
-        notifNew: 'Nouvelles annonces', notifRecommend: 'Recommandations UAMO',
-        writeSeller: 'Écrire au vendeur', detail: 'Annonce',
-        securityChangePassword: 'Changer mot de passe', securityChangeEmail: 'Changer email',
-        securityChangePhone: 'Changer numéro de téléphone', securitySessions: 'Sessions actives',
-        condition: 'État', new: 'Neuf', used: 'Occasion', conditionNew: 'Neuf', conditionUsed: 'Occasion',
-        filterTitle: 'Filtres', filterPrice: 'Prix (UAH)', filterCity: 'Ville',
-        filterCondition: 'État', filterDate: 'Date', filterApply: 'Appliquer', filterReset: 'Réinitialiser',
-        allTime: 'Tout le temps', today: 'Aujourd\'hui', week: 'Cette semaine', month: 'Ce mois'
-    },
-    es: {
-        home: 'Inicio', search: 'Buscar', add: 'Añadir', addListing: 'Añadir anuncio',
-        messages: 'Mensajes', profile: 'Perfil', settings: 'Ajustes',
-        listings: 'Anuncios', favorites: 'Favoritos', myListings: 'Mis anuncios',
-        recommended: 'Recomendado', newListings: 'Nuevos anuncios', all: 'Todos →',
-        products: 'Productos', jobs: 'Trabajo', services: 'Servicios',
-        realestate: 'Inmuebles', transport: 'Transporte',
-        publish: 'Publicar anuncio', listingPublished: '✅ ¡Anuncio publicado!',
-        enterTitle: 'Ingrese un título', enterPrice: 'Ingrese un precio', invalidPrice: 'Ingrese un precio válido',
-        publishError: '❌ Error al publicar',
-        category: 'Categoría', title: 'Título *', description: 'Descripción', photo: 'Foto',
-        addPhoto: 'Añadir foto (hasta 8)', price: 'Precio (UAH) *', city: 'Ciudad', phone: 'Teléfono',
-        editProfile: 'Editar perfil', logout: 'Cerrar sesión', help: 'Ayuda', about: 'Acerca de UAMO',
-        account: 'Cuenta', notifications: 'Notificaciones', citySettings: 'Ciudad',
-        language: 'Idioma', privacy: 'Privacidad', messagesSettings: 'Mensajes',
-        security: 'Seguridad', saveChanges: '💾 Guardar cambios', changePhoto: 'Cambiar foto',
-        filters: 'Filtros', noResults: 'No se encontraron resultados', noFavorites: 'Nada aquí',
-        noChats: 'Sin chats', noListings: 'Sin anuncios',
-        createFirst: 'Crea tu primer anuncio', chats: 'Chats',
-        saveLanguage: '💾 Guardar idioma', back: 'Volver', user: 'Usuario',
-        email: 'Email', phoneSettings: 'Teléfono', password: 'Contraseña',
-        changeEmail: 'Cambiar email', changePhone: 'Enviar código', changePassword: 'Cambiar contraseña',
-        forgotPassword: '¿Olvidaste tu contraseña?', currentEmail: 'Email actual', newEmail: 'Nuevo email',
-        currentPhone: 'Número actual', newPhone: 'Nuevo número',
-        currentPassword: 'Contraseña actual', newPassword: 'Nueva contraseña', confirmPassword: 'Confirmar contraseña',
-        whoCanMessage: '¿Quién puede escribirme:', whoAll: 'Todos', whoUsers: 'Usuarios UAMO', whoNone: 'Nadie',
-        allowMessages: 'Permitir mensajes de usuarios',
-        showPhone: 'Mostrar número de teléfono', showCity: 'Mostrar ciudad',
-        allowMessagesFromOthers: 'Permitir mensajes de otros',
-        showProfile: 'Mostrar mi perfil', showActivity: 'Mostrar actividad',
-        notifMessages: 'Mensajes', notifChat: 'Nuevos mensajes en el chat',
-        notifReplies: 'Respuestas a mis anuncios', notifPrice: 'Precio de anuncio favorito cambiado',
-        notifNew: 'Nuevos anuncios', notifRecommend: 'Recomendaciones UAMO',
-        writeSeller: 'Escribir al vendedor', detail: 'Anuncio',
-        securityChangePassword: 'Cambiar contraseña', securityChangeEmail: 'Cambiar email',
-        securityChangePhone: 'Cambiar número de teléfono', securitySessions: 'Sesiones activas',
-        condition: 'Estado', new: 'Nuevo', used: 'Usado', conditionNew: 'Nuevo', conditionUsed: 'Usado',
-        filterTitle: 'Filtros', filterPrice: 'Precio (UAH)', filterCity: 'Ciudad',
-        filterCondition: 'Estado', filterDate: 'Fecha', filterApply: 'Aplicar', filterReset: 'Restablecer',
-        allTime: 'Todo el tiempo', today: 'Hoy', week: 'Esta semana', month: 'Este mes'
-    },
-    it: {
-        home: 'Home', search: 'Cerca', add: 'Aggiungi', addListing: 'Aggiungi annuncio',
-        messages: 'Messaggi', profile: 'Profilo', settings: 'Impostazioni',
-        listings: 'Annunci', favorites: 'Preferiti', myListings: 'I miei annunci',
-        recommended: 'Consigliati', newListings: 'Nuovi annunci', all: 'Tutti →',
-        products: 'Prodotti', jobs: 'Lavoro', services: 'Servizi',
-        realestate: 'Immobili', transport: 'Trasporto',
-        publish: 'Pubblica annuncio', listingPublished: '✅ Annuncio pubblicato!',
-        enterTitle: 'Inserisci un titolo', enterPrice: 'Inserisci un prezzo', invalidPrice: 'Inserisci un prezzo valido',
-        publishError: '❌ Errore nella pubblicazione',
-        category: 'Categoria', title: 'Titolo *', description: 'Descrizione', photo: 'Foto',
-        addPhoto: 'Aggiungi foto (fino a 8)', price: 'Prezzo (UAH) *', city: 'Città', phone: 'Telefono',
-        editProfile: 'Modifica profilo', logout: 'Esci', help: 'Aiuto', about: 'Informazioni su UAMO',
-        account: 'Account', notifications: 'Notifiche', citySettings: 'Città',
-        language: 'Lingua', privacy: 'Privacy', messagesSettings: 'Messaggi',
-        security: 'Sicurezza', saveChanges: '💾 Salva modifiche', changePhoto: 'Cambia foto',
-        filters: 'Filtri', noResults: 'Nessun risultato', noFavorites: 'Niente qui',
-        noChats: 'Nessuna chat', noListings: 'Nessun annuncio',
-        createFirst: 'Crea il tuo primo annuncio', chats: 'Chat',
-        saveLanguage: '💾 Salva lingua', back: 'Indietro', user: 'Utente',
-        email: 'Email', phoneSettings: 'Telefono', password: 'Password',
-        changeEmail: 'Cambia email', changePhone: 'Invia codice', changePassword: 'Cambia password',
-        forgotPassword: 'Password dimenticata?', currentEmail: 'Email attuale', newEmail: 'Nuova email',
-        currentPhone: 'Numero attuale', newPhone: 'Nuovo numero',
-        currentPassword: 'Password attuale', newPassword: 'Nuova password', confirmPassword: 'Conferma password',
-        whoCanMessage: 'Chi può scrivermi:', whoAll: 'Tutti', whoUsers: 'Utenti UAMO', whoNone: 'Nessuno',
-        allowMessages: 'Permetti messaggi dagli utenti',
-        showPhone: 'Mostra numero di telefono', showCity: 'Mostra città',
-        allowMessagesFromOthers: 'Permetti messaggi da altri',
-        showProfile: 'Mostra il mio profilo', showActivity: 'Mostra attività',
-        notifMessages: 'Messaggi', notifChat: 'Nuovi messaggi in chat',
-        notifReplies: 'Risposte ai miei annunci', notifPrice: 'Prezzo dell\'annuncio preferito cambiato',
-        notifNew: 'Nuovi annunci', notifRecommend: 'Raccomandazioni UAMO',
-        writeSeller: 'Scrivi al venditore', detail: 'Annuncio',
-        securityChangePassword: 'Cambia password', securityChangeEmail: 'Cambia email',
-        securityChangePhone: 'Cambia numero di telefono', securitySessions: 'Sessioni attive',
-        condition: 'Condizione', new: 'Nuovo', used: 'Usato', conditionNew: 'Nuovo', conditionUsed: 'Usato',
-        filterTitle: 'Filtri', filterPrice: 'Prezzo (UAH)', filterCity: 'Città',
-        filterCondition: 'Condizione', filterDate: 'Data', filterApply: 'Applica', filterReset: 'Reimposta',
-        allTime: 'Sempre', today: 'Oggi', week: 'Questa settimana', month: 'Questo mese'
-    },
-    cs: {
-        home: 'Domů', search: 'Hledat', add: 'Přidat', addListing: 'Přidat inzerát',
-        messages: 'Zprávy', profile: 'Profil', settings: 'Nastavení',
-        listings: 'Inzeráty', favorites: 'Oblíbené', myListings: 'Moje inzeráty',
-        recommended: 'Doporučené', newListings: 'Nové inzeráty', all: 'Vše →',
-        products: 'Produkty', jobs: 'Práce', services: 'Služby',
-        realestate: 'Nemovitosti', transport: 'Doprava',
-        publish: 'Zveřejnit inzerát', listingPublished: '✅ Inzerát zveřejněn!',
-        enterTitle: 'Zadejte název', enterPrice: 'Zadejte cenu', invalidPrice: 'Zadejte platnou cenu',
-        publishError: '❌ Nepodařilo se zveřejnit',
-        category: 'Kategorie', title: 'Název *', description: 'Popis', photo: 'Foto',
-        addPhoto: 'Přidat foto (až 8)', price: 'Cena (UAH) *', city: 'Město', phone: 'Telefon',
-        editProfile: 'Upravit profil', logout: 'Odhlásit', help: 'Nápověda', about: 'O UAMO',
-        account: 'Účet', notifications: 'Notifikace', citySettings: 'Město',
-        language: 'Jazyk', privacy: 'Soukromí', messagesSettings: 'Zprávy',
-        security: 'Bezpečnost', saveChanges: '💾 Uložit změny', changePhoto: 'Změnit foto',
-        filters: 'Filtry', noResults: 'Nic nenalezeno', noFavorites: 'Zatím nic',
-        noChats: 'Žádné chaty', noListings: 'Žádné inzeráty',
-        createFirst: 'Vytvořte svůj první inzerát', chats: 'Chaty',
-        saveLanguage: '💾 Uložit jazyk', back: 'Zpět', user: 'Uživatel',
-        email: 'Email', phoneSettings: 'Telefon', password: 'Heslo',
-        changeEmail: 'Změnit email', changePhone: 'Odeslat kód', changePassword: 'Změnit heslo',
-        forgotPassword: 'Zapomněli jste heslo?', currentEmail: 'Aktuální email', newEmail: 'Nový email',
-        currentPhone: 'Aktuální číslo', newPhone: 'Nové číslo',
-        currentPassword: 'Aktuální heslo', newPassword: 'Nové heslo', confirmPassword: 'Potvrďte heslo',
-        whoCanMessage: 'Kdo mi může napsat:', whoAll: 'Všichni', whoUsers: 'Uživatelé UAMO', whoNone: 'Nikdo',
-        allowMessages: 'Povolit zprávy od uživatelů',
-        showPhone: 'Zobrazit telefonní číslo', showCity: 'Zobrazit město',
-        allowMessagesFromOthers: 'Povolit zprávy od ostatních',
-        showProfile: 'Zobrazit můj profil', showActivity: 'Zobrazit aktivitu',
-        notifMessages: 'Zprávy', notifChat: 'Nové zprávy v chatu',
-        notifReplies: 'Odpovědi na mé inzeráty', notifPrice: 'Cena oblíbeného inzerátu se změnila',
-        notifNew: 'Nové inzeráty', notifRecommend: 'Doporučení UAMO',
-        writeSeller: 'Napsat prodejci', detail: 'Inzerát',
-        securityChangePassword: 'Změnit heslo', securityChangeEmail: 'Změnit email',
-        securityChangePhone: 'Změnit telefonní číslo', securitySessions: 'Aktivní sezení',
-        condition: 'Stav', new: 'Nový', used: 'Použitý', conditionNew: 'Nový', conditionUsed: 'Použitý',
-        filterTitle: 'Filtry', filterPrice: 'Cena (UAH)', filterCity: 'Město',
-        filterCondition: 'Stav', filterDate: 'Datum', filterApply: 'Použít', filterReset: 'Resetovat',
-        allTime: 'Vždy', today: 'Dnes', week: 'Tento týden', month: 'Tento měsíc'
-    },
-    sk: {
-        home: 'Domov', search: 'Hľadať', add: 'Pridať', addListing: 'Pridať inzerát',
-        messages: 'Správy', profile: 'Profil', settings: 'Nastavenia',
-        listings: 'Inzeráty', favorites: 'Obľúbené', myListings: 'Moje inzeráty',
-        recommended: 'Odporúčané', newListings: 'Nové inzeráty', all: 'Všetky →',
-        products: 'Produkty', jobs: 'Práca', services: 'Služby',
-        realestate: 'Nehnuteľnosti', transport: 'Doprava',
-        publish: 'Zverejniť inzerát', listingPublished: '✅ Inzerát zverejnený!',
-        enterTitle: 'Zadajte názov', enterPrice: 'Zadajte cenu', invalidPrice: 'Zadajte platnú cenu',
-        publishError: '❌ Nepodarilo sa zverejniť',
-        category: 'Kategória', title: 'Názov *', description: 'Popis', photo: 'Foto',
-        addPhoto: 'Pridať foto (až 8)', price: 'Cena (UAH) *', city: 'Mesto', phone: 'Telefón',
-        editProfile: 'Upraviť profil', logout: 'Odhlásiť', help: 'Pomoc', about: 'O UAMO',
-        account: 'Účet', notifications: 'Notifikácie', citySettings: 'Mesto',
-        language: 'Jazyk', privacy: 'Súkromie', messagesSettings: 'Správy',
-        security: 'Bezpečnosť', saveChanges: '💾 Uložiť zmeny', changePhoto: 'Zmeniť foto',
-        filters: 'Filtre', noResults: 'Nič nenájdené', noFavorites: 'Zatiaľ nič',
-        noChats: 'Žiadne chaty', noListings: 'Žiadne inzeráty',
-        createFirst: 'Vytvorte svoj prvý inzerát', chats: 'Chaty',
-        saveLanguage: '💾 Uložiť jazyk', back: 'Späť', user: 'Používateľ',
-        email: 'Email', phoneSettings: 'Telefón', password: 'Heslo',
-        changeEmail: 'Zmeniť email', changePhone: 'Odoslať kód', changePassword: 'Zmeniť heslo',
-        forgotPassword: 'Zabudli ste heslo?', currentEmail: 'Aktuálny email', newEmail: 'Nový email',
-        currentPhone: 'Aktuálne číslo', newPhone: 'Nové číslo',
-        currentPassword: 'Aktuálne heslo', newPassword: 'Nové heslo', confirmPassword: 'Potvrďte heslo',
-        whoCanMessage: 'Kto mi môže napísať:', whoAll: 'Všetci', whoUsers: 'Používatelia UAMO', whoNone: 'Nikto',
-        allowMessages: 'Povoliť správy od používateľov',
-        showPhone: 'Zobraziť telefónne číslo', showCity: 'Zobraziť mesto',
-        allowMessagesFromOthers: 'Povoliť správy od ostatných',
-        showProfile: 'Zobraziť môj profil', showActivity: 'Zobraziť aktivitu',
-        notifMessages: 'Správy', notifChat: 'Nové správy v chate',
-        notifReplies: 'Odpovede na moje inzeráty', notifPrice: 'Cena obľúbeného inzerátu sa zmenila',
-        notifNew: 'Nové inzeráty', notifRecommend: 'Odporúčania UAMO',
-        writeSeller: 'Napísať predajcovi', detail: 'Inzerát',
-        securityChangePassword: 'Zmeniť heslo', securityChangeEmail: 'Zmeniť email',
-        securityChangePhone: 'Zmeniť telefónne číslo', securitySessions: 'Aktívne relácie',
-        condition: 'Stav', new: 'Nový', used: 'Použitý', conditionNew: 'Nový', conditionUsed: 'Použitý',
-        filterTitle: 'Filtre', filterPrice: 'Cena (UAH)', filterCity: 'Mesto',
-        filterCondition: 'Stav', filterDate: 'Dátum', filterApply: 'Použiť', filterReset: 'Resetovať',
-        allTime: 'Vždy', today: 'Dnes', week: 'Tento týždeň', month: 'Tento mesiac'
-    },
-    ro: {
-        home: 'Acasă', search: 'Căutare', add: 'Adaugă', addListing: 'Adaugă anunț',
-        messages: 'Mesaje', profile: 'Profil', settings: 'Setări',
-        listings: 'Anunțuri', favorites: 'Favorite', myListings: 'Anunțurile mele',
-        recommended: 'Recomandate', newListings: 'Anunțuri noi', all: 'Toate →',
-        products: 'Produse', jobs: 'Locuri de muncă', services: 'Servicii',
-        realestate: 'Imobiliare', transport: 'Transport',
-        publish: 'Publică anunț', listingPublished: '✅ Anunț publicat!',
-        enterTitle: 'Introduceți un titlu', enterPrice: 'Introduceți un preț', invalidPrice: 'Introduceți un preț valid',
-        publishError: '❌ Eroare la publicare',
-        category: 'Categorie', title: 'Titlu *', description: 'Descriere', photo: 'Foto',
-        addPhoto: 'Adaugă foto (până la 8)', price: 'Preț (UAH) *', city: 'Oraș', phone: 'Telefon',
-        editProfile: 'Editează profil', logout: 'Deconectare', help: 'Ajutor', about: 'Despre UAMO',
-        account: 'Cont', notifications: 'Notificări', citySettings: 'Oraș',
-        language: 'Limbă', privacy: 'Confidențialitate', messagesSettings: 'Mesaje',
-        security: 'Securitate', saveChanges: '💾 Salvează modificările', changePhoto: 'Schimbă foto',
-        filters: 'Filtre', noResults: 'Nu s-au găsit rezultate', noFavorites: 'Nimic aici',
-        noChats: 'Niciun chat', noListings: 'Niciun anunț',
-        createFirst: 'Creează primul anunț', chats: 'Chat-uri',
-        saveLanguage: '💾 Salvează limba', back: 'Înapoi', user: 'Utilizator',
-        email: 'Email', phoneSettings: 'Telefon', password: 'Parolă',
-        changeEmail: 'Schimbă email', changePhone: 'Trimite cod', changePassword: 'Schimbă parola',
-        forgotPassword: 'Ați uitat parola?', currentEmail: 'Email actual', newEmail: 'Email nou',
-        currentPhone: 'Număr actual', newPhone: 'Număr nou',
-        currentPassword: 'Parola actuală', newPassword: 'Parolă nouă', confirmPassword: 'Confirmă parola',
-        whoCanMessage: 'Cine îmi poate scrie:', whoAll: 'Toți', whoUsers: 'Utilizatori UAMO', whoNone: 'Nimeni',
-        allowMessages: 'Permite mesaje de la utilizatori',
-        showPhone: 'Arată numărul de telefon', showCity: 'Arată orașul',
-        allowMessagesFromOthers: 'Permite mesaje de la alții',
-        showProfile: 'Arată profilul meu', showActivity: 'Arată activitatea',
-        notifMessages: 'Mesaje', notifChat: 'Mesaje noi în chat',
-        notifReplies: 'Răspunsuri la anunțurile mele', notifPrice: 'Prețul anunțului preferat s-a schimbat',
-        notifNew: 'Anunțuri noi', notifRecommend: 'Recomandări UAMO',
-        writeSeller: 'Scrie vânzătorului', detail: 'Anunț',
-        securityChangePassword: 'Schimbă parola', securityChangeEmail: 'Schimbă email',
-        securityChangePhone: 'Schimbă numărul de telefon', securitySessions: 'Sesiuni active',
-        condition: 'Stare', new: 'Nou', used: 'Folosit', conditionNew: 'Nou', conditionUsed: 'Folosit',
-        filterTitle: 'Filtre', filterPrice: 'Preț (UAH)', filterCity: 'Oraș',
-        filterCondition: 'Stare', filterDate: 'Data', filterApply: 'Aplică', filterReset: 'Resetează',
-        allTime: 'Tot timpul', today: 'Astăzi', week: 'Săptămâna aceasta', month: 'Luna aceasta'
-    },
-    tr: {
-        home: 'Ana Sayfa', search: 'Ara', add: 'Ekle', addListing: 'İlan Ekle',
-        messages: 'Mesajlar', profile: 'Profil', settings: 'Ayarlar',
-        listings: 'İlanlar', favorites: 'Favoriler', myListings: 'İlanlarım',
-        recommended: 'Önerilenler', newListings: 'Yeni İlanlar', all: 'Tümü →',
-        products: 'Ürünler', jobs: 'İş', services: 'Hizmetler',
-        realestate: 'Gayrimenkul', transport: 'Taşımacılık',
-        publish: 'İlanı Yayınla', listingPublished: '✅ İlan yayınlandı!',
-        enterTitle: 'Başlık girin', enterPrice: 'Fiyat girin', invalidPrice: 'Geçerli bir fiyat girin',
-        publishError: '❌ İlan yayınlanamadı',
-        category: 'Kategori', title: 'Başlık *', description: 'Açıklama', photo: 'Fotoğraf',
-        addPhoto: 'Fotoğraf ekle (8\'e kadar)', price: 'Fiyat (UAH) *', city: 'Şehir', phone: 'Telefon',
-        editProfile: 'Profili Düzenle', logout: 'Çıkış Yap', help: 'Yardım', about: 'UAMO Hakkında',
-        account: 'Hesap', notifications: 'Bildirimler', citySettings: 'Şehir',
-        language: 'Dil', privacy: 'Gizlilik', messagesSettings: 'Mesajlar',
-        security: 'Güvenlik', saveChanges: '💾 Değişiklikleri Kaydet', changePhoto: 'Fotoğrafı Değiştir',
-        filters: 'Filtreler', noResults: 'Sonuç bulunamadı', noFavorites: 'Henüz bir şey yok',
-        noChats: 'Sohbet yok', noListings: 'Henüz ilanınız yok',
-        createFirst: 'İlk ilanınızı oluşturun', chats: 'Sohbetler',
-        saveLanguage: '💾 Dili Kaydet', back: 'Geri', user: 'Kullanıcı',
-        email: 'Email', phoneSettings: 'Telefon', password: 'Şifre',
-        changeEmail: 'Email değiştir', changePhone: 'Kod gönder', changePassword: 'Şifre değiştir',
-        forgotPassword: 'Şifrenizi mi unuttunuz?', currentEmail: 'Mevcut email', newEmail: 'Yeni email',
-        currentPhone: 'Mevcut numara', newPhone: 'Yeni numara',
-        currentPassword: 'Mevcut şifre', newPassword: 'Yeni şifre', confirmPassword: 'Şifreyi onayla',
-        whoCanMessage: 'Kimler mesaj gönderebilir:', whoAll: 'Herkes', whoUsers: 'UAMO kullanıcıları', whoNone: 'Hiç kimse',
-        allowMessages: 'Kullanıcılardan mesajlara izin ver',
-        showPhone: 'Telefon numarasını göster', showCity: 'Şehri göster',
-        allowMessagesFromOthers: 'Başkalarından mesajlara izin ver',
-        showProfile: 'Profilimi göster', showActivity: 'Aktiviteyi göster',
-        notifMessages: 'Mesajlar', notifChat: 'Sohbette yeni mesajlar',
-        notifReplies: 'İlanlarıma yanıtlar', notifPrice: 'Favori ilan fiyatı değişti',
-        notifNew: 'Yeni ilanlar', notifRecommend: 'UAMO önerileri',
-        writeSeller: 'Satıcıya yaz', detail: 'İlan',
-        securityChangePassword: 'Şifre değiştir', securityChangeEmail: 'Email değiştir',
-        securityChangePhone: 'Telefon numarasını değiştir', securitySessions: 'Aktif oturumlar',
-        condition: 'Durum', new: 'Yeni', used: 'Kullanılmış', conditionNew: 'Yeni', conditionUsed: 'Kullanılmış',
-        filterTitle: 'Filtreler', filterPrice: 'Fiyat (UAH)', filterCity: 'Şehir',
-        filterCondition: 'Durum', filterDate: 'Tarih', filterApply: 'Uygula', filterReset: 'Sıfırla',
-        allTime: 'Her zaman', today: 'Bugün', week: 'Bu hafta', month: 'Bu ay'
+        condition: 'Condition', new: 'New', used: 'Used'
     }
 };
 
 let currentLang = 'uk';
-let t = function(key) { return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key; };
+function t(key) { return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key; }
 
 // ================================================================
-// БЕЗПЕЧНІ HELPER-ФУНКЦІЇ ДЛЯ РОБОТИ З DOM
+// БЕЗПЕЧНІ HELPER-ФУНКЦІЇ
 // ================================================================
 
 function setValue(id, value) { const el = document.getElementById(id); if (el) el.value = value ?? ''; }
@@ -1394,236 +997,79 @@ function setText(id, value) { const el = document.getElementById(id); if (el) el
 function setHTML(id, value) { const el = document.getElementById(id); if (el) el.innerHTML = value ?? ''; }
 
 // ================================================================
-// SUPABASE CONFIG
-// ================================================================
-
-const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_O--QDl2DMLdrGfzxJllRfg_qlH401yR';
-
-let supabase = null;
-let currentUser = null;
-let isAuthMode = 'login';
-let currentPage = 'auth';
-let historyStack = ['auth'];
-let selectedPhotos = [];
-let favorites = [];
-let listings = [];
-let myListings = [];
-let chats = [];
-let chatMessages = [];
-let currentChatId = null;
-let currentDetailId = null;
-let detailPhotos = [];
-let detailIndex = 0;
-let currentDetailListing = null;
-let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця',
-    'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк',
-    'Ужгород', 'Хмельницький'
-];
-let userData = {
-    id: null, name: 'Користувач', last_name: '', username: '', phone: '', email: '', city: 'Київ', avatar: 'К', language: 'uk'
-};
-let unreadCount = 0;
-let filterData = { priceMin: '', priceMax: '', city: '', condition: 'all', date: 'all' };
-
-// ================================================================
-// ФУНКЦІЇ ПЕРЕКЛАДУ
+// ПЕРЕКЛАД
 // ================================================================
 
 function applyTranslations() {
-    const lang = currentLang;
-    const tr = translations[lang] || translations.uk;
-
+    const tr = translations[currentLang] || translations.uk;
     // Навігація
-    setText('navHome', tr.home);
-    setText('navSearch', tr.search);
-    setText('navAdd', tr.add);
-    setText('navChats', tr.chats);
-    setText('navProfile', tr.profile);
-
+    setText('navHome', tr.home); setText('navSearch', tr.search); setText('navAdd', tr.add);
+    setText('navChats', tr.chats); setText('navProfile', tr.profile);
     // Головна
-    setText('recommendedTitle', tr.recommended);
-    setText('newListingsTitle', tr.newListings);
-    setText('recommendedAll', tr.all);
-    setText('newListingsAll', tr.all);
+    setText('recommendedTitle', tr.recommended); setText('newListingsTitle', tr.newListings);
+    setText('recommendedAll', tr.all); setText('newListingsAll', tr.all);
     setHTML('addListingBtn', '<i class="fas fa-plus"></i> ' + tr.addListing);
-
     // Пошук
-    setText('filterAll', tr.all.replace(' →', ''));
-    setText('filterProducts', tr.products);
-    setText('filterJobs', tr.jobs);
-    setText('filterServices', tr.services);
-    setText('filterRealestate', tr.realestate);
-    setText('filterTransport', tr.transport);
-    setText('filterFilters', tr.filters);
-
-    // Фільтри модалка
-    setText('filterTitle', tr.filterTitle);
-    setText('filterPriceLabel', tr.filterPrice);
-    setText('filterCityLabel', tr.filterCity);
-    setText('filterConditionLabel', tr.filterCondition);
-    setText('filterDateLabel', tr.filterDate);
-    setText('filterApplyBtn', tr.filterApply);
-    setText('filterResetBtn', tr.filterReset);
-    
-    // Опції фільтрів
-    const conditionSelect = document.getElementById('filterCondition');
-    if (conditionSelect) {
-        conditionSelect.options[0].text = tr.all;
-        conditionSelect.options[1].text = tr.new;
-        conditionSelect.options[2].text = tr.used;
-    }
-    const dateSelect = document.getElementById('filterDate');
-    if (dateSelect) {
-        dateSelect.options[0].text = tr.allTime;
-        dateSelect.options[1].text = tr.today;
-        dateSelect.options[2].text = tr.week;
-        dateSelect.options[3].text = tr.month;
-    }
-
-    // Додати оголошення
-    setText('addListingTitle', tr.addListing);
-    setText('addCategoryLabel', tr.category);
-    setText('addTitleLabel', tr.title);
-    setText('addDescLabel', tr.description);
-    setText('addConditionLabel', tr.condition);
-    setText('addPhotoLabel', tr.photo);
-    setText('addPhotoText', tr.addPhoto);
-    setText('addPriceLabel', tr.price);
-    setText('addCityLabel', tr.city);
-    setText('addPhoneLabel', tr.phone);
+    setText('filterAll', tr.all.replace(' →', '')); setText('filterProducts', tr.products);
+    setText('filterJobs', tr.jobs); setText('filterServices', tr.services);
+    setText('filterRealestate', tr.realestate); setText('filterTransport', tr.transport);
+    // Додати
+    setText('addListingTitle', tr.addListing); setText('addCategoryLabel', tr.category);
+    setText('addTitleLabel', tr.title); setText('addDescLabel', tr.description);
+    setText('addConditionLabel', tr.condition); setText('addPhotoLabel', tr.photo);
+    setText('addPhotoText', tr.addPhoto); setText('addPriceLabel', tr.price);
+    setText('addCityLabel', tr.city); setText('addPhoneLabel', tr.phone);
     setText('publishBtn', tr.publish);
-
-    // Категорії в селекті
-    const catMap = { 'products': tr.products, 'jobs': tr.jobs, 'services': tr.services, 'realestate': tr.realestate, 'transport': tr.transport };
-    const select = document.getElementById('addCategory');
-    if (select) {
-        for (let opt of select.options) {
-            if (catMap[opt.value]) {
-                const icons = { 'products': '🛍️', 'jobs': '💼', 'services': '🛠️', 'realestate': '🏢', 'transport': '🚗' };
-                opt.text = (icons[opt.value] || '') + ' ' + catMap[opt.value];
-            }
-        }
-    }
-
     // Обране
     setText('favoritesTitle', tr.favorites);
-
     // Чати
     setText('chatsTitle', tr.chats);
-
     // Профіль
-    setText('editProfileBtn', tr.editProfile);
-    setText('statActiveLabel', tr.listings);
-    setText('statFavoritesLabel', tr.favorites);
-    setText('statMessagesLabel', tr.messages);
-    setText('profileMyListings', tr.myListings);
-    setText('profileFavorites', tr.favorites);
-    setText('profileMessages', tr.messages);
-    setText('profileSettings', tr.settings);
-    setText('profileHelp', tr.help);
-    setText('profileAbout', tr.about);
-    setText('profileLogout', tr.logout);
-
+    setText('editProfileBtn', tr.editProfile); setText('statActiveLabel', tr.listings);
+    setText('statFavoritesLabel', tr.favorites); setText('statMessagesLabel', tr.messages);
+    setText('profileMyListings', tr.myListings); setText('profileFavorites', tr.favorites);
+    setText('profileMessages', tr.messages); setText('profileSettings', tr.settings);
+    setText('profileHelp', tr.help); setText('profileAbout', tr.about); setText('profileLogout', tr.logout);
     // Редагувати профіль
-    setText('editProfileTitle', tr.editProfile);
-    setText('changePhotoText', tr.changePhoto);
-    setText('editNameLabel', 'Ім\'я');
-    setText('editLastNameLabel', 'Прізвище');
-    setText('editUsernameLabel', 'Нікнейм');
-    setText('editPhoneLabel', tr.phone);
-    setText('editCityLabel', tr.city);
-    setText('saveProfileBtn', tr.saveChanges);
-
+    setText('editProfileTitle', tr.editProfile); setText('changePhotoText', tr.changePhoto);
+    setText('editNameLabel', 'Ім\'я'); setText('editLastNameLabel', 'Прізвище');
+    setText('editUsernameLabel', 'Нікнейм'); setText('editPhoneLabel', tr.phone);
+    setText('editCityLabel', tr.city); setText('saveProfileBtn', tr.saveChanges);
     // Мої оголошення
     setText('myListingsTitle', tr.myListings);
-
     // Налаштування
-    setText('settingsTitle', tr.settings);
-    setText('settingsAccount', tr.account);
-    setText('settingsNotifications', tr.notifications);
-    setText('settingsCity', tr.citySettings);
-    setText('settingsLanguage', tr.language);
-    setText('settingsPrivacy', tr.privacy);
-    setText('settingsMessages', tr.messagesSettings);
-    setText('settingsSecurity', tr.security);
-
-    // Налаштування - Обліковий запис
-    setText('accountTitle', tr.account);
-    setText('accountEmail', tr.email);
-    setText('accountPhone', tr.phoneSettings);
-    setText('accountPassword', tr.password);
-
-    // Налаштування - Email
-    setText('emailTitle', tr.changeEmail);
-    setText('currentEmailLabel', tr.currentEmail);
-    setText('newEmailLabel', tr.newEmail);
-    setText('changeEmailBtn', tr.changeEmail);
-
-    // Налаштування - Телефон
-    setText('phoneTitle', tr.changePhone);
-    setText('currentPhoneLabel', tr.currentPhone);
-    setText('newPhoneLabel', tr.newPhone);
-    setText('changePhoneBtn', tr.changePhone);
-
-    // Налаштування - Пароль
-    setText('passwordTitle', tr.changePassword);
-    setText('currentPasswordLabel', tr.currentPassword);
-    setText('newPasswordLabel', tr.newPassword);
-    setText('confirmPasswordLabel', tr.confirmPassword);
-    setText('changePasswordBtn', tr.changePassword);
-    setText('forgotPasswordLinkText', tr.forgotPassword);
-
-    // Налаштування - Сповіщення
-    setText('notificationsTitle', tr.notifications);
-    setText('notifMessages', tr.notifMessages);
-    setText('notifChat', tr.notifChat);
-    setText('notifReplies', tr.notifReplies);
-    setText('notifPrice', tr.notifPrice);
-    setText('notifNew', tr.notifNew);
-    setText('notifRecommend', tr.notifRecommend);
-
-    // Налаштування - Місто
-    setText('cityTitle', tr.citySettings);
-
-    // Налаштування - Мова
-    setText('languageTitle', tr.language);
-    setText('saveLanguageBtn', tr.saveLanguage);
-
-    // Налаштування - Конфіденційність
-    setText('privacyTitle', tr.privacy);
-    setText('privacyPhone', tr.showPhone);
-    setText('privacyCity', tr.showCity);
-    setText('privacyMessages', tr.allowMessagesFromOthers);
-    setText('privacyProfile', tr.showProfile);
-    setText('privacyActivity', tr.showActivity);
-
-    // Налаштування - Повідомлення
-    setText('messagesSettingsTitle', tr.messagesSettings);
-    setText('whoCanMessage', tr.whoCanMessage);
-    setText('whoAll', tr.whoAll);
-    setText('whoUsers', tr.whoUsers);
-    setText('whoNone', tr.whoNone);
-    setText('allowMessages', tr.allowMessages);
-
-    // Налаштування - Безпека
-    setText('securityTitle', tr.security);
-    setText('securityChangePassword', tr.securityChangePassword);
-    setText('securityChangeEmail', tr.securityChangeEmail);
-    setText('securityChangePhone', tr.securityChangePhone);
-    setText('securitySessions', tr.securitySessions);
-
-    // Деталі
-    setText('detailTitle', tr.detail);
-    setText('writeSellerBtn', tr.writeSeller);
-
-    // Success Modal
-    setText('successHomeBtn', tr.home);
-    setText('successViewBtn', 'Переглянути');
+    setText('settingsTitle', tr.settings); setText('settingsAccount', tr.account);
+    setText('settingsNotifications', tr.notifications); setText('settingsCity', tr.citySettings);
+    setText('settingsLanguage', tr.language); setText('settingsPrivacy', tr.privacy);
+    setText('settingsMessages', tr.messagesSettings); setText('settingsSecurity', tr.security);
+    setText('accountTitle', tr.account); setText('accountEmail', tr.email);
+    setText('accountPhone', tr.phoneSettings); setText('accountPassword', tr.password);
+    setText('emailTitle', tr.changeEmail); setText('currentEmailLabel', tr.currentEmail);
+    setText('newEmailLabel', tr.newEmail); setText('changeEmailBtn', tr.changeEmail);
+    setText('phoneTitle', tr.changePhone); setText('currentPhoneLabel', tr.currentPhone);
+    setText('newPhoneLabel', tr.newPhone); setText('changePhoneBtn', tr.changePhone);
+    setText('passwordTitle', tr.changePassword); setText('currentPasswordLabel', tr.currentPassword);
+    setText('newPasswordLabel', tr.newPassword); setText('confirmPasswordLabel', tr.confirmPassword);
+    setText('changePasswordBtn', tr.changePassword); setText('forgotPasswordLinkText', tr.forgotPassword);
+    setText('notificationsTitle', tr.notifications); setText('notifMessages', tr.notifMessages);
+    setText('notifChat', tr.notifChat); setText('notifReplies', tr.notifReplies);
+    setText('notifPrice', tr.notifPrice); setText('notifNew', tr.notifNew);
+    setText('notifRecommend', tr.notifRecommend); setText('cityTitle', tr.citySettings);
+    setText('languageTitle', tr.language); setText('saveLanguageBtn', tr.saveLanguage);
+    setText('privacyTitle', tr.privacy); setText('privacyPhone', tr.showPhone);
+    setText('privacyCity', tr.showCity); setText('privacyMessages', tr.allowMessagesFromOthers);
+    setText('privacyProfile', tr.showProfile); setText('privacyActivity', tr.showActivity);
+    setText('messagesSettingsTitle', tr.messagesSettings); setText('whoCanMessage', tr.whoCanMessage);
+    setText('whoAll', tr.whoAll); setText('whoUsers', tr.whoUsers); setText('whoNone', tr.whoNone);
+    setText('allowMessages', tr.allowMessages); setText('securityTitle', tr.security);
+    setText('securityChangePassword', tr.securityChangePassword); setText('securityChangeEmail', tr.securityChangeEmail);
+    setText('securityChangePhone', tr.securityChangePhone); setText('securitySessions', tr.securitySessions);
+    setText('detailTitle', tr.detail); setText('writeSellerBtn', tr.writeSeller);
+    setText('successHomeBtn', tr.home); setText('successViewBtn', 'Переглянути');
 }
 
 // ================================================================
-// ВИПРАВЛЕНИЙ updateUI() - БЕЗПЕЧНИЙ
+// updateUI
 // ================================================================
 
 function updateUI() {
@@ -1632,7 +1078,6 @@ function updateUI() {
     setText('profileAvatarLetter', userData.avatar || 'К');
     setText('editAvatarLetter', userData.avatar || 'К');
     setText('avatarLetter', userData.avatar || 'К');
-
     setValue('editName', userData.name);
     setValue('editLastName', userData.last_name);
     setValue('editUsername', userData.username);
@@ -1640,53 +1085,11 @@ function updateUI() {
     setValue('editCity', userData.city || 'Київ');
     setValue('currentEmail', userData.email);
     setValue('currentPhone', userData.phone);
-
     setText('securityEmail', userData.email || 'user@example.com');
     setText('securityPhone', userData.phone || '+380 XX XXX XX XX');
-
     renderCitySelect();
-
     const radios = document.querySelectorAll('input[name="language"]');
     radios.forEach(r => { r.checked = r.value === currentLang; r.parentElement.classList.toggle('active', r.checked); });
-}
-
-// ================================================================
-// ФІЛЬТРИ
-// ================================================================
-
-function openFilterModal() {
-    document.getElementById('filterModal').classList.add('show');
-    // Заповнюємо поточними значеннями
-    document.getElementById('filterPriceMin').value = filterData.priceMin || '';
-    document.getElementById('filterPriceMax').value = filterData.priceMax || '';
-    document.getElementById('filterCity').value = filterData.city || '';
-    document.getElementById('filterCondition').value = filterData.condition || 'all';
-    document.getElementById('filterDate').value = filterData.date || 'all';
-}
-
-function closeFilterModal() {
-    document.getElementById('filterModal').classList.remove('show');
-}
-
-function applyFilters() {
-    filterData.priceMin = document.getElementById('filterPriceMin').value.trim();
-    filterData.priceMax = document.getElementById('filterPriceMax').value.trim();
-    filterData.city = document.getElementById('filterCity').value.trim();
-    filterData.condition = document.getElementById('filterCondition').value;
-    filterData.date = document.getElementById('filterDate').value;
-    closeFilterModal();
-    renderSearch(document.getElementById('searchInput')?.value || '');
-}
-
-function resetFilters() {
-    filterData = { priceMin: '', priceMax: '', city: '', condition: 'all', date: 'all' };
-    document.getElementById('filterPriceMin').value = '';
-    document.getElementById('filterPriceMax').value = '';
-    document.getElementById('filterCity').value = '';
-    document.getElementById('filterCondition').value = 'all';
-    document.getElementById('filterDate').value = 'all';
-    closeFilterModal();
-    renderSearch(document.getElementById('searchInput')?.value || '');
 }
 
 // ================================================================
@@ -1736,7 +1139,7 @@ function initSupabase() {
 }
 
 // ================================================================
-// TOGGLE PASSWORD VISIBILITY
+// TOGGLE PASSWORD
 // ================================================================
 
 function togglePasswordVisibility(inputId, button) {
@@ -2162,47 +1565,6 @@ function renderSearchResult(listing) {
         '</div></div>';
 }
 
-function applyFiltersToListings(results) {
-    let filtered = results;
-    
-    // Ціна
-    if (filterData.priceMin) {
-        const min = parseFloat(filterData.priceMin);
-        filtered = filtered.filter(l => parseFloat(l.price) >= min);
-    }
-    if (filterData.priceMax) {
-        const max = parseFloat(filterData.priceMax);
-        filtered = filtered.filter(l => parseFloat(l.price) <= max);
-    }
-    
-    // Місто
-    if (filterData.city.trim()) {
-        const city = filterData.city.trim().toLowerCase();
-        filtered = filtered.filter(l => l.location.toLowerCase().includes(city));
-    }
-    
-    // Стан
-    if (filterData.condition && filterData.condition !== 'all') {
-        filtered = filtered.filter(l => l.condition === filterData.condition);
-    }
-    
-    // Дата
-    if (filterData.date && filterData.date !== 'all') {
-        const now = new Date();
-        let cutoff = new Date();
-        if (filterData.date === 'today') {
-            cutoff.setHours(0, 0, 0, 0);
-        } else if (filterData.date === 'week') {
-            cutoff.setDate(cutoff.getDate() - 7);
-        } else if (filterData.date === 'month') {
-            cutoff.setMonth(cutoff.getMonth() - 1);
-        }
-        filtered = filtered.filter(l => new Date(l.createdAt) >= cutoff);
-    }
-    
-    return filtered;
-}
-
 function renderHome() {
     if (!currentUser) { navigateTo('auth'); return; }
     const recommended = listings.filter(l => l.isFeatured).slice(0, 6);
@@ -2225,8 +1587,6 @@ function renderSearch(query) {
         const q = query.trim().toLowerCase();
         results = results.filter(l => l.title.toLowerCase().includes(q) || l.location.toLowerCase().includes(q) || l.category.toLowerCase().includes(q));
     }
-    // Застосовуємо фільтри
-    results = applyFiltersToListings(results);
     if (results.length === 0) {
         container.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i> ' + t('noResults') + '</div>';
     } else {
@@ -2368,7 +1728,7 @@ function updateNav(page) {
 function goBackFromDetail() { if (currentPage === 'detail') { navigateTo('home'); } }
 
 // ================================================================
-// FILTERS - CATEGORY
+// FILTERS
 // ================================================================
 
 let currentFilter = 'all';
@@ -2490,6 +1850,7 @@ function openDetail(id) {
     document.getElementById('detailTime').textContent = timeAgo(listing.createdAt);
     document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
     document.getElementById('detailConditionText').textContent = getConditionLabel(listing.condition);
+    document.getElementById('detailConditionBadge').textContent = getConditionLabel(listing.condition);
     
     const catNames = { products: t('products'), jobs: t('jobs'), services: t('services'), realestate: t('realestate'), transport: t('transport') };
     document.getElementById('detailCategoryText').textContent = catNames[listing.category] || listing.category;
@@ -2961,9 +2322,6 @@ window.handleForgotPassword = handleForgotPassword;
 window.navigateTo = navigateTo;
 window.goBack = goBack;
 window.filterByCategory = filterByCategory;
-window.openFilterModal = openFilterModal;
-window.applyFilters = applyFilters;
-window.resetFilters = resetFilters;
 window.openDetail = openDetail;
 window.changeDetailPhoto = changeDetailPhoto;
 window.toggleDetailFavorite = toggleDetailFavorite;
