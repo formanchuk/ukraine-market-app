@@ -11,11 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A;
             --primary-light: #1A3A6B;
@@ -36,8 +32,7 @@
             --danger: #EF4444;
             --success: #22C55E;
         }
-        html,
-        body {
+        html, body {
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
@@ -45,27 +40,10 @@
             padding-bottom: 75px;
             -webkit-font-smoothing: antialiased;
         }
-        .app-container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 0 16px 80px 16px;
-            animation: fadeIn 0.25s ease;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .hidden {
-            display: none !important;
-        }
+        .app-container { max-width: 480px; margin: 0 auto; padding: 0 16px 80px 16px; animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden { display: none !important; }
 
-        /* HEADER */
         .header {
             display: flex;
             align-items: center;
@@ -76,27 +54,10 @@
             top: 0;
             z-index: 20;
         }
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-        .logo span {
-            color: var(--accent);
-        }
-        .logo i {
-            color: var(--gold);
-            font-size: 18px;
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .logo { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .logo span { color: var(--accent); }
+        .logo i { color: var(--gold); font-size: 18px; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
         .header-actions button {
             background: none;
             border: none;
@@ -107,9 +68,7 @@
             position: relative;
             padding: 4px;
         }
-        .header-actions button:hover {
-            color: var(--primary);
-        }
+        .header-actions button:hover { color: var(--primary); }
         .badge {
             position: absolute;
             top: -2px;
@@ -141,14 +100,8 @@
             transition: var(--transition);
             overflow: hidden;
         }
-        .avatar-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .avatar-small:hover {
-            border-color: var(--accent);
-        }
+        .avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-small:hover { border-color: var(--accent); }
         .status-badge {
             display: inline-block;
             padding: 2px 8px;
@@ -156,20 +109,10 @@
             font-size: 10px;
             font-weight: 600;
         }
-        .status-connected {
-            background: var(--success);
-            color: white;
-        }
-        .status-error {
-            background: var(--danger);
-            color: white;
-        }
-        .status-waiting {
-            background: #F59E0B;
-            color: white;
-        }
+        .status-connected { background: var(--success); color: white; }
+        .status-error { background: var(--danger); color: white; }
+        .status-waiting { background: #F59E0B; color: white; }
 
-        /* AUTH */
         .auth-container {
             display: flex;
             flex-direction: column;
@@ -187,33 +130,11 @@
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
         }
-        .auth-box .auth-title {
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 8px;
-            color: var(--primary);
-        }
-        .auth-box .auth-title span {
-            color: var(--accent);
-        }
-        .auth-box .auth-subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .auth-box .form-group {
-            margin-bottom: 16px;
-            position: relative;
-        }
-        .auth-box label {
-            display: block;
-            font-weight: 600;
-            font-size: 13px;
-            margin-bottom: 4px;
-            color: var(--primary);
-        }
+        .auth-box .auth-title { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 8px; color: var(--primary); }
+        .auth-box .auth-title span { color: var(--accent); }
+        .auth-box .auth-subtitle { text-align: center; color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
+        .auth-box .form-group { margin-bottom: 16px; position: relative; }
+        .auth-box label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--primary); }
         .auth-box input {
             width: 100%;
             padding: 12px 44px 12px 14px;
@@ -226,14 +147,8 @@
             outline: none;
             color: var(--text);
         }
-        .auth-box input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.08);
-        }
-        .auth-box input:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .auth-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.08); }
+        .auth-box input:disabled { opacity: 0.6; cursor: not-allowed; }
         .password-toggle {
             position: absolute;
             right: 12px;
@@ -246,9 +161,7 @@
             padding: 4px;
             z-index: 2;
         }
-        .password-toggle:hover {
-            color: var(--text);
-        }
+        .password-toggle:hover { color: var(--text); }
         .btn-primary {
             width: 100%;
             padding: 14px;
@@ -262,13 +175,8 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .btn-primary:hover {
-            background: var(--accent-hover);
-        }
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-submit {
             width: 100%;
             padding: 15px;
@@ -282,24 +190,10 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .btn-submit:hover {
-            background: var(--primary-light);
-        }
-        .auth-link {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .auth-link a {
-            color: var(--accent);
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .auth-link a:hover {
-            text-decoration: underline;
-        }
+        .btn-submit:hover { background: var(--primary-light); }
+        .auth-link { text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-secondary); }
+        .auth-link a { color: var(--accent); cursor: pointer; text-decoration: none; font-weight: 600; }
+        .auth-link a:hover { text-decoration: underline; }
         .auth-error {
             color: var(--danger);
             font-size: 14px;
@@ -310,9 +204,7 @@
             border: 1px solid rgba(239, 68, 68, 0.15);
             display: none;
         }
-        .auth-error.show {
-            display: block;
-        }
+        .auth-error.show { display: block; }
         .auth-success {
             color: var(--success);
             font-size: 14px;
@@ -323,37 +215,14 @@
             border: 1px solid rgba(34, 197, 94, 0.15);
             display: none;
         }
-        .auth-success.show {
-            display: block;
-        }
-        .auth-loading {
-            text-align: center;
-            padding: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            display: none;
-        }
-        .auth-loading.show {
-            display: block;
-        }
-        .forgot-password {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 13px;
-        }
-        .forgot-password a {
-            color: var(--text-secondary);
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .forgot-password a:hover {
-            color: var(--accent);
-        }
+        .auth-success.show { display: block; }
+        .auth-loading { text-align: center; padding: 8px; color: var(--text-secondary); font-size: 14px; display: none; }
+        .auth-loading.show { display: block; }
+        .forgot-password { text-align: center; margin-top: 12px; font-size: 13px; }
+        .forgot-password a { color: var(--text-secondary); cursor: pointer; text-decoration: none; }
+        .forgot-password a:hover { color: var(--accent); }
 
-        /* SEARCH BAR */
-        .search-bar {
-            padding: 4px 0 12px 0;
-        }
+        .search-bar { padding: 4px 0 12px 0; }
         .search-bar-inner {
             display: flex;
             align-items: center;
@@ -364,14 +233,8 @@
             border: 1px solid var(--border);
             transition: var(--transition);
         }
-        .search-bar-inner:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.10);
-        }
-        .search-bar-inner i {
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
+        .search-bar-inner:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.10); }
+        .search-bar-inner i { color: var(--text-secondary); font-size: 16px; }
         .search-bar-inner input {
             flex: 1;
             border: none;
@@ -382,24 +245,27 @@
             background: transparent;
             color: var(--text);
         }
-        .search-bar-inner input::placeholder {
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
+        .search-bar-inner input::placeholder { color: var(--text-secondary); font-weight: 400; }
 
-        /* CATEGORIES */
         .category-slider {
             padding: 4px 0 14px 0;
             overflow-x: auto;
-            white-space: nowrap;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 8px;
         }
-        .category-slider::-webkit-scrollbar {
-            display: none;
+        .category-slider::-webkit-scrollbar { display: none; }
+        .category-row {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            padding: 2px 0;
         }
+        .category-row::-webkit-scrollbar { display: none; }
         .category-item {
             flex: 0 0 auto;
             display: flex;
@@ -408,64 +274,26 @@
             justify-content: center;
             background: var(--card-bg);
             border-radius: var(--radius-sm);
-            padding: 10px 16px;
-            min-width: 64px;
+            padding: 8px 14px;
+            min-width: 56px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             transition: var(--transition);
             cursor: pointer;
-            gap: 4px;
+            gap: 2px;
         }
-        .category-item:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent);
-        }
-        .category-item i {
-            font-size: 22px;
-            color: var(--primary);
-        }
-        .category-item span {
-            font-size: 10px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-        .category-item.active {
-            border-color: var(--accent);
-            background: rgba(0, 102, 255, 0.05);
-        }
-        .category-item.active i {
-            color: var(--accent);
-        }
-        .category-item.active span {
-            color: var(--accent);
-        }
+        .category-item:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .category-item i { font-size: 18px; color: var(--primary); }
+        .category-item span { font-size: 9px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+        .category-item.active { border-color: var(--accent); background: rgba(0, 102, 255, 0.05); }
+        .category-item.active i { color: var(--accent); }
+        .category-item.active span { color: var(--accent); }
 
-        /* SECTION HEADER */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0 4px 0;
-        }
-        .section-header h2 {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        .section-header a {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--accent);
-            text-decoration: none;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        .section-header a:hover {
-            color: var(--accent-hover);
-        }
+        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 0 4px 0; }
+        .section-header h2 { font-size: 17px; font-weight: 600; color: var(--primary); }
+        .section-header a { font-size: 13px; font-weight: 500; color: var(--accent); text-decoration: none; transition: var(--transition); cursor: pointer; }
+        .section-header a:hover { color: var(--accent-hover); }
 
-        /* LISTING CARDS */
         .listing-scroll {
             display: flex;
             gap: 12px;
@@ -474,9 +302,7 @@
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
         }
-        .listing-scroll::-webkit-scrollbar {
-            display: none;
-        }
+        .listing-scroll::-webkit-scrollbar { display: none; }
         .listing-card {
             flex: 0 0 160px;
             background: var(--card-bg);
@@ -487,10 +313,7 @@
             transition: var(--transition);
             cursor: pointer;
         }
-        .listing-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-        }
+        .listing-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07); }
         .listing-card-image {
             height: 110px;
             background: var(--border);
@@ -522,50 +345,15 @@
             transition: var(--transition);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
-        .listing-card-image .favorite-icon:hover {
-            color: #EF4444;
-        }
-        .listing-card-image .favorite-icon.active {
-            color: #EF4444;
-        }
-        .listing-card-body {
-            padding: 8px 10px 10px 10px;
-        }
-        .listing-card-body .price {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1px;
-        }
-        .listing-card-body .title {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 1px;
-        }
-        .listing-card-body .location {
-            font-size: 11px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .listing-card-body .condition {
-            font-size: 10px;
-            color: var(--text-dim);
-            display: inline-block;
-            padding: 1px 8px;
-            border-radius: 10px;
-            background: var(--bg);
-            margin-top: 2px;
-        }
+        .listing-card-image .favorite-icon:hover { color: #EF4444; }
+        .listing-card-image .favorite-icon.active { color: #EF4444; }
+        .listing-card-body { padding: 8px 10px 10px 10px; }
+        .listing-card-body .price { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 1px; }
+        .listing-card-body .title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
+        .listing-card-body .location { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+        .listing-card-body .condition { font-size: 10px; color: var(--text-dim); display: inline-block; padding: 1px 8px; border-radius: 10px; background: var(--bg); margin-top: 2px; }
 
-        .cta-add {
-            margin: 4px 0 16px 0;
-        }
+        .cta-add { margin: 4px 0 16px 0; }
         .cta-add button {
             width: 100%;
             padding: 15px;
@@ -584,12 +372,8 @@
             transition: var(--transition);
             box-shadow: 0 6px 20px rgba(0, 102, 255, 0.25);
         }
-        .cta-add button:hover {
-            background: var(--accent-hover);
-            transform: scale(1.01);
-        }
+        .cta-add button:hover { background: var(--accent-hover); transform: scale(1.01); }
 
-        /* BOTTOM NAV */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -606,9 +390,7 @@
             backdrop-filter: blur(12px);
             background: rgba(255, 255, 255, 0.94);
         }
-        .bottom-nav.show {
-            display: flex;
-        }
+        .bottom-nav.show { display: flex; }
         .bottom-nav-item {
             display: flex;
             flex-direction: column;
@@ -625,22 +407,11 @@
             padding: 4px 12px;
             position: relative;
         }
-        .bottom-nav-item i {
-            font-size: 20px;
-            transition: var(--transition);
-        }
-        .bottom-nav-item span {
-            font-weight: 500;
-        }
-        .bottom-nav-item:hover {
-            color: var(--primary);
-        }
-        .bottom-nav-item.active {
-            color: var(--accent);
-        }
-        .bottom-nav-item.active i {
-            transform: scale(1.05);
-        }
+        .bottom-nav-item i { font-size: 20px; transition: var(--transition); }
+        .bottom-nav-item span { font-weight: 500; }
+        .bottom-nav-item:hover { color: var(--primary); }
+        .bottom-nav-item.active { color: var(--accent); }
+        .bottom-nav-item.active i { transform: scale(1.05); }
         .bottom-nav-item .badge-count {
             position: absolute;
             top: -2px;
@@ -671,25 +442,10 @@
             box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);
         }
 
-        .page {
-            display: none;
-            animation: fadeUp 0.25s ease;
-        }
-        .page.active {
-            display: block;
-        }
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        .page { display: none; animation: fadeUp 0.25s ease; }
+        .page.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* SEARCH PAGE */
         .search-filters {
             display: flex;
             gap: 8px;
@@ -711,21 +467,9 @@
             align-items: center;
             gap: 5px;
         }
-        .search-filters button:hover {
-            border-color: var(--accent);
-            color: var(--primary);
-        }
-        .search-filters button.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-        .search-results {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 16px;
-        }
+        .search-filters button:hover { border-color: var(--accent); color: var(--primary); }
+        .search-filters button.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .search-results { display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
         .search-result-card {
             display: flex;
             gap: 12px;
@@ -737,9 +481,7 @@
             transition: var(--transition);
             cursor: pointer;
         }
-        .search-result-card:hover {
-            border-color: var(--accent);
-        }
+        .search-result-card:hover { border-color: var(--accent); }
         .search-result-card .img {
             flex: 0 0 72px;
             height: 72px;
@@ -753,77 +495,20 @@
             background-size: cover;
             background-position: center;
         }
-        .search-result-card .info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .search-result-card .info .price {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--primary);
-        }
-        .search-result-card .info .title {
-            font-weight: 500;
-            font-size: 13px;
-        }
-        .search-result-card .info .meta {
-            font-size: 11px;
-            color: var(--text-secondary);
-            display: flex;
-            gap: 12px;
-            margin-top: 2px;
-            flex-wrap: wrap;
-        }
-        .search-result-card .info .condition-badge {
-            font-size: 10px;
-            padding: 1px 8px;
-            border-radius: 10px;
-            background: var(--bg);
-            color: var(--text-dim);
-        }
+        .search-result-card .info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .search-result-card .info .price { font-weight: 700; font-size: 15px; color: var(--primary); }
+        .search-result-card .info .title { font-weight: 500; font-size: 13px; }
+        .search-result-card .info .meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 12px; margin-top: 2px; flex-wrap: wrap; }
+        .search-result-card .info .condition-badge { font-size: 10px; padding: 1px 8px; border-radius: 10px; background: var(--bg); color: var(--text-dim); }
 
-        .favorites-empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-        .favorites-empty i {
-            font-size: 48px;
-            color: var(--border);
-            margin-bottom: 16px;
-        }
-        .favorites-empty h3 {
-            font-weight: 600;
-            font-size: 18px;
-            color: var(--text);
-        }
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-        }
-        .empty-state i {
-            font-size: 40px;
-            color: var(--border);
-            display: block;
-            margin-bottom: 12px;
-        }
-        .empty-state h3 {
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
+        .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+        .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; }
+        .favorites-empty h3 { font-weight: 600; font-size: 18px; color: var(--text); }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+        .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
+        .empty-state h3 { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 4px; }
 
-        /* PROFILE */
-        .profile-header {
-            padding: 16px 0 12px 0;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+        .profile-header { padding: 16px 0 12px 0; display: flex; align-items: center; gap: 14px; }
         .profile-avatar {
             width: 60px;
             height: 60px;
@@ -841,30 +526,11 @@
             cursor: pointer;
             position: relative;
         }
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .profile-avatar .avatar-letter {
-            font-size: 26px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        .profile-info h3 {
-            font-size: 17px;
-            font-weight: 600;
-        }
-        .profile-info p {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        .profile-stats {
-            display: flex;
-            gap: 8px;
-            padding: 8px 0 12px 0;
-            flex-wrap: wrap;
-        }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-avatar .avatar-letter { font-size: 26px; font-weight: 600; color: var(--primary); }
+        .profile-info h3 { font-size: 17px; font-weight: 600; }
+        .profile-info p { font-size: 13px; color: var(--text-secondary); }
+        .profile-stats { display: flex; gap: 8px; padding: 8px 0 12px 0; flex-wrap: wrap; }
         .profile-stats .stat {
             flex: 1;
             text-align: center;
@@ -874,15 +540,8 @@
             border: 1px solid var(--border);
             min-width: 50px;
         }
-        .profile-stats .stat .num {
-            font-weight: 700;
-            font-size: 17px;
-            color: var(--primary);
-        }
-        .profile-stats .stat .label {
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
+        .profile-stats .stat .num { font-weight: 700; font-size: 17px; color: var(--primary); }
+        .profile-stats .stat .label { font-size: 10px; color: var(--text-secondary); }
         .profile-menu {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -902,39 +561,15 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .profile-menu-item:last-child {
-            border-bottom: none;
-        }
-        .profile-menu-item:hover {
-            background: var(--bg);
-        }
-        .profile-menu-item i {
-            width: 20px;
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
-        .profile-menu-item .arrow {
-            margin-left: auto;
-            color: var(--border);
-        }
-        .profile-menu-item.danger {
-            color: var(--danger);
-        }
+        .profile-menu-item:last-child { border-bottom: none; }
+        .profile-menu-item:hover { background: var(--bg); }
+        .profile-menu-item i { width: 20px; color: var(--text-secondary); font-size: 16px; }
+        .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
+        .profile-menu-item.danger { color: var(--danger); }
 
-        /* ADD LISTING */
-        .add-listing-form .form-group {
-            margin-bottom: 14px;
-        }
-        .add-listing-form label {
-            display: block;
-            font-weight: 600;
-            font-size: 13px;
-            margin-bottom: 4px;
-            color: var(--primary);
-        }
-        .add-listing-form input,
-        .add-listing-form textarea,
-        .add-listing-form select {
+        .add-listing-form .form-group { margin-bottom: 14px; }
+        .add-listing-form label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--primary); }
+        .add-listing-form input, .add-listing-form textarea, .add-listing-form select {
             width: 100%;
             padding: 11px 14px;
             border: 1px solid var(--border);
@@ -946,16 +581,11 @@
             outline: none;
             color: var(--text);
         }
-        .add-listing-form input:focus,
-        .add-listing-form textarea:focus,
-        .add-listing-form select:focus {
+        .add-listing-form input:focus, .add-listing-form textarea:focus, .add-listing-form select:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.08);
         }
-        .add-listing-form textarea {
-            resize: vertical;
-            min-height: 70px;
-        }
+        .add-listing-form textarea { resize: vertical; min-height: 70px; }
         .add-listing-form .photo-upload {
             border: 2px dashed var(--border);
             border-radius: var(--radius-sm);
@@ -965,21 +595,9 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .add-listing-form .photo-upload:hover {
-            border-color: var(--accent);
-            background: rgba(0, 102, 255, 0.02);
-        }
-        .add-listing-form .photo-upload i {
-            font-size: 24px;
-            margin-bottom: 4px;
-            display: block;
-        }
-        .add-listing-form .photo-preview-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
+        .add-listing-form .photo-upload:hover { border-color: var(--accent); background: rgba(0, 102, 255, 0.02); }
+        .add-listing-form .photo-upload i { font-size: 24px; margin-bottom: 4px; display: block; }
+        .add-listing-form .photo-preview-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         .add-listing-form .photo-preview-item {
             width: 64px;
             height: 64px;
@@ -1006,7 +624,6 @@
             justify-content: center;
         }
 
-        /* DETAIL */
         .detail-gallery {
             height: 220px;
             background: var(--border);
@@ -1037,11 +654,7 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .detail-gallery .dots span.active {
-            background: #fff;
-            width: 18px;
-            border-radius: 4px;
-        }
+        .detail-gallery .dots span.active { background: #fff; width: 18px; border-radius: 4px; }
         .detail-gallery .nav-arrow {
             position: absolute;
             top: 50%;
@@ -1056,62 +669,23 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .detail-gallery .nav-arrow:hover {
-            background: rgba(0, 0, 0, 0.6);
-        }
-        .detail-gallery .nav-arrow.left {
-            left: 8px;
-        }
-        .detail-gallery .nav-arrow.right {
-            right: 8px;
-        }
-        .detail-content {
-            padding: 14px 0 16px 0;
-        }
-        .detail-content .price {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        .detail-content .title {
-            font-size: 19px;
-            font-weight: 600;
-            margin: 2px 0 2px 0;
-        }
-        .detail-content .meta {
-            font-size: 13px;
-            color: var(--text-secondary);
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .detail-content .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 14px 0;
-        }
-        .detail-content .description {
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text);
-        }
+        .detail-gallery .nav-arrow:hover { background: rgba(0, 0, 0, 0.6); }
+        .detail-gallery .nav-arrow.left { left: 8px; }
+        .detail-gallery .nav-arrow.right { right: 8px; }
+        .detail-content { padding: 14px 0 16px 0; }
+        .detail-content .price { font-size: 26px; font-weight: 700; color: var(--primary); }
+        .detail-content .title { font-size: 19px; font-weight: 600; margin: 2px 0 2px 0; }
+        .detail-content .meta { font-size: 13px; color: var(--text-secondary); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+        .detail-content .divider { height: 1px; background: var(--border); margin: 14px 0; }
+        .detail-content .description { font-size: 14px; line-height: 1.6; color: var(--text); }
         .detail-content .specs {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px 12px;
             margin: 10px 0;
         }
-        .detail-content .specs .spec-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 4px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .detail-content .specs .spec-item .label {
-            color: var(--text-secondary);
-        }
+        .detail-content .specs .spec-item { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+        .detail-content .specs .spec-item .label { color: var(--text-secondary); }
         .seller-box {
             display: flex;
             align-items: center;
@@ -1135,26 +709,11 @@
             overflow: hidden;
             flex-shrink: 0;
         }
-        .seller-box .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .seller-box .info {
-            flex: 1;
-        }
-        .seller-box .info .name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .seller-box .info .since {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .seller-box .actions {
-            display: flex;
-            gap: 6px;
-        }
+        .seller-box .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .seller-box .info { flex: 1; }
+        .seller-box .info .name { font-weight: 600; font-size: 14px; }
+        .seller-box .info .since { font-size: 12px; color: var(--text-secondary); }
+        .seller-box .actions { display: flex; gap: 6px; }
         .seller-box .actions button {
             padding: 7px 12px;
             border: none;
@@ -1165,22 +724,11 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .seller-box .actions .btn-chat {
-            background: var(--accent);
-            color: #fff;
-        }
-        .seller-box .actions .btn-chat:hover {
-            background: var(--accent-hover);
-        }
-        .seller-box .actions .btn-call {
-            background: var(--border);
-            color: var(--text);
-        }
-        .seller-box .actions .btn-call:hover {
-            background: #d1d8e0;
-        }
+        .seller-box .actions .btn-chat { background: var(--accent); color: #fff; }
+        .seller-box .actions .btn-chat:hover { background: var(--accent-hover); }
+        .seller-box .actions .btn-call { background: var(--border); color: var(--text); }
+        .seller-box .actions .btn-call:hover { background: #d1d8e0; }
 
-        /* CHAT */
         .chat-messages {
             display: flex;
             flex-direction: column;
@@ -1209,11 +757,7 @@
             border-bottom-left-radius: 4px;
             border: 1px solid var(--border);
         }
-        .chat-message .chat-time {
-            font-size: 10px;
-            opacity: 0.6;
-            margin-left: 6px;
-        }
+        .chat-message .chat-time { font-size: 10px; opacity: 0.6; margin-left: 6px; }
         .chat-input {
             display: flex;
             gap: 8px;
@@ -1245,14 +789,9 @@
             font-size: 18px;
             transition: var(--transition);
         }
-        .chat-input button:hover {
-            background: var(--accent-hover);
-        }
+        .chat-input button:hover { background: var(--accent-hover); }
 
-        /* SETTINGS */
-        .settings-group {
-            margin-bottom: 20px;
-        }
+        .settings-group { margin-bottom: 20px; }
         .settings-group .settings-title {
             font-size: 13px;
             font-weight: 600;
@@ -1268,18 +807,9 @@
             padding: 12px 0;
             border-bottom: 1px solid var(--border);
         }
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-        .settings-item .settings-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-        }
-        .settings-item .settings-value {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item .settings-label { font-size: 14px; font-weight: 500; color: var(--text); }
+        .settings-item .settings-value { font-size: 13px; color: var(--text-secondary); }
         .toggle-switch {
             width: 44px;
             height: 24px;
@@ -1290,9 +820,7 @@
             position: relative;
             flex-shrink: 0;
         }
-        .toggle-switch.active {
-            background: var(--accent);
-        }
+        .toggle-switch.active { background: var(--accent); }
         .toggle-switch .toggle-thumb {
             width: 20px;
             height: 20px;
@@ -1304,9 +832,7 @@
             transition: var(--transition);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .toggle-switch.active .toggle-thumb {
-            left: 22px;
-        }
+        .toggle-switch.active .toggle-thumb { left: 22px; }
         .settings-select {
             padding: 8px 12px;
             border: 1px solid var(--border);
@@ -1317,14 +843,8 @@
             font-size: 14px;
             outline: none;
         }
-        .settings-select:focus {
-            border-color: var(--accent);
-        }
-        .radio-group {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
+        .settings-select:focus { border-color: var(--accent); }
+        .radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
         .radio-item {
             display: flex;
             align-items: center;
@@ -1333,22 +853,10 @@
             color: var(--text-secondary);
             cursor: pointer;
         }
-        .radio-item input[type="radio"] {
-            accent-color: var(--accent);
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-        .radio-item.active {
-            color: var(--text);
-        }
+        .radio-item input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+        .radio-item.active { color: var(--text); }
 
-        .back-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0 12px 0;
-        }
+        .back-header { display: flex; align-items: center; gap: 12px; padding: 8px 0 12px 0; }
         .back-btn {
             background: none;
             border: none;
@@ -1358,14 +866,8 @@
             padding: 4px 0;
             transition: var(--transition);
         }
-        .back-btn:hover {
-            color: var(--primary);
-        }
-        .back-header .title {
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--text);
-        }
+        .back-btn:hover { color: var(--primary); }
+        .back-header .title { font-weight: 600; font-size: 16px; color: var(--text); }
 
         .success-modal {
             position: fixed;
@@ -1380,9 +882,7 @@
             z-index: 1000;
             animation: fadeIn 0.3s ease;
         }
-        .success-modal.show {
-            display: flex;
-        }
+        .success-modal.show { display: flex; }
         .success-modal .modal-box {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -1391,25 +891,10 @@
             width: 90%;
             text-align: center;
         }
-        .success-modal .modal-box .icon {
-            font-size: 56px;
-            color: var(--success);
-            margin-bottom: 12px;
-        }
-        .success-modal .modal-box h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .success-modal .modal-box p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-        .success-modal .modal-box .btn-group {
-            display: flex;
-            gap: 10px;
-        }
+        .success-modal .modal-box .icon { font-size: 56px; color: var(--success); margin-bottom: 12px; }
+        .success-modal .modal-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .success-modal .modal-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+        .success-modal .modal-box .btn-group { display: flex; gap: 10px; }
         .success-modal .modal-box .btn-group button {
             flex: 1;
             padding: 12px;
@@ -1420,22 +905,11 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .success-modal .modal-box .btn-group .btn-primary-modal {
-            background: var(--accent);
-            color: #fff;
-        }
-        .success-modal .modal-box .btn-group .btn-primary-modal:hover {
-            background: var(--accent-hover);
-        }
-        .success-modal .modal-box .btn-group .btn-secondary-modal {
-            background: var(--bg);
-            color: var(--text);
-        }
-        .success-modal .modal-box .btn-group .btn-secondary-modal:hover {
-            background: var(--border);
-        }
+        .success-modal .modal-box .btn-group .btn-primary-modal { background: var(--accent); color: #fff; }
+        .success-modal .modal-box .btn-group .btn-primary-modal:hover { background: var(--accent-hover); }
+        .success-modal .modal-box .btn-group .btn-secondary-modal { background: var(--bg); color: var(--text); }
+        .success-modal .modal-box .btn-group .btn-secondary-modal:hover { background: var(--border); }
 
-        /* FILTER MODAL */
         .filter-modal {
             position: fixed;
             top: 0;
@@ -1449,9 +923,7 @@
             z-index: 200;
             animation: fadeIn 0.2s ease;
         }
-        .filter-modal.show {
-            display: flex;
-        }
+        .filter-modal.show { display: flex; }
         .filter-modal .filter-content {
             background: var(--card-bg);
             border-radius: var(--radius) var(--radius) 0 0;
@@ -1462,16 +934,7 @@
             overflow-y: auto;
             animation: slideUp 0.3s ease;
         }
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .filter-modal .filter-header {
             display: flex;
             justify-content: space-between;
@@ -1480,38 +943,13 @@
             padding-bottom: 12px;
             border-bottom: 1px solid var(--border);
         }
-        .filter-modal .filter-header h3 {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .filter-modal .filter-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text-dim);
-            cursor: pointer;
-            padding: 4px;
-        }
-        .filter-modal .filter-close:hover {
-            color: var(--text);
-        }
-        .filter-group {
-            margin-bottom: 16px;
-        }
-        .filter-group h4 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-        .filter-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .filter-row span {
-            color: var(--text-secondary);
-        }
+        .filter-modal .filter-header h3 { font-size: 18px; font-weight: 600; }
+        .filter-modal .filter-close { background: none; border: none; font-size: 24px; color: var(--text-dim); cursor: pointer; padding: 4px; }
+        .filter-modal .filter-close:hover { color: var(--text); }
+        .filter-group { margin-bottom: 16px; }
+        .filter-group h4 { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .filter-row { display: flex; align-items: center; gap: 8px; }
+        .filter-row span { color: var(--text-secondary); }
         .filter-input {
             flex: 1;
             padding: 10px 12px;
@@ -1525,15 +963,8 @@
             transition: var(--transition);
             width: 100%;
         }
-        .filter-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.08);
-        }
-        .filter-options {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .filter-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.08); }
+        .filter-options { display: flex; gap: 12px; flex-wrap: wrap; }
         .filter-option {
             display: flex;
             align-items: center;
@@ -1542,19 +973,8 @@
             color: var(--text-secondary);
             cursor: pointer;
         }
-        .filter-option input[type="radio"] {
-            accent-color: var(--accent);
-            width: 14px;
-            height: 14px;
-            cursor: pointer;
-        }
-        .filter-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
-        }
+        .filter-option input[type="radio"] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+        .filter-actions { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
         .filter-actions .btn-apply {
             flex: 2;
             padding: 14px;
@@ -1567,9 +987,7 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .filter-actions .btn-apply:hover {
-            background: var(--accent-hover);
-        }
+        .filter-actions .btn-apply:hover { background: var(--accent-hover); }
         .filter-actions .btn-reset {
             flex: 1;
             padding: 14px;
@@ -1582,37 +1000,19 @@
             cursor: pointer;
             transition: var(--transition);
         }
-        .filter-actions .btn-reset:hover {
-            background: var(--border);
-        }
+        .filter-actions .btn-reset:hover { background: var(--border); }
 
         @media (min-width: 640px) {
-            .app-container {
-                max-width: 600px;
-                padding: 0 24px 80px 24px;
-            }
-            .bottom-nav {
-                max-width: 600px;
-                border-radius: 16px 16px 0 0;
-            }
-            .filter-modal .filter-content {
-                max-width: 600px;
-            }
+            .app-container { max-width: 600px; padding: 0 24px 80px 24px; }
+            .bottom-nav { max-width: 600px; border-radius: 16px 16px 0 0; }
+            .filter-modal .filter-content { max-width: 600px; }
         }
         @media (max-width: 400px) {
-            .listing-card {
-                flex: 0 0 140px;
-            }
-            .listing-card-image {
-                height: 95px;
-            }
-            .category-item {
-                min-width: 56px;
-                padding: 8px 12px;
-            }
-            .category-item i {
-                font-size: 18px;
-            }
+            .listing-card { flex: 0 0 140px; }
+            .listing-card-image { height: 95px; }
+            .category-item { min-width: 48px; padding: 6px 10px; }
+            .category-item i { font-size: 16px; }
+            .category-item span { font-size: 8px; }
         }
     </style>
 </head>
@@ -1703,7 +1103,7 @@
         </div>
 
         <!-- SEARCH -->
-        <div class="page search-page" id="page-search">
+        <div class="page" id="page-search">
             <div class="app-container">
                 <div class="search-bar">
                     <div class="search-bar-inner">
@@ -1734,22 +1134,22 @@
                 <div class="add-listing-form">
                     <div class="form-group">
                         <label>Категорія</label>
-                        <select id="addCategory">
-                            <option value="Товари">🛍️ Товари</option>
-                            <option value="Електроніка">📱 Електроніка</option>
-                            <option value="Одяг">👕 Одяг</option>
-                            <option value="Меблі">🛋️ Меблі</option>
-                            <option value="Робота">💼 Робота</option>
-                            <option value="Послуги">🛠️ Послуги</option>
-                            <option value="Нерухомість">🏢 Нерухомість</option>
-                            <option value="Транспорт">🚗 Транспорт</option>
-                            <option value="Тварини">🐾 Тварини</option>
-                            <option value="Дитяче">👶 Дитяче</option>
-                            <option value="Спорт">⚽ Спорт</option>
-                            <option value="Книги">📚 Книги</option>
-                            <option value="Музика">🎵 Музика</option>
-                            <option value="Краса">💄 Краса</option>
-                            <option value="Фото">📷 Фото</option>
+                        <select id="addCategory" onchange="renderCategoryFields(this.value)">
+                            <option value="products">🛍️ Товари</option>
+                            <option value="electronics">📱 Електроніка</option>
+                            <option value="clothing">👕 Одяг</option>
+                            <option value="furniture">🛋️ Меблі</option>
+                            <option value="jobs">💼 Робота</option>
+                            <option value="services">🛠️ Послуги</option>
+                            <option value="realestate">🏢 Нерухомість</option>
+                            <option value="transport">🚗 Транспорт</option>
+                            <option value="animals">🐾 Тварини</option>
+                            <option value="kids">👶 Дитяче</option>
+                            <option value="sport">⚽ Спорт</option>
+                            <option value="books">📚 Книги</option>
+                            <option value="music">🎵 Музика</option>
+                            <option value="beauty">💄 Краса</option>
+                            <option value="photo">📷 Фото</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1760,14 +1160,7 @@
                         <label>Опис</label>
                         <textarea id="addDesc" placeholder="Детальний опис..." rows="3"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label>Стан</label>
-                        <select id="addCondition">
-                            <option value="new">🆕 Новий</option>
-                            <option value="used">🔄 Б/В</option>
-                            <option value="refurbished">🔧 Відновлений</option>
-                        </select>
-                    </div>
+                    <div id="categoryFieldsContainer"></div>
                     <div class="form-group">
                         <label>Фото</label>
                         <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
@@ -1934,6 +1327,10 @@
                     <div class="profile-menu-item" onclick="navigateTo('settings-privacy')"><i class="fas fa-lock"></i> Конфіденційність <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('settings-messages')"><i class="fas fa-comment"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('settings-security')"><i class="fas fa-shield-alt"></i> Безпека <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-blacklist')"><i class="fas fa-ban"></i> Чорний список <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-history')"><i class="fas fa-history"></i> Історія переглядів <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-payments')"><i class="fas fa-credit-card"></i> Платежі <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-reviews')"><i class="fas fa-star"></i> Відгуки <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
             </div>
         </div>
@@ -2040,30 +1437,12 @@
                     <span class="title">Сповіщення</span>
                 </div>
                 <div class="settings-group">
-                    <div class="settings-item">
-                        <span class="settings-label">Повідомлення</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Нові повідомлення в чаті</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Відповіді на мої оголошення</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Обране оголошення змінило ціну</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Нові оголошення</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Рекомендації UAMO</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
+                    <div class="settings-item"><span class="settings-label">Повідомлення</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Нові повідомлення в чаті</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Відповіді на мої оголошення</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Обране оголошення змінило ціну</span><div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Нові оголошення</span><div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Рекомендації UAMO</span><div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
                 </div>
             </div>
         </div>
@@ -2111,34 +1490,11 @@
                     <span class="title">Конфіденційність</span>
                 </div>
                 <div class="settings-group">
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати номер телефону</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати місто</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Дозволити повідомлення від інших</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати мій профіль</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Показувати активність</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
-                    <div class="profile-menu-item" onclick="alert('Заблоковані користувачі: поки що порожньо')">
-                        <i class="fas fa-ban"></i> Заблоковані користувачі
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="alert('Керування даними: видалити всі дані, експорт даних')">
-                        <i class="fas fa-database"></i> Керування даними
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
+                    <div class="settings-item"><span class="settings-label">Показувати номер телефону</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Показувати місто</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Дозволити повідомлення від інших</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Показувати мій профіль</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Показувати активність</span><div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
                 </div>
             </div>
         </div>
@@ -2159,10 +1515,7 @@
                             <label class="radio-item"><input type="radio" name="who_can_message" value="none" /> Ніхто</label>
                         </div>
                     </div>
-                    <div class="settings-item">
-                        <span class="settings-label">Дозволити повідомлення від користувачів</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
-                    </div>
+                    <div class="settings-item"><span class="settings-label">Дозволити повідомлення від користувачів</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
                 </div>
             </div>
         </div>
@@ -2183,23 +1536,59 @@
                         <span class="settings-label">Телефон</span>
                         <span class="settings-value" id="securityPhone">+380 XX XXX XX XX</span>
                     </div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-password')">
-                        <i class="fas fa-key"></i> Змінити пароль
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-email')">
-                        <i class="fas fa-envelope"></i> Змінити email
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-phone')">
-                        <i class="fas fa-phone"></i> Змінити номер телефону
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
-                    <div class="profile-menu-item" onclick="alert('Активні сеанси: ви ввійшли з 2 пристроїв')">
-                        <i class="fas fa-laptop"></i> Активні сеанси
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                    </div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-password')"><i class="fas fa-key"></i> Змінити пароль <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-email')"><i class="fas fa-envelope"></i> Змінити email <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-phone')"><i class="fas fa-phone"></i> Змінити номер телефону <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="alert('Активні сеанси: ви ввійшли з 2 пристроїв')"><i class="fas fa-laptop"></i> Активні сеанси <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: BLACKLIST -->
+        <div class="page" id="page-settings-blacklist">
+            <div class="app-container">
+                <div class="back-header">
+                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
+                    <span class="title">Чорний список</span>
+                </div>
+                <div class="empty-state"><i class="fas fa-ban"></i><h3>Список порожній</h3><p>Ви ще не заблокували жодного користувача</p></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: HISTORY -->
+        <div class="page" id="page-settings-history">
+            <div class="app-container">
+                <div class="back-header">
+                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
+                    <span class="title">Історія переглядів</span>
+                </div>
+                <div class="empty-state"><i class="fas fa-history"></i><h3>Історія порожня</h3><p>Ви ще не переглядали оголошення</p></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: PAYMENTS -->
+        <div class="page" id="page-settings-payments">
+            <div class="app-container">
+                <div class="back-header">
+                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
+                    <span class="title">Платежі</span>
+                </div>
+                <div class="settings-group">
+                    <div class="settings-item"><span class="settings-label">Спосіб оплати</span><span class="settings-value">💳 Карта</span></div>
+                    <div class="settings-item"><span class="settings-label">Карта</span><span class="settings-value">•••• 4242</span></div>
+                    <button class="btn-submit" style="margin-top:16px;">Додати карту</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: REVIEWS -->
+        <div class="page" id="page-settings-reviews">
+            <div class="app-container">
+                <div class="back-header">
+                    <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
+                    <span class="title">Відгуки</span>
+                </div>
+                <div class="empty-state"><i class="fas fa-star"></i><h3>Немає відгуків</h3><p>Ви ще не залишили жодного відгуку</p></div>
             </div>
         </div>
 
@@ -2292,7 +1681,6 @@
                 <h3>🔍 Фільтри</h3>
                 <button class="filter-close" onclick="closeFilterModal()">&times;</button>
             </div>
-
             <div class="filter-group">
                 <h4>Ціна</h4>
                 <div class="filter-row">
@@ -2301,48 +1689,28 @@
                     <input type="number" id="filterPriceMax" placeholder="До" class="filter-input" />
                 </div>
             </div>
-
             <div class="filter-group">
                 <h4>Місто</h4>
                 <input type="text" id="filterCity" placeholder="Введіть місто" class="filter-input" />
             </div>
-
             <div class="filter-group">
                 <h4>Стан</h4>
                 <div class="filter-options">
-                    <label class="filter-option">
-                        <input type="radio" name="condition" value="all" checked /> Всі
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="condition" value="new" /> 🆕 Новий
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="condition" value="used" /> 🔄 Б/В
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="condition" value="refurbished" /> 🔧 Відновлений
-                    </label>
+                    <label class="filter-option"><input type="radio" name="condition" value="all" checked /> Всі</label>
+                    <label class="filter-option"><input type="radio" name="condition" value="new" /> 🆕 Новий</label>
+                    <label class="filter-option"><input type="radio" name="condition" value="used" /> 🔄 Б/В</label>
+                    <label class="filter-option"><input type="radio" name="condition" value="refurbished" /> 🔧 Відновлений</label>
                 </div>
             </div>
-
             <div class="filter-group">
                 <h4>Дата публікації</h4>
                 <div class="filter-options">
-                    <label class="filter-option">
-                        <input type="radio" name="date" value="all" checked /> Всі
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="date" value="today" /> 📅 Сьогодні
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="date" value="week" /> 📅 Цей тиждень
-                    </label>
-                    <label class="filter-option">
-                        <input type="radio" name="date" value="month" /> 📅 Цей місяць
-                    </label>
+                    <label class="filter-option"><input type="radio" name="date" value="all" checked /> Всі</label>
+                    <label class="filter-option"><input type="radio" name="date" value="today" /> 📅 Сьогодні</label>
+                    <label class="filter-option"><input type="radio" name="date" value="week" /> 📅 Цей тиждень</label>
+                    <label class="filter-option"><input type="radio" name="date" value="month" /> 📅 Цей місяць</label>
                 </div>
             </div>
-
             <div class="filter-actions">
                 <button class="btn-apply" onclick="applyFilters()">Застосувати</button>
                 <button class="btn-reset" onclick="resetFilters()">Скинути</button>
@@ -2357,6 +1725,225 @@
         const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
         const SUPABASE_ANON_KEY =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cHNtZWxwc3Nnbml3b2hqYnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODYzNDksImV4cCI6MjEwMzc2MjM0OX0.I6oOuOn68QKJH_bAPUS9QG8CscEcFeeN_MQBzohWaEw';
+
+        // ================================================================
+        // КАТЕГОРІЇ З ПОЛЯМИ
+        // ================================================================
+
+        const CATEGORIES_CONFIG = {
+            'products': {
+                name: 'Товари',
+                icon: 'fa-tag',
+                fields: [
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Apple, Samsung, Nike...' },
+                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'iPhone 14 Pro, Air Max...' },
+                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Білий, Синій...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В', 'Відновлений'] },
+                    { id: 'warranty', label: 'Гарантія', type: 'select', options: ['Є', 'Немає'] }
+                ]
+            },
+            'jobs': {
+                name: 'Робота',
+                icon: 'fa-briefcase',
+                fields: [
+                    { id: 'company', label: 'Компанія', type: 'text', placeholder: 'Назва компанії' },
+                    { id: 'position', label: 'Посада', type: 'text', placeholder: 'Програміст, Менеджер...' },
+                    { id: 'salary', label: 'Зарплата', type: 'text', placeholder: 'Від 20000 грн' },
+                    { id: 'schedule', label: 'Графік', type: 'select', options: ['Повний день', 'Неповний день',
+                            'Віддалено', 'Гнучкий'
+                        ] },
+                    { id: 'experience', label: 'Досвід', type: 'select', options: ['Без досвіду', '1-2 роки',
+                            '3-5 років', '5+ років'
+                        ] }
+                ]
+            },
+            'services': {
+                name: 'Послуги',
+                icon: 'fa-wrench',
+                fields: [
+                    { id: 'service_type', label: 'Тип послуги', type: 'text', placeholder: 'Ремонт, Прибирання...' },
+                    { id: 'price_type', label: 'Ціна', type: 'text', placeholder: 'За годину, За проект...' },
+                    { id: 'duration', label: 'Тривалість', type: 'text', placeholder: '1 година, 1 день...' },
+                    { id: 'certified', label: 'Сертифікація', type: 'select', options: ['Є сертифікат',
+                            'Без сертифікату'
+                        ] }
+                ]
+            },
+            'realestate': {
+                name: 'Нерухомість',
+                icon: 'fa-building',
+                fields: [
+                    { id: 'property_type', label: 'Тип', type: 'select', options: ['Квартира', 'Будинок', 'Кімната',
+                            'Офіс', 'Гараж'
+                        ] },
+                    { id: 'rooms', label: 'Кімнат', type: 'number', placeholder: '1, 2, 3...' },
+                    { id: 'area', label: 'Площа (м²)', type: 'number', placeholder: '50' },
+                    { id: 'floor', label: 'Поверх', type: 'number', placeholder: '3' },
+                    { id: 'floors_total', label: 'Поверхів у будинку', type: 'number', placeholder: '9' },
+                    { id: 'heating', label: 'Опалення', type: 'select', options: ['Центральне', 'Автономне',
+                            'Пічне'
+                        ] },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Після ремонту',
+                            'Потребує ремонту'
+                        ] }
+                ]
+            },
+            'transport': {
+                name: 'Транспорт',
+                icon: 'fa-car',
+                fields: [
+                    { id: 'vehicle_type', label: 'Тип', type: 'select', options: ['Легковий', 'Вантажний',
+                            'Мотоцикл', 'Скутер', 'Велосипед'
+                        ] },
+                    { id: 'brand', label: 'Марка', type: 'text', placeholder: 'Toyota, BMW, Tesla...' },
+                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'Camry, X5, Model 3...' },
+                    { id: 'year', label: 'Рік випуску', type: 'number', placeholder: '2020' },
+                    { id: 'mileage', label: 'Пробіг (км)', type: 'number', placeholder: '50000' },
+                    { id: 'engine', label: 'Двигун', type: 'text', placeholder: '2.0 л, 150 к.с.' },
+                    { id: 'fuel', label: 'Паливо', type: 'select', options: ['Бензин', 'Дизель', 'Газ', 'Електро',
+                            'Гібрид'
+                        ] },
+                    { id: 'transmission', label: 'Коробка', type: 'select', options: ['Автомат', 'Механіка',
+                            'Робот', 'Варіатор'
+                        ] }
+                ]
+            },
+            'electronics': {
+                name: 'Електроніка',
+                icon: 'fa-laptop',
+                fields: [
+                    { id: 'device_type', label: 'Тип', type: 'select', options: ['Смартфон', 'Ноутбук', 'Планшет',
+                            'Телевізор', 'Навушники', 'Камера'
+                        ] },
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Apple, Samsung, Sony...' },
+                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'iPhone 14 Pro, MacBook Air...' },
+                    { id: 'memory', label: 'Пам\'ять', type: 'text', placeholder: '128 ГБ, 8 ГБ RAM' },
+                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Синій...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Як новий', 'Б/В'] }
+                ]
+            },
+            'clothing': {
+                name: 'Одяг',
+                icon: 'fa-tshirt',
+                fields: [
+                    { id: 'clothing_type', label: 'Тип', type: 'select', options: ['Чоловічий', 'Жіночий',
+                            'Дитячий'
+                        ] },
+                    { id: 'size', label: 'Розмір', type: 'select', options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike, Adidas, Gucci...' },
+                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Білий...' },
+                    { id: 'material', label: 'Матеріал', type: 'text', placeholder: 'Бавона, Шкіра...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Новий з биркою', 'Новий', 'Б/В'] }
+                ]
+            },
+            'furniture': {
+                name: 'Меблі',
+                icon: 'fa-couch',
+                fields: [
+                    { id: 'furniture_type', label: 'Тип', type: 'select', options: ['Диван', 'Крісло', 'Стіл',
+                            'Ліжко', 'Шафа', 'Стелаж'
+                        ] },
+                    { id: 'material', label: 'Матеріал', type: 'text', placeholder: 'Дерево, Шкіра, Тканина...' },
+                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Коричневий, Білий...' },
+                    { id: 'dimensions', label: 'Розміри', type: 'text', placeholder: '200x80x90 см' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
+                ]
+            },
+            'animals': {
+                name: 'Тварини',
+                icon: 'fa-paw',
+                fields: [
+                    { id: 'animal_type', label: 'Тип', type: 'select', options: ['Собака', 'Кіт', 'Птах', 'Гризун',
+                            'Риба', 'Інше'
+                        ] },
+                    { id: 'breed', label: 'Порода', type: 'text', placeholder: 'Німецька вівчарка, Британський...' },
+                    { id: 'age', label: 'Вік', type: 'text', placeholder: '2 роки, 3 місяці...' },
+                    { id: 'gender', label: 'Стать', type: 'select', options: ['Самець', 'Самка'] },
+                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Рудий...' },
+                    { id: 'vaccinated', label: 'Вакцинація', type: 'select', options: ['Є', 'Немає'] }
+                ]
+            },
+            'kids': {
+                name: 'Дитяче',
+                icon: 'fa-child',
+                fields: [
+                    { id: 'kids_type', label: 'Тип', type: 'select', options: ['Одяг', 'Іграшки', 'Візочок',
+                            'Автокрісло', 'Ліжечко', 'Харчування'
+                        ] },
+                    { id: 'age_range', label: 'Вік', type: 'text', placeholder: '0-3 міс, 1-3 роки...' },
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Chicco, Fisher-Price...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
+                ]
+            },
+            'sport': {
+                name: 'Спорт',
+                icon: 'fa-football-ball',
+                fields: [
+                    { id: 'sport_type', label: 'Тип', type: 'select', options: ['Футбол', 'Баскетбол', 'Теніс',
+                            'Плавання', 'Фітнес', 'Велоспорт'
+                        ] },
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike, Adidas, Puma...' },
+                    { id: 'size', label: 'Розмір', type: 'text', placeholder: 'S, M, L, XL...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
+                ]
+            },
+            'books': {
+                name: 'Книги',
+                icon: 'fa-book',
+                fields: [
+                    { id: 'book_type', label: 'Тип', type: 'select', options: ['Художня', 'Наукова', 'Дитяча',
+                            'Підручник', 'Комікс'
+                        ] },
+                    { id: 'author', label: 'Автор', type: 'text', placeholder: 'Тарас Шевченко...' },
+                    { id: 'language', label: 'Мова', type: 'text', placeholder: 'Українська, Англійська...' },
+                    { id: 'year', label: 'Рік видання', type: 'number', placeholder: '2020' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
+                ]
+            },
+            'music': {
+                name: 'Музика',
+                icon: 'fa-music',
+                fields: [
+                    { id: 'music_type', label: 'Тип', type: 'select', options: ['Гітара', 'Фортепіано', 'Барабани',
+                            'Скрипка', 'Синтезатор'
+                        ] },
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Fender, Yamaha...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
+                ]
+            },
+            'beauty': {
+                name: 'Краса',
+                icon: 'fa-spa',
+                fields: [
+                    { id: 'beauty_type', label: 'Тип', type: 'select', options: ['Косметика', 'Парфуми',
+                            'Аксесуари', 'Обладнання'
+                        ] },
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'L\'Oreal, Chanel...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
+                ]
+            },
+            'photo': {
+                name: 'Фото',
+                icon: 'fa-camera',
+                fields: [
+                    { id: 'photo_type', label: 'Тип', type: 'select', options: ['Камера', 'Об\'єктив', 'Спалах',
+                            'Штатив', 'Аксесуари'
+                        ] },
+                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Canon, Nikon, Sony...' },
+                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'EOS R5, A7III...' },
+                    { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
+                ]
+            }
+        };
+
+        const CATEGORY_ICONS = {};
+        const CATEGORY_NAMES = {};
+        for (const [key, val] of Object.entries(CATEGORIES_CONFIG)) {
+            CATEGORY_ICONS[key] = val.icon;
+            CATEGORY_NAMES[key] = val.name;
+        }
+        CATEGORY_ICONS['all'] = 'fa-list';
+        CATEGORY_NAMES['all'] = 'Всі';
 
         // ================================================================
         // ЗМІННІ
@@ -2395,48 +1982,11 @@
         let unreadCount = 0;
         let dataLoaded = false;
         let currentFilterCategory = 'all';
-
-        // ================================================================
-        // КАТЕГОРІЇ
-        // ================================================================
-
-        const CATEGORY_ICONS = {
-            'all': 'fa-list',
-            'products': 'fa-tag',
-            'jobs': 'fa-briefcase',
-            'services': 'fa-wrench',
-            'realestate': 'fa-building',
-            'transport': 'fa-car',
-            'electronics': 'fa-laptop',
-            'clothing': 'fa-tshirt',
-            'furniture': 'fa-couch',
-            'animals': 'fa-paw',
-            'kids': 'fa-child',
-            'sport': 'fa-football-ball',
-            'books': 'fa-book',
-            'music': 'fa-music',
-            'photo': 'fa-camera',
-            'beauty': 'fa-spa'
-        };
-
-        const CATEGORY_NAMES = {
-            'all': 'Всі',
-            'products': 'Товари',
-            'jobs': 'Робота',
-            'services': 'Послуги',
-            'realestate': 'Нерухомість',
-            'transport': 'Транспорт',
-            'electronics': 'Електроніка',
-            'clothing': 'Одяг',
-            'furniture': 'Меблі',
-            'animals': 'Тварини',
-            'kids': 'Дитяче',
-            'sport': 'Спорт',
-            'books': 'Книги',
-            'music': 'Музика',
-            'photo': 'Фото',
-            'beauty': 'Краса'
-        };
+        let currentFilterCondition = 'all';
+        let currentFilterDate = 'all';
+        let filterPriceMin = 0;
+        let filterPriceMax = Infinity;
+        let filterCity = '';
 
         // ================================================================
         // ІНІЦІАЛІЗАЦІЯ SUPABASE
@@ -2467,20 +2017,16 @@
         // ================================================================
         function showAuthError(msg) {
             const el = document.getElementById('authError');
-            if (el) {
-                el.textContent = msg;
-                el.className = 'auth-error show';
-            }
+            if (el) { el.textContent = msg;
+                el.className = 'auth-error show'; }
             const s = document.getElementById('authSuccess');
             if (s) s.className = 'auth-success';
         }
 
         function showAuthSuccess(msg) {
             const el = document.getElementById('authSuccess');
-            if (el) {
-                el.textContent = msg;
-                el.className = 'auth-success show';
-            }
+            if (el) { el.textContent = msg;
+                el.className = 'auth-success show'; }
             const e = document.getElementById('authError');
             if (e) e.className = 'auth-error';
         }
@@ -2490,17 +2036,13 @@
             const el = document.getElementById('authLoading');
             const inputs = document.querySelectorAll('#authForm input');
             if (loading) {
-                if (btn) {
-                    btn.disabled = true;
-                    btn.textContent = '⏳...';
-                }
+                if (btn) { btn.disabled = true;
+                    btn.textContent = '⏳...'; }
                 if (el) el.className = 'auth-loading show';
                 inputs.forEach(i => i.disabled = true);
             } else {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.textContent = isAuthMode === 'login' ? 'Увійти' : 'Зареєструватися';
-                }
+                if (btn) { btn.disabled = false;
+                    btn.textContent = isAuthMode === 'login' ? 'Увійти' : 'Зареєструватися'; }
                 if (el) el.className = 'auth-loading';
                 inputs.forEach(i => i.disabled = false);
             }
@@ -2510,13 +2052,9 @@
             const input = document.getElementById(inputId);
             if (!input) return;
             const icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fas fa-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'fas fa-eye';
-            }
+            if (input.type === 'password') { input.type = 'text';
+                icon.className = 'fas fa-eye-slash'; } else { input.type = 'password';
+                icon.className = 'fas fa-eye'; }
         }
 
         function toggleAuthMode() {
@@ -2536,10 +2074,8 @@
                 if (subtitle) subtitle.textContent = 'Увійдіть у свій акаунт';
                 if (confirmGroup) confirmGroup.classList.add('hidden');
                 if (forgotLink) forgotLink.classList.remove('hidden');
-                if (passwordInput) {
-                    passwordInput.placeholder = '••••••••';
-                    passwordInput.autocomplete = 'current-password';
-                }
+                if (passwordInput) { passwordInput.placeholder = '••••••••';
+                    passwordInput.autocomplete = 'current-password'; }
             } else {
                 if (btn) btn.textContent = 'Зареєструватися';
                 if (toggleText) toggleText.textContent = 'Вже маєте акаунт?';
@@ -2547,10 +2083,8 @@
                 if (subtitle) subtitle.textContent = 'Створіть новий акаунт';
                 if (confirmGroup) confirmGroup.classList.remove('hidden');
                 if (forgotLink) forgotLink.classList.add('hidden');
-                if (passwordInput) {
-                    passwordInput.placeholder = '•••••••• (мін. 6)';
-                    passwordInput.autocomplete = 'new-password';
-                }
+                if (passwordInput) { passwordInput.placeholder = '•••••••• (мін. 6)';
+                    passwordInput.autocomplete = 'new-password'; }
             }
             document.getElementById('authError').className = 'auth-error';
             document.getElementById('authSuccess').className = 'auth-success';
@@ -2563,60 +2097,36 @@
             document.getElementById('authError').className = 'auth-error';
             document.getElementById('authSuccess').className = 'auth-success';
 
-            if (!supabase) {
-                showAuthError('Підключення до сервера не встановлено');
-                return;
-            }
+            if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
 
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
             const confirmPassword = document.getElementById('authConfirmPassword')?.value;
 
-            if (!email) {
-                showAuthError('Введіть email');
-                document.getElementById('authEmail').focus();
-                return;
-            }
-            if (!email.includes('@')) {
-                showAuthError('Введіть коректний email');
-                document.getElementById('authEmail').focus();
-                return;
-            }
-            if (!password) {
-                showAuthError('Введіть пароль');
-                document.getElementById('authPassword').focus();
-                return;
-            }
-            if (password.length < 6) {
-                showAuthError('Пароль має бути не менше 6 символів');
-                document.getElementById('authPassword').focus();
-                return;
-            }
+            if (!email) { showAuthError('Введіть email');
+                document.getElementById('authEmail').focus(); return; }
+            if (!email.includes('@')) { showAuthError('Введіть коректний email');
+                document.getElementById('authEmail').focus(); return; }
+            if (!password) { showAuthError('Введіть пароль');
+                document.getElementById('authPassword').focus(); return; }
+            if (password.length < 6) { showAuthError('Пароль має бути не менше 6 символів');
+                document.getElementById('authPassword').focus(); return; }
             if (isAuthMode === 'register') {
-                if (!confirmPassword) {
-                    showAuthError('Підтвердіть пароль');
-                    document.getElementById('authConfirmPassword').focus();
-                    return;
-                }
-                if (password !== confirmPassword) {
-                    showAuthError('Паролі не співпадають');
-                    document.getElementById('authConfirmPassword').focus();
-                    return;
-                }
+                if (!confirmPassword) { showAuthError('Підтвердіть пароль');
+                    document.getElementById('authConfirmPassword').focus(); return; }
+                if (password !== confirmPassword) { showAuthError('Паролі не співпадають');
+                    document.getElementById('authConfirmPassword').focus(); return; }
             }
 
             setLoading(true);
             try {
                 if (isAuthMode === 'login') {
-                    const { data, error } = await supabase.auth.signInWithPassword({
-                        email,
-                        password
-                    });
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                     setLoading(false);
                     if (error) {
                         if (error.message.includes('Invalid login')) showAuthError('Невірний email або пароль');
                         else if (error.message.includes('Email not confirmed')) showAuthError(
-                            'Email не підтверджено');
+                        'Email не підтверджено');
                         else showAuthError(`Помилка: ${error.message}`);
                         return;
                     }
@@ -2631,11 +2141,7 @@
                         email,
                         password,
                         options: {
-                            data: {
-                                first_name: email.split('@')[0],
-                                username: email.split('@')[0],
-                                city: 'Київ'
-                            },
+                            data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' },
                             emailRedirectTo: window.location.origin
                         }
                     });
@@ -2647,12 +2153,10 @@
                     }
                     if (data?.user) {
                         showAuthSuccess('✅ Реєстрація успішна! Перевірте пошту для підтвердження.');
-                        setTimeout(() => {
-                            toggleAuthMode();
+                        setTimeout(() => { toggleAuthMode();
                             document.getElementById('authEmail').value = email;
                             document.getElementById('authPassword').value = '';
-                            showAuthSuccess('Тепер увійдіть у свій акаунт');
-                        }, 1500);
+                            showAuthSuccess('Тепер увійдіть у свій акаунт'); }, 1500);
                     }
                 }
             } catch (e) {
@@ -2662,26 +2166,15 @@
         }
 
         async function handleForgotPassword() {
-            if (!supabase) {
-                showAuthError('Підключення до сервера не встановлено');
-                return;
-            }
+            if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
             const email = document.getElementById('authEmail').value.trim();
-            if (!email) {
-                showAuthError('Введіть email');
-                document.getElementById('authEmail').focus();
-                return;
-            }
-            if (!email.includes('@')) {
-                showAuthError('Введіть коректний email');
-                return;
-            }
+            if (!email) { showAuthError('Введіть email');
+                document.getElementById('authEmail').focus(); return; }
+            if (!email.includes('@')) { showAuthError('Введіть коректний email'); return; }
 
             setLoading(true);
             try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin
-                });
+                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
                 setLoading(false);
                 if (error) {
                     if (error.message.includes('User not found')) showAuthError('Користувача не знайдено');
@@ -2689,10 +2182,8 @@
                     return;
                 }
                 showAuthSuccess(`✅ Лист з посиланням надіслано на ${email}`);
-            } catch (e) {
-                setLoading(false);
-                showAuthError('Помилка. Спробуйте ще раз.');
-            }
+            } catch (e) { setLoading(false);
+                showAuthError('Помилка. Спробуйте ще раз.'); }
         }
 
         // ================================================================
@@ -2812,15 +2303,13 @@
         }
 
         // ================================================================
-        // 🔧 ВИПРАВЛЕННЯ: КНОПКА "КОЛОКОЛЬЧИК"
+        // 🔧 ВИПРАВЛЕННЯ
         // ================================================================
 
         function fixNotificationBadge() {
             const badge = document.getElementById('notif-badge');
-            if (badge) {
-                badge.textContent = '0';
-                badge.classList.add('hidden');
-            }
+            if (badge) { badge.textContent = '0';
+                badge.classList.add('hidden'); }
         }
 
         function toggleNotifications() {
@@ -2829,16 +2318,10 @@
                 if (badge.classList.contains('hidden')) {
                     badge.textContent = '0';
                     badge.classList.add('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
+                } else { badge.classList.add('hidden'); }
             }
             alert('📬 Сповіщень поки що немає');
         }
-
-        // ================================================================
-        // 🔧 ВИПРАВЛЕННЯ: АВАТАРКИ В ПРОФІЛІ
-        // ================================================================
 
         function updateAvatar() {
             const avatarElements = document.querySelectorAll('.profile-avatar, .avatar-small, #profileAvatar, #editAvatar, #headerAvatar');
@@ -2849,27 +2332,19 @@
                 if (userData.avatar && (userData.avatar.startsWith('http') || userData.avatar.startsWith(
                         'data:image'))) {
                     let img = el.querySelector('img');
-                    if (!img) {
-                        img = document.createElement('img');
-                        el.appendChild(img);
-                    }
+                    if (!img) { img = document.createElement('img');
+                        el.appendChild(img); }
                     img.src = userData.avatar;
                     img.style.display = 'block';
                     if (letterSpan) letterSpan.style.display = 'none';
                 } else {
                     const img = el.querySelector('img');
                     if (img) img.style.display = 'none';
-                    if (letterSpan) {
-                        letterSpan.style.display = 'block';
-                        letterSpan.textContent = userData.avatar || 'К';
-                    }
+                    if (letterSpan) { letterSpan.style.display = 'block';
+                        letterSpan.textContent = userData.avatar || 'К'; }
                 }
             });
         }
-
-        // ================================================================
-        // 🔧 ВИПРАВЛЕННЯ: ФОТО ПРИ ДОДАВАННІ
-        // ================================================================
 
         function resetPhotoForm() {
             selectedPhotos = [];
@@ -2880,23 +2355,69 @@
         }
 
         // ================================================================
+        // КАТЕГОРІЇ ТА ПОЛЯ
+        // ================================================================
+
+        function getCategoryFields(category) {
+            return CATEGORIES_CONFIG[category]?.fields || [];
+        }
+
+        function getCategoryName(cat) {
+            return CATEGORY_NAMES[cat] || cat || 'Інше';
+        }
+
+        function getCategoryIcon(cat) {
+            return CATEGORY_ICONS[cat] || 'fa-tag';
+        }
+
+        function getConditionLabel(condition) {
+            const labels = { 'new': '🆕 Новий', 'used': '🔄 Б/В', 'refurbished': '🔧 Відновлений' };
+            return labels[condition] || condition || 'Не вказано';
+        }
+
+        function renderCategoryFields(category) {
+            const fields = getCategoryFields(category);
+            const container = document.getElementById('categoryFieldsContainer');
+            if (!container) return;
+
+            if (fields.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = fields.map(field => {
+                if (field.type === 'select') {
+                    return `
+                                <div class="form-group">
+                                    <label>${field.label}</label>
+                                    <select id="field_${field.id}" class="category-field">
+                                        ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                                    </select>
+                                </div>
+                            `;
+                } else {
+                    return `
+                                <div class="form-group">
+                                    <label>${field.label}</label>
+                                    <input type="${field.type}" id="field_${field.id}" class="category-field" placeholder="${field.placeholder || ''}" />
+                                </div>
+                            `;
+                }
+            }).join('');
+        }
+
+        // ================================================================
         // ОСНОВНІ ФУНКЦІЇ
         // ================================================================
 
         function loadListings() {
-            if (listings.length > 0) {
-                renderAll();
-                return;
-            }
+            if (listings.length > 0) { renderAll(); return; }
             if (!dataLoaded) loadAllData();
         }
 
         function loadFavorites() {
-            if (favorites.length > 0 || dataLoaded) {
-                renderAll();
-                updateProfileStats();
-                return;
-            }
+            if (favorites.length > 0 || dataLoaded) { renderAll();
+                updateProfileStats(); return; }
             if (!dataLoaded) loadAllData();
         }
 
@@ -2941,26 +2462,7 @@
             return '';
         }
 
-        function isFavorite(id) {
-            return favorites.some(f => f === id);
-        }
-
-        function getCategoryName(cat) {
-            return CATEGORY_NAMES[cat] || cat || 'Інше';
-        }
-
-        function getCategoryIcon(cat) {
-            return CATEGORY_ICONS[cat] || 'fa-tag';
-        }
-
-        function getConditionLabel(condition) {
-            const labels = {
-                'new': '🆕 Новий',
-                'used': '🔄 Б/В',
-                'refurbished': '🔧 Відновлений'
-            };
-            return labels[condition] || condition || 'Не вказано';
-        }
+        function isFavorite(id) { return favorites.some(f => f === id); }
 
         function updateUI() {
             const el = (id) => document.getElementById(id);
@@ -2984,12 +2486,8 @@
             if (!badge) return;
             const count = chats.reduce((sum, c) => sum + (c.unread_count || 0), 0);
             unreadCount = count;
-            if (count > 0) {
-                badge.style.display = 'flex';
-                badge.textContent = count > 9 ? '9+' : count;
-            } else {
-                badge.style.display = 'none';
-            }
+            if (count > 0) { badge.style.display = 'flex';
+                badge.textContent = count > 9 ? '9+' : count; } else { badge.style.display = 'none'; }
         }
 
         function updateProfileStats() {
@@ -3016,27 +2514,26 @@
 
             // Фільтр по категорії
             if (category !== 'all') {
-                // Перевіряємо чи категорія співпадає (з урахуванням різних назв)
+                const categoryMap = {
+                    'products': ['товари', 'products'],
+                    'jobs': ['робота', 'jobs', 'вакансії'],
+                    'services': ['послуги', 'services'],
+                    'realestate': ['нерухомість', 'realestate', 'квартира', 'будинок'],
+                    'transport': ['транспорт', 'transport', 'авто', 'car'],
+                    'electronics': ['електроніка', 'electronics', 'телефон', 'ноутбук'],
+                    'clothing': ['одяг', 'clothing', 'взуття'],
+                    'furniture': ['меблі', 'furniture', 'диван'],
+                    'animals': ['тварини', 'animals', 'собака', 'кіт'],
+                    'kids': ['дитяче', 'kids', 'іграшки'],
+                    'sport': ['спорт', 'sport', 'футбол'],
+                    'books': ['книги', 'books'],
+                    'music': ['музика', 'music'],
+                    'photo': ['фото', 'photo', 'камера'],
+                    'beauty': ['краса', 'beauty']
+                };
+                const keywords = categoryMap[category] || [category];
                 results = results.filter(l => {
                     const catLower = (l.category || '').toLowerCase();
-                    const categoryMap = {
-                        'products': ['товари', 'products'],
-                        'jobs': ['робота', 'jobs', 'вакансії'],
-                        'services': ['послуги', 'services'],
-                        'realestate': ['нерухомість', 'realestate', 'квартира', 'будинок'],
-                        'transport': ['транспорт', 'transport', 'авто', 'car'],
-                        'electronics': ['електроніка', 'electronics', 'телефон', 'ноутбук'],
-                        'clothing': ['одяг', 'clothing', 'взуття'],
-                        'furniture': ['меблі', 'furniture', 'диван'],
-                        'animals': ['тварини', 'animals', 'собака', 'кіт'],
-                        'kids': ['дитяче', 'kids', 'іграшки'],
-                        'sport': ['спорт', 'sport', 'футбол'],
-                        'books': ['книги', 'books'],
-                        'music': ['музика', 'music'],
-                        'photo': ['фото', 'photo', 'камера'],
-                        'beauty': ['краса', 'beauty']
-                    };
-                    const keywords = categoryMap[category] || [category];
                     return keywords.some(k => catLower.includes(k));
                 });
             }
@@ -3070,13 +2567,9 @@
             if (dateFilter !== 'all') {
                 const now = new Date();
                 let cutoff = new Date();
-                if (dateFilter === 'today') {
-                    cutoff.setHours(0, 0, 0, 0);
-                } else if (dateFilter === 'week') {
-                    cutoff.setDate(now.getDate() - 7);
-                } else if (dateFilter === 'month') {
-                    cutoff.setMonth(now.getMonth() - 1);
-                }
+                if (dateFilter === 'today') { cutoff.setHours(0, 0, 0, 0); } else if (dateFilter === 'week') { cutoff
+                        .setDate(now.getDate() - 7); } else if (dateFilter === 'month') { cutoff.setMonth(now.getMonth() -
+                        1); }
                 results = results.filter(l => {
                     const date = new Date(l.createdAt);
                     return date >= cutoff;
@@ -3092,15 +2585,31 @@
 
         function renderCategories() {
             const mainCategories = ['all', 'products', 'jobs', 'services', 'realestate', 'transport'];
+            const allCategories = ['electronics', 'clothing', 'furniture', 'animals', 'kids', 'sport', 'books', 'music',
+                'beauty', 'photo'
+            ];
+
             const container = document.getElementById('categorySlider');
             if (!container) return;
 
-            container.innerHTML = mainCategories.map(cat =>
+            const mainHtml = mainCategories.map(cat =>
                 `<div class="category-item ${currentFilterCategory === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">
-                    <i class="fas ${CATEGORY_ICONS[cat] || 'fa-tag'}"></i>
-                    <span>${CATEGORY_NAMES[cat] || cat}</span>
-                </div>`
+                            <i class="fas ${getCategoryIcon(cat)}"></i>
+                            <span>${getCategoryName(cat)}</span>
+                        </div>`
             ).join('');
+
+            const allHtml = allCategories.map(cat =>
+                `<div class="category-item ${currentFilterCategory === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">
+                            <i class="fas ${getCategoryIcon(cat)}"></i>
+                            <span>${getCategoryName(cat)}</span>
+                        </div>`
+            ).join('');
+
+            container.innerHTML = `
+                        <div class="category-row">${mainHtml}</div>
+                        <div class="category-row">${allHtml}</div>
+                    `;
         }
 
         function renderListingCard(listing) {
@@ -3108,21 +2617,21 @@
             const photo = getFirstPhoto(listing);
             const conditionLabel = getConditionLabel(listing.condition);
             return `
-                <div class="listing-card" onclick="openDetail('${listing.id}')">
-                    <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);`}">
-                        ${!photo ? listing.image || '📦' : ''}
-                        <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${listing.id}')">
-                            <i class="${fav ? 'fas' : 'far'} fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="listing-card-body">
-                        <div class="price">${listing.price} грн</div>
-                        <div class="title">${listing.title}</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> ${listing.location}</div>
-                        ${listing.condition ? `<div class="condition">${conditionLabel}</div>` : ''}
-                    </div>
-                </div>
-            `;
+                        <div class="listing-card" onclick="openDetail('${listing.id}')">
+                            <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);`}">
+                                ${!photo ? listing.image || '📦' : ''}
+                                <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${listing.id}')">
+                                    <i class="${fav ? 'fas' : 'far'} fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="listing-card-body">
+                                <div class="price">${listing.price} грн</div>
+                                <div class="title">${listing.title}</div>
+                                <div class="location"><i class="fas fa-map-marker-alt"></i> ${listing.location}</div>
+                                ${listing.condition ? `<div class="condition">${conditionLabel}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
         }
 
         function renderSearchResult(listing) {
@@ -3130,29 +2639,26 @@
             const conditionLabel = getConditionLabel(listing.condition);
             const categoryName = getCategoryName(listing.category);
             return `
-                <div class="search-result-card" onclick="openDetail('${listing.id}')">
-                    <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;`}">
-                        ${!photo ? listing.image || '📦' : ''}
-                    </div>
-                    <div class="info">
-                        <div class="price">${listing.price} грн</div>
-                        <div class="title">${listing.title}</div>
-                        <div class="meta">
-                            <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
-                            <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
-                            ${listing.condition ? `<span class="condition-badge">${conditionLabel}</span>` : ''}
-                            ${listing.category ? `<span class="condition-badge">${categoryName}</span>` : ''}
+                        <div class="search-result-card" onclick="openDetail('${listing.id}')">
+                            <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;`}">
+                                ${!photo ? listing.image || '📦' : ''}
+                            </div>
+                            <div class="info">
+                                <div class="price">${listing.price} грн</div>
+                                <div class="title">${listing.title}</div>
+                                <div class="meta">
+                                    <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
+                                    <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
+                                    ${listing.condition ? `<span class="condition-badge">${conditionLabel}</span>` : ''}
+                                    ${listing.category ? `<span class="condition-badge">${categoryName}</span>` : ''}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            `;
+                    `;
         }
 
         function renderHome() {
-            if (!currentUser) {
-                navigateTo('auth');
-                return;
-            }
+            if (!currentUser) { navigateTo('auth'); return; }
             const recommended = listings.filter(l => l.isFeatured).slice(0, 6);
             const newListings = listings.filter(l => l.isNew).slice(0, 6);
 
@@ -3178,7 +2684,6 @@
             const container = document.getElementById('searchResults');
             if (!container) return;
 
-            // Оновлюємо поле пошуку
             if (query && document.getElementById('searchInput')) {
                 document.getElementById('searchInput').value = query;
             }
@@ -3187,12 +2692,12 @@
 
             if (results.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-search"></i>
-                        <h3>Нічого не знайдено</h3>
-                        <p>Спробуйте змінити параметри пошуку або додайте нове оголошення</p>
-                    </div>
-                `;
+                            <div class="empty-state">
+                                <i class="fas fa-search"></i>
+                                <h3>Нічого не знайдено</h3>
+                                <p>Спробуйте змінити параметри пошуку або додайте нове оголошення</p>
+                            </div>
+                        `;
             } else {
                 container.innerHTML = results.map(renderSearchResult).join('');
             }
@@ -3206,12 +2711,12 @@
             const favList = listings.filter(l => isFavorite(l.id));
             if (favList.length === 0) {
                 container.innerHTML = `
-                    <div class="favorites-empty">
-                        <i class="fas fa-heart" style="color:#EF4444;"></i>
-                        <h3>Тут поки що порожньо</h3>
-                        <p style="margin-top:4px; color:var(--text-secondary);">Зберігайте оголошення, щоб повернутися до них пізніше.</p>
-                    </div>
-                `;
+                            <div class="favorites-empty">
+                                <i class="fas fa-heart" style="color:#EF4444;"></i>
+                                <h3>Тут поки що порожньо</h3>
+                                <p style="margin-top:4px; color:var(--text-secondary);">Зберігайте оголошення, щоб повернутися до них пізніше.</p>
+                            </div>
+                        `;
             } else {
                 container.innerHTML = favList.map(l => renderSearchResult(l)).join('');
             }
@@ -3223,12 +2728,12 @@
             if (!container) return;
             if (chats.length === 0) {
                 container.innerHTML = `
-                    <div class="favorites-empty">
-                        <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
-                        <h3>Немає чатів</h3>
-                        <p style="margin-top:4px; color:var(--text-secondary);">Напишіть продавцю, щоб почати діалог</p>
-                    </div>
-                `;
+                            <div class="favorites-empty">
+                                <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
+                                <h3>Немає чатів</h3>
+                                <p style="margin-top:4px; color:var(--text-secondary);">Напишіть продавцю, щоб почати діалог</p>
+                            </div>
+                        `;
             } else {
                 container.innerHTML = chats.map(chat => {
                     const isBuyer = chat.buyer_id === currentUser.id;
@@ -3237,23 +2742,23 @@
                     const partnerAvatar = partner?.avatar_url || partnerName?.[0] || '👤';
                     const unread = chat.unread_count || 0;
                     return `
-                        <div class="search-result-card" onclick="openChatDetail('${chat.id}')">
-                            <div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">
-                                ${partnerAvatar}
-                            </div>
-                            <div class="info">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-weight:600;">${partnerName}</span>
-                                    ${unread > 0 ? `<span style="background:#EF4444; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">${unread}</span>` : ''}
+                                <div class="search-result-card" onclick="openChatDetail('${chat.id}')">
+                                    <div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">
+                                        ${partnerAvatar}
+                                    </div>
+                                    <div class="info">
+                                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                                            <span style="font-weight:600;">${partnerName}</span>
+                                            ${unread > 0 ? `<span style="background:#EF4444; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">${unread}</span>` : ''}
+                                        </div>
+                                        <div style="font-size:13px; color:var(--text-secondary);">${chat.last_message || 'Немає повідомлень'}</div>
+                                        <div class="meta">
+                                            <span><i class="fas fa-clock"></i> ${chat.last_message_time ? timeAgo(chat.last_message_time) : 'нещодавно'}</span>
+                                            <span>📦 ${chat.listings?.title || 'Оголошення'}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div style="font-size:13px; color:var(--text-secondary);">${chat.last_message || 'Немає повідомлень'}</div>
-                                <div class="meta">
-                                    <span><i class="fas fa-clock"></i> ${chat.last_message_time ? timeAgo(chat.last_message_time) : 'нещодавно'}</span>
-                                    <span>📦 ${chat.listings?.title || 'Оголошення'}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                            `;
                 }).join('');
             }
             updateNav('chats');
@@ -3265,38 +2770,38 @@
             if (!container) return;
             if (myListings.length === 0) {
                 container.innerHTML = `
-                    <div class="favorites-empty">
-                        <i class="fas fa-list-ul" style="color:var(--accent);"></i>
-                        <h3>У вас поки немає оголошень</h3>
-                        <p style="margin-top:4px; color:var(--text-secondary);">Створіть своє перше оголошення</p>
-                        <button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo('add')">+ Додати оголошення</button>
-                    </div>
-                `;
+                            <div class="favorites-empty">
+                                <i class="fas fa-list-ul" style="color:var(--accent);"></i>
+                                <h3>У вас поки немає оголошень</h3>
+                                <p style="margin-top:4px; color:var(--text-secondary);">Створіть своє перше оголошення</p>
+                                <button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo('add')">+ Додати оголошення</button>
+                            </div>
+                        `;
             } else {
                 container.innerHTML = myListings.map(item => {
                     const photo = getFirstPhoto(item);
                     const conditionLabel = getConditionLabel(item.condition);
                     return `
-                        <div class="search-result-card" style="flex-wrap:wrap;">
-                            <div class="img" style="${photo ? `background-image:url('${photo}')` : `display:flex; align-items:center; justify-content:center; font-size:24px;`}">
-                                ${!photo ? '📦' : ''}
-                            </div>
-                            <div class="info" style="flex:1;">
-                                <div class="price">${item.price} грн</div>
-                                <div class="title">${item.title}</div>
-                                <div class="meta">
-                                    <span><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
-                                    <span><i class="far fa-clock"></i> ${timeAgo(item.createdAt)}</span>
-                                    ${item.condition ? `<span class="condition-badge">${conditionLabel}</span>` : ''}
+                                <div class="search-result-card" style="flex-wrap:wrap;">
+                                    <div class="img" style="${photo ? `background-image:url('${photo}')` : `display:flex; align-items:center; justify-content:center; font-size:24px;`}">
+                                        ${!photo ? '📦' : ''}
+                                    </div>
+                                    <div class="info" style="flex:1;">
+                                        <div class="price">${item.price} грн</div>
+                                        <div class="title">${item.title}</div>
+                                        <div class="meta">
+                                            <span><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
+                                            <span><i class="far fa-clock"></i> ${timeAgo(item.createdAt)}</span>
+                                            ${item.condition ? `<span class="condition-badge">${conditionLabel}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; gap:6px; width:100%; margin-top:8px;">
+                                        <button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail('${item.id}')">👁 Відкрити</button>
+                                        <button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing('${item.id}')">✏️ Редагувати</button>
+                                        <button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1;" onclick="deleteListing('${item.id}')">🗑 Видалити</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div style="display:flex; gap:6px; width:100%; margin-top:8px;">
-                                <button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail('${item.id}')">👁 Відкрити</button>
-                                <button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing('${item.id}')">✏️ Редагувати</button>
-                                <button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1;" onclick="deleteListing('${item.id}')">🗑 Видалити</button>
-                            </div>
-                        </div>
-                    `;
+                            `;
                 }).join('');
             }
         }
@@ -3314,17 +2819,14 @@
             if (!container) return;
             container.innerHTML = cities.map(c =>
                 `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;">
-                    <span class="settings-label">${c}</span>
-                    ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
-                </div>`
+                            <span class="settings-label">${c}</span>
+                            ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
+                        </div>`
             ).join('');
         }
 
         function renderAll() {
-            if (!currentUser && currentPage !== 'auth') {
-                navigateTo('auth');
-                return;
-            }
+            if (!currentUser && currentPage !== 'auth') { navigateTo('auth'); return; }
             switch (currentPage) {
                 case 'home':
                     renderHome();
@@ -3369,10 +2871,7 @@
                 return;
             }
 
-            if (!currentUser && page !== 'auth') {
-                window.navigateTo('auth');
-                return;
-            }
+            if (!currentUser && page !== 'auth') { window.navigateTo('auth'); return; }
 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById(`page-${page}`);
@@ -3388,12 +2887,8 @@
         };
 
         function goBack() {
-            if (historyStack.length > 1) {
-                historyStack.pop();
-                window.navigateTo(historyStack[historyStack.length - 1]);
-            } else {
-                window.navigateTo('home');
-            }
+            if (historyStack.length > 1) { historyStack.pop();
+                window.navigateTo(historyStack[historyStack.length - 1]); } else { window.navigateTo('home'); }
         }
 
         function updateNav(page) {
@@ -3402,21 +2897,16 @@
             });
         }
 
-        function goBackFromDetail() {
-            if (currentPage === 'detail') window.navigateTo('home');
-        }
+        function goBackFromDetail() { if (currentPage === 'detail') window.navigateTo('home'); }
 
         // ================================================================
-        // ФІЛЬТРИ (оновлені)
+        // ФІЛЬТРИ
         // ================================================================
 
         function filterByCategory(cat) {
             currentFilterCategory = cat;
-            // Оновлюємо активний стан кнопок
-            document.querySelectorAll('.category-item').forEach(el => {
-                el.classList.toggle('active', el.textContent.trim().toLowerCase() === (CATEGORY_NAMES[cat] || cat)
-                    .toLowerCase());
-            });
+            renderCategories();
+            // Оновлюємо кнопки в пошуку
             document.querySelectorAll('.search-filters button').forEach(el => {
                 const btnCat = el.getAttribute('onclick')?.match(/'(.*?)'/)?.[1];
                 el.classList.toggle('active', btnCat === cat);
@@ -3424,13 +2914,9 @@
             renderSearch(document.getElementById('searchInput')?.value || '');
         }
 
-        function openFilterModal() {
-            document.getElementById('filterModal').classList.add('show');
-        }
+        function openFilterModal() { document.getElementById('filterModal').classList.add('show'); }
 
-        function closeFilterModal() {
-            document.getElementById('filterModal').class.classList.remove('show');
-        }
+        function closeFilterModal() { document.getElementById('filterModal').classList.remove('show'); }
 
         function applyFilters() {
             closeFilterModal();
@@ -3452,19 +2938,13 @@
         // ================================================================
 
         async function toggleFavorite(listingId) {
-            if (!currentUser) {
-                window.navigateTo('auth');
-                return;
-            }
+            if (!currentUser) { window.navigateTo('auth'); return; }
             const isFav = favorites.includes(listingId);
             if (isFav) {
                 await supabase.from('favorites').delete().eq('user_id', currentUser.id).eq('listing_id', listingId);
                 favorites = favorites.filter(id => id !== listingId);
             } else {
-                await supabase.from('favorites').insert({
-                    user_id: currentUser.id,
-                    listing_id: listingId
-                });
+                await supabase.from('favorites').insert({ user_id: currentUser.id, listing_id: listingId });
                 favorites.push(listingId);
             }
             renderAll();
@@ -3472,10 +2952,7 @@
         }
 
         async function submitListing() {
-            if (!currentUser) {
-                window.navigateTo('auth');
-                return;
-            }
+            if (!currentUser) { window.navigateTo('auth'); return; }
 
             const title = document.getElementById('addTitle').value.trim();
             const price = document.getElementById('addPrice').value.trim();
@@ -3483,16 +2960,17 @@
             const phone = document.getElementById('addPhone').value.trim() || userData.phone;
             const desc = document.getElementById('addDesc').value.trim();
             const category = document.getElementById('addCategory').value;
-            const condition = document.getElementById('addCondition').value;
 
-            if (!title) {
-                alert('Введіть назву');
-                return;
-            }
-            if (!price) {
-                alert('Введіть ціну');
-                return;
-            }
+            if (!title) { alert('Введіть назву'); return; }
+            if (!price) { alert('Введіть ціну'); return; }
+
+            // Збираємо додаткові поля
+            const fields = getCategoryFields(category);
+            const specs = {};
+            fields.forEach(field => {
+                const el = document.getElementById(`field_${field.id}`);
+                if (el) { specs[field.label] = el.value; }
+            });
 
             const { data, error } = await supabase.from('listings').insert({
                 user_id: currentUser.id,
@@ -3502,16 +2980,14 @@
                 phone: phone,
                 description: desc || '',
                 category: category,
-                condition: condition,
+                condition: 'new',
+                specs: specs,
                 photos: selectedPhotos.length > 0 ? selectedPhotos : null,
                 status: 'active',
                 created_at: new Date().toISOString()
             }).select();
 
-            if (error) {
-                alert('Помилка: ' + error.message);
-                return;
-            }
+            if (error) { alert('Помилка: ' + error.message); return; }
 
             resetPhotoForm();
             document.getElementById('addTitle').value = '';
@@ -3522,10 +2998,8 @@
 
             showSuccessModal('✓ Оголошення опубліковано!', 'Ваше оголошення вже доступне на UAMO.',
                 () => window.navigateTo('home'),
-                () => {
-                    if (data && data.length > 0) openDetail(data[0].id);
-                    else window.navigateTo('home');
-                }
+                () => { if (data && data.length > 0) openDetail(data[0].id);
+                    else window.navigateTo('home'); }
             );
 
             dataLoaded = false;
@@ -3542,24 +3016,16 @@
             const secondaryBtn = document.getElementById('successSecondaryBtn');
 
             if (primaryBtn) {
-                primaryBtn.onclick = () => {
-                    closeSuccessModal();
-                    if (primaryAction) primaryAction();
-                };
+                primaryBtn.onclick = () => { closeSuccessModal(); if (primaryAction) primaryAction(); };
             }
             if (secondaryBtn) {
-                secondaryBtn.onclick = () => {
-                    closeSuccessModal();
-                    if (secondaryAction) secondaryAction();
-                };
+                secondaryBtn.onclick = () => { closeSuccessModal(); if (secondaryAction) secondaryAction(); };
             }
             modal.classList.add('show');
         }
 
-        function closeSuccessModal() {
-            const modal = document.getElementById('successModal');
-            if (modal) modal.classList.remove('show');
-        }
+        function closeSuccessModal() { const modal = document.getElementById('successModal'); if (modal) modal.classList.remove(
+                'show'); }
 
         // ================================================================
         // DETAIL
@@ -3567,10 +3033,7 @@
 
         function openDetail(id) {
             const listing = listings.find(l => l.id === id);
-            if (!listing) {
-                alert('Оголошення не знайдено');
-                return;
-            }
+            if (!listing) { alert('Оголошення не знайдено'); return; }
             currentDetailListing = listing;
             currentDetailId = id;
             detailPhotos = listing.photos || (listing.image ? [listing.image] : []);
@@ -3581,11 +3044,11 @@
             if (el('detailTitle')) el('detailTitle').textContent = listing.title;
             if (el('detailMeta')) {
                 el('detailMeta').innerHTML = `
-                    <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
-                    <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
-                    ${listing.condition ? `<span>${getConditionLabel(listing.condition)}</span>` : ''}
-                    ${listing.category ? `<span>${getCategoryName(listing.category)}</span>` : ''}
-                `;
+                            <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
+                            <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
+                            ${listing.condition ? `<span>${getConditionLabel(listing.condition)}</span>` : ''}
+                            ${listing.category ? `<span>${getCategoryName(listing.category)}</span>` : ''}
+                        `;
             }
             if (el('detailDesc')) el('detailDesc').textContent = listing.description || 'Без опису';
 
@@ -3597,9 +3060,7 @@
                             `<div class="spec-item"><span class="label">${k}</span> <span>${v}</span></div>`)
                         .join('');
                     specsContainer.style.display = 'grid';
-                } else {
-                    specsContainer.style.display = 'none';
-                }
+                } else { specsContainer.style.display = 'none'; }
             }
 
             const gallery = document.getElementById('detailGallery');
@@ -3609,14 +3070,12 @@
                     gallery.style.backgroundSize = 'cover';
                     gallery.style.backgroundPosition = 'center';
                     gallery.innerHTML = `
-                        <button class="nav-arrow left" id="detailArrowLeft" onclick="changeDetailPhoto(-1)">‹</button>
-                        <button class="nav-arrow right" id="detailArrowRight" onclick="changeDetailPhoto(1)">›</button>
-                        <div class="dots" id="detailDots"></div>
-                    `;
+                                <button class="nav-arrow left" id="detailArrowLeft" onclick="changeDetailPhoto(-1)">‹</button>
+                                <button class="nav-arrow right" id="detailArrowRight" onclick="changeDetailPhoto(1)">›</button>
+                                <div class="dots" id="detailDots"></div>
+                            `;
                     renderDetailDots();
-                } else {
-                    gallery.innerHTML = `<i class="fas fa-image"></i>`;
-                }
+                } else { gallery.innerHTML = `<i class="fas fa-image"></i>`; }
             }
 
             if (el('sellerAvatar')) el('sellerAvatar').textContent = listing.seller?.avatar || '👤';
@@ -3626,13 +3085,9 @@
             const isOwn = listing.user_id === currentUser?.id;
             const chatBtn = document.querySelector('.btn-submit[onclick*="openChatFromDetail"]');
             if (chatBtn) {
-                if (isOwn) {
-                    chatBtn.textContent = '✏️ Редагувати';
-                    chatBtn.onclick = () => editListing(listing.id);
-                } else {
-                    chatBtn.textContent = '💬 Написати продавцю';
-                    chatBtn.onclick = openChatFromDetail;
-                }
+                if (isOwn) { chatBtn.textContent = '✏️ Редагувати';
+                    chatBtn.onclick = () => editListing(listing.id); } else { chatBtn.textContent = '💬 Написати продавцю';
+                    chatBtn.onclick = openChatFromDetail; }
             }
 
             if (el('sellerCallBtn')) {
@@ -3650,10 +3105,7 @@
         function renderDetailDots() {
             const container = document.getElementById('detailDots');
             if (!container) return;
-            if (detailPhotos.length <= 1) {
-                container.innerHTML = '';
-                return;
-            }
+            if (detailPhotos.length <= 1) { container.innerHTML = ''; return; }
             container.innerHTML = detailPhotos.map((_, i) =>
                 `<span class="${i === detailIndex ? 'active' : ''}" onclick="changeDetailPhoto(${i - detailIndex})"></span>`
             ).join('');
@@ -3669,13 +3121,9 @@
             const left = document.getElementById('detailArrowLeft');
             const right = document.getElementById('detailArrowRight');
             if (left && right) {
-                if (detailPhotos.length <= 1) {
-                    left.style.display = 'none';
-                    right.style.display = 'none';
-                } else {
-                    left.style.display = 'block';
-                    right.style.display = 'block';
-                }
+                if (detailPhotos.length <= 1) { left.style.display = 'none';
+                    right.style.display = 'none'; } else { left.style.display = 'block';
+                    right.style.display = 'block'; }
             }
         }
 
@@ -3691,33 +3139,21 @@
             }
         }
 
-        function toggleDetailFavorite() {
-            if (!currentDetailId) return;
+        function toggleDetailFavorite() { if (!currentDetailId) return;
             toggleFavorite(currentDetailId);
             updateDetailFavoriteBtn();
-            renderAll();
-        }
+            renderAll(); }
 
         function openChatFromDetail() {
-            if (!currentUser) {
-                window.navigateTo('auth');
-                return;
-            }
+            if (!currentUser) { window.navigateTo('auth'); return; }
             if (!currentDetailListing) return;
             const sellerId = currentDetailListing.user_id;
-            if (sellerId === currentUser.id) {
-                editListing(currentDetailId);
-                return;
-            }
+            if (sellerId === currentUser.id) { editListing(currentDetailId); return; }
             const existingChat = chats.find(c =>
                 (c.buyer_id === currentUser.id && c.seller_id === sellerId) ||
                 (c.buyer_id === sellerId && c.seller_id === currentUser.id)
             );
-            if (existingChat) {
-                openChatDetail(existingChat.id);
-            } else {
-                createChat(sellerId, currentDetailListing.id);
-            }
+            if (existingChat) { openChatDetail(existingChat.id); } else { createChat(sellerId, currentDetailListing.id); }
         }
 
         // ================================================================
@@ -3741,10 +3177,8 @@
                     await loadAllData();
                     openChatDetail(data[0].id);
                 }
-            } catch (e) {
-                console.error('❌ Error creating chat:', e);
-                alert('Помилка створення чату');
-            }
+            } catch (e) { console.error('❌ Error creating chat:', e);
+                alert('Помилка створення чату'); }
         }
 
         async function openChatDetail(chatId) {
@@ -3755,12 +3189,8 @@
                 .eq('chat_id', chatId)
                 .order('created_at', { ascending: true });
 
-            if (error) {
-                console.error('❌ Error loading messages:', error);
-                chatMessages = [];
-            } else {
-                chatMessages = data || [];
-            }
+            if (error) { console.error('❌ Error loading messages:', error);
+                chatMessages = []; } else { chatMessages = data || []; }
 
             const container = document.getElementById('chatMessages');
             if (!container) return;
@@ -3772,11 +3202,11 @@
                 container.innerHTML = chatMessages.map(msg => {
                     const isOwn = msg.sender_id === currentUser.id;
                     return `
-                        <div class="chat-message ${isOwn ? 'own' : 'other'}">
-                            ${msg.content}
-                            <span class="chat-time">${timeAgo(msg.created_at)}</span>
-                        </div>
-                    `;
+                                <div class="chat-message ${isOwn ? 'own' : 'other'}">
+                                    ${msg.content}
+                                    <span class="chat-time">${timeAgo(msg.created_at)}</span>
+                                </div>
+                            `;
                 }).join('');
             }
 
@@ -3821,10 +3251,8 @@
                 dataLoaded = false;
                 await loadAllData();
                 await openChatDetail(currentChatId);
-            } catch (e) {
-                console.error('❌ Error sending message:', e);
-                alert('Помилка відправки повідомлення');
-            }
+            } catch (e) { console.error('❌ Error sending message:', e);
+                alert('Помилка відправки повідомлення'); }
         }
 
         async function markChatRead(chatId) {
@@ -3832,9 +3260,7 @@
                 await supabase.from('chats').update({ unread_count: 0 }).eq('id', chatId);
                 dataLoaded = false;
                 await loadAllData();
-            } catch (e) {
-                console.warn('⚠️ Failed to mark chat read:', e);
-            }
+            } catch (e) { console.warn('⚠️ Failed to mark chat read:', e); }
         }
 
         function scrollChatToBottom() {
@@ -3851,10 +3277,8 @@
             if (!files) return;
             for (let i = 0; i < files.length && selectedPhotos.length < 8; i++) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedPhotos.push(e.target.result);
-                    renderPhotoPreviews();
-                };
+                reader.onload = function(e) { selectedPhotos.push(e.target.result);
+                    renderPhotoPreviews(); };
                 reader.readAsDataURL(files[i]);
             }
             event.target.value = '';
@@ -3865,15 +3289,13 @@
             if (!grid) return;
             grid.innerHTML = selectedPhotos.map((photo, index) =>
                 `<div class="photo-preview-item" style="background-image:url('${photo}');">
-                    <button class="remove-photo" onclick="removePhoto(${index})">×</button>
-                </div>`
+                            <button class="remove-photo" onclick="removePhoto(${index})">×</button>
+                        </div>`
             ).join('');
         }
 
-        function removePhoto(index) {
-            selectedPhotos.splice(index, 1);
-            renderPhotoPreviews();
-        }
+        function removePhoto(index) { selectedPhotos.splice(index, 1);
+            renderPhotoPreviews(); }
 
         // ================================================================
         // EDIT LISTING
@@ -3881,17 +3303,13 @@
 
         function editListing(id) {
             const listing = myListings.find(l => l.id === id) || listings.find(l => l.id === id);
-            if (!listing) {
-                alert('Оголошення не знайдено');
-                return;
-            }
+            if (!listing) { alert('Оголошення не знайдено'); return; }
 
             document.getElementById('addTitle').value = listing.title || '';
             document.getElementById('addPrice').value = listing.price || '';
             document.getElementById('addCity').value = listing.location || '';
             document.getElementById('addPhone').value = listing.phone || '';
             document.getElementById('addDesc').value = listing.description || '';
-            document.getElementById('addCondition').value = listing.condition || 'new';
             // Встановлюємо категорію
             const categorySelect = document.getElementById('addCategory');
             const categoryOptions = categorySelect.options;
@@ -3901,15 +3319,22 @@
                     break;
                 }
             }
+            // Рендеримо поля категорії
+            renderCategoryFields(listing.category);
+            // Заповнюємо поля
+            if (listing.specs) {
+                Object.entries(listing.specs).forEach(([key, val]) => {
+                    const fieldEl = document.querySelector(`#field_${key}`);
+                    if (fieldEl) fieldEl.value = val;
+                });
+            }
             selectedPhotos = listing.photos || [];
             renderPhotoPreviews();
 
             window.navigateTo('add');
             const btn = document.querySelector('.btn-submit');
-            if (btn) {
-                btn.textContent = '💾 Оновити оголошення';
-                btn.onclick = () => updateListing(id);
-            }
+            if (btn) { btn.textContent = '💾 Оновити оголошення';
+                btn.onclick = () => updateListing(id); }
         }
 
         async function updateListing(id) {
@@ -3919,16 +3344,17 @@
             const phone = document.getElementById('addPhone').value.trim() || userData.phone;
             const desc = document.getElementById('addDesc').value.trim();
             const category = document.getElementById('addCategory').value;
-            const condition = document.getElementById('addCondition').value;
 
-            if (!title) {
-                alert('Введіть назву');
-                return;
-            }
-            if (!price) {
-                alert('Введіть ціну');
-                return;
-            }
+            if (!title) { alert('Введіть назву'); return; }
+            if (!price) { alert('Введіть ціну'); return; }
+
+            // Збираємо додаткові поля
+            const fields = getCategoryFields(category);
+            const specs = {};
+            fields.forEach(field => {
+                const el = document.getElementById(`field_${field.id}`);
+                if (el) { specs[field.label] = el.value; }
+            });
 
             try {
                 const { error } = await supabase.from('listings').update({
@@ -3938,7 +3364,8 @@
                     phone: phone,
                     description: desc || '',
                     category: category,
-                    condition: condition,
+                    condition: 'new',
+                    specs: specs,
                     photos: selectedPhotos.length > 0 ? selectedPhotos : null,
                     updated_at: new Date().toISOString()
                 }).eq('id', id);
@@ -3950,10 +3377,8 @@
                 dataLoaded = false;
                 await loadAllData();
                 window.navigateTo('my-listings');
-            } catch (e) {
-                console.error('❌ Error updating listing:', e);
-                alert('Помилка оновлення');
-            }
+            } catch (e) { console.error('❌ Error updating listing:', e);
+                alert('Помилка оновлення'); }
         }
 
         async function deleteListing(id) {
@@ -3965,10 +3390,8 @@
                 dataLoaded = false;
                 await loadAllData();
                 if (currentPage === 'my-listings') renderMyListings();
-            } catch (e) {
-                console.error('❌ Error deleting listing:', e);
-                alert('Помилка видалення');
-            }
+            } catch (e) { console.error('❌ Error deleting listing:', e);
+                alert('Помилка видалення'); }
         }
 
         // ================================================================
@@ -3976,10 +3399,7 @@
         // ================================================================
 
         async function saveProfile() {
-            if (!currentUser) {
-                window.navigateTo('auth');
-                return;
-            }
+            if (!currentUser) { window.navigateTo('auth'); return; }
 
             const name = document.getElementById('editName').value.trim() || 'Користувач';
             const lastName = document.getElementById('editLastName').value.trim() || '';
@@ -4008,10 +3428,8 @@
                 updateAvatar();
                 alert('✅ Профіль оновлено!');
                 window.navigateTo('profile');
-            } catch (e) {
-                console.error('❌ Error saving profile:', e);
-                alert('Помилка збереження');
-            }
+            } catch (e) { console.error('❌ Error saving profile:', e);
+                alert('Помилка збереження'); }
         }
 
         function uploadAvatar(event) {
@@ -4028,17 +3446,13 @@
             reader.readAsDataURL(file);
         }
 
-        function editUploadAvatar(event) {
-            uploadAvatar(event);
-        }
+        function editUploadAvatar(event) { uploadAvatar(event); }
 
         // ================================================================
         // SETTINGS FUNCTIONS
         // ================================================================
 
-        function toggleSetting(el) {
-            el.classList.toggle('active');
-        }
+        function toggleSetting(el) { el.classList.toggle('active'); }
 
         function selectCity(city) {
             userData.city = city;
@@ -4054,9 +3468,9 @@
             const filtered = cities.filter(c => c.toLowerCase().includes(query.toLowerCase()));
             container.innerHTML = filtered.map(c =>
                 `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;">
-                    <span class="settings-label">${c}</span>
-                    ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
-                </div>`
+                            <span class="settings-label">${c}</span>
+                            ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
+                        </div>`
             ).join('');
         }
 
@@ -4074,27 +3488,15 @@
         // ================================================================
 
         async function changePassword() {
-            if (!supabase) {
-                alert('Підключення до сервера не встановлено');
-                return;
-            }
+            if (!supabase) { alert('Підключення до сервера не встановлено'); return; }
 
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                alert('Заповніть всі поля');
-                return;
-            }
-            if (newPassword.length < 6) {
-                alert('Новий пароль має бути не менше 6 символів');
-                return;
-            }
-            if (newPassword !== confirmPassword) {
-                alert('Паролі не співпадають');
-                return;
-            }
+            if (!currentPassword || !newPassword || !confirmPassword) { alert('Заповніть всі поля'); return; }
+            if (newPassword.length < 6) { alert('Новий пароль має бути не менше 6 символів'); return; }
+            if (newPassword !== confirmPassword) { alert('Паролі не співпадають'); return; }
 
             try {
                 const { error } = await supabase.auth.updateUser({ password: newPassword });
@@ -4103,23 +3505,15 @@
                 document.getElementById('currentPassword').value = '';
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmPassword').value = '';
-            } catch (e) {
-                console.error('❌ Error changing password:', e);
-                alert('Помилка зміни пароля: ' + e.message);
-            }
+            } catch (e) { console.error('❌ Error changing password:', e);
+                alert('Помилка зміни пароля: ' + e.message); }
         }
 
         async function changeEmail() {
-            if (!supabase) {
-                alert('Підключення до сервера не встановлено');
-                return;
-            }
+            if (!supabase) { alert('Підключення до сервера не встановлено'); return; }
 
             const newEmail = document.getElementById('newEmail').value.trim();
-            if (!newEmail || !newEmail.includes('@')) {
-                alert('Введіть коректний email');
-                return;
-            }
+            if (!newEmail || !newEmail.includes('@')) { alert('Введіть коректний email'); return; }
 
             try {
                 const { error } = await supabase.auth.updateUser({ email: newEmail });
@@ -4127,23 +3521,15 @@
                 alert('✅ Email змінено! Перевірте нову пошту для підтвердження.');
                 userData.email = newEmail;
                 updateUI();
-            } catch (e) {
-                console.error('❌ Error changing email:', e);
-                alert('Помилка зміни email: ' + e.message);
-            }
+            } catch (e) { console.error('❌ Error changing email:', e);
+                alert('Помилка зміни email: ' + e.message); }
         }
 
         async function changePhone() {
-            if (!supabase) {
-                alert('Підключення до сервера не встановлено');
-                return;
-            }
+            if (!supabase) { alert('Підключення до сервера не встановлено'); return; }
 
             const newPhone = document.getElementById('newPhone').value.trim();
-            if (!newPhone) {
-                alert('Введіть номер телефону');
-                return;
-            }
+            if (!newPhone) { alert('Введіть номер телефону'); return; }
 
             try {
                 const { error } = await supabase.auth.updateUser({ data: { phone: newPhone } });
@@ -4151,16 +3537,12 @@
                 alert('✅ Телефон змінено успішно!');
                 userData.phone = newPhone;
                 updateUI();
-            } catch (e) {
-                console.error('❌ Error changing phone:', e);
-                alert('Помилка зміни телефону: ' + e.message);
-            }
+            } catch (e) { console.error('❌ Error changing phone:', e);
+                alert('Помилка зміни телефону: ' + e.message); }
         }
 
-        function showForgotPassword() {
-            window.navigateTo('auth');
-            handleForgotPassword();
-        }
+        function showForgotPassword() { window.navigateTo('auth');
+            handleForgotPassword(); }
 
         // ================================================================
         // HELP / ABOUT / LOGOUT
@@ -4193,9 +3575,7 @@
                 window.navigateTo('auth');
                 const bottomNav = document.getElementById('bottomNav');
                 if (bottomNav) bottomNav.classList.remove('show');
-            } catch (e) {
-                console.error('❌ Error logging out:', e);
-            }
+            } catch (e) { console.error('❌ Error logging out:', e); }
         }
 
         // ================================================================
@@ -4210,9 +3590,7 @@
                     tg.ready();
                     console.log('✅ Telegram WebApp initialized');
                 }
-            } catch (e) {
-                console.warn('⚠️ Telegram WebApp not available');
-            }
+            } catch (e) { console.warn('⚠️ Telegram WebApp not available'); }
         }
 
         // ================================================================
@@ -4307,6 +3685,7 @@
         window.resetPhotoForm = resetPhotoForm;
         window.fixNotificationBadge = fixNotificationBadge;
         window.updateAvatar = updateAvatar;
+        window.renderCategoryFields = renderCategoryFields;
         window.getFilteredListings = getFilteredListings;
 
         console.log('✅ UAMO додаток готовий до роботи! 🚀');
