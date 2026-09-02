@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        /* ===== ВЕСЬ ВАШ CSS (залиште без змін) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A;
@@ -990,6 +991,7 @@
 </head>
 <body>
 
+<!-- ===== ВЕСЬ ВАШ HTML (залиште без змін) ===== -->
 <div id="app">
     <!-- HEADER -->
     <div class="header" id="globalHeader">
@@ -1639,12 +1641,14 @@
 
 <script>
     // ================================================================
-    // SUPABASE CONFIG - ВИПРАВЛЕНО З ВАШИМИ КЛЮЧАМИ
+    // SUPABASE CONFIG - ВАШІ КЛЮЧІ
     // ================================================================
     const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cHNtZWxwc3Nnbml3b2hqYnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODYzNDksImV4cCI6MjEwMzc2MjM0OX0.I6oOuOn68QKJH_bAPUS9QG8CscEcFeeN_MQBzohWaEw';
 
-    // ТІЛЬКИ ОДНЕ ОГОЛОШЕННЯ
+    // ================================================================
+    // ЗМІННІ
+    // ================================================================
     let supabase = null;
     let currentUser = null;
     let isAuthMode = 'login';
@@ -1678,92 +1682,65 @@
     };
     let unreadCount = 0;
 
+    // ===== КЕШ ДЛЯ ШВИДКОСТІ =====
+    const cache = {
+        listings: null,
+        favorites: null,
+        chats: null,
+        users: {},
+        myListings: null
+    };
+    let cacheTime = 0;
+    const CACHE_DURATION = 30000; // 30 секунд
+
     // ================================================================
-    // ІНІЦІАЛІЗАЦІЯ SUPABASE - ВИПРАВЛЕНО
+    // ІНІЦІАЛІЗАЦІЯ SUPABASE
     // ================================================================
     function initSupabase() {
         try {
             if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('✅ Supabase client initialized successfully');
+                console.log('✅ Supabase client initialized');
                 const badge = document.getElementById('statusBadge');
-                if (badge) {
-                    badge.textContent = '✅';
-                    badge.className = 'status-badge status-connected';
-                }
+                if (badge) { badge.textContent = '✅';
+                    badge.className = 'status-badge status-connected'; }
                 return true;
             } else {
                 console.error('❌ Supabase SDK not loaded');
-                const badge = document.getElementById('statusBadge');
-                if (badge) {
-                    badge.textContent = '❌';
-                    badge.className = 'status-badge status-error';
-                }
                 return false;
             }
         } catch (e) {
             console.error('❌ Failed to init Supabase:', e);
-            const badge = document.getElementById('statusBadge');
-            if (badge) {
-                badge.textContent = '❌';
-                badge.className = 'status-badge status-error';
-            }
             return false;
-        }
-    }
-
-    // ================================================================
-    // TOGGLE PASSWORD VISIBILITY
-    // ================================================================
-    function togglePasswordVisibility(inputId, button) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
-        const icon = button.querySelector('i');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.className = 'fas fa-eye-slash';
-        } else {
-            input.type = 'password';
-            icon.className = 'fas fa-eye';
         }
     }
 
     // ================================================================
     // AUTH HELPERS
     // ================================================================
-    function showAuthError(message) {
+    function showAuthError(msg) {
         const el = document.getElementById('authError');
-        if (!el) return;
-        el.textContent = message;
-        el.className = 'auth-error show';
-        const success = document.getElementById('authSuccess');
-        if (success) success.className = 'auth-success';
+        if (el) { el.textContent = msg;
+            el.className = 'auth-error show'; }
+        const s = document.getElementById('authSuccess');
+        if (s) s.className = 'auth-success';
     }
 
-    function showAuthSuccess(message) {
+    function showAuthSuccess(msg) {
         const el = document.getElementById('authSuccess');
-        if (!el) return;
-        el.textContent = message;
-        el.className = 'auth-success show';
-        const error = document.getElementById('authError');
-        if (error) error.className = 'auth-error';
-    }
-
-    function hideAuthMessages() {
-        const error = document.getElementById('authError');
-        const success = document.getElementById('authSuccess');
-        if (error) error.className = 'auth-error';
-        if (success) success.className = 'auth-success';
+        if (el) { el.textContent = msg;
+            el.className = 'auth-success show'; }
+        const e = document.getElementById('authError');
+        if (e) e.className = 'auth-error';
     }
 
     function setLoading(loading) {
         const btn = document.getElementById('authSubmitBtn');
         const el = document.getElementById('authLoading');
         const inputs = document.querySelectorAll('#authForm input');
-
         if (loading) {
             if (btn) { btn.disabled = true;
-                btn.textContent = '⏳ Завантаження...'; }
+                btn.textContent = '⏳...'; }
             if (el) el.className = 'auth-loading show';
             inputs.forEach(i => i.disabled = true);
         } else {
@@ -1774,13 +1751,17 @@
         }
     }
 
-    // ================================================================
-    // TOGGLE AUTH MODE
-    // ================================================================
-    function toggleAuthMode() {
-        hideAuthMessages();
-        isAuthMode = isAuthMode === 'login' ? 'register' : 'login';
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') { input.type = 'text';
+            icon.className = 'fas fa-eye-slash'; } else { input.type = 'password';
+            icon.className = 'fas fa-eye'; }
+    }
 
+    function toggleAuthMode() {
+        isAuthMode = isAuthMode === 'login' ? 'register' : 'login';
         const btn = document.getElementById('authSubmitBtn');
         const toggleText = document.getElementById('authToggleText');
         const link = document.getElementById('authToggleLink');
@@ -1805,397 +1786,287 @@
             if (subtitle) subtitle.textContent = 'Створіть новий акаунт';
             if (confirmGroup) confirmGroup.classList.remove('hidden');
             if (forgotLink) forgotLink.classList.add('hidden');
-            if (passwordInput) { passwordInput.placeholder = '•••••••• (мін. 6 символів)';
+            if (passwordInput) { passwordInput.placeholder = '•••••••• (мін. 6)';
                 passwordInput.autocomplete = 'new-password'; }
         }
+        document.getElementById('authError').className = 'auth-error';
+        document.getElementById('authSuccess').className = 'auth-success';
     }
 
     // ================================================================
     // AUTH HANDLERS
     // ================================================================
     async function handleAuth() {
-        hideAuthMessages();
+        document.getElementById('authError').className = 'auth-error';
+        document.getElementById('authSuccess').className = 'auth-success';
 
-        if (!supabase) {
-            showAuthError('Підключення до сервера не встановлено. Спробуйте перезавантажити сторінку.');
-            return;
-        }
+        if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
 
         const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
         const confirmPassword = document.getElementById('authConfirmPassword')?.value;
 
-        if (!email) {
-            showAuthError('Введіть email');
-            document.getElementById('authEmail').focus();
-            return;
-        }
-
-        if (!email.includes('@') || !email.includes('.')) {
-            showAuthError('Введіть коректний email');
-            document.getElementById('authEmail').focus();
-            return;
-        }
-
-        if (!password) {
-            showAuthError('Введіть пароль');
-            document.getElementById('authPassword').focus();
-            return;
-        }
-
-        if (password.length < 6) {
-            showAuthError('Пароль має бути не менше 6 символів');
-            document.getElementById('authPassword').focus();
-            return;
-        }
-
+        if (!email) { showAuthError('Введіть email');
+            document.getElementById('authEmail').focus(); return; }
+        if (!email.includes('@')) { showAuthError('Введіть коректний email');
+            document.getElementById('authEmail').focus(); return; }
+        if (!password) { showAuthError('Введіть пароль');
+            document.getElementById('authPassword').focus(); return; }
+        if (password.length < 6) { showAuthError('Пароль має бути не менше 6 символів');
+            document.getElementById('authPassword').focus(); return; }
         if (isAuthMode === 'register') {
-            if (!confirmPassword) {
-                showAuthError('Підтвердіть пароль');
-                document.getElementById('authConfirmPassword').focus();
-                return;
-            }
-            if (password !== confirmPassword) {
-                showAuthError('Паролі не співпадають');
-                document.getElementById('authConfirmPassword').focus();
-                return;
-            }
+            if (!confirmPassword) { showAuthError('Підтвердіть пароль');
+                document.getElementById('authConfirmPassword').focus(); return; }
+            if (password !== confirmPassword) { showAuthError('Паролі не співпадають');
+                document.getElementById('authConfirmPassword').focus(); return; }
         }
 
         setLoading(true);
-
         try {
             if (isAuthMode === 'login') {
-                console.log('🔐 Attempting login for:', email);
-
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                 setLoading(false);
-
                 if (error) {
-                    console.error('❌ Login error:', error);
-                    if (error.message.includes('Invalid login credentials')) {
-                        showAuthError('Невірний email або пароль');
-                    } else if (error.message.includes('Email not confirmed')) {
-                        showAuthError('Email не підтверджено. Перевірте вашу пошту та підтвердіть акаунт.');
-                    } else if (error.message.includes('network') || error.message.includes('fetch')) {
-                        showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
-                    } else {
-                        showAuthError(`Помилка: ${error.message}`);
-                    }
+                    if (error.message.includes('Invalid login')) showAuthError('Невірний email або пароль');
+                    else if (error.message.includes('Email not confirmed')) showAuthError('Email не підтверджено');
+                    else showAuthError(`Помилка: ${error.message}`);
                     return;
                 }
-
                 if (data?.user) {
-                    console.log('✅ Login successful:', data.user.email);
                     currentUser = data.user;
-                    showAuthSuccess('✅ Вхід виконано успішно!');
-
-                    await loadUserData();
-                    await loadListings();
-                    await loadFavorites();
-                    await loadChats();
-
-                    setTimeout(() => {
-                        navigateTo('home');
-                    }, 500);
+                    showAuthSuccess('✅ Вхід виконано!');
+                    await Promise.all([loadUserData(), loadListings(), loadFavorites(), loadChats()]);
+                    setTimeout(() => navigateTo('home'), 300);
                 }
-
             } else {
-                console.log('📝 Attempting registration for:', email);
-
                 const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
+                    email,
+                    password,
                     options: {
-                        data: {
-                            first_name: email.split('@')[0],
-                            username: email.split('@')[0],
-                            city: 'Київ'
-                        },
-                        emailRedirectTo: window.location.origin + '/'
+                        data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' },
+                        emailRedirectTo: window.location.origin
                     }
                 });
-
                 setLoading(false);
-
                 if (error) {
-                    console.error('❌ Registration error:', error);
-                    if (error.message.includes('User already registered')) {
-                        showAuthError('Цей email вже зареєстровано. Увійдіть у свій акаунт.');
-                    } else if (error.message.includes('network') || error.message.includes('fetch')) {
-                        showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
-                    } else {
-                        showAuthError(`Помилка: ${error.message}`);
-                    }
+                    if (error.message.includes('User already')) showAuthError('Цей email вже зареєстровано');
+                    else showAuthError(`Помилка: ${error.message}`);
                     return;
                 }
-
                 if (data?.user) {
-                    console.log('✅ Registration successful:', data.user.email);
-
-                    try {
-                        await createUserRecord(data.user.id, email, email.split('@')[0]);
-                    } catch (e) {
-                        console.warn('⚠️ User record creation warning:', e);
-                    }
-
-                    if (data.user.confirmed_at) {
-                        showAuthSuccess('✅ Реєстрація успішна! Ви можете увійти.');
-                        setTimeout(() => {
-                            toggleAuthMode();
-                            document.getElementById('authEmail').value = email;
-                            document.getElementById('authPassword').value = '';
-                            if (document.getElementById('authConfirmPassword')) {
-                                document.getElementById('authConfirmPassword').value = '';
-                            }
-                            showAuthSuccess('Тепер увійдіть у свій акаунт');
-                        }, 1500);
-                    } else {
-                        showAuthSuccess('✅ Реєстрація успішна! Перевірте вашу пошту для підтвердження акаунта.');
-                    }
+                    showAuthSuccess('✅ Реєстрація успішна! Перевірте пошту для підтвердження.');
+                    setTimeout(() => { toggleAuthMode();
+                        document.getElementById('authEmail').value = email;
+                        document.getElementById('authPassword').value = '';
+                        showAuthSuccess('Тепер увійдіть у свій акаунт'); }, 1500);
                 }
             }
         } catch (e) {
             setLoading(false);
-            console.error('❌ Unexpected auth error:', e);
-            showAuthError('Несподівана помилка. Спробуйте ще раз або перезавантажте сторінку.');
+            showAuthError('Несподівана помилка. Спробуйте ще раз.');
         }
     }
 
-    // ================================================================
-    // FORGOT PASSWORD
-    // ================================================================
     async function handleForgotPassword() {
-        if (!supabase) {
-            showAuthError('Підключення до сервера не встановлено');
-            return;
-        }
-
+        if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
         const email = document.getElementById('authEmail').value.trim();
+        if (!email) { showAuthError('Введіть email');
+            document.getElementById('authEmail').focus(); return; }
+        if (!email.includes('@')) { showAuthError('Введіть коректний email'); return; }
 
-        if (!email) {
-            showAuthError('Введіть email для відновлення пароля');
-            document.getElementById('authEmail').focus();
-            return;
-        }
-
-        if (!email.includes('@') || !email.includes('.')) {
-            showAuthError('Введіть коректний email');
-            document.getElementById('authEmail').focus();
-            return;
-        }
-
-        hideAuthMessages();
         setLoading(true);
-
         try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: window.location.origin + '/'
-            });
-
+            const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
             setLoading(false);
-
             if (error) {
-                console.error('❌ Reset password error:', error);
-                if (error.message.includes('User not found')) {
-                    showAuthError('Користувача з таким email не знайдено');
-                } else {
-                    showAuthError(`Помилка: ${error.message}`);
-                }
+                if (error.message.includes('User not found')) showAuthError('Користувача не знайдено');
+                else showAuthError(`Помилка: ${error.message}`);
                 return;
             }
-
-            showAuthSuccess(`✅ Лист з посиланням для відновлення надіслано на ${email}`);
-            document.getElementById('authPassword').value = '';
-            if (document.getElementById('authConfirmPassword')) {
-                document.getElementById('authConfirmPassword').value = '';
-            }
-        } catch (e) {
-            setLoading(false);
-            console.error('❌ Unexpected reset error:', e);
-            showAuthError('Помилка. Спробуйте ще раз.');
-        }
+            showAuthSuccess(`✅ Лист з посиланням надіслано на ${email}`);
+        } catch (e) { setLoading(false);
+            showAuthError('Помилка. Спробуйте ще раз.'); }
     }
 
     // ================================================================
-    // USER RECORD HELPER
-    // ================================================================
-    async function createUserRecord(userId, email, username) {
-        try {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
-                method: 'POST',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: userId,
-                    email: email,
-                    first_name: username,
-                    username: username,
-                    city: 'Київ',
-                    created_at: new Date().toISOString()
-                })
-            });
-
-            if (!response.ok) {
-                console.warn('⚠️ User record creation failed:', response.status);
-            } else {
-                console.log('✅ User record created');
-            }
-        } catch (e) {
-            console.warn('⚠️ User record creation error:', e);
-        }
-    }
-
-    // ================================================================
-    // API REQUEST HELPER
-    // ================================================================
-    async function apiRequest(endpoint, options = {}) {
-        try {
-            const headers = {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                'Content-Type': 'application/json',
-                ...options.headers
-            };
-
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
-                ...options,
-                headers: headers
-            });
-
-            if (res.status === 204) return [];
-            if (res.status === 404) {
-                console.warn(`⚠️ Endpoint not found: ${endpoint}`);
-                return [];
-            }
-            if (res.status === 401 || res.status === 403) {
-                console.warn('⚠️ Unauthorized request');
-                return [];
-            }
-            if (res.status === 201 || res.status === 200) {
-                const text = await res.text();
-                if (text && text.length > 0) {
-                    try { return JSON.parse(text); } catch (e) { return []; }
-                }
-                return [];
-            }
-            if (!res.ok) {
-                console.warn(`⚠️ API error ${res.status}: ${endpoint}`);
-                return [];
-            }
-            const text = await res.text();
-            if (text && text.length > 0) {
-                try { return JSON.parse(text); } catch (e) { return []; }
-            }
-            return [];
-        } catch (e) {
-            console.error('Fetch error:', e);
-            return [];
-        }
-    }
-
-    // ================================================================
-    // LOAD DATA
+    // ОПТИМІЗОВАНІ ЗАПИТИ ДО БАЗИ ДАНИХ
     // ================================================================
     async function loadUserData() {
         if (!currentUser) return;
-        try {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${currentUser.id}&select=*`, {
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data && data.length > 0) {
-                    const u = data[0];
-                    userData.id = u.id;
-                    userData.name = u.first_name || 'Користувач';
-                    userData.last_name = u.last_name || '';
-                    userData.username = u.username || '';
-                    userData.phone = u.phone || '';
-                    userData.email = u.email || currentUser.email || '';
-                    userData.city = u.city || 'Київ';
-                    userData.avatar = u.avatar_url || userData.avatar;
-                    userData.language = u.language || 'uk';
-                    updateUI();
-                    console.log('✅ User data loaded');
-                }
-            }
-        } catch (e) {
-            console.warn('⚠️ Failed to load user data:', e);
+        if (cache.users[currentUser.id]) {
+            const u = cache.users[currentUser.id];
+            userData = {
+                id: u.id,
+                name: u.first_name || 'Користувач',
+                last_name: u.last_name || '',
+                username: u.username || '',
+                phone: u.phone || '',
+                email: u.email || currentUser.email || '',
+                city: u.city || 'Київ',
+                avatar: u.avatar_url || 'К',
+                language: u.language || 'uk'
+            };
+            updateUI();
+            return;
         }
+        try {
+            const { data, error } = await supabase.from('users').select('*').eq('id', currentUser.id).single();
+            if (error) throw error;
+            if (data) {
+                cache.users[currentUser.id] = data;
+                userData = {
+                    id: data.id,
+                    name: data.first_name || 'Користувач',
+                    last_name: data.last_name || '',
+                    username: data.username || '',
+                    phone: data.phone || '',
+                    email: data.email || currentUser.email || '',
+                    city: data.city || 'Київ',
+                    avatar: data.avatar_url || 'К',
+                    language: data.language || 'uk'
+                };
+                updateUI();
+            }
+        } catch (e) { console.warn('⚠️ Failed to load user data:', e); }
     }
 
     async function loadListings() {
-        const data = await apiRequest('listings?select=*&status=eq.active&order=created_at.desc&limit=500');
-        listings = data.map(item => ({
-            id: item.id,
-            title: item.title || 'Без назви',
-            price: item.price ? String(item.price) : '0',
-            location: item.city || 'не вказано',
-            image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-            photos: item.photos || null,
-            category: item.category || 'Інше',
-            isNew: new Date(item.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000),
-            isFeatured: item.is_featured || false,
-            createdAt: item.created_at || new Date().toISOString(),
-            description: item.description || 'Без опису',
-            specs: item.specs || {},
-            seller: item.seller || { name: 'Продавець', since: '2024', avatar: '👤' },
-            user_id: item.user_id,
-            phone: item.phone || '',
-            status: item.status || 'active'
-        }));
-        renderAll();
+        if (cache.listings && (Date.now() - cacheTime) < CACHE_DURATION) {
+            listings = cache.listings;
+            renderAll();
+            return;
+        }
+        try {
+            const { data, error } = await supabase
+                .from('listings')
+                .select(`*, users:user_id (first_name, avatar_url)`)
+                .eq('status', 'active')
+                .order('created_at', { ascending: false })
+                .limit(100);
+
+            if (error) throw error;
+
+            listings = data.map(item => ({
+                id: item.id,
+                title: item.title || 'Без назви',
+                price: item.price ? String(item.price) : '0',
+                location: item.city || 'не вказано',
+                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                photos: item.photos || null,
+                category: item.category || 'Інше',
+                isNew: new Date(item.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000),
+                isFeatured: item.is_featured || false,
+                createdAt: item.created_at || new Date().toISOString(),
+                description: item.description || 'Без опису',
+                specs: item.specs || {},
+                seller: {
+                    name: item.users?.first_name || 'Продавець',
+                    avatar: item.users?.avatar_url || '👤',
+                    since: '2024'
+                },
+                user_id: item.user_id,
+                phone: item.phone || '',
+                status: item.status || 'active'
+            }));
+
+            cache.listings = listings;
+            cacheTime = Date.now();
+            renderAll();
+        } catch (e) {
+            console.error('❌ Error loading listings:', e);
+            if (cache.listings) { listings = cache.listings;
+                renderAll(); }
+        }
     }
 
     async function loadMyListings() {
         if (!currentUser) return;
-        const data = await apiRequest(
-            `listings?select=*&user_id=eq.${currentUser.id}&order=created_at.desc&limit=500`);
-        myListings = data.map(item => ({
-            id: item.id,
-            title: item.title || 'Без назви',
-            price: item.price ? String(item.price) : '0',
-            location: item.city || 'не вказано',
-            image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-            photos: item.photos || null,
-            category: item.category || 'Інше',
-            createdAt: item.created_at || new Date().toISOString(),
-            description: item.description || 'Без опису',
-            phone: item.phone || '',
-            status: item.status || 'active'
-        }));
-        if (currentPage === 'my-listings') renderMyListings();
-        updateProfileStats();
+        if (cache.myListings && (Date.now() - cacheTime) < CACHE_DURATION) {
+            myListings = cache.myListings;
+            if (currentPage === 'my-listings') renderMyListings();
+            updateProfileStats();
+            return;
+        }
+        try {
+            const { data, error } = await supabase
+                .from('listings')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            myListings = data.map(item => ({
+                id: item.id,
+                title: item.title || 'Без назви',
+                price: item.price ? String(item.price) : '0',
+                location: item.city || 'не вказано',
+                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                photos: item.photos || null,
+                category: item.category || 'Інше',
+                createdAt: item.created_at || new Date().toISOString(),
+                description: item.description || 'Без опису',
+                phone: item.phone || '',
+                status: item.status || 'active'
+            }));
+
+            cache.myListings = myListings;
+            if (currentPage === 'my-listings') renderMyListings();
+            updateProfileStats();
+        } catch (e) { console.warn('⚠️ Failed to load my listings:', e); }
     }
 
     async function loadFavorites() {
         if (!currentUser) return;
-        const data = await apiRequest(`favorites?user_id=eq.${currentUser.id}&select=listing_id`);
-        favorites = data.map(f => f.listing_id);
-        renderAll();
-        updateProfileStats();
+        if (cache.favorites && (Date.now() - cacheTime) < CACHE_DURATION) {
+            favorites = cache.favorites;
+            renderAll();
+            updateProfileStats();
+            return;
+        }
+        try {
+            const { data, error } = await supabase
+                .from('favorites')
+                .select('listing_id')
+                .eq('user_id', currentUser.id);
+
+            if (error) throw error;
+
+            favorites = data.map(f => f.listing_id);
+            cache.favorites = favorites;
+            renderAll();
+            updateProfileStats();
+        } catch (e) { console.warn('⚠️ Failed to load favorites:', e); }
     }
 
     async function loadChats() {
         if (!currentUser) return;
-        const data = await apiRequest(
-            `chats?buyer_id=eq.${currentUser.id}&order=updated_at.desc&select=*,listings(title),buyer:users!chats_buyer_id_fkey(first_name,avatar_url),seller:users!chats_seller_id_fkey(first_name,avatar_url)`
-        );
-        chats = data || [];
-        if (currentPage === 'chats') renderChats();
-        updateChatBadge();
+        if (cache.chats && (Date.now() - cacheTime) < CACHE_DURATION) {
+            chats = cache.chats;
+            if (currentPage === 'chats') renderChats();
+            updateChatBadge();
+            return;
+        }
+        try {
+            const { data, error } = await supabase
+                .from('chats')
+                .select(`
+                    *,
+                    listings:listing_id (title),
+                    buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
+                    seller:users!chats_seller_id_fkey (first_name, avatar_url)
+                `)
+                .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+                .order('updated_at', { ascending: false });
+
+            if (error) throw error;
+
+            chats = data || [];
+            cache.chats = chats;
+            if (currentPage === 'chats') renderChats();
+            updateChatBadge();
+        } catch (e) { console.warn('⚠️ Failed to load chats:', e);
+            chats = []; }
     }
 
     // ================================================================
@@ -2220,40 +2091,24 @@
         return '';
     }
 
-    function isFavorite(id) {
-        return favorites.some(f => f === id);
-    }
+    function isFavorite(id) { return favorites.some(f => f === id); }
 
     function updateUI() {
-        const nameEl = document.getElementById('profileName');
-        const emailEl = document.getElementById('profileEmail');
-        const avatarLetter = document.getElementById('profileAvatarLetter');
-        const editAvatarLetter = document.getElementById('editAvatarLetter');
-        const headerAvatarLetter = document.getElementById('avatarLetter');
-        const editName = document.getElementById('editName');
-        const editLastName = document.getElementById('editLastName');
-        const editUsername = document.getElementById('editUsername');
-        const editPhone = document.getElementById('editPhone');
-        const editCity = document.getElementById('editCity');
-        const currentEmail = document.getElementById('currentEmail');
-        const currentPhone = document.getElementById('currentPhone');
-        const securityEmail = document.getElementById('securityEmail');
-        const securityPhone = document.getElementById('securityPhone');
-
-        if (nameEl) nameEl.textContent = userData.name || 'Користувач';
-        if (emailEl) emailEl.textContent = userData.email || 'user@example.com';
-        if (avatarLetter) avatarLetter.textContent = userData.avatar || 'К';
-        if (editAvatarLetter) editAvatarLetter.textContent = userData.avatar || 'К';
-        if (headerAvatarLetter) headerAvatarLetter.textContent = userData.avatar || 'К';
-        if (editName) editName.value = userData.name || '';
-        if (editLastName) editLastName.value = userData.last_name || '';
-        if (editUsername) editUsername.value = userData.username || '';
-        if (editPhone) editPhone.value = userData.phone || '';
-        if (editCity) editCity.value = userData.city || 'Київ';
-        if (currentEmail) currentEmail.value = userData.email || '';
-        if (currentPhone) currentPhone.value = userData.phone || '';
-        if (securityEmail) securityEmail.textContent = userData.email || 'user@example.com';
-        if (securityPhone) securityPhone.textContent = userData.phone || '+380 XX XXX XX XX';
+        const el = (id) => document.getElementById(id);
+        if (el('profileName')) el('profileName').textContent = userData.name || 'Користувач';
+        if (el('profileEmail')) el('profileEmail').textContent = userData.email || 'user@example.com';
+        if (el('profileAvatarLetter')) el('profileAvatarLetter').textContent = userData.avatar || 'К';
+        if (el('editAvatarLetter')) el('editAvatarLetter').textContent = userData.avatar || 'К';
+        if (el('avatarLetter')) el('avatarLetter').textContent = userData.avatar || 'К';
+        if (el('editName')) el('editName').value = userData.name || '';
+        if (el('editLastName')) el('editLastName').value = userData.last_name || '';
+        if (el('editUsername')) el('editUsername').value = userData.username || '';
+        if (el('editPhone')) el('editPhone').value = userData.phone || '';
+        if (el('editCity')) el('editCity').value = userData.city || 'Київ';
+        if (el('currentEmail')) el('currentEmail').value = userData.email || '';
+        if (el('currentPhone')) el('currentPhone').value = userData.phone || '';
+        if (el('securityEmail')) el('securityEmail').textContent = userData.email || 'user@example.com';
+        if (el('securityPhone')) el('securityPhone').textContent = userData.phone || '+380 XX XXX XX XX';
         renderCitySelect();
     }
 
@@ -2262,21 +2117,15 @@
         if (!badge) return;
         const count = chats.reduce((sum, c) => sum + (c.unread_count || 0), 0);
         unreadCount = count;
-        if (count > 0) {
-            badge.style.display = 'flex';
-            badge.textContent = count > 9 ? '9+' : count;
-        } else {
-            badge.style.display = 'none';
-        }
+        if (count > 0) { badge.style.display = 'flex';
+            badge.textContent = count > 9 ? '9+' : count; } else { badge.style.display = 'none'; }
     }
 
     function updateProfileStats() {
-        const statActive = document.getElementById('statActive');
-        const statFavorites = document.getElementById('statFavorites');
-        const statMessages = document.getElementById('statMessages');
-        if (statActive) statActive.textContent = myListings.length;
-        if (statFavorites) statFavorites.textContent = favorites.length;
-        if (statMessages) statMessages.textContent = chats.length;
+        const el = (id) => document.getElementById(id);
+        if (el('statActive')) el('statActive').textContent = myListings.length;
+        if (el('statFavorites')) el('statFavorites').textContent = favorites.length;
+        if (el('statMessages')) el('statMessages').textContent = chats.length;
     }
 
     // ================================================================
@@ -2375,8 +2224,7 @@
             );
         }
         if (results.length === 0) {
-            container.innerHTML =
-                `<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>`;
+            container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>`;
         } else {
             container.innerHTML = results.map(renderSearchResult).join('');
         }
@@ -2502,18 +2350,34 @@
     }
 
     function renderAll() {
-        if (!currentUser && currentPage !== 'auth') {
-            navigateTo('auth');
-            return;
+        if (!currentUser && currentPage !== 'auth') { navigateTo('auth'); return; }
+        switch (currentPage) {
+            case 'home':
+                renderHome();
+                break;
+            case 'search':
+                renderSearch(document.getElementById('searchInput')?.value || '');
+                break;
+            case 'favorites':
+                renderFavorites();
+                break;
+            case 'chats':
+                renderChats();
+                break;
+            case 'profile':
+                updateUI();
+                updateProfileStats();
+                updateNav('profile');
+                break;
+            case 'my-listings':
+                renderMyListings();
+                break;
+            case 'settings-city':
+                renderCities();
+                break;
+            default:
+                break;
         }
-        if (currentPage === 'home') renderHome();
-        else if (currentPage === 'search') renderSearch(document.getElementById('searchInput')?.value || '');
-        else if (currentPage === 'favorites') renderFavorites();
-        else if (currentPage === 'chats') renderChats();
-        else if (currentPage === 'profile') { updateUI();
-            updateProfileStats();
-            updateNav('profile'); } else if (currentPage === 'my-listings') renderMyListings();
-        else if (currentPage === 'settings-city') renderCities();
     }
 
     // ================================================================
@@ -2530,10 +2394,7 @@
             return;
         }
 
-        if (!currentUser && page !== 'auth') {
-            navigateTo('auth');
-            return;
-        }
+        if (!currentUser && page !== 'auth') { navigateTo('auth'); return; }
 
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         const target = document.getElementById(`page-${page}`);
@@ -2542,22 +2403,15 @@
         if (bottomNav) bottomNav.classList.add('show');
         currentPage = page;
 
-        if (historyStack[historyStack.length - 1] !== page) {
-            historyStack.push(page);
-        }
+        if (historyStack[historyStack.length - 1] !== page) historyStack.push(page);
 
         renderAll();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function goBack() {
-        if (historyStack.length > 1) {
-            historyStack.pop();
-            const prev = historyStack[historyStack.length - 1];
-            navigateTo(prev);
-        } else {
-            navigateTo('home');
-        }
+        if (historyStack.length > 1) { historyStack.pop();
+            navigateTo(historyStack[historyStack.length - 1]); } else { navigateTo('home'); }
     }
 
     function updateNav(page) {
@@ -2566,11 +2420,7 @@
         });
     }
 
-    function goBackFromDetail() {
-        if (currentPage === 'detail') {
-            navigateTo('home');
-        }
-    }
+    function goBackFromDetail() { if (currentPage === 'detail') navigateTo('home'); }
 
     // ================================================================
     // FILTERS
@@ -2581,25 +2431,16 @@
         currentFilter = cat;
         const input = document.getElementById('searchInput');
         if (input) {
-            if (cat === 'all') {
-                input.value = '';
-            } else {
-                const names = {
-                    products: 'Товари',
-                    jobs: 'Робота',
-                    services: 'Послуги',
-                    realestate: 'Нерухомість',
-                    transport: 'Транспорт'
-                };
+            if (cat === 'all') { input.value = ''; } else {
+                const names = { products: 'Товари', jobs: 'Робота', services: 'Послуги', realestate: 'Нерухомість',
+                    transport: 'Транспорт' };
                 input.value = names[cat] || '';
             }
             renderSearch(input.value);
         }
     }
 
-    function showFilters() {
-        alert('🔍 Фільтри:\n- Ціна від/до\n- Місто\n- Стан (новий/б/в)\n- Дата публікації');
-    }
+    function showFilters() { alert('🔍 Фільтри:\n- Ціна від/до\n- Місто\n- Стан (новий/б/в)\n- Дата публікації'); }
 
     // ================================================================
     // LISTING OPERATIONS
@@ -2608,15 +2449,13 @@
         if (!currentUser) { navigateTo('auth'); return; }
         const isFav = favorites.includes(listingId);
         if (isFav) {
-            await apiRequest(`favorites?user_id=eq.${currentUser.id}&listing_id=eq.${listingId}`, { method: 'DELETE' });
+            await supabase.from('favorites').delete().eq('user_id', currentUser.id).eq('listing_id', listingId);
             favorites = favorites.filter(id => id !== listingId);
         } else {
-            await apiRequest('favorites', {
-                method: 'POST',
-                body: JSON.stringify({ user_id: currentUser.id, listing_id: listingId })
-            });
+            await supabase.from('favorites').insert({ user_id: currentUser.id, listing_id: listingId });
             favorites.push(listingId);
         }
+        cache.favorites = favorites;
         renderAll();
         updateProfileStats();
     }
@@ -2634,7 +2473,7 @@
         if (!title) { alert('Введіть назву'); return; }
         if (!price) { alert('Введіть ціну'); return; }
 
-        const newItem = {
+        const { data, error } = await supabase.from('listings').insert({
             user_id: currentUser.id,
             title: title,
             price: parseFloat(price),
@@ -2645,12 +2484,9 @@
             photos: selectedPhotos.length > 0 ? selectedPhotos : null,
             status: 'active',
             created_at: new Date().toISOString()
-        };
+        }).select();
 
-        const result = await apiRequest('listings', {
-            method: 'POST',
-            body: JSON.stringify(newItem)
-        });
+        if (error) { alert('Помилка: ' + error.message); return; }
 
         selectedPhotos = [];
         renderPhotoPreviews();
@@ -2660,14 +2496,14 @@
         document.getElementById('addPhone').value = '';
         document.getElementById('addDesc').value = '';
 
-        showSuccessModal(
-            '✓ Оголошення опубліковано!',
-            'Ваше оголошення вже доступне на UAMO.',
+        showSuccessModal('✓ Оголошення опубліковано!', 'Ваше оголошення вже доступне на UAMO.',
             () => navigateTo('home'),
-            () => { if (result && result.length > 0) openDetail(result[0].id);
+            () => { if (data && data.length > 0) openDetail(data[0].id);
                 else navigateTo('home'); }
         );
 
+        cache.listings = null;
+        cache.myListings = null;
         await loadListings();
         await loadMyListings();
     }
@@ -2682,25 +2518,16 @@
         const secondaryBtn = document.getElementById('successSecondaryBtn');
 
         if (primaryBtn) {
-            primaryBtn.onclick = () => {
-                closeSuccessModal();
-                if (primaryAction) primaryAction();
-            };
+            primaryBtn.onclick = () => { closeSuccessModal(); if (primaryAction) primaryAction(); };
         }
         if (secondaryBtn) {
-            secondaryBtn.onclick = () => {
-                closeSuccessModal();
-                if (secondaryAction) secondaryAction();
-            };
+            secondaryBtn.onclick = () => { closeSuccessModal(); if (secondaryAction) secondaryAction(); };
         }
-
         modal.classList.add('show');
     }
 
-    function closeSuccessModal() {
-        const modal = document.getElementById('successModal');
-        if (modal) modal.classList.remove('show');
-    }
+    function closeSuccessModal() { const modal = document.getElementById('successModal'); if (modal) modal.classList.remove(
+            'show'); }
 
     // ================================================================
     // DETAIL
@@ -2713,35 +2540,28 @@
         detailPhotos = listing.photos || (listing.image ? [listing.image] : []);
         detailIndex = 0;
 
-        const priceEl = document.getElementById('detailPrice');
-        const titleEl = document.getElementById('detailTitle');
-        const metaEl = document.getElementById('detailMeta');
-        const descEl = document.getElementById('detailDesc');
-        const specsContainer = document.getElementById('detailSpecs');
-        const gallery = document.getElementById('detailGallery');
-
-        if (priceEl) priceEl.textContent = `${listing.price} грн`;
-        if (titleEl) titleEl.textContent = listing.title;
-        if (metaEl) {
-            metaEl.innerHTML = `
+        const el = (id) => document.getElementById(id);
+        if (el('detailPrice')) el('detailPrice').textContent = `${listing.price} грн`;
+        if (el('detailTitle')) el('detailTitle').textContent = listing.title;
+        if (el('detailMeta')) {
+            el('detailMeta').innerHTML = `
                 <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
                 <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
             `;
         }
-        if (descEl) descEl.textContent = listing.description || 'Без опису';
+        if (el('detailDesc')) el('detailDesc').textContent = listing.description || 'Без опису';
 
+        const specsContainer = document.getElementById('detailSpecs');
         if (specsContainer) {
             if (listing.specs && Object.keys(listing.specs).length > 0) {
                 specsContainer.innerHTML = Object.entries(listing.specs)
-                    .map(([key, val]) => `<div class="spec-item"><span class="label">${key}</span> <span>${val}</span></div>`)
+                    .map(([k, v]) => `<div class="spec-item"><span class="label">${k}</span> <span>${v}</span></div>`)
                     .join('');
                 specsContainer.style.display = 'grid';
-            } else {
-                specsContainer.style.display = 'none';
-            }
+            } else { specsContainer.style.display = 'none'; }
         }
 
-        // Update gallery
+        const gallery = document.getElementById('detailGallery');
         if (gallery) {
             if (detailPhotos.length > 0) {
                 gallery.style.backgroundImage = `url('${detailPhotos[0]}')`;
@@ -2753,59 +2573,38 @@
                     <div class="dots" id="detailDots"></div>
                 `;
                 renderDetailDots();
-            } else {
-                gallery.innerHTML = `<i class="fas fa-image"></i>`;
-            }
+            } else { gallery.innerHTML = `<i class="fas fa-image"></i>`; }
         }
 
-        // Update seller
-        const sellerAvatar = document.getElementById('sellerAvatar');
-        const sellerName = document.getElementById('sellerName');
-        const sellerSince = document.getElementById('sellerSince');
-        const sellerCallBtn = document.getElementById('sellerCallBtn');
+        if (el('sellerAvatar')) el('sellerAvatar').textContent = listing.seller?.avatar || '👤';
+        if (el('sellerName')) el('sellerName').textContent = listing.seller?.name || 'Продавець';
+        if (el('sellerSince')) el('sellerSince').textContent = listing.seller?.since || 'На UAMO з 2024';
 
-        if (sellerAvatar) sellerAvatar.textContent = listing.seller?.avatar || '👤';
-        if (sellerName) sellerName.textContent = listing.seller?.name || 'Продавець';
-        if (sellerSince) sellerSince.textContent = listing.seller?.since || 'На UAMO з 2024';
-
-        // Check if own listing
         const isOwn = listing.user_id === currentUser?.id;
         const chatBtn = document.querySelector('.btn-submit[onclick*="openChatFromDetail"]');
         if (chatBtn) {
-            if (isOwn) {
-                chatBtn.textContent = '✏️ Редагувати';
-                chatBtn.onclick = () => editListing(listing.id);
-            } else {
-                chatBtn.textContent = '💬 Написати продавцю';
-                chatBtn.onclick = openChatFromDetail;
-            }
+            if (isOwn) { chatBtn.textContent = '✏️ Редагувати';
+                chatBtn.onclick = () => editListing(listing.id); } else { chatBtn.textContent = '💬 Написати продавцю';
+                chatBtn.onclick = openChatFromDetail; }
         }
 
-        if (sellerCallBtn) {
-            sellerCallBtn.onclick = () => {
+        if (el('sellerCallBtn')) {
+            el('sellerCallBtn').onclick = () => {
                 const phone = listing.phone || userData.phone;
-                if (phone) {
-                    window.location.href = `tel:${phone}`;
-                } else {
-                    alert('Номер телефону не вказано');
-                }
+                if (phone) window.location.href = `tel:${phone}`;
+                else alert('Номер телефону не вказано');
             };
         }
 
-        // Update favorite button
         updateDetailFavoriteBtn();
-
         navigateTo('detail');
     }
 
     function renderDetailDots() {
-        const dotsContainer = document.getElementById('detailDots');
-        if (!dotsContainer) return;
-        if (detailPhotos.length <= 1) {
-            dotsContainer.innerHTML = '';
-            return;
-        }
-        dotsContainer.innerHTML = detailPhotos.map((_, i) =>
+        const container = document.getElementById('detailDots');
+        if (!container) return;
+        if (detailPhotos.length <= 1) { container.innerHTML = ''; return; }
+        container.innerHTML = detailPhotos.map((_, i) =>
             `<span class="${i === detailIndex ? 'active' : ''}" onclick="changeDetailPhoto(${i - detailIndex})"></span>`
         ).join('');
     }
@@ -2814,21 +2613,15 @@
         if (detailPhotos.length === 0) return;
         detailIndex = (detailIndex + direction + detailPhotos.length) % detailPhotos.length;
         const gallery = document.getElementById('detailGallery');
-        if (gallery) {
-            gallery.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
-        }
+        if (gallery) gallery.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
         renderDetailDots();
 
-        const leftArrow = document.getElementById('detailArrowLeft');
-        const rightArrow = document.getElementById('detailArrowRight');
-        if (leftArrow && rightArrow) {
-            if (detailPhotos.length <= 1) {
-                leftArrow.style.display = 'none';
-                rightArrow.style.display = 'none';
-            } else {
-                leftArrow.style.display = 'block';
-                rightArrow.style.display = 'block';
-            }
+        const left = document.getElementById('detailArrowLeft');
+        const right = document.getElementById('detailArrowRight');
+        if (left && right) {
+            if (detailPhotos.length <= 1) { left.style.display = 'none';
+                right.style.display = 'none'; } else { left.style.display = 'block';
+                right.style.display = 'block'; }
         }
     }
 
@@ -2844,30 +2637,21 @@
         }
     }
 
-    function toggleDetailFavorite() {
-        if (!currentDetailId) return;
+    function toggleDetailFavorite() { if (!currentDetailId) return;
         toggleFavorite(currentDetailId);
         updateDetailFavoriteBtn();
-        renderAll();
-    }
+        renderAll(); }
 
     function openChatFromDetail() {
         if (!currentUser) { navigateTo('auth'); return; }
         if (!currentDetailListing) return;
         const sellerId = currentDetailListing.user_id;
-        if (sellerId === currentUser.id) {
-            editListing(currentDetailId);
-            return;
-        }
+        if (sellerId === currentUser.id) { editListing(currentDetailId); return; }
         const existingChat = chats.find(c =>
             (c.buyer_id === currentUser.id && c.seller_id === sellerId) ||
             (c.buyer_id === sellerId && c.seller_id === currentUser.id)
         );
-        if (existingChat) {
-            openChatDetail(existingChat.id);
-        } else {
-            createChat(sellerId, currentDetailListing.id);
-        }
+        if (existingChat) { openChatDetail(existingChat.id); } else { createChat(sellerId, currentDetailListing.id); }
     }
 
     // ================================================================
@@ -2876,30 +2660,34 @@
     async function createChat(sellerId, listingId) {
         if (!currentUser) return;
         try {
-            const result = await apiRequest('chats', {
-                method: 'POST',
-                body: JSON.stringify({
-                    buyer_id: currentUser.id,
-                    seller_id: sellerId,
-                    listing_id: listingId,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                })
-            });
-            if (result && result.length > 0) {
+            const { data, error } = await supabase.from('chats').insert({
+                buyer_id: currentUser.id,
+                seller_id: sellerId,
+                listing_id: listingId,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            }).select();
+
+            if (error) throw error;
+            if (data && data.length > 0) {
+                cache.chats = null;
                 await loadChats();
-                openChatDetail(result[0].id);
+                openChatDetail(data[0].id);
             }
-        } catch (e) {
-            console.error('❌ Error creating chat:', e);
-            alert('Помилка створення чату');
-        }
+        } catch (e) { console.error('❌ Error creating chat:', e);
+            alert('Помилка створення чату'); }
     }
 
     async function openChatDetail(chatId) {
         currentChatId = chatId;
-        const messages = await apiRequest(`messages?chat_id=eq.${chatId}&order=created_at.asc`);
-        chatMessages = messages || [];
+        const { data, error } = await supabase
+            .from('messages')
+            .select('*')
+            .eq('chat_id', chatId)
+            .order('created_at', { ascending: true });
+
+        if (error) { console.error('❌ Error loading messages:', error);
+            chatMessages = []; } else { chatMessages = data || []; }
 
         const container = document.getElementById('chatMessages');
         if (!container) return;
@@ -2930,7 +2718,6 @@
 
         navigateTo('chat-detail');
         scrollChatToBottom();
-
         await markChatRead(chatId);
     }
 
@@ -2941,53 +2728,40 @@
         if (!content || !currentChatId || !currentUser) return;
 
         try {
-            const result = await apiRequest('messages', {
-                method: 'POST',
-                body: JSON.stringify({
-                    chat_id: currentChatId,
-                    sender_id: currentUser.id,
-                    content: content,
-                    created_at: new Date().toISOString()
-                })
+            const { error } = await supabase.from('messages').insert({
+                chat_id: currentChatId,
+                sender_id: currentUser.id,
+                content: content,
+                created_at: new Date().toISOString()
             });
 
-            if (result && result.length > 0) {
-                await apiRequest(`chats?id=eq.${currentChatId}`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({
-                        last_message: content,
-                        last_message_time: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    })
-                });
+            if (error) throw error;
 
-                input.value = '';
-                await loadChats();
-                await openChatDetail(currentChatId);
-            }
-        } catch (e) {
-            console.error('❌ Error sending message:', e);
-            alert('Помилка відправки повідомлення');
-        }
+            await supabase.from('chats').update({
+                last_message: content,
+                last_message_time: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            }).eq('id', currentChatId);
+
+            input.value = '';
+            cache.chats = null;
+            await loadChats();
+            await openChatDetail(currentChatId);
+        } catch (e) { console.error('❌ Error sending message:', e);
+            alert('Помилка відправки повідомлення'); }
     }
 
     async function markChatRead(chatId) {
         try {
-            await apiRequest(`chats?id=eq.${chatId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ unread_count: 0 })
-            });
+            await supabase.from('chats').update({ unread_count: 0 }).eq('id', chatId);
+            cache.chats = null;
             await loadChats();
-        } catch (e) {
-            console.warn('⚠️ Failed to mark chat read:', e);
-        }
+        } catch (e) { console.warn('⚠️ Failed to mark chat read:', e); }
     }
 
     function scrollChatToBottom() {
         const container = document.getElementById('chatMessages');
-        if (container) {
-            container.scrollTop = container.scrollHeight;
-        }
+        if (container) container.scrollTop = container.scrollHeight;
     }
 
     // ================================================================
@@ -2998,10 +2772,8 @@
         if (!files) return;
         for (let i = 0; i < files.length && selectedPhotos.length < 8; i++) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedPhotos.push(e.target.result);
-                renderPhotoPreviews();
-            };
+            reader.onload = function(e) { selectedPhotos.push(e.target.result);
+                renderPhotoPreviews(); };
             reader.readAsDataURL(files[i]);
         }
         event.target.value = '';
@@ -3017,10 +2789,8 @@
         ).join('');
     }
 
-    function removePhoto(index) {
-        selectedPhotos.splice(index, 1);
-        renderPhotoPreviews();
-    }
+    function removePhoto(index) { selectedPhotos.splice(index, 1);
+        renderPhotoPreviews(); }
 
     // ================================================================
     // EDIT LISTING
@@ -3039,10 +2809,8 @@
 
         navigateTo('add');
         const btn = document.querySelector('.btn-submit');
-        if (btn) {
-            btn.textContent = '💾 Оновити оголошення';
-            btn.onclick = () => updateListing(id);
-        }
+        if (btn) { btn.textContent = '💾 Оновити оголошення';
+            btn.onclick = () => updateListing(id); }
     }
 
     async function updateListing(id) {
@@ -3057,43 +2825,42 @@
         if (!price) { alert('Введіть ціну'); return; }
 
         try {
-            await apiRequest(`listings?id=eq.${id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({
-                    title: title,
-                    price: parseFloat(price),
-                    city: city,
-                    phone: phone,
-                    description: desc || '',
-                    category: category,
-                    photos: selectedPhotos.length > 0 ? selectedPhotos : null,
-                    updated_at: new Date().toISOString()
-                })
-            });
+            const { error } = await supabase.from('listings').update({
+                title: title,
+                price: parseFloat(price),
+                city: city,
+                phone: phone,
+                description: desc || '',
+                category: category,
+                photos: selectedPhotos.length > 0 ? selectedPhotos : null,
+                updated_at: new Date().toISOString()
+            }).eq('id', id);
+
+            if (error) throw error;
 
             alert('✅ Оголошення оновлено!');
+            cache.listings = null;
+            cache.myListings = null;
             await loadListings();
             await loadMyListings();
             navigateTo('my-listings');
-        } catch (e) {
-            console.error('❌ Error updating listing:', e);
-            alert('Помилка оновлення');
-        }
+        } catch (e) { console.error('❌ Error updating listing:', e);
+            alert('Помилка оновлення'); }
     }
 
     async function deleteListing(id) {
         if (!confirm('Ви впевнені, що хочете видалити це оголошення?')) return;
-
         try {
-            await apiRequest(`listings?id=eq.${id}`, { method: 'DELETE' });
+            const { error } = await supabase.from('listings').delete().eq('id', id);
+            if (error) throw error;
             alert('🗑 Оголошення видалено');
+            cache.listings = null;
+            cache.myListings = null;
             await loadListings();
             await loadMyListings();
             if (currentPage === 'my-listings') renderMyListings();
-        } catch (e) {
-            console.error('❌ Error deleting listing:', e);
-            alert('Помилка видалення');
-        }
+        } catch (e) { console.error('❌ Error deleting listing:', e);
+            alert('Помилка видалення'); }
     }
 
     // ================================================================
@@ -3109,30 +2876,28 @@
         const city = document.getElementById('editCity').value || 'Київ';
 
         try {
-            await apiRequest(`users?id=eq.${currentUser.id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({
-                    first_name: name,
-                    last_name: lastName,
-                    username: username,
-                    phone: phone,
-                    city: city,
-                    updated_at: new Date().toISOString()
-                })
-            });
+            const { error } = await supabase.from('users').update({
+                first_name: name,
+                last_name: lastName,
+                username: username,
+                phone: phone,
+                city: city,
+                updated_at: new Date().toISOString()
+            }).eq('id', currentUser.id);
+
+            if (error) throw error;
 
             userData.name = name;
             userData.last_name = lastName;
             userData.username = username;
             userData.phone = phone;
             userData.city = city;
+            cache.users[currentUser.id] = null;
             updateUI();
             alert('✅ Профіль оновлено!');
             navigateTo('profile');
-        } catch (e) {
-            console.error('❌ Error saving profile:', e);
-            alert('Помилка збереження');
-        }
+        } catch (e) { console.error('❌ Error saving profile:', e);
+            alert('Помилка збереження'); }
     }
 
     function uploadAvatar(event) {
@@ -3143,31 +2908,23 @@
             const avatarUrl = e.target.result;
             userData.avatar = avatarUrl;
             updateUI();
-            apiRequest(`users?id=eq.${currentUser.id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ avatar_url: avatarUrl })
-            });
+            supabase.from('users').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
+            cache.users[currentUser.id] = null;
         };
         reader.readAsDataURL(file);
     }
 
-    function editUploadAvatar(event) {
-        uploadAvatar(event);
-    }
+    function editUploadAvatar(event) { uploadAvatar(event); }
 
     // ================================================================
     // SETTINGS FUNCTIONS
     // ================================================================
-    function toggleSetting(el) {
-        el.classList.toggle('active');
-    }
+    function toggleSetting(el) { el.classList.toggle('active'); }
 
     function selectCity(city) {
         userData.city = city;
-        apiRequest(`users?id=eq.${currentUser.id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ city: city })
-        });
+        supabase.from('users').update({ city: city }).eq('id', currentUser.id);
+        cache.users[currentUser.id] = null;
         renderCities();
         updateUI();
         alert(`✅ Місто змінено на ${city}`);
@@ -3176,9 +2933,7 @@
     function filterCities(query) {
         const container = document.getElementById('citiesList');
         if (!container) return;
-        const filtered = cities.filter(c =>
-            c.toLowerCase().includes(query.toLowerCase())
-        );
+        const filtered = cities.filter(c => c.toLowerCase().includes(query.toLowerCase()));
         container.innerHTML = filtered.map(c =>
             `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;">
                 <span class="settings-label">${c}</span>
@@ -3192,10 +2947,8 @@
         if (!selected) return;
         const lang = selected.value;
         userData.language = lang;
-        apiRequest(`users?id=eq.${currentUser.id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ language: lang })
-        });
+        supabase.from('users').update({ language: lang }).eq('id', currentUser.id);
+        cache.users[currentUser.id] = null;
         alert(`✅ Мову змінено на ${selected.parentElement.textContent.trim()}`);
     }
 
@@ -3209,90 +2962,57 @@
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            alert('Заповніть всі поля');
-            return;
-        }
-        if (newPassword.length < 6) {
-            alert('Новий пароль має бути не менше 6 символів');
-            return;
-        }
-        if (newPassword !== confirmPassword) {
-            alert('Паролі не співпадають');
-            return;
-        }
+        if (!currentPassword || !newPassword || !confirmPassword) { alert('Заповніть всі поля'); return; }
+        if (newPassword.length < 6) { alert('Новий пароль має бути не менше 6 символів'); return; }
+        if (newPassword !== confirmPassword) { alert('Паролі не співпадають'); return; }
 
         try {
-            const { error } = await supabase.auth.updateUser({
-                password: newPassword
-            });
-
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
             if (error) throw error;
-
             alert('✅ Пароль змінено успішно!');
             document.getElementById('currentPassword').value = '';
             document.getElementById('newPassword').value = '';
             document.getElementById('confirmPassword').value = '';
-        } catch (e) {
-            console.error('❌ Error changing password:', e);
-            alert('Помилка зміни пароля: ' + e.message);
-        }
+        } catch (e) { console.error('❌ Error changing password:', e);
+            alert('Помилка зміни пароля: ' + e.message); }
     }
 
     async function changeEmail() {
         if (!supabase) { alert('Підключення до сервера не встановлено'); return; }
 
         const newEmail = document.getElementById('newEmail').value.trim();
-        if (!newEmail || !newEmail.includes('@')) {
-            alert('Введіть коректний email');
-            return;
-        }
+        if (!newEmail || !newEmail.includes('@')) { alert('Введіть коректний email'); return; }
 
         try {
-            const { error } = await supabase.auth.updateUser({
-                email: newEmail
-            });
-
+            const { error } = await supabase.auth.updateUser({ email: newEmail });
             if (error) throw error;
-
             alert('✅ Email змінено! Перевірте нову пошту для підтвердження.');
             userData.email = newEmail;
+            cache.users[currentUser.id] = null;
             updateUI();
-        } catch (e) {
-            console.error('❌ Error changing email:', e);
-            alert('Помилка зміни email: ' + e.message);
-        }
+        } catch (e) { console.error('❌ Error changing email:', e);
+            alert('Помилка зміни email: ' + e.message); }
     }
 
     async function changePhone() {
         if (!supabase) { alert('Підключення до сервера не встановлено'); return; }
 
         const newPhone = document.getElementById('newPhone').value.trim();
-        if (!newPhone) {
-            alert('Введіть номер телефону');
-            return;
-        }
+        if (!newPhone) { alert('Введіть номер телефону'); return; }
 
         try {
-            const { error } = await supabase.auth.updateUser({
-                data: { phone: newPhone }
-            });
-
+            const { error } = await supabase.auth.updateUser({ data: { phone: newPhone } });
             if (error) throw error;
-
             alert('✅ Телефон змінено успішно!');
             userData.phone = newPhone;
+            cache.users[currentUser.id] = null;
             updateUI();
-        } catch (e) {
-            console.error('❌ Error changing phone:', e);
-            alert('Помилка зміни телефону: ' + e.message);
-        }
+        } catch (e) { console.error('❌ Error changing phone:', e);
+            alert('Помилка зміни телефону: ' + e.message); }
     }
 
-    function showForgotPassword() {
-        navigateTo('auth');
-        handleForgotPassword();
-    }
+    function showForgotPassword() { navigateTo('auth');
+        handleForgotPassword(); }
 
     // ================================================================
     // HELP / ABOUT / LOGOUT
@@ -3316,19 +3036,19 @@
 
     async function handleLogout() {
         if (!confirm('Ви впевнені, що хочете вийти?')) return;
-
         try {
-            if (supabase) {
-                await supabase.auth.signOut();
-            }
+            if (supabase) await supabase.auth.signOut();
             currentUser = null;
             currentPage = 'auth';
+            cache.listings = null;
+            cache.favorites = null;
+            cache.chats = null;
+            cache.myListings = null;
+            cache.users = {};
             navigateTo('auth');
             const bottomNav = document.getElementById('bottomNav');
             if (bottomNav) bottomNav.classList.remove('show');
-        } catch (e) {
-            console.error('❌ Error logging out:', e);
-        }
+        } catch (e) { console.error('❌ Error logging out:', e); }
     }
 
     // ================================================================
@@ -3342,9 +3062,7 @@
                 tg.ready();
                 console.log('✅ Telegram WebApp initialized');
             }
-        } catch (e) {
-            console.warn('⚠️ Telegram WebApp not available');
-        }
+        } catch (e) { console.warn('⚠️ Telegram WebApp not available'); }
     }
 
     // ================================================================
@@ -3352,46 +3070,25 @@
     // ================================================================
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🚀 UAMO App starting...');
-
         initTelegramWebApp();
 
-        const initResult = initSupabase();
-
-        if (initResult) {
+        if (initSupabase()) {
             supabase.auth.getSession().then(({ data: { session } }) => {
                 if (session) {
                     currentUser = session.user;
-                    loadUserData().then(() => {
-                        loadListings();
-                        loadFavorites();
-                        loadChats();
-                        navigateTo('home');
-                    });
-                } else {
-                    navigateTo('auth');
-                }
-            }).catch(() => {
-                navigateTo('auth');
-            });
+                    Promise.all([loadUserData(), loadListings(), loadFavorites(), loadChats()])
+                        .then(() => navigateTo('home'));
+                } else { navigateTo('auth'); }
+            }).catch(() => navigateTo('auth'));
         } else {
-            setTimeout(function retryInit() {
+            setTimeout(function retry() {
                 if (initSupabase()) {
                     supabase.auth.getSession().then(({ data: { session } }) => {
-                        if (session) {
-                            currentUser = session.user;
-                            loadUserData().then(() => {
-                                loadListings();
-                                loadFavorites();
-                                loadChats();
-                                navigateTo('home');
-                            });
-                        } else {
-                            navigateTo('auth');
-                        }
+                        if (session) { currentUser = session.user;
+                            Promise.all([loadUserData(), loadListings(), loadFavorites(), loadChats()])
+                                .then(() => navigateTo('home')); } else { navigateTo('auth'); }
                     });
-                } else {
-                    showAuthError('Не вдалося підключитися до сервера. Перевірте інтернет.');
-                }
+                } else { showAuthError('Не вдалося підключитися до сервера. Перевірте інтернет.'); }
             }, 1000);
         }
     });
