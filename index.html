@@ -1641,33 +1641,6 @@
 
     <script>
         // ================================================================
-        // ПЕРЕВІРКА ЗАВАНТАЖЕННЯ SUPABASE
-        // ================================================================
-
-        console.log('🔍 Перевірка завантаження Supabase SDK...');
-
-        // Функція перевірки готовності
-        function waitForSupabase(callback, attempts) {
-            attempts = attempts || 0;
-            if (typeof supabaseClient !== 'undefined') {
-                console.log('✅ Supabase SDK завантажено!');
-                callback();
-            } else if (attempts < 20) {
-                console.log(`⏳ Очікування Supabase SDK... спроба ${attempts + 1}/20`);
-                setTimeout(function() {
-                    waitForSupabase(callback, attempts + 1);
-                }, 300);
-            } else {
-                console.error('❌ Не вдалося завантажити Supabase SDK');
-                document.getElementById('statusBadge').textContent = '❌';
-                document.getElementById('statusBadge').className = 'status-badge status-error';
-                document.getElementById('authError').textContent =
-                'Не вдалося завантажити бібліотеку Supabase. Перевірте з\'єднання.';
-                document.getElementById('authError').className = 'auth-error show';
-            }
-        }
-
-        // ================================================================
         // SUPABASE CONFIG
         // ================================================================
 
@@ -1709,22 +1682,55 @@
         let unreadCount = 0;
 
         // ================================================================
-        // ІНІЦІАЛІЗАЦІЯ SUPABASE
+        // ВИПРАВЛЕНА ФУНКЦІЯ ОЧІКУВАННЯ SUPABASE
+        // ================================================================
+
+        function waitForSupabase(callback, attempts) {
+            attempts = attempts || 0;
+
+            if (window.supabase && typeof window.supabase.createClient === 'function') {
+                console.log('✅ Supabase SDK завантажено!');
+                callback();
+                return;
+            }
+
+            if (attempts < 20) {
+                console.log('⏳ Очікування Supabase SDK... спроба ' + (attempts + 1) + '/20');
+                setTimeout(function() {
+                    waitForSupabase(callback, attempts + 1);
+                }, 300);
+                return;
+            }
+
+            console.error('❌ Не вдалося завантажити Supabase SDK');
+            document.getElementById('statusBadge').textContent = '❌';
+            document.getElementById('statusBadge').className = 'status-badge status-error';
+            document.getElementById('authError').textContent = 'Не вдалося завантажити бібліотеку Supabase. Перевірте з\'єднання.';
+            document.getElementById('authError').className = 'auth-error show';
+        }
+
+        // ================================================================
+        // ВИПРАВЛЕНА ІНІЦІАЛІЗАЦІЯ SUPABASE
         // ================================================================
 
         function initSupabase() {
             try {
-                // Створюємо клієнт
-                supabase = supabaseClient.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                    throw new Error('Supabase SDK не завантажений');
+                }
+
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 console.log('✅ Supabase client initialized successfully');
+
                 document.getElementById('statusBadge').textContent = '✅';
                 document.getElementById('statusBadge').className = 'status-badge status-connected';
+
                 return true;
             } catch (e) {
                 console.error('❌ Failed to init Supabase:', e);
                 document.getElementById('statusBadge').textContent = '❌';
                 document.getElementById('statusBadge').className = 'status-badge status-error';
-                showAuthError('Не вдалося підключитися до сервера. Перевірте з\'єднання та спробуйте ще раз.');
+                showAuthError('Не вдалося підключитися до сервера: ' + e.message);
                 return false;
             }
         }
@@ -1831,7 +1837,6 @@
         async function handleAuth() {
             hideAuthMessages();
 
-            // Перевіряємо чи є підключення до Supabase
             if (!supabase) {
                 showAuthError('Підключення до сервера не встановлено. Спробуйте перезавантажити сторінку.');
                 return;
@@ -1900,7 +1905,7 @@
                         } else if (error.message.includes('network') || error.message.includes('fetch')) {
                             showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
                         } else {
-                            showAuthError(`Помилка: ${error.message}`);
+                            showAuthError('Помилка: ' + error.message);
                         }
                         return;
                     }
@@ -1945,7 +1950,7 @@
                         } else if (error.message.includes('network') || error.message.includes('fetch')) {
                             showAuthError('Помилка з\'єднання з сервером. Перевірте інтернет.');
                         } else {
-                            showAuthError(`Помилка: ${error.message}`);
+                            showAuthError('Помилка: ' + error.message);
                         }
                         return;
                     }
@@ -1968,8 +1973,7 @@
                                 showAuthSuccess('Тепер увійдіть у свій акаунт');
                             }, 1500);
                         } else {
-                            showAuthSuccess(
-                                '✅ Реєстрація успішна! Перевірте вашу пошту для підтвердження акаунта.');
+                            showAuthSuccess('✅ Реєстрація успішна! Перевірте вашу пошту для підтвердження акаунта.');
                         }
 
                         document.getElementById('authPassword').value = '';
@@ -2024,12 +2028,12 @@
                     if (error.message.includes('User not found')) {
                         showAuthError('Користувача з таким email не знайдено');
                     } else {
-                        showAuthError(`Помилка: ${error.message}`);
+                        showAuthError('Помилка: ' + error.message);
                     }
                     return;
                 }
 
-                showAuthSuccess(`✅ Лист з посиланням для відновлення надіслано на ${email}`);
+                showAuthSuccess('✅ Лист з посиланням для відновлення надіслано на ' + email);
                 document.getElementById('authPassword').value = '';
             } catch (e) {
                 setLoading(false);
@@ -2044,11 +2048,11 @@
 
         async function createUserRecord(userId, email, username) {
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users', {
                     method: 'POST',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -2079,19 +2083,19 @@
             try {
                 const headers = {
                     'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
                     'Content-Type': 'application/json',
                     ...options.headers
                 };
 
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/' + endpoint, {
                     ...options,
                     headers: headers
                 });
 
                 if (res.status === 204) return [];
                 if (res.status === 404) {
-                    console.warn(`⚠️ Endpoint not found: ${endpoint}`);
+                    console.warn('⚠️ Endpoint not found:', endpoint);
                     return [];
                 }
                 if (res.status === 401 || res.status === 403) {
@@ -2106,7 +2110,7 @@
                     return [];
                 }
                 if (!res.ok) {
-                    console.warn(`⚠️ API error ${res.status}: ${endpoint}`);
+                    console.warn('⚠️ API error ' + res.status + ':', endpoint);
                     return [];
                 }
                 const text = await res.text();
@@ -2127,10 +2131,10 @@
         async function loadUserData() {
             if (!currentUser) return;
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${currentUser.id}&select=*`, {
+                const response = await fetch(SUPABASE_URL + '/rest/v1/users?id=eq.' + currentUser.id + '&select=*', {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
                     }
                 });
 
@@ -2181,8 +2185,8 @@
 
         async function loadMyListings() {
             if (!currentUser) return;
-            const data = await apiRequest(
-                `listings?select=*&user_id=eq.${currentUser.id}&order=created_at.desc&limit=500`);
+            const data = await apiRequest('listings?select=*&user_id=eq.' + currentUser.id +
+                '&order=created_at.desc&limit=500');
             myListings = data.map(item => ({
                 id: item.id,
                 title: item.title || 'Без назви',
@@ -2202,7 +2206,7 @@
 
         async function loadFavorites() {
             if (!currentUser) return;
-            const data = await apiRequest(`favorites?user_id=eq.${currentUser.id}&select=listing_id`);
+            const data = await apiRequest('favorites?user_id=eq.' + currentUser.id + '&select=listing_id');
             favorites = data.map(f => f.listing_id);
             renderAll();
             updateProfileStats();
@@ -2210,9 +2214,9 @@
 
         async function loadChats() {
             if (!currentUser) return;
-            const data = await apiRequest(
-                `chats?buyer_id=eq.${currentUser.id}&order=updated_at.desc&select=*,listings(title),buyer:users!chats_buyer_id_fkey(first_name,avatar_url),seller:users!chats_seller_id_fkey(first_name,avatar_url)`
-            );
+            const data = await apiRequest('chats?buyer_id=eq.' + currentUser.id +
+                '&order=updated_at.desc&select=*,listings(title),buyer:users!chats_buyer_id_fkey(first_name,avatar_url),seller:users!chats_seller_id_fkey(first_name,avatar_url)'
+                );
             chats = data || [];
             if (currentPage === 'chats') renderChats();
             updateChatBadge();
@@ -2227,11 +2231,11 @@
             const diff = Date.now() - new Date(dateStr).getTime();
             const min = Math.floor(diff / 60000);
             if (min < 1) return 'щойно';
-            if (min < 60) return `${min} хв тому`;
+            if (min < 60) return min + ' хв тому';
             const hrs = Math.floor(min / 60);
-            if (hrs < 24) return `${hrs} год тому`;
+            if (hrs < 24) return hrs + ' год тому';
             const days = Math.floor(hrs / 24);
-            if (days < 7) return `${days} дн тому`;
+            if (days < 7) return days + ' дн тому';
             return new Date(dateStr).toLocaleDateString();
         }
 
@@ -2296,50 +2300,52 @@
             ];
             const container = document.getElementById('categorySlider');
             container.innerHTML = categories.map(c =>
-                `<div class="category-item" onclick="filterByCategory('${c.id}'); navigateTo('search')">
-                    <i class="fas ${c.icon}"></i>
-                    <span>${c.name}</span>
-                </div>`
+                '<div class="category-item" onclick="filterByCategory(\'' + c.id +
+                '\'); navigateTo(\'search\')">' +
+                '<i class="fas ' + c.icon + '"></i>' +
+                '<span>' + c.name + '</span>' +
+                '</div>'
             ).join('');
         }
 
         function renderListingCard(listing) {
             const fav = isFavorite(listing.id);
             const photo = getFirstPhoto(listing);
-            return `
-                <div class="listing-card" onclick="openDetail('${listing.id}')">
-                    <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);`}">
-                        ${!photo ? listing.image || '📦' : ''}
-                        <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${listing.id}')">
-                            <i class="${fav ? 'fas' : 'far'} fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="listing-card-body">
-                        <div class="price">${listing.price} грн</div>
-                        <div class="title">${listing.title}</div>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> ${listing.location}</div>
-                    </div>
-                </div>
-            `;
+            return '<div class="listing-card" onclick="openDetail(\'' + listing.id + '\')">' +
+                '<div class="listing-card-image" style="' + (photo ? 'background-image:url(\'' + photo +
+                '\')' : 'background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);') +
+                '">' +
+                (!photo ? listing.image || '📦' : '') +
+                '<button class="favorite-icon ' + (fav ? 'active' : '') +
+                '" onclick="event.stopPropagation(); toggleFavorite(\'' + listing.id + '\')">' +
+                '<i class="' + (fav ? 'fas' : 'far') + ' fa-heart"></i>' +
+                '</button>' +
+                '</div>' +
+                '<div class="listing-card-body">' +
+                '<div class="price">' + listing.price + ' грн</div>' +
+                '<div class="title">' + listing.title + '</div>' +
+                '<div class="location"><i class="fas fa-map-marker-alt"></i> ' + listing.location + '</div>' +
+                '</div>' +
+                '</div>';
         }
 
         function renderSearchResult(listing) {
             const photo = getFirstPhoto(listing);
-            return `
-                <div class="search-result-card" onclick="openDetail('${listing.id}')">
-                    <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;`}">
-                        ${!photo ? listing.image || '📦' : ''}
-                    </div>
-                    <div class="info">
-                        <div class="price">${listing.price} грн</div>
-                        <div class="title">${listing.title}</div>
-                        <div class="meta">
-                            <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
-                            <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+            return '<div class="search-result-card" onclick="openDetail(\'' + listing.id + '\')">' +
+                '<div class="img" style="' + (photo ? 'background-image:url(\'' + photo +
+                '\')' : 'background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;') +
+                '">' +
+                (!photo ? listing.image || '📦' : '') +
+                '</div>' +
+                '<div class="info">' +
+                '<div class="price">' + listing.price + ' грн</div>' +
+                '<div class="title">' + listing.title + '</div>' +
+                '<div class="meta">' +
+                '<span><i class="fas fa-map-marker-alt"></i> ' + listing.location + '</span>' +
+                '<span><i class="far fa-clock"></i> ' + timeAgo(listing.createdAt) + '</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
         }
 
         function renderHome() {
@@ -2360,7 +2366,8 @@
             document.getElementById('bottomNav').classList.add('show');
         }
 
-        function renderSearch(query = '') {
+        function renderSearch(query) {
+            query = query || '';
             const container = document.getElementById('searchResults');
             let results = listings;
             if (query.trim()) {
@@ -2372,8 +2379,7 @@
                 );
             }
             if (results.length === 0) {
-                container.innerHTML =
-                    `<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>`;
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i> Нічого не знайдено</div>';
             } else {
                 container.innerHTML = results.map(renderSearchResult).join('');
             }
@@ -2384,13 +2390,12 @@
             const container = document.getElementById('favoritesContent');
             const favList = listings.filter(l => isFavorite(l.id));
             if (favList.length === 0) {
-                container.innerHTML = `
-                    <div class="favorites-empty">
-                        <i class="fas fa-heart" style="color:#EF4444;"></i>
-                        <h3>Тут поки що порожньо</h3>
-                        <p style="margin-top:4px; color:var(--text-secondary);">Зберігайте оголошення, щоб повернутися до них пізніше.</p>
-                    </div>
-                `;
+                container.innerHTML =
+                    '<div class="favorites-empty">' +
+                    '<i class="fas fa-heart" style="color:#EF4444;"></i>' +
+                    '<h3>Тут поки що порожньо</h3>' +
+                    '<p style="margin-top:4px; color:var(--text-secondary);">Зберігайте оголошення, щоб повернутися до них пізніше.</p>' +
+                    '</div>';
             } else {
                 container.innerHTML = favList.map(l => renderSearchResult(l)).join('');
             }
@@ -2401,13 +2406,12 @@
             const container = document.getElementById('chatsList');
             if (!container) return;
             if (chats.length === 0) {
-                container.innerHTML = `
-                    <div class="favorites-empty">
-                        <i class="fas fa-comment-dots" style="color:var(--accent);"></i>
-                        <h3>Немає чатів</h3>
-                        <p style="margin-top:4px; color:var(--text-secondary);">Напишіть продавцю, щоб почати діалог</p>
-                    </div>
-                `;
+                container.innerHTML =
+                    '<div class="favorites-empty">' +
+                    '<i class="fas fa-comment-dots" style="color:var(--accent);"></i>' +
+                    '<h3>Немає чатів</h3>' +
+                    '<p style="margin-top:4px; color:var(--text-secondary);">Напишіть продавцю, щоб почати діалог</p>' +
+                    '</div>';
             } else {
                 container.innerHTML = chats.map(chat => {
                     const isBuyer = chat.buyer_id === currentUser.id;
@@ -2415,24 +2419,26 @@
                     const partnerName = partner?.first_name || 'Користувач';
                     const partnerAvatar = partner?.avatar_url || partnerName?.[0] || '👤';
                     const unread = chat.unread_count || 0;
-                    return `
-                        <div class="search-result-card" onclick="openChatDetail('${chat.id}')">
-                            <div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">
-                                ${partnerAvatar}
-                            </div>
-                            <div class="info">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-weight:600;">${partnerName}</span>
-                                    ${unread > 0 ? `<span style="background:#EF4444; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">${unread}</span>` : ''}
-                                </div>
-                                <div style="font-size:13px; color:var(--text-secondary);">${chat.last_message || 'Немає повідомлень'}</div>
-                                <div class="meta">
-                                    <span><i class="fas fa-clock"></i> ${chat.last_message_time ? timeAgo(chat.last_message_time) : 'нещодавно'}</span>
-                                    <span>📦 ${chat.listings?.title || 'Оголошення'}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    return '<div class="search-result-card" onclick="openChatDetail(\'' + chat.id + '\')">' +
+                        '<div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">' +
+                        partnerAvatar +
+                        '</div>' +
+                        '<div class="info">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                        '<span style="font-weight:600;">' + partnerName + '</span>' +
+                        (unread > 0 ?
+                            '<span style="background:#EF4444; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">' +
+                            unread + '</span>' : '') +
+                        '</div>' +
+                        '<div style="font-size:13px; color:var(--text-secondary);">' + (chat.last_message ||
+                            'Немає повідомлень') + '</div>' +
+                        '<div class="meta">' +
+                        '<span><i class="fas fa-clock"></i> ' + (chat.last_message_time ? timeAgo(chat
+                            .last_message_time) : 'нещодавно') + '</span>' +
+                        '<span>📦 ' + (chat.listings?.title || 'Оголошення') + '</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
                 }).join('');
             }
             updateNav('chats');
@@ -2443,37 +2449,39 @@
             const container = document.getElementById('myListingsContainer');
             if (!container) return;
             if (myListings.length === 0) {
-                container.innerHTML = `
-                    <div class="favorites-empty">
-                        <i class="fas fa-list-ul" style="color:var(--accent);"></i>
-                        <h3>У вас поки немає оголошень</h3>
-                        <p style="margin-top:4px; color:var(--text-secondary);">Створіть своє перше оголошення</p>
-                        <button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo('add')">+ Додати оголошення</button>
-                    </div>
-                `;
+                container.innerHTML =
+                    '<div class="favorites-empty">' +
+                    '<i class="fas fa-list-ul" style="color:var(--accent);"></i>' +
+                    '<h3>У вас поки немає оголошень</h3>' +
+                    '<p style="margin-top:4px; color:var(--text-secondary);">Створіть своє перше оголошення</p>' +
+                    '<button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo(\'add\')">+ Додати оголошення</button>' +
+                    '</div>';
             } else {
                 container.innerHTML = myListings.map(item => {
                     const photo = getFirstPhoto(item);
-                    return `
-                        <div class="search-result-card" style="flex-wrap:wrap;">
-                            <div class="img" style="${photo ? `background-image:url('${photo}')` : `display:flex; align-items:center; justify-content:center; font-size:24px;`}">
-                                ${!photo ? '📦' : ''}
-                            </div>
-                            <div class="info" style="flex:1;">
-                                <div class="price">${item.price} грн</div>
-                                <div class="title">${item.title}</div>
-                                <div class="meta">
-                                    <span><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
-                                    <span><i class="far fa-clock"></i> ${timeAgo(item.createdAt)}</span>
-                                </div>
-                            </div>
-                            <div style="display:flex; gap:6px; width:100%; margin-top:8px;">
-                                <button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail('${item.id}')">👁 Відкрити</button>
-                                <button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing('${item.id}')">✏️ Редагувати</button>
-                                <button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1;" onclick="deleteListing('${item.id}')">🗑 Видалити</button>
-                            </div>
-                        </div>
-                    `;
+                    return '<div class="search-result-card" style="flex-wrap:wrap;">' +
+                        '<div class="img" style="' + (photo ? 'background-image:url(\'' + photo +
+                            '\')' : 'display:flex; align-items:center; justify-content:center; font-size:24px;') +
+                        '">' +
+                        (!photo ? '📦' : '') +
+                        '</div>' +
+                        '<div class="info" style="flex:1;">' +
+                        '<div class="price">' + item.price + ' грн</div>' +
+                        '<div class="title">' + item.title + '</div>' +
+                        '<div class="meta">' +
+                        '<span><i class="fas fa-map-marker-alt"></i> ' + item.location + '</span>' +
+                        '<span><i class="far fa-clock"></i> ' + timeAgo(item.createdAt) + '</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div style="display:flex; gap:6px; width:100%; margin-top:8px;">' +
+                        '<button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail(\'' +
+                        item.id + '\')">👁 Відкрити</button>' +
+                        '<button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing(\'' +
+                        item.id + '\')">✏️ Редагувати</button>' +
+                        '<button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1;" onclick="deleteListing(\'' +
+                        item.id + '\')">🗑 Видалити</button>' +
+                        '</div>' +
+                        '</div>';
                 }).join('');
             }
         }
@@ -2482,7 +2490,7 @@
             const select = document.getElementById('editCity');
             if (!select) return;
             select.innerHTML = cities.map(c =>
-                `<option value="${c}" ${c === userData.city ? 'selected' : ''}>${c}</option>`
+                '<option value="' + c + '" ' + (c === userData.city ? 'selected' : '') + '>' + c + '</option>'
             ).join('');
         }
 
@@ -2490,10 +2498,11 @@
             const container = document.getElementById('citiesList');
             if (!container) return;
             container.innerHTML = cities.map(c =>
-                `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;">
-                    <span class="settings-label">${c}</span>
-                    ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
-                </div>`
+                '<div class="settings-item" onclick="selectCity(\'' + c + '\')" style="cursor:pointer;">' +
+                '<span class="settings-label">' + c + '</span>' +
+                (c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' :
+                    '') +
+                '</div>'
             ).join('');
         }
 
@@ -2506,9 +2515,11 @@
             else if (currentPage === 'search') renderSearch(document.getElementById('searchInput')?.value || '');
             else if (currentPage === 'favorites') renderFavorites();
             else if (currentPage === 'chats') renderChats();
-            else if (currentPage === 'profile') { updateUI();
+            else if (currentPage === 'profile') {
+                updateUI();
                 updateProfileStats();
-                updateNav('profile'); } else if (currentPage === 'my-listings') renderMyListings();
+                updateNav('profile');
+            } else if (currentPage === 'my-listings') renderMyListings();
             else if (currentPage === 'settings-city') renderCities();
         }
 
@@ -2532,7 +2543,7 @@
             }
 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById(`page-${page}`);
+            const target = document.getElementById('page-' + page);
             if (target) target.classList.add('active');
             document.getElementById('bottomNav').classList.add('show');
             currentPage = page;
@@ -2605,7 +2616,9 @@
             if (!currentUser) { navigateTo('auth'); return; }
             const isFav = favorites.includes(listingId);
             if (isFav) {
-                await apiRequest(`favorites?user_id=eq.${currentUser.id}&listing_id=eq.${listingId}`, { method: 'DELETE' });
+                await apiRequest('favorites?user_id=eq.' + currentUser.id + '&listing_id=eq.' + listingId, {
+                    method: 'DELETE'
+                });
                 favorites = favorites.filter(id => id !== listingId);
             } else {
                 await apiRequest('favorites', {
@@ -2660,8 +2673,8 @@
             showSuccessModal(
                 '✓ Оголошення опубліковано!',
                 'Ваше оголошення вже доступне на UAMO.',
-                () => navigateTo('home'),
-                () => { if (result && result.length > 0) openDetail(result[0].id);
+                function() { navigateTo('home'); },
+                function() { if (result && result.length > 0) openDetail(result[0].id);
                     else navigateTo('home'); }
             );
 
@@ -2677,11 +2690,11 @@
             const primaryBtn = document.getElementById('successPrimaryBtn');
             const secondaryBtn = document.getElementById('successSecondaryBtn');
 
-            primaryBtn.onclick = () => {
+            primaryBtn.onclick = function() {
                 closeSuccessModal();
                 if (primaryAction) primaryAction();
             };
-            secondaryBtn.onclick = () => {
+            secondaryBtn.onclick = function() {
                 closeSuccessModal();
                 if (secondaryAction) secondaryAction();
             };
@@ -2705,18 +2718,20 @@
             detailPhotos = listing.photos || (listing.image ? [listing.image] : []);
             detailIndex = 0;
 
-            document.getElementById('detailPrice').textContent = `${listing.price} грн`;
+            document.getElementById('detailPrice').textContent = listing.price + ' грн';
             document.getElementById('detailTitle').textContent = listing.title;
-            document.getElementById('detailMeta').innerHTML = `
-                <span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span>
-                <span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>
-            `;
+            document.getElementById('detailMeta').innerHTML =
+                '<span><i class="fas fa-map-marker-alt"></i> ' + listing.location + '</span>' +
+                '<span><i class="far fa-clock"></i> ' + timeAgo(listing.createdAt) + '</span>';
             document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
 
             const specsContainer = document.getElementById('detailSpecs');
             if (listing.specs && Object.keys(listing.specs).length > 0) {
                 specsContainer.innerHTML = Object.entries(listing.specs)
-                    .map(([key, val]) => `<div class="spec-item"><span class="label">${key}</span> <span>${val}</span></div>`)
+                    .map(function(entry) {
+                        return '<div class="spec-item"><span class="label">' + entry[0] +
+                            '</span> <span>' + entry[1] + '</span></div>';
+                    })
                     .join('');
                 specsContainer.style.display = 'grid';
             } else {
@@ -2725,7 +2740,7 @@
 
             if (listing.seller) {
                 document.getElementById('sellerName').textContent = listing.seller.name || 'Продавець';
-                document.getElementById('sellerSince').textContent = `На UAMO з ${listing.seller.since || '2024'}`;
+                document.getElementById('sellerSince').textContent = 'На UAMO з ' + (listing.seller.since || '2024');
                 document.getElementById('sellerAvatar').textContent = listing.seller.avatar || '👤';
             }
 
@@ -2744,15 +2759,16 @@
             const arrowRight = document.getElementById('detailArrowRight');
 
             if (detailPhotos.length > 0) {
-                gallery.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
+                gallery.style.backgroundImage = 'url(\'' + detailPhotos[detailIndex] + '\')';
                 gallery.style.backgroundSize = 'cover';
                 gallery.style.backgroundPosition = 'center';
                 const icon = gallery.querySelector('i');
                 if (icon) icon.style.display = 'none';
 
-                dots.innerHTML = detailPhotos.map((_, i) =>
-                    `<span class="${i === detailIndex ? 'active' : ''}" onclick="detailIndex=${i}; updateDetailGallery();"></span>`
-                ).join('');
+                dots.innerHTML = detailPhotos.map(function(_, i) {
+                    return '<span class="' + (i === detailIndex ? 'active' : '') +
+                        '" onclick="detailIndex=' + i + '; updateDetailGallery();"></span>';
+                }).join('');
 
                 arrowLeft.style.display = detailPhotos.length > 1 ? 'block' : 'none';
                 arrowRight.style.display = detailPhotos.length > 1 ? 'block' : 'none';
@@ -2794,8 +2810,8 @@
             if (!currentUser) { navigateTo('auth'); return; }
             const sellerId = currentDetailListing.user_id || '1';
             const adId = currentDetailListing.id;
-            apiRequest(`chats?buyer_id=eq.${currentUser.id}&seller_id=eq.${sellerId}&listing_id=eq.${adId}`)
-                .then(chats => {
+            apiRequest('chats?buyer_id=eq.' + currentUser.id + '&seller_id=eq.' + sellerId + '&listing_id=eq.' + adId)
+                .then(function(chats) {
                     if (chats && chats.length > 0) {
                         openChatDetail(chats[0].id);
                     } else {
@@ -2808,7 +2824,7 @@
                                 created_at: new Date().toISOString(),
                                 updated_at: new Date().toISOString()
                             })
-                        }).then(newChat => {
+                        }).then(function(newChat) {
                             if (newChat && newChat.length > 0) {
                                 openChatDetail(newChat[0].id);
                             }
@@ -2819,13 +2835,13 @@
 
         function openChatDetail(chatId) {
             currentChatId = chatId;
-            apiRequest(`messages?chat_id=eq.${chatId}&order=created_at.asc&limit=200`)
-                .then(messages => {
+            apiRequest('messages?chat_id=eq.' + chatId + '&order=created_at.asc&limit=200')
+                .then(function(messages) {
                     chatMessages = messages || [];
-                    apiRequest(
-                            `chats?id=eq.${chatId}&select=*,buyer:users!chats_buyer_id_fkey(first_name,avatar_url),seller:users!chats_seller_id_fkey(first_name,avatar_url)`
-                        )
-                        .then(chatData => {
+                    apiRequest('chats?id=eq.' + chatId +
+                            '&select=*,buyer:users!chats_buyer_id_fkey(first_name,avatar_url),seller:users!chats_seller_id_fkey(first_name,avatar_url)'
+                            )
+                        .then(function(chatData) {
                             const chat = chatData[0];
                             if (!chat) return;
                             const isBuyer = chat.buyer_id === currentUser.id;
@@ -2836,10 +2852,11 @@
                             document.getElementById('chatPartnerAvatar').innerHTML = partnerAvatar;
                             renderChatMessages();
                             navigateTo('chat-detail');
-                            apiRequest(`messages?chat_id=eq.${chatId}&is_read=eq.false`, {
+                            apiRequest('messages?chat_id=eq.' + chatId + '&is_read=eq.false', {
                                 method: 'PATCH',
-                                body: JSON.stringify({ is_read: true, read_at: new Date().toISOString() })
-                            }).then(() => loadChats());
+                                body: JSON.stringify({ is_read: true, read_at: new Date()
+                                        .toISOString() })
+                            }).then(function() { loadChats(); });
                         });
                 });
         }
@@ -2847,16 +2864,15 @@
         function renderChatMessages() {
             const container = document.getElementById('chatMessages');
             if (!container) return;
-            container.innerHTML = chatMessages.map(msg => {
+            container.innerHTML = chatMessages.map(function(msg) {
                 const isOwn = msg.sender_id === currentUser.id;
-                return `
-                    <div class="chat-message ${isOwn ? 'own' : 'other'}">
-                        ${msg.text}
-                        <span class="chat-time">${new Date(msg.created_at).toLocaleTimeString()}</span>
-                    </div>
-                `;
+                return '<div class="chat-message ' + (isOwn ? 'own' : 'other') + '">' +
+                    msg.text +
+                    '<span class="chat-time">' + new Date(msg.created_at).toLocaleTimeString() +
+                    '</span>' +
+                    '</div>';
             }).join('');
-            setTimeout(() => container.scrollTop = container.scrollHeight, 100);
+            setTimeout(function() { container.scrollTop = container.scrollHeight; }, 100);
         }
 
         function sendMessage() {
@@ -2871,15 +2887,15 @@
                     text: text,
                     created_at: new Date().toISOString()
                 })
-            }).then(() => {
+            }).then(function() {
                 input.value = '';
-                apiRequest(`chats?id=eq.${currentChatId}`, {
+                apiRequest('chats?id=eq.' + currentChatId, {
                     method: 'PATCH',
                     body: JSON.stringify({
                         last_message: text,
                         last_message_time: new Date().toISOString()
                     })
-                }).then(() => {
+                }).then(function() {
                     openChatDetail(currentChatId);
                     loadChats();
                 });
@@ -2898,7 +2914,7 @@
                     break;
                 }
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = function(e) {
                     selectedPhotos.push(e.target.result);
                     renderPhotoPreviews();
                 };
@@ -2909,11 +2925,13 @@
 
         function renderPhotoPreviews() {
             const container = document.getElementById('photoPreviewGrid');
-            container.innerHTML = selectedPhotos.map((p, i) =>
-                `<div class="photo-preview-item" style="background-image:url('${p}')">
-                    <button class="remove-photo" onclick="selectedPhotos.splice(${i},1); renderPhotoPreviews();">×</button>
-                </div>`
-            ).join('');
+            container.innerHTML = selectedPhotos.map(function(p, i) {
+                return '<div class="photo-preview-item" style="background-image:url(\'' + p +
+                    '\')">' +
+                    '<button class="remove-photo" onclick="selectedPhotos.splice(' + i +
+                    ',1); renderPhotoPreviews();">×</button>' +
+                    '</div>';
+            }).join('');
         }
 
         // ================================================================
@@ -2924,13 +2942,13 @@
             const file = event.target.files[0];
             if (!file || !currentUser) return;
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = function(e) {
                 const data = e.target.result;
                 userData.avatar = data;
-                document.getElementById('profileAvatarLetter').innerHTML = `<img src="${data}" />`;
-                document.getElementById('editAvatarLetter').innerHTML = `<img src="${data}" />`;
-                document.getElementById('avatarLetter').innerHTML = `<img src="${data}" />`;
-                apiRequest(`users?id=eq.${currentUser.id}`, {
+                document.getElementById('profileAvatarLetter').innerHTML = '<img src="' + data + '" />';
+                document.getElementById('editAvatarLetter').innerHTML = '<img src="' + data + '" />';
+                document.getElementById('avatarLetter').innerHTML = '<img src="' + data + '" />';
+                apiRequest('users?id=eq.' + currentUser.id, {
                     method: 'PATCH',
                     body: JSON.stringify({ avatar_url: data })
                 });
@@ -2942,13 +2960,13 @@
             const file = event.target.files[0];
             if (!file || !currentUser) return;
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = function(e) {
                 const data = e.target.result;
                 userData.avatar = data;
-                document.getElementById('editAvatarLetter').innerHTML = `<img src="${data}" />`;
-                document.getElementById('profileAvatarLetter').innerHTML = `<img src="${data}" />`;
-                document.getElementById('avatarLetter').innerHTML = `<img src="${data}" />`;
-                apiRequest(`users?id=eq.${currentUser.id}`, {
+                document.getElementById('editAvatarLetter').innerHTML = '<img src="' + data + '" />';
+                document.getElementById('profileAvatarLetter').innerHTML = '<img src="' + data + '" />';
+                document.getElementById('avatarLetter').innerHTML = '<img src="' + data + '" />';
+                apiRequest('users?id=eq.' + currentUser.id, {
                     method: 'PATCH',
                     body: JSON.stringify({ avatar_url: data })
                 });
@@ -2966,7 +2984,7 @@
 
             if (!name) { alert('Введіть ім\'я'); return; }
 
-            await apiRequest(`users?id=eq.${currentUser.id}`, {
+            await apiRequest('users?id=eq.' + currentUser.id, {
                 method: 'PATCH',
                 body: JSON.stringify({
                     first_name: name,
@@ -2991,24 +3009,26 @@
         function selectCity(city) {
             if (!currentUser) { navigateTo('auth'); return; }
             userData.city = city;
-            apiRequest(`users?id=eq.${currentUser.id}`, {
+            apiRequest('users?id=eq.' + currentUser.id, {
                 method: 'PATCH',
                 body: JSON.stringify({ city: city })
             });
             renderCities();
-            alert(`✅ Місто змінено на ${city}`);
+            alert('✅ Місто змінено на ' + city);
         }
 
         function filterCities(query) {
             const container = document.getElementById('citiesList');
             if (!container) return;
-            const filtered = cities.filter(c => c.toLowerCase().includes(query.toLowerCase()));
-            container.innerHTML = filtered.map(c =>
-                `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;">
-                    <span class="settings-label">${c}</span>
-                    ${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}
-                </div>`
-            ).join('');
+            const filtered = cities.filter(function(c) { return c.toLowerCase().includes(query.toLowerCase()); });
+            container.innerHTML = filtered.map(function(c) {
+                return '<div class="settings-item" onclick="selectCity(\'' + c + '\')" style="cursor:pointer;">' +
+                    '<span class="settings-label">' + c + '</span>' +
+                    (c === userData.city ?
+                        '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' :
+                        '') +
+                    '</div>';
+            }).join('');
         }
 
         function saveLanguage() {
@@ -3016,7 +3036,7 @@
             const selected = document.querySelector('input[name="language"]:checked');
             if (selected) {
                 userData.language = selected.value;
-                apiRequest(`users?id=eq.${currentUser.id}`, {
+                apiRequest('users?id=eq.' + currentUser.id, {
                     method: 'PATCH',
                     body: JSON.stringify({ language: selected.value })
                 });
@@ -3026,11 +3046,6 @@
 
         function toggleSetting(el) {
             el.classList.toggle('active');
-            const isActive = el.classList.contains('active');
-            if (currentUser) {
-                // Тут можна зберігати конкретне налаштування
-            }
-            console.log('Налаштування змінено:', isActive);
         }
 
         // ================================================================
@@ -3044,9 +3059,7 @@
             if (newEmail === userData.email) { alert('Email не змінився'); return; }
 
             try {
-                const { error } = await supabase.auth.updateUser({
-                    email: newEmail
-                });
+                const { error } = await supabase.auth.updateUser({ email: newEmail });
                 if (error) {
                     alert('Помилка: ' + error.message);
                     return;
@@ -3066,7 +3079,7 @@
             if (!newPhone) { alert('Введіть новий номер'); return; }
             if (newPhone === userData.phone) { alert('Номер не змінився'); return; }
 
-            await apiRequest(`users?id=eq.${currentUser.id}`, {
+            await apiRequest('users?id=eq.' + currentUser.id, {
                 method: 'PATCH',
                 body: JSON.stringify({ phone: newPhone })
             });
@@ -3106,9 +3119,7 @@
                     return;
                 }
 
-                const { error } = await supabase.auth.updateUser({
-                    password: newPassword
-                });
+                const { error } = await supabase.auth.updateUser({ password: newPassword });
                 if (error) {
                     alert('Помилка: ' + error.message);
                     return;
@@ -3128,7 +3139,7 @@
             if (email) {
                 supabase.auth.resetPasswordForEmail(email, {
                     redirectTo: window.location.origin
-                }).then(({ error }) => {
+                }).then(function({ error }) {
                     if (error) {
                         alert('Помилка: ' + error.message);
                     } else {
@@ -3155,7 +3166,7 @@
             renderPhotoPreviews();
             const btn = document.querySelector('.add-listing-form .btn-submit');
             btn.textContent = '✏️ Оновити оголошення';
-            btn.onclick = () => updateListing(id);
+            btn.onclick = function() { updateListing(id); };
             navigateTo('add');
         }
 
@@ -3170,7 +3181,7 @@
 
             if (!title || !price) { alert('Заповніть назву та ціну'); return; }
 
-            await apiRequest(`listings?id=eq.${id}`, {
+            await apiRequest('listings?id=eq.' + id, {
                 method: 'PATCH',
                 body: JSON.stringify({
                     title: title,
@@ -3201,7 +3212,7 @@
 
         async function deleteListing(id) {
             if (!confirm('Ви впевнені, що хочете видалити це оголошення?')) return;
-            await apiRequest(`listings?id=eq.${id}`, { method: 'DELETE' });
+            await apiRequest('listings?id=eq.' + id, { method: 'DELETE' });
             alert('🗑 Оголошення видалено');
             await loadListings();
             await loadMyListings();
@@ -3212,10 +3223,13 @@
         // HELPERS
         // ================================================================
 
-        function showHelp() { alert(
-            '🆘 Допомога\n\nЯкщо у вас виникли питання, зверніться до служби підтримки: support@uamo.com'); }
+        function showHelp() {
+            alert('🆘 Допомога\n\nЯкщо у вас виникли питання, зверніться до служби підтримки: support@uamo.com');
+        }
 
-        function showAbout() { alert('ℹ️ Про UAMO\n\nUAMO — універсальна платформа оголошень.\nВерсія 2.0\n\n© 2026 UAMO'); }
+        function showAbout() {
+            alert('ℹ️ Про UAMO\n\nUAMO — універсальна платформа оголошень.\nВерсія 2.0\n\n© 2026 UAMO');
+        }
 
         async function handleLogout() {
             if (!confirm('Ви впевнені, що хочете вийти?')) return;
