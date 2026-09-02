@@ -830,13 +830,24 @@
     </div>
 </div>
 
-<!-- ВИПРАВЛЕНО: ЗАМІНЕНО CDN НА UNPKG -->
+<!-- ============================================================ -->
+<!-- ТІЛЬКИ ОДИН ПІДКЛЮЧЕННЯ SUPABASE - БЕЗ ДУБЛІКАТІВ -->
+<!-- ============================================================ -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <script>
-// =====================================================================
+// ================================================================
+// SUPABASE CONFIG - ЄДИНИЙ РАЗ
+// ================================================================
+
+const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_O--QDl2DMLdrGfzxJllRfg_qlH401yR';
+
+let supabase = null; // ТІЛЬКИ ОДНА ЗМІННА - БЕЗ ДУБЛІКАТІВ
+
+// ================================================================
 // ПЕРЕКЛАДИ (11 МОВ)
-// =====================================================================
+// ================================================================
 
 const translations = {
     uk: {
@@ -920,49 +931,17 @@ moreLangs.forEach(lang => {
 let currentLang = 'uk';
 let t = function(key) { return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key; };
 
-// =====================================================================
-// БЕЗПЕЧНІ HELPER-ФУНКЦІЇ ДЛЯ DOM
-// =====================================================================
+// ================================================================
+// HELPER-ФУНКЦІЇ ДЛЯ DOM
+// ================================================================
 
 function setValue(id, value) { const el = document.getElementById(id); if (el) el.value = value ?? ''; }
 function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value ?? ''; }
 function setHTML(id, value) { const el = document.getElementById(id); if (el) el.innerHTML = value ?? ''; }
 
-// =====================================================================
-// SUPABASE CONFIG
-// =====================================================================
-
-const SUPABASE_URL = 'https://qupsmelpssgniwohjbxz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_O--QDl2DMLdrGfzxJllRfg_qlH401yR';
-
-let supabase = null;
-let currentUser = null;
-let isAuthMode = 'login';
-let currentPage = 'auth';
-let historyStack = ['auth'];
-let selectedPhotos = [];
-let favorites = [];
-let listings = [];
-let myListings = [];
-let chats = [];
-let chatMessages = [];
-let currentChatId = null;
-let currentDetailId = null;
-let detailPhotos = [];
-let detailIndex = 0;
-let currentDetailListing = null;
-let sellerProfileUserId = null;
-let chatSubscription = null;
-let cities = ['Київ','Харків','Одеса','Дніпро','Львів','Запоріжжя','Кривий Ріг','Миколаїв','Вінниця',
-    'Полтава','Чернігів','Черкаси','Суми','Житомир','Рівне','Івано-Франківськ','Тернопіль','Луцьк',
-    'Ужгород','Хмельницький'];
-let userData = {id:null,name:'Користувач',last_name:'',username:'',phone:'',email:'',city:'Київ',avatar:'К',language:'uk',rating:0,ratingCount:0};
-let unreadCount = 0;
-let filterData = {priceFrom:'',priceTo:'',city:'',condition:'',sort:'newest',hasPhoto:false,isNew:false};
-
-// =====================================================================
+// ================================================================
 // ПЕРЕКЛАД ІНТЕРФЕЙСУ
-// =====================================================================
+// ================================================================
 
 function applyTranslations() {
     const lang = currentLang;
@@ -1044,9 +1023,9 @@ function updateUI() {
     radios.forEach(r=>{r.checked=r.value===currentLang;r.parentElement.classList.toggle('active',r.checked);});
 }
 
-// =====================================================================
+// ================================================================
 // SUPABASE ІНІЦІАЛІЗАЦІЯ
-// =====================================================================
+// ================================================================
 
 function waitForSupabase(callback, attempts) {
     attempts = attempts || 0;
@@ -1070,6 +1049,7 @@ function initSupabase() {
         if (!window.supabase || typeof window.supabase.createClient !== 'function') {
             throw new Error('Supabase SDK не завантажений');
         }
+        // ЄДИНЕ створення клієнта
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('✅ Supabase client initialized successfully:', !!supabase);
         document.getElementById('statusBadge').textContent='✅';
@@ -1084,9 +1064,37 @@ function initSupabase() {
     }
 }
 
-// =====================================================================
+// ================================================================
+// ЗМІННІ СТАНУ
+// ================================================================
+
+let currentUser = null;
+let isAuthMode = 'login';
+let currentPage = 'auth';
+let historyStack = ['auth'];
+let selectedPhotos = [];
+let favorites = [];
+let listings = [];
+let myListings = [];
+let chats = [];
+let chatMessages = [];
+let currentChatId = null;
+let currentDetailId = null;
+let detailPhotos = [];
+let detailIndex = 0;
+let currentDetailListing = null;
+let sellerProfileUserId = null;
+let chatSubscription = null;
+let cities = ['Київ','Харків','Одеса','Дніпро','Львів','Запоріжжя','Кривий Ріг','Миколаїв','Вінниця',
+    'Полтава','Чернігів','Черкаси','Суми','Житомир','Рівне','Івано-Франківськ','Тернопіль','Луцьк',
+    'Ужгород','Хмельницький'];
+let userData = {id:null,name:'Користувач',last_name:'',username:'',phone:'',email:'',city:'Київ',avatar:'К',language:'uk',rating:0,ratingCount:0};
+let unreadCount = 0;
+let filterData = {priceFrom:'',priceTo:'',city:'',condition:'',sort:'newest',hasPhoto:false,isNew:false};
+
+// ================================================================
 // REALTIME ПІДПИСКА НА ЧАТИ
-// =====================================================================
+// ================================================================
 
 function subscribeToChats() {
     if (!supabase) return null;
@@ -1119,9 +1127,9 @@ function subscribeToChats() {
     return chatSubscription;
 }
 
-// =====================================================================
+// ================================================================
 // ТОГЛ ПАРОЛЯ
-// =====================================================================
+// ================================================================
 
 function togglePasswordVisibility(inputId, button) {
     const input = document.getElementById(inputId); if(!input) return;
@@ -1171,9 +1179,9 @@ function toggleAuthMode(){
     }
 }
 
-// =====================================================================
+// ================================================================
 // АВТОРИЗАЦІЯ
-// =====================================================================
+// ================================================================
 
 async function handleAuth() {
     hideAuthMessages();
@@ -1260,9 +1268,9 @@ async function createUserRecord(userId,email,username){
     } catch(e){}
 }
 
-// =====================================================================
+// ================================================================
 // API ЗАПИТИ
-// =====================================================================
+// ================================================================
 
 async function apiRequest(endpoint,options={}){
     try{
@@ -1283,9 +1291,9 @@ async function apiRequest(endpoint,options={}){
     } catch(e){throw e;}
 }
 
-// =====================================================================
+// ================================================================
 // ЗАВАНТАЖЕННЯ ДАНИХ
-// =====================================================================
+// ================================================================
 
 async function loadUserData() {
     if(!currentUser)return;
@@ -1385,9 +1393,9 @@ function updateChatBadge() {
 
 function updateProfileStats(){document.getElementById('statActive').textContent=myListings.length;document.getElementById('statFavorites').textContent=favorites.length;document.getElementById('statMessages').textContent=chats.length;}
 
-// =====================================================================
+// ================================================================
 // РЕНДЕРИНГ
-// =====================================================================
+// ================================================================
 
 function renderCategories() {
     const categories=[
@@ -1544,9 +1552,9 @@ function renderAll(){
     applyTranslations();
 }
 
-// =====================================================================
+// ================================================================
 // НАВІГАЦІЯ
-// =====================================================================
+// ================================================================
 
 function navigateTo(page){
     if(page==='auth'){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.getElementById('page-auth');if(target)target.classList.add('active');document.getElementById('bottomNav').classList.remove('show');currentPage='auth';return;}
@@ -1614,9 +1622,9 @@ function resetFilters(){
     renderSearch(document.getElementById('searchInput')?.value||'');
 }
 
-// =====================================================================
+// ================================================================
 // ОПЕРАЦІЇ З ОГОЛОШЕННЯМИ
-// =====================================================================
+// ================================================================
 
 async function toggleFavorite(listingId){if(!currentUser){navigateTo('auth');return;}const isFav=favorites.includes(listingId);if(isFav){await apiRequest('favorites?user_id=eq.'+currentUser.id+'&listing_id=eq.'+listingId,{method:'DELETE'});favorites=favorites.filter(id=>id!==listingId);}else{await apiRequest('favorites',{method:'POST',body:JSON.stringify({user_id:currentUser.id,listing_id:listingId})});favorites.push(listingId);}renderAll();updateProfileStats();}
 
@@ -1652,9 +1660,9 @@ function showSuccessModal(title,message,primaryAction,secondaryAction){
 }
 function closeSuccessModal(){document.getElementById('successModal').classList.remove('show');}
 
-// =====================================================================
+// ================================================================
 // ВИДАЛЕННЯ ПОВІДОМЛЕННЯ
-// =====================================================================
+// ================================================================
 
 async function deleteMessage(messageId) {
     if(!confirm(t('deleteMessage'))) return;
@@ -1668,9 +1676,9 @@ async function deleteMessage(messageId) {
     } catch(e){console.error('Delete message error:',e);}
 }
 
-// =====================================================================
+// ================================================================
 // ДЕТАЛЬНА СТОРІНКА
-// =====================================================================
+// ================================================================
 
 function openDetail(id){
     const listing=listings.find(l=>l.id===id);
@@ -1756,9 +1764,9 @@ function openSellerProfileFromDetail(){
     }
 }
 
-// =====================================================================
+// ================================================================
 // ПРОФІЛЬ ПРОДАВЦЯ
-// =====================================================================
+// ================================================================
 
 async function openSellerProfile(userId) {
     sellerProfileUserId=userId;
@@ -1822,9 +1830,9 @@ function openChatFromSellerProfile(){
     }
 }
 
-// =====================================================================
+// ================================================================
 // ЧАТИ
-// =====================================================================
+// ================================================================
 
 async function openChatFromDetail() {
     if(!currentDetailListing){alert('Оголошення не знайдено');return;}
@@ -1902,16 +1910,16 @@ async function sendMessage(){
     }catch(error){console.error('Send message error:',error);alert('Не вдалося відправити повідомлення');}
 }
 
-// =====================================================================
+// ================================================================
 // ФОТО
-// =====================================================================
+// ================================================================
 
 function handlePhotos(event){const files=event.target.files;for(let file of files){if(selectedPhotos.length>=8){alert('Максимум 8 фото');break;}const reader=new FileReader();reader.onload=function(e){selectedPhotos.push(e.target.result);renderPhotoPreviews();};reader.readAsDataURL(file);}event.target.value='';}
 function renderPhotoPreviews(){const container=document.getElementById('photoPreviewGrid');container.innerHTML=selectedPhotos.map(function(p,i){return'<div class="photo-preview-item" style="background-image:url(\''+p+'\')"><button class="remove-photo" onclick="selectedPhotos.splice('+i+',1); renderPhotoPreviews();">×</button></div>';}).join('');}
 
-// =====================================================================
+// ================================================================
 // ПРОФІЛЬ КОРИСТУВАЧА
-// =====================================================================
+// ================================================================
 
 function uploadAvatar(event){const file=event.target.files[0];if(!file||!currentUser)return;const reader=new FileReader();reader.onload=function(e){const data=e.target.result;userData.avatar=data;document.getElementById('profileAvatarLetter').innerHTML='<img src="'+data+'" />';document.getElementById('editAvatarLetter').innerHTML='<img src="'+data+'" />';document.getElementById('avatarLetter').innerHTML='<img src="'+data+'" />';apiRequest('users?id=eq.'+currentUser.id,{method:'PATCH',body:JSON.stringify({avatar_url:data})});};reader.readAsDataURL(file);}
 function editUploadAvatar(event){const file=event.target.files[0];if(!file||!currentUser)return;const reader=new FileReader();reader.onload=function(e){const data=e.target.result;userData.avatar=data;document.getElementById('editAvatarLetter').innerHTML='<img src="'+data+'" />';document.getElementById('profileAvatarLetter').innerHTML='<img src="'+data+'" />';document.getElementById('avatarLetter').innerHTML='<img src="'+data+'" />';apiRequest('users?id=eq.'+currentUser.id,{method:'PATCH',body:JSON.stringify({avatar_url:data})});};reader.readAsDataURL(file);}
@@ -1921,26 +1929,26 @@ function filterCities(query){const container=document.getElementById('citiesList
 function saveLanguage(){if(!currentUser){navigateTo('auth');return;}const selected=document.querySelector('input[name="language"]:checked');if(selected){const lang=selected.value;currentLang=lang;localStorage.setItem('uamo_lang',lang);userData.language=lang;apiRequest('users?id=eq.'+currentUser.id,{method:'PATCH',body:JSON.stringify({language:lang})});applyTranslations();renderAll();alert('✅ '+ (translations[lang]?.saveLanguage||'Мову змінено!'));}}
 function toggleSetting(el){el.classList.toggle('active');}
 
-// =====================================================================
+// ================================================================
 // НАЛАШТУВАННЯ БЕЗПЕКИ
-// =====================================================================
+// ================================================================
 
 async function changeEmail(){if(!currentUser){navigateTo('auth');return;}const newEmail=document.getElementById('newEmail').value.trim();if(!newEmail){alert('Введіть новий email');return;}if(newEmail===userData.email){alert('Email не змінився');return;}try{const {error}=await supabase.auth.updateUser({email:newEmail});if(error){alert('Помилка: '+error.message);return;}alert('✅ Лист з підтвердженням надіслано на нову адресу');userData.email=newEmail;updateUI();navigateTo('settings-account');}catch(e){alert('Помилка: '+e.message);}}
 async function changePhone(){if(!currentUser){navigateTo('auth');return;}const newPhone=document.getElementById('newPhone').value.trim();if(!newPhone){alert('Введіть новий номер');return;}if(newPhone===userData.phone){alert('Номер не змінився');return;}await apiRequest('users?id=eq.'+currentUser.id,{method:'PATCH',body:JSON.stringify({phone:newPhone})});userData.phone=newPhone;updateUI();alert('✅ Номер телефону оновлено!');navigateTo('settings-account');}
 async function changePassword(){if(!currentUser){navigateTo('auth');return;}const currentPassword=document.getElementById('currentPassword').value;const newPassword=document.getElementById('newPassword').value;const confirmPassword=document.getElementById('confirmPassword').value;if(!currentPassword||!newPassword||!confirmPassword){alert('Заповніть всі поля');return;}if(newPassword.length<6){alert('Пароль має бути не менше 6 символів');return;}if(newPassword!==confirmPassword){alert('Паролі не співпадають');return;}try{const {error:signInError}=await supabase.auth.signInWithPassword({email:currentUser.email,password:currentPassword});if(signInError){alert('Поточний пароль невірний');return;}const {error}=await supabase.auth.updateUser({password:newPassword});if(error){alert('Помилка: '+error.message);return;}alert('✅ Пароль змінено успішно!');document.getElementById('currentPassword').value='';document.getElementById('newPassword').value='';document.getElementById('confirmPassword').value='';navigateTo('settings-account');}catch(e){alert('Помилка: '+e.message);}}
 function showForgotPassword(){const email=prompt('Введіть ваш email для відновлення пароля:');if(email){supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin}).then(function({error}){if(error){alert('Помилка: '+error.message);}else{alert('✅ Лист з посиланням для відновлення надіслано на '+email);}});}}
 
-// =====================================================================
+// ================================================================
 // РЕДАГУВАННЯ/ВИДАЛЕННЯ ОГОЛОШЕНЬ
-// =====================================================================
+// ================================================================
 
 function editListing(id){const listing=myListings.find(l=>l.id===id);if(!listing)return;document.getElementById('addTitle').value=listing.title;document.getElementById('addPrice').value=listing.price;document.getElementById('addCity').value=listing.location;document.getElementById('addPhone').value=listing.phone||'';document.getElementById('addDesc').value=listing.description||'';document.getElementById('addCategory').value=listing.category||'products';document.getElementById('addCondition').value=listing.condition||'new';selectedPhotos=listing.photos||[];renderPhotoPreviews();const btn=document.querySelector('.add-listing-form .btn-submit');btn.textContent='✏️ '+t('editProfile');btn.onclick=function(){updateListing(id);};navigateTo('add');}
 async function updateListing(id){if(!currentUser){navigateTo('auth');return;}const title=document.getElementById('addTitle').value.trim();const price=document.getElementById('addPrice').value.trim();const city=document.getElementById('addCity').value.trim()||userData.city;const phone=document.getElementById('addPhone').value.trim()||userData.phone;const desc=document.getElementById('addDesc').value.trim();const category=document.getElementById('addCategory').value;const condition=document.getElementById('addCondition').value;if(!title||!price){alert(t('enterTitle')+' та '+t('enterPrice'));return;}await apiRequest('listings?id=eq.'+id,{method:'PATCH',body:JSON.stringify({title:title,price:parseFloat(price),city:city,phone:phone,description:desc||'',category:category,photos:selectedPhotos.length>0?selectedPhotos:null,condition:condition})});selectedPhotos=[];renderPhotoPreviews();alert('✅ '+t('listingPublished'));const btn=document.querySelector('.add-listing-form .btn-submit');btn.textContent=t('publish');btn.onclick=submitListing;document.getElementById('addTitle').value='';document.getElementById('addPrice').value='';document.getElementById('addCity').value='';document.getElementById('addPhone').value='';document.getElementById('addDesc').value='';await loadListings();await loadMyListings();navigateTo('my-listings');}
 async function deleteListing(id){if(!confirm('Ви впевнені, що хочете видалити це оголошення?'))return;await apiRequest('listings?id=eq.'+id,{method:'DELETE'});alert('🗑 '+t('listings')+' видалено');await loadListings();await loadMyListings();if(currentPage==='my-listings')renderMyListings();}
 
-// =====================================================================
+// ================================================================
 // ДОПОМІЖНІ ФУНКЦІЇ
-// =====================================================================
+// ================================================================
 
 function showHelp(){alert('🆘 '+t('help')+'\n\nЯкщо у вас виникли питання, зверніться до служби підтримки: support@uamo.com');}
 function showAbout(){alert('ℹ️ '+t('about')+'\n\nUAMO — універсальна платформа оголошень.\nВерсія 2.0\n\n© 2026 UAMO');}
@@ -1957,9 +1965,9 @@ async function handleLogout(){
     document.getElementById('statusBadge').className='status-badge status-waiting';
 }
 
-// =====================================================================
+// ================================================================
 // ПЕРЕВІРКА СЕСІЇ ТА ЗАПУСК
-// =====================================================================
+// ================================================================
 
 async function checkSession() {
     if(!supabase){console.warn('⏳ Waiting for Supabase to init before checking session...');setTimeout(checkSession,500);return;}
@@ -2003,9 +2011,9 @@ function init(){
     });
 }
 
-// =====================================================================
+// ================================================================
 // ЕКСПОРТ ГЛОБАЛЬНИХ ЗМІННИХ
-// =====================================================================
+// ================================================================
 
 window.handleAuth=handleAuth;
 window.toggleAuthMode=toggleAuthMode;
