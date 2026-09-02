@@ -1103,11 +1103,11 @@
                     <div class="form-group">
                         <label id="addCategoryLabel">Категорія</label>
                         <select id="addCategory">
-                            <option value="Товари">🛍️ <span id="catProducts">Товари</span></option>
-                            <option value="Робота">💼 <span id="catJobs">Робота</span></option>
-                            <option value="Послуги">🛠️ <span id="catServices">Послуги</span></option>
-                            <option value="Нерухомість">🏢 <span id="catRealestate">Нерухомість</span></option>
-                            <option value="Транспорт">🚗 <span id="catTransport">Транспорт</span></option>
+                            <option value="products">🛍️ <span id="catProducts">Товари</span></option>
+                            <option value="jobs">💼 <span id="catJobs">Робота</span></option>
+                            <option value="services">🛠️ <span id="catServices">Послуги</span></option>
+                            <option value="realestate">🏢 <span id="catRealestate">Нерухомість</span></option>
+                            <option value="transport">🚗 <span id="catTransport">Транспорт</span></option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1413,7 +1413,8 @@
                 chats: 'Чати',
                 language: 'Мова',
                 saveLanguage: '💾 Зберегти мову',
-                back: 'Назад'
+                back: 'Назад',
+                user: 'Користувач'
             },
             en: {
                 home: 'Home',
@@ -1470,7 +1471,8 @@
                 chats: 'Chats',
                 language: 'Language',
                 saveLanguage: '💾 Save language',
-                back: 'Back'
+                back: 'Back',
+                user: 'User'
             },
             pl: {
                 home: 'Strona główna',
@@ -1527,7 +1529,8 @@
                 chats: 'Czaty',
                 language: 'Język',
                 saveLanguage: '💾 Zapisz język',
-                back: 'Wstecz'
+                back: 'Wstecz',
+                user: 'Użytkownik'
             },
             de: {
                 home: 'Startseite',
@@ -1584,7 +1587,8 @@
                 chats: 'Chats',
                 language: 'Sprache',
                 saveLanguage: '💾 Sprache speichern',
-                back: 'Zurück'
+                back: 'Zurück',
+                user: 'Benutzer'
             },
             fr: {
                 home: 'Accueil',
@@ -1641,7 +1645,8 @@
                 chats: 'Chats',
                 language: 'Langue',
                 saveLanguage: '💾 Enregistrer la langue',
-                back: 'Retour'
+                back: 'Retour',
+                user: 'Utilisateur'
             },
             es: {
                 home: 'Inicio',
@@ -1698,7 +1703,8 @@
                 chats: 'Chats',
                 language: 'Idioma',
                 saveLanguage: '💾 Guardar idioma',
-                back: 'Volver'
+                back: 'Volver',
+                user: 'Usuario'
             },
             it: {
                 home: 'Home',
@@ -1755,7 +1761,8 @@
                 chats: 'Chat',
                 language: 'Lingua',
                 saveLanguage: '💾 Salva lingua',
-                back: 'Indietro'
+                back: 'Indietro',
+                user: 'Utente'
             },
             cs: {
                 home: 'Domů',
@@ -1812,7 +1819,8 @@
                 chats: 'Chaty',
                 language: 'Jazyk',
                 saveLanguage: '💾 Uložit jazyk',
-                back: 'Zpět'
+                back: 'Zpět',
+                user: 'Uživatel'
             },
             sk: {
                 home: 'Domov',
@@ -1869,7 +1877,8 @@
                 chats: 'Chaty',
                 language: 'Jazyk',
                 saveLanguage: '💾 Uložiť jazyk',
-                back: 'Späť'
+                back: 'Späť',
+                user: 'Používateľ'
             },
             ro: {
                 home: 'Acasă',
@@ -1926,7 +1935,8 @@
                 chats: 'Chat-uri',
                 language: 'Limbă',
                 saveLanguage: '💾 Salvează limba',
-                back: 'Înapoi'
+                back: 'Înapoi',
+                user: 'Utilizator'
             },
             tr: {
                 home: 'Ana Sayfa',
@@ -1983,7 +1993,8 @@
                 chats: 'Sohbetler',
                 language: 'Dil',
                 saveLanguage: '💾 Dili Kaydet',
-                back: 'Geri'
+                back: 'Geri',
+                user: 'Kullanıcı'
             }
         };
 
@@ -1991,6 +2002,25 @@
         let t = function(key) {
             return translations[currentLang] && translations[currentLang][key] ? translations[currentLang][key] : key;
         };
+
+        // ================================================================
+        // БЕЗПЕЧНІ HELPER-ФУНКЦІЇ ДЛЯ РОБОТИ З DOM
+        // ================================================================
+
+        function setValue(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.value = value ?? '';
+        }
+
+        function setText(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value ?? '';
+        }
+
+        function setHTML(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = value ?? '';
+        }
 
         // ================================================================
         // SUPABASE CONFIG
@@ -2041,100 +2071,142 @@
             const tr = translations[lang] || translations.uk;
 
             // Навігація
-            document.getElementById('navHome').textContent = tr.home;
-            document.getElementById('navSearch').textContent = tr.search;
-            document.getElementById('navAdd').textContent = tr.add;
-            document.getElementById('navChats').textContent = tr.chats;
-            document.getElementById('navProfile').textContent = tr.profile;
+            setText('navHome', tr.home);
+            setText('navSearch', tr.search);
+            setText('navAdd', tr.add);
+            setText('navChats', tr.chats);
+            setText('navProfile', tr.profile);
 
             // Головна
-            document.getElementById('recommendedTitle').textContent = tr.recommended;
-            document.getElementById('newListingsTitle').textContent = tr.newListings;
-            document.getElementById('recommendedAll').textContent = tr.all;
-            document.getElementById('newListingsAll').textContent = tr.all;
-            document.getElementById('addListingBtn').innerHTML = '<i class="fas fa-plus"></i> ' + tr.addListing;
+            setText('recommendedTitle', tr.recommended);
+            setText('newListingsTitle', tr.newListings);
+            setText('recommendedAll', tr.all);
+            setText('newListingsAll', tr.all);
+            setHTML('addListingBtn', '<i class="fas fa-plus"></i> ' + tr.addListing);
 
             // Пошук
-            document.getElementById('filterAll').textContent = tr.all.replace(' →', '');
-            document.getElementById('filterProducts').textContent = tr.products;
-            document.getElementById('filterJobs').textContent = tr.jobs;
-            document.getElementById('filterServices').textContent = tr.services;
-            document.getElementById('filterRealestate').textContent = tr.realestate;
-            document.getElementById('filterTransport').textContent = tr.transport;
-            document.getElementById('filterFilters').textContent = tr.filters;
+            setText('filterAll', tr.all.replace(' →', ''));
+            setText('filterProducts', tr.products);
+            setText('filterJobs', tr.jobs);
+            setText('filterServices', tr.services);
+            setText('filterRealestate', tr.realestate);
+            setText('filterTransport', tr.transport);
+            setText('filterFilters', tr.filters);
 
             // Додати оголошення
-            document.getElementById('addListingTitle').textContent = tr.addListing;
-            document.getElementById('addCategoryLabel').textContent = tr.category;
-            document.getElementById('addTitleLabel').textContent = tr.title;
-            document.getElementById('addDescLabel').textContent = tr.description;
-            document.getElementById('addPhotoLabel').textContent = tr.photo;
-            document.getElementById('addPhotoText').textContent = tr.addPhoto;
-            document.getElementById('addPriceLabel').textContent = tr.price;
-            document.getElementById('addCityLabel').textContent = tr.city;
-            document.getElementById('addPhoneLabel').textContent = tr.phone;
-            document.getElementById('publishBtn').textContent = tr.publish;
+            setText('addListingTitle', tr.addListing);
+            setText('addCategoryLabel', tr.category);
+            setText('addTitleLabel', tr.title);
+            setText('addDescLabel', tr.description);
+            setText('addPhotoLabel', tr.photo);
+            setText('addPhotoText', tr.addPhoto);
+            setText('addPriceLabel', tr.price);
+            setText('addCityLabel', tr.city);
+            setText('addPhoneLabel', tr.phone);
+            setText('publishBtn', tr.publish);
 
-            // Обране
-            document.getElementById('favoritesTitle').textContent = tr.favorites;
-
-            // Чати
-            document.getElementById('chatsTitle').textContent = tr.chats;
-
-            // Профіль
-            document.getElementById('editProfileBtn').textContent = tr.editProfile;
-            document.getElementById('statActiveLabel').textContent = tr.listings;
-            document.getElementById('statFavoritesLabel').textContent = tr.favorites;
-            document.getElementById('statMessagesLabel').textContent = tr.messages;
-            document.getElementById('profileMyListings').textContent = tr.myListings;
-            document.getElementById('profileFavorites').textContent = tr.favorites;
-            document.getElementById('profileMessages').textContent = tr.messages;
-            document.getElementById('profileSettings').textContent = tr.settings;
-            document.getElementById('profileHelp').textContent = tr.help;
-            document.getElementById('profileAbout').textContent = tr.about;
-            document.getElementById('profileLogout').textContent = tr.logout;
-
-            // Редагувати профіль
-            document.getElementById('editProfileTitle').textContent = tr.editProfile;
-            document.getElementById('changePhotoText').textContent = tr.changePhoto;
-            document.getElementById('editNameLabel').textContent = 'Ім\'я';
-            document.getElementById('editLastNameLabel').textContent = 'Прізвище';
-            document.getElementById('editUsernameLabel').textContent = 'Нікнейм';
-            document.getElementById('editPhoneLabel').textContent = tr.phone;
-            document.getElementById('editCityLabel').textContent = tr.city;
-            document.getElementById('saveProfileBtn').textContent = tr.saveChanges;
-
-            // Мої оголошення
-            document.getElementById('myListingsTitle').textContent = tr.myListings;
-
-            // Налаштування
-            document.getElementById('settingsTitle').textContent = tr.settings;
-            document.getElementById('settingsAccount').textContent = tr.settingsAccount;
-            document.getElementById('settingsNotifications').textContent = tr.settingsNotifications;
-            document.getElementById('settingsCity').textContent = tr.settingsCity;
-            document.getElementById('settingsLanguage').textContent = tr.settingsLanguage;
-            document.getElementById('settingsPrivacy').textContent = tr.settingsPrivacy;
-            document.getElementById('settingsMessages').textContent = tr.settingsMessages;
-            document.getElementById('settingsSecurity').textContent = tr.settingsSecurity;
-
-            // Мова
-            document.getElementById('languageTitle').textContent = tr.language;
-            document.getElementById('saveLanguageBtn').textContent = tr.saveLanguage;
-
-            // Success Modal
-            document.getElementById('successHomeBtn').textContent = tr.home;
-            document.getElementById('successViewBtn').textContent = 'Переглянути';
-
-            // Місця для категорій
-            const catMap = { 'Товари': tr.products, 'Робота': tr.jobs, 'Послуги': tr.services, 'Нерухомість': tr
-                    .realestate, 'Транспорт': tr.transport };
+            // Категорії в селекті
+            const catMap = {
+                'products': tr.products,
+                'jobs': tr.jobs,
+                'services': tr.services,
+                'realestate': tr.realestate,
+                'transport': tr.transport
+            };
             const select = document.getElementById('addCategory');
             if (select) {
                 for (let opt of select.options) {
-                    const val = opt.value;
-                    if (catMap[val]) opt.text = catMap[val];
+                    if (catMap[opt.value]) {
+                        opt.text = opt.value === 'products' ? '🛍️ ' + catMap[opt.value] :
+                            opt.value === 'jobs' ? '💼 ' + catMap[opt.value] :
+                            opt.value === 'services' ? '🛠️ ' + catMap[opt.value] :
+                            opt.value === 'realestate' ? '🏢 ' + catMap[opt.value] :
+                            opt.value === 'transport' ? '🚗 ' + catMap[opt.value] : opt.value;
+                    }
                 }
             }
+
+            // Обране
+            setText('favoritesTitle', tr.favorites);
+
+            // Чати
+            setText('chatsTitle', tr.chats);
+
+            // Профіль
+            setText('editProfileBtn', tr.editProfile);
+            setText('statActiveLabel', tr.listings);
+            setText('statFavoritesLabel', tr.favorites);
+            setText('statMessagesLabel', tr.messages);
+            setText('profileMyListings', tr.myListings);
+            setText('profileFavorites', tr.favorites);
+            setText('profileMessages', tr.messages);
+            setText('profileSettings', tr.settings);
+            setText('profileHelp', tr.help);
+            setText('profileAbout', tr.about);
+            setText('profileLogout', tr.logout);
+
+            // Редагувати профіль
+            setText('editProfileTitle', tr.editProfile);
+            setText('changePhotoText', tr.changePhoto);
+            setText('editNameLabel', 'Ім\'я');
+            setText('editLastNameLabel', 'Прізвище');
+            setText('editUsernameLabel', 'Нікнейм');
+            setText('editPhoneLabel', tr.phone);
+            setText('editCityLabel', tr.city);
+            setText('saveProfileBtn', tr.saveChanges);
+
+            // Мої оголошення
+            setText('myListingsTitle', tr.myListings);
+
+            // Налаштування
+            setText('settingsTitle', tr.settings);
+            setText('settingsAccount', tr.settingsAccount);
+            setText('settingsNotifications', tr.settingsNotifications);
+            setText('settingsCity', tr.settingsCity);
+            setText('settingsLanguage', tr.settingsLanguage);
+            setText('settingsPrivacy', tr.settingsPrivacy);
+            setText('settingsMessages', tr.settingsMessages);
+            setText('settingsSecurity', tr.settingsSecurity);
+
+            // Мова
+            setText('languageTitle', tr.language);
+            setText('saveLanguageBtn', tr.saveLanguage);
+
+            // Success Modal
+            setText('successHomeBtn', tr.home);
+            setText('successViewBtn', 'Переглянути');
+        }
+
+        // ================================================================
+        // ВИПРАВЛЕНИЙ updateUI() - БЕЗПЕЧНИЙ
+        // ================================================================
+
+        function updateUI() {
+            setText('profileName', userData.name || t('user'));
+            setText('profileEmail', userData.email || 'user@example.com');
+            setText('profileAvatarLetter', userData.avatar || 'К');
+            setText('editAvatarLetter', userData.avatar || 'К');
+            setText('avatarLetter', userData.avatar || 'К');
+
+            setValue('editName', userData.name);
+            setValue('editLastName', userData.last_name);
+            setValue('editUsername', userData.username);
+            setValue('editPhone', userData.phone);
+            setValue('editCity', userData.city || 'Київ');
+            setValue('currentEmail', userData.email);
+            setValue('currentPhone', userData.phone);
+
+            setText('securityEmail', userData.email || 'user@example.com');
+            setText('securityPhone', userData.phone || '+380 XX XXX XX XX');
+
+            renderCitySelect();
+
+            // Вибираємо мову в радіо
+            const radios = document.querySelectorAll('input[name="language"]');
+            radios.forEach(r => {
+                r.checked = r.value === currentLang;
+                r.parentElement.classList.toggle('active', r.checked);
+            });
         }
 
         // ================================================================
@@ -2650,30 +2722,6 @@
 
         function isFavorite(id) {
             return favorites.some(f => f === id);
-        }
-
-        function updateUI() {
-            document.getElementById('profileName').textContent = userData.name || 'Користувач';
-            document.getElementById('profileEmail').textContent = userData.email || 'user@example.com';
-            document.getElementById('profileAvatarLetter').textContent = userData.avatar || 'К';
-            document.getElementById('editAvatarLetter').textContent = userData.avatar || 'К';
-            document.getElementById('avatarLetter').textContent = userData.avatar || 'К';
-            document.getElementById('editName').value = userData.name || '';
-            document.getElementById('editLastName').value = userData.last_name || '';
-            document.getElementById('editUsername').value = userData.username || '';
-            document.getElementById('editPhone').value = userData.phone || '';
-            document.getElementById('editCity').value = userData.city || 'Київ';
-            document.getElementById('currentEmail').value = userData.email || '';
-            document.getElementById('currentPhone').value = userData.phone || '';
-            document.getElementById('securityEmail').textContent = userData.email || 'user@example.com';
-            document.getElementById('securityPhone').textContent = userData.phone || '+380 XX XXX XX XX';
-            renderCitySelect();
-            // Вибираємо мову в радіо
-            const radios = document.querySelectorAll('input[name="language"]');
-            radios.forEach(r => {
-                r.checked = r.value === currentLang;
-                r.parentElement.classList.toggle('active', r.checked);
-            });
         }
 
         function updateChatBadge() {
@@ -3603,7 +3651,7 @@
             document.getElementById('addCity').value = listing.location;
             document.getElementById('addPhone').value = listing.phone || '';
             document.getElementById('addDesc').value = listing.description || '';
-            document.getElementById('addCategory').value = listing.category || 'Товари';
+            document.getElementById('addCategory').value = listing.category || 'products';
             selectedPhotos = listing.photos || [];
             renderPhotoPreviews();
             const btn = document.querySelector('.add-listing-form .btn-submit');
@@ -3708,7 +3756,6 @@
                     currentUser = session.user;
                     document.getElementById('statusBadge').textContent = '✅';
                     document.getElementById('statusBadge').className = 'status-badge status-connected';
-                    // Завантажуємо збережену мову
                     const savedLang = localStorage.getItem('uamo_lang') || 'uk';
                     currentLang = savedLang;
                     await loadUserData();
@@ -3740,7 +3787,6 @@
             console.log('🚀 UAMO Auth Init');
             console.log('📡 Supabase URL:', SUPABASE_URL);
 
-            // Відновлюємо мову з localStorage
             const savedLang = localStorage.getItem('uamo_lang') || 'uk';
             currentLang = savedLang;
             applyTranslations();
