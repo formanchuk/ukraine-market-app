@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        /* ===== ВЕСЬ ВАШ CSS (залиште як є) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A;
@@ -973,6 +974,7 @@
 </head>
 <body>
 
+<!-- ===== ВЕСЬ HTML (залиште як є) ===== -->
 <div id="app">
     <div class="header" id="globalHeader">
         <div class="logo" onclick="navigateTo('home')">
@@ -1635,44 +1637,7 @@
         language: 'uk'
     };
     let unreadCount = 0;
-
-    // ================================================================
-    // 🚀 СУПЕР-ШВИДКИЙ КЕШ
-    // ================================================================
-    const SuperCache = {
-        _data: {},
-        _timers: {},
-
-        set(key, value, ttl = 60000) {
-            this._data[key] = value;
-            this._timers[key] = Date.now() + ttl;
-        },
-
-        get(key) {
-            if (this._timers[key] && Date.now() > this._timers[key]) {
-                delete this._data[key];
-                delete this._timers[key];
-                return null;
-            }
-            return this._data[key] || null;
-        },
-
-        clear(key) {
-            if (key) {
-                delete this._data[key];
-                delete this._timers[key];
-            } else {
-                this._data = {};
-                this._timers = {};
-            }
-        },
-
-        has(key) {
-            return this.get(key) !== null;
-        }
-    };
-
-    let isLoading = false;
+    let dataLoaded = false;
 
     // ================================================================
     // ІНІЦІАЛІЗАЦІЯ SUPABASE
@@ -1816,7 +1781,7 @@
                 if (data?.user) {
                     currentUser = data.user;
                     showAuthSuccess('✅ Вхід виконано!');
-                    await loadDataFast();
+                    await loadAllData();
                     setTimeout(() => navigateTo('home'), 200);
                 }
             } else {
@@ -1870,86 +1835,100 @@
     }
 
     // ================================================================
-    // ⚡ МИТТЄВЕ ЗАВАНТАЖЕННЯ ДАНИХ
+    // 🚀 ГОЛОВНА ФУНКЦІЯ ЗАВАНТАЖЕННЯ ВСІХ ДАНИХ (ОДИН РАЗ)
     // ================================================================
 
-    async function loadDataFast() {
-        if (isLoading) return;
+    async function loadAllData() {
+        if (dataLoaded) return;
+        if (!currentUser) return;
 
-        const cached = SuperCache.get('allData');
-        if (cached) {
-            console.log('⚡ Дані з кешу!');
-            listings = cached.listings || [];
-            favorites = cached.favorites || [];
-            chats = cached.chats || [];
-            myListings = cached.myListings || [];
-            renderAll();
-            updateProfileStats();
-            updateChatBadge();
-            return;
-        }
-
-        isLoading = true;
+        console.log('📡 Завантаження всіх даних...');
+        const start = performance.now();
 
         try {
-            console.log('📡 Завантаження даних...');
-            const startTime = Date.now();
-
-            // Завантажуємо оголошення через VIEW
-            const { data: listingsData, error: listingsError } = await supabase
-                .from('listings_with_users')
+            // Завантажуємо ВСІ дані паралельно
+            const [listingsRes, userRes, favRes, chatsRes, myRes] = await Promise.all([
+                // Оголошення через VIEW
+                supabase.from('listings_with_users').select('*').limit(50),
+                // Дані користувача
+                supabase.from('users').select('*').eq('id', currentUser.id).single(),
+                // Обране
+                supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
+                // Чати
+                supabase.from('chats')
+                .select(`
+                            *,
+                            listings:listing_id (title),
+                            buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
+                            seller:users!chats_seller_id_fkey (first_name, avatar_url)
+                        `)
+                .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+                .order('updated_at', { ascending: false })
+                .limit(30),
+                // Мої оголошення
+                supabase.from('listings')
                 .select('*')
-                .limit(50);
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false })
+                .limit(30)
+            ]);
 
-            if (listingsError) throw listingsError;
+            // Обробляємо оголошення
+            if (!listingsRes.error) {
+                listings = listingsRes.data.map(item => ({
+                    id: item.id,
+                    title: item.title || 'Без назви',
+                    price: item.price ? String(item.price) : '0',
+                    location: item.city || 'не вказано',
+                    image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                    photos: item.photos || null,
+                    category: item.category || 'Інше',
+                    isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
+                    isFeatured: item.is_featured || false,
+                    createdAt: item.created_at || new Date().toISOString(),
+                    description: item.description || 'Без опису',
+                    specs: item.specs || {},
+                    seller: {
+                        name: item.seller_name || 'Продавець',
+                        avatar: item.seller_avatar || '👤',
+                        since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
+                    },
+                    user_id: item.user_id,
+                    phone: item.phone || '',
+                    status: item.status || 'active'
+                }));
+            }
 
-            listings = listingsData.map(item => ({
-                id: item.id,
-                title: item.title || 'Без назви',
-                price: item.price ? String(item.price) : '0',
-                location: item.city || 'не вказано',
-                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                photos: item.photos || null,
-                category: item.category || 'Інше',
-                isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
-                isFeatured: item.is_featured || false,
-                createdAt: item.created_at || new Date().toISOString(),
-                description: item.description || 'Без опису',
-                specs: item.specs || {},
-                seller: {
-                    name: item.seller_name || 'Продавець',
-                    avatar: item.seller_avatar || '👤',
-                    since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
-                },
-                user_id: item.user_id,
-                phone: item.phone || '',
-                status: item.status || 'active'
-            }));
+            // Обробляємо користувача
+            if (!userRes.error && userRes.data) {
+                const u = userRes.data;
+                userData = {
+                    id: u.id,
+                    name: u.first_name || 'Користувач',
+                    last_name: u.last_name || '',
+                    username: u.username || '',
+                    phone: u.phone || '',
+                    email: u.email || currentUser.email || '',
+                    city: u.city || 'Київ',
+                    avatar: u.avatar_url || 'К',
+                    language: u.language || 'uk'
+                };
+                updateUI();
+            }
 
-            // Завантажуємо інші дані паралельно
-            if (currentUser) {
-                const [favResult, chatsResult, myResult] = await Promise.all([
-                    supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
-                    supabase.from('chats')
-                    .select(`
-                                *,
-                                listings:listing_id (title),
-                                buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
-                                seller:users!chats_seller_id_fkey (first_name, avatar_url)
-                            `)
-                    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
-                    .order('updated_at', { ascending: false })
-                    .limit(20),
-                    supabase.from('listings')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .order('created_at', { ascending: false })
-                    .limit(20)
-                ]);
+            // Обробляємо обране
+            if (!favRes.error) {
+                favorites = favRes.data.map(f => f.listing_id);
+            }
 
-                favorites = favResult.data?.map(f => f.listing_id) || [];
-                chats = chatsResult.data || [];
-                myListings = myResult.data?.map(item => ({
+            // Обробляємо чати
+            if (!chatsRes.error) {
+                chats = chatsRes.data || [];
+            }
+
+            // Обробляємо мої оголошення
+            if (!myRes.error) {
+                myListings = myRes.data.map(item => ({
                     id: item.id,
                     title: item.title || 'Без назви',
                     price: item.price ? String(item.price) : '0',
@@ -1961,70 +1940,61 @@
                     description: item.description || 'Без опису',
                     phone: item.phone || '',
                     status: item.status || 'active'
-                })) || [];
+                }));
             }
 
-            // Зберігаємо в кеш
-            SuperCache.set('allData', {
-                listings: listings,
-                favorites: favorites,
-                chats: chats,
-                myListings: myListings
-            }, 30000);
+            dataLoaded = true;
 
-            const elapsed = Date.now() - startTime;
-            console.log(`✅ Завантажено за ${elapsed}ms (${listings.length} оголошень)`);
+            const elapsed = (performance.now() - start).toFixed(2);
+            console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
 
-            renderAll();
+            // Оновлюємо UI
             updateProfileStats();
             updateChatBadge();
+            renderAll();
 
         } catch (e) {
             console.error('❌ Помилка завантаження:', e);
-            const fallback = SuperCache.get('allData');
-            if (fallback) {
-                listings = fallback.listings || [];
-                favorites = fallback.favorites || [];
-                chats = fallback.chats || [];
-                myListings = fallback.myListings || [];
-                renderAll();
-            }
-        } finally {
-            isLoading = false;
         }
     }
 
     // ================================================================
-    // ЗАВАНТАЖЕННЯ ДАНИХ КОРИСТУВАЧА
+    // ШВИДКІ ФУНКЦІЇ ЗАВАНТАЖЕННЯ (ВИКОРИСТОВУЮТЬ ВЖЕ ЗАВАНТАЖЕНІ ДАНІ)
     // ================================================================
 
-    async function loadUserData() {
-        if (!currentUser) return;
-        if (SuperCache.has('user_' + currentUser.id)) {
-            const u = SuperCache.get('user_' + currentUser.id);
-            userData = u;
-            updateUI();
+    function loadListings() {
+        if (listings.length > 0) {
+            renderAll();
             return;
         }
-        try {
-            const { data, error } = await supabase.from('users').select('*').eq('id', currentUser.id).single();
-            if (error) throw error;
-            if (data) {
-                userData = {
-                    id: data.id,
-                    name: data.first_name || 'Користувач',
-                    last_name: data.last_name || '',
-                    username: data.username || '',
-                    phone: data.phone || '',
-                    email: data.email || currentUser.email || '',
-                    city: data.city || 'Київ',
-                    avatar: data.avatar_url || 'К',
-                    language: data.language || 'uk'
-                };
-                SuperCache.set('user_' + currentUser.id, userData, 60000);
-                updateUI();
-            }
-        } catch (e) { console.warn('⚠️ Failed to load user data:', e); }
+        if (!dataLoaded) loadAllData();
+    }
+
+    function loadFavorites() {
+        if (favorites.length > 0 || dataLoaded) {
+            renderAll();
+            updateProfileStats();
+            return;
+        }
+        if (!dataLoaded) loadAllData();
+    }
+
+    function loadChats() {
+        if (chats.length > 0 || dataLoaded) {
+            if (currentPage === 'chats') renderChats();
+            updateChatBadge();
+            return;
+        }
+        if (!dataLoaded) loadAllData();
+    }
+
+    function loadMyListings() {
+        if (myListings.length > 0 || dataLoaded) {
+            if (currentPage === 'my-listings') renderMyListings();
+            updateProfileStats();
+            return;
+        }
+        if (!dataLoaded) loadAllData();
     }
 
     // ================================================================
@@ -2344,24 +2314,7 @@
     // NAVIGATION
     // ================================================================
 
-    const _originalNavigateTo = window.navigateTo || function() {};
-
     window.navigateTo = function(page) {
-        if (page === 'home' || page === 'search' || page === 'favorites' || page === 'chats' || page === 'profile') {
-            if (!SuperCache.has('allData')) {
-                loadDataFast();
-            } else {
-                const cached = SuperCache.get('allData');
-                if (cached) {
-                    listings = cached.listings || [];
-                    favorites = cached.favorites || [];
-                    chats = cached.chats || [];
-                    myListings = cached.myListings || [];
-                    renderAll();
-                }
-            }
-        }
-
         if (page === 'auth') {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-auth');
@@ -2372,7 +2325,7 @@
             return;
         }
 
-        if (!currentUser && page !== 'auth') { navigateTo('auth'); return; }
+        if (!currentUser && page !== 'auth') { window.navigateTo('auth'); return; }
 
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         const target = document.getElementById(`page-${page}`);
@@ -2389,7 +2342,7 @@
 
     function goBack() {
         if (historyStack.length > 1) { historyStack.pop();
-            navigateTo(historyStack[historyStack.length - 1]); } else { navigateTo('home'); }
+            window.navigateTo(historyStack[historyStack.length - 1]); } else { window.navigateTo('home'); }
     }
 
     function updateNav(page) {
@@ -2398,7 +2351,7 @@
         });
     }
 
-    function goBackFromDetail() { if (currentPage === 'detail') navigateTo('home'); }
+    function goBackFromDetail() { if (currentPage === 'detail') window.navigateTo('home'); }
 
     // ================================================================
     // FILTERS
@@ -2426,7 +2379,7 @@
     // ================================================================
 
     async function toggleFavorite(listingId) {
-        if (!currentUser) { navigateTo('auth'); return; }
+        if (!currentUser) { window.navigateTo('auth'); return; }
         const isFav = favorites.includes(listingId);
         if (isFav) {
             await supabase.from('favorites').delete().eq('user_id', currentUser.id).eq('listing_id', listingId);
@@ -2435,13 +2388,12 @@
             await supabase.from('favorites').insert({ user_id: currentUser.id, listing_id: listingId });
             favorites.push(listingId);
         }
-        SuperCache.clear('allData');
         renderAll();
         updateProfileStats();
     }
 
     async function submitListing() {
-        if (!currentUser) { navigateTo('auth'); return; }
+        if (!currentUser) { window.navigateTo('auth'); return; }
 
         const title = document.getElementById('addTitle').value.trim();
         const price = document.getElementById('addPrice').value.trim();
@@ -2477,13 +2429,14 @@
         document.getElementById('addDesc').value = '';
 
         showSuccessModal('✓ Оголошення опубліковано!', 'Ваше оголошення вже доступне на UAMO.',
-            () => navigateTo('home'),
+            () => window.navigateTo('home'),
             () => { if (data && data.length > 0) openDetail(data[0].id);
-                else navigateTo('home'); }
+                else window.navigateTo('home'); }
         );
 
-        SuperCache.clear('allData');
-        setTimeout(loadDataFast, 500);
+        // Оновлюємо дані
+        dataLoaded = false;
+        setTimeout(loadAllData, 500);
     }
 
     function showSuccessModal(title, message, primaryAction, secondaryAction) {
@@ -2576,7 +2529,7 @@
         }
 
         updateDetailFavoriteBtn();
-        navigateTo('detail');
+        window.navigateTo('detail');
     }
 
     function renderDetailDots() {
@@ -2622,7 +2575,7 @@
         renderAll(); }
 
     function openChatFromDetail() {
-        if (!currentUser) { navigateTo('auth'); return; }
+        if (!currentUser) { window.navigateTo('auth'); return; }
         if (!currentDetailListing) return;
         const sellerId = currentDetailListing.user_id;
         if (sellerId === currentUser.id) { editListing(currentDetailId); return; }
@@ -2650,8 +2603,8 @@
 
             if (error) throw error;
             if (data && data.length > 0) {
-                SuperCache.clear('allData');
-                await loadDataFast();
+                dataLoaded = false;
+                await loadAllData();
                 openChatDetail(data[0].id);
             }
         } catch (e) { console.error('❌ Error creating chat:', e);
@@ -2696,7 +2649,7 @@
             document.getElementById('chatPartnerAvatar').textContent = partnerAvatar;
         }
 
-        navigateTo('chat-detail');
+        window.navigateTo('chat-detail');
         scrollChatToBottom();
         await markChatRead(chatId);
     }
@@ -2724,8 +2677,8 @@
             }).eq('id', currentChatId);
 
             input.value = '';
-            SuperCache.clear('allData');
-            await loadDataFast();
+            dataLoaded = false;
+            await loadAllData();
             await openChatDetail(currentChatId);
         } catch (e) { console.error('❌ Error sending message:', e);
             alert('Помилка відправки повідомлення'); }
@@ -2734,8 +2687,8 @@
     async function markChatRead(chatId) {
         try {
             await supabase.from('chats').update({ unread_count: 0 }).eq('id', chatId);
-            SuperCache.clear('allData');
-            await loadDataFast();
+            dataLoaded = false;
+            await loadAllData();
         } catch (e) { console.warn('⚠️ Failed to mark chat read:', e); }
     }
 
@@ -2789,7 +2742,7 @@
         selectedPhotos = listing.photos || [];
         renderPhotoPreviews();
 
-        navigateTo('add');
+        window.navigateTo('add');
         const btn = document.querySelector('.btn-submit');
         if (btn) { btn.textContent = '💾 Оновити оголошення';
             btn.onclick = () => updateListing(id); }
@@ -2821,9 +2774,9 @@
             if (error) throw error;
 
             alert('✅ Оголошення оновлено!');
-            SuperCache.clear('allData');
-            await loadDataFast();
-            navigateTo('my-listings');
+            dataLoaded = false;
+            await loadAllData();
+            window.navigateTo('my-listings');
         } catch (e) { console.error('❌ Error updating listing:', e);
             alert('Помилка оновлення'); }
     }
@@ -2834,8 +2787,8 @@
             const { error } = await supabase.from('listings').delete().eq('id', id);
             if (error) throw error;
             alert('🗑 Оголошення видалено');
-            SuperCache.clear('allData');
-            await loadDataFast();
+            dataLoaded = false;
+            await loadAllData();
             if (currentPage === 'my-listings') renderMyListings();
         } catch (e) { console.error('❌ Error deleting listing:', e);
             alert('Помилка видалення'); }
@@ -2846,7 +2799,7 @@
     // ================================================================
 
     async function saveProfile() {
-        if (!currentUser) { navigateTo('auth'); return; }
+        if (!currentUser) { window.navigateTo('auth'); return; }
 
         const name = document.getElementById('editName').value.trim() || 'Користувач';
         const lastName = document.getElementById('editLastName').value.trim() || '';
@@ -2871,10 +2824,9 @@
             userData.username = username;
             userData.phone = phone;
             userData.city = city;
-            SuperCache.clear('user_' + currentUser.id);
             updateUI();
             alert('✅ Профіль оновлено!');
-            navigateTo('profile');
+            window.navigateTo('profile');
         } catch (e) { console.error('❌ Error saving profile:', e);
             alert('Помилка збереження'); }
     }
@@ -2888,7 +2840,6 @@
             userData.avatar = avatarUrl;
             updateUI();
             supabase.from('users').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
-            SuperCache.clear('user_' + currentUser.id);
         };
         reader.readAsDataURL(file);
     }
@@ -2904,7 +2855,6 @@
     function selectCity(city) {
         userData.city = city;
         supabase.from('users').update({ city: city }).eq('id', currentUser.id);
-        SuperCache.clear('user_' + currentUser.id);
         renderCities();
         updateUI();
         alert(`✅ Місто змінено на ${city}`);
@@ -2928,7 +2878,6 @@
         const lang = selected.value;
         userData.language = lang;
         supabase.from('users').update({ language: lang }).eq('id', currentUser.id);
-        SuperCache.clear('user_' + currentUser.id);
         alert(`✅ Мову змінено на ${selected.parentElement.textContent.trim()}`);
     }
 
@@ -2969,7 +2918,6 @@
             if (error) throw error;
             alert('✅ Email змінено! Перевірте нову пошту для підтвердження.');
             userData.email = newEmail;
-            SuperCache.clear('user_' + currentUser.id);
             updateUI();
         } catch (e) { console.error('❌ Error changing email:', e);
             alert('Помилка зміни email: ' + e.message); }
@@ -2986,13 +2934,12 @@
             if (error) throw error;
             alert('✅ Телефон змінено успішно!');
             userData.phone = newPhone;
-            SuperCache.clear('user_' + currentUser.id);
             updateUI();
         } catch (e) { console.error('❌ Error changing phone:', e);
             alert('Помилка зміни телефону: ' + e.message); }
     }
 
-    function showForgotPassword() { navigateTo('auth');
+    function showForgotPassword() { window.navigateTo('auth');
         handleForgotPassword(); }
 
     // ================================================================
@@ -3021,10 +2968,9 @@
         try {
             if (supabase) await supabase.auth.signOut();
             currentUser = null;
+            dataLoaded = false;
             currentPage = 'auth';
-            SuperCache.clear('allData');
-            SuperCache.clear('user_' + (currentUser?.id || ''));
-            navigateTo('auth');
+            window.navigateTo('auth');
             const bottomNav = document.getElementById('bottomNav');
             if (bottomNav) bottomNav.classList.remove('show');
         } catch (e) { console.error('❌ Error logging out:', e); }
@@ -3057,25 +3003,25 @@
             supabase.auth.getSession().then(({ data: { session } }) => {
                 if (session) {
                     currentUser = session.user;
-                    Promise.all([loadUserData(), loadDataFast()])
+                    Promise.all([loadAllData()])
                         .then(() => {
-                            navigateTo('home');
+                            window.navigateTo('home');
                             console.log('✅ Все завантажено!');
                         });
                 } else {
-                    navigateTo('auth');
+                    window.navigateTo('auth');
                 }
-            }).catch(() => navigateTo('auth'));
+            }).catch(() => window.navigateTo('auth'));
         } else {
             setTimeout(function retry() {
                 if (initSupabase()) {
                     supabase.auth.getSession().then(({ data: { session } }) => {
                         if (session) {
                             currentUser = session.user;
-                            Promise.all([loadUserData(), loadDataFast()])
-                                .then(() => navigateTo('home'));
+                            Promise.all([loadAllData()])
+                                .then(() => window.navigateTo('home'));
                         } else {
-                            navigateTo('auth');
+                            window.navigateTo('auth');
                         }
                     });
                 } else {
@@ -3127,463 +3073,8 @@
     window.closeSuccessModal = closeSuccessModal;
     window.updateListing = updateListing;
     window.renderSearch = renderSearch;
-    window.loadDataFast = loadDataFast;
+    window.loadAllData = loadAllData;
 </script>
 
 </body>
 </html>
-// ================================================================
-// 🔥 СУПЕР-ШВИДКИЙ РЕЖИМ - ВСІ ДАНІ В ПАМ'ЯТІ
-// ================================================================
-
-(function() {
-    'use strict';
-    
-    // ================================================================
-    // 1. ХРАНИЛИЩЕ ДАНИХ В ПАМ'ЯТІ
-    // ================================================================
-    
-    const AppStore = {
-        // Дані
-        _data: {
-            listings: [],
-            favorites: [],
-            chats: [],
-            myListings: [],
-            user: null,
-            messages: {}
-        },
-        _loaded: false,
-        _loading: false,
-        _listeners: [],
-        
-        // Завантажити всі дані один раз
-        async loadAll() {
-            if (this._loaded) return;
-            if (this._loading) {
-                await new Promise(resolve => {
-                    const check = setInterval(() => {
-                        if (this._loaded) {
-                            clearInterval(check);
-                            resolve();
-                        }
-                    }, 50);
-                });
-                return;
-            }
-            
-            this._loading = true;
-            
-            try {
-                console.log('📡 Завантаження всіх даних...');
-                const start = Date.now();
-                
-                // Завантажуємо ВСІ дані одним пакетом
-                const promises = [];
-                
-                // Оголошення
-                promises.push(
-                    supabase
-                        .from('listings_with_users')
-                        .select('*')
-                        .limit(100)
-                );
-                
-                // Якщо є користувач - завантажуємо його дані
-                if (currentUser) {
-                    promises.push(
-                        supabase.from('users').select('*').eq('id', currentUser.id).single(),
-                        supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
-                        supabase.from('chats')
-                            .select(`
-                                *,
-                                listings:listing_id (title),
-                                buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
-                                seller:users!chats_seller_id_fkey (first_name, avatar_url)
-                            `)
-                            .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
-                            .order('updated_at', { ascending: false })
-                            .limit(30),
-                        supabase.from('listings')
-                            .select('*')
-                            .eq('user_id', currentUser.id)
-                            .order('created_at', { ascending: false })
-                            .limit(30)
-                    );
-                }
-                
-                const results = await Promise.all(promises);
-                
-                // Розпаковуємо результати
-                let idx = 0;
-                
-                // Оголошення
-                const listingsResult = results[idx++];
-                if (!listingsResult.error) {
-                    this._data.listings = listingsResult.data.map(item => ({
-                        id: item.id,
-                        title: item.title || 'Без назви',
-                        price: item.price ? String(item.price) : '0',
-                        location: item.city || 'не вказано',
-                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                        photos: item.photos || null,
-                        category: item.category || 'Інше',
-                        isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
-                        isFeatured: item.is_featured || false,
-                        createdAt: item.created_at || new Date().toISOString(),
-                        description: item.description || 'Без опису',
-                        specs: item.specs || {},
-                        seller: {
-                            name: item.seller_name || 'Продавець',
-                            avatar: item.seller_avatar || '👤',
-                            since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
-                        },
-                        user_id: item.user_id,
-                        phone: item.phone || '',
-                        status: item.status || 'active'
-                    }));
-                }
-                
-                if (currentUser) {
-                    // Користувач
-                    const userResult = results[idx++];
-                    if (!userResult.error && userResult.data) {
-                        const u = userResult.data;
-                        this._data.user = {
-                            id: u.id,
-                            name: u.first_name || 'Користувач',
-                            last_name: u.last_name || '',
-                            username: u.username || '',
-                            phone: u.phone || '',
-                            email: u.email || currentUser.email || '',
-                            city: u.city || 'Київ',
-                            avatar: u.avatar_url || 'К',
-                            language: u.language || 'uk'
-                        };
-                        // Оновлюємо глобальний userData
-                        Object.assign(userData, this._data.user);
-                        updateUI();
-                    }
-                    
-                    // Обране
-                    const favResult = results[idx++];
-                    if (!favResult.error) {
-                        this._data.favorites = favResult.data.map(f => f.listing_id);
-                        favorites = this._data.favorites;
-                    }
-                    
-                    // Чати
-                    const chatsResult = results[idx++];
-                    if (!chatsResult.error) {
-                        this._data.chats = chatsResult.data || [];
-                        chats = this._data.chats;
-                    }
-                    
-                    // Мої оголошення
-                    const myResult = results[idx++];
-                    if (!myResult.error) {
-                        this._data.myListings = myResult.data.map(item => ({
-                            id: item.id,
-                            title: item.title || 'Без назви',
-                            price: item.price ? String(item.price) : '0',
-                            location: item.city || 'не вказано',
-                            image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                            photos: item.photos || null,
-                            category: item.category || 'Інше',
-                            createdAt: item.created_at || new Date().toISOString(),
-                            description: item.description || 'Без опису',
-                            phone: item.phone || '',
-                            status: item.status || 'active'
-                        }));
-                        myListings = this._data.myListings;
-                    }
-                }
-                
-                // Оновлюємо глобальні змінні
-                listings = this._data.listings;
-                
-                this._loaded = true;
-                this._loading = false;
-                
-                const elapsed = Date.now() - start;
-                console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
-                
-                // Оновлюємо UI
-                updateProfileStats();
-                updateChatBadge();
-                renderAll();
-                
-            } catch (e) {
-                console.error('❌ Помилка завантаження:', e);
-                this._loading = false;
-            }
-        },
-        
-        // Отримати дані миттєво (з кешу)
-        get(key) {
-            return this._data[key] || null;
-        },
-        
-        // Очистити кеш
-        clear() {
-            this._loaded = false;
-            this._data = {
-                listings: [],
-                favorites: [],
-                chats: [],
-                myListings: [],
-                user: null,
-                messages: {}
-            };
-        },
-        
-        // Перезавантажити дані
-        async refresh() {
-            this.clear();
-            await this.loadAll();
-        }
-    };
-    
-    // ================================================================
-    // 2. ПЕРЕВИЗНАЧАЄМО ВСІ ФУНКЦІЇ ДЛЯ ШВИДКОСТІ
-    // ================================================================
-    
-    // Зберігаємо оригінальні функції
-    const _origLoadListings = window.loadListings;
-    const _origLoadFavorites = window.loadFavorites;
-    const _origLoadChats = window.loadChats;
-    const _origLoadMyListings = window.loadMyListings;
-    const _origNavigateTo = window.navigateTo;
-    const _origRenderAll = window.renderAll;
-    
-    // Швидке завантаження - просто беремо з кешу
-    window.loadListings = function() {
-        const data = AppStore.get('listings');
-        if (data && data.length > 0) {
-            listings = data;
-            renderAll();
-            return;
-        }
-        AppStore.loadAll();
-    };
-    
-    window.loadFavorites = function() {
-        const data = AppStore.get('favorites');
-        if (data) {
-            favorites = data;
-            renderAll();
-            updateProfileStats();
-            return;
-        }
-        AppStore.loadAll();
-    };
-    
-    window.loadChats = function() {
-        const data = AppStore.get('chats');
-        if (data) {
-            chats = data;
-            if (currentPage === 'chats') renderChats();
-            updateChatBadge();
-            return;
-        }
-        AppStore.loadAll();
-    };
-    
-    window.loadMyListings = function() {
-        const data = AppStore.get('myListings');
-        if (data) {
-            myListings = data;
-            if (currentPage === 'my-listings') renderMyListings();
-            updateProfileStats();
-            return;
-        }
-        AppStore.loadAll();
-    };
-    
-    // Швидка навігація
-    window.navigateTo = function(page) {
-        if (page === 'auth') {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById('page-auth');
-            if (target) target.classList.add('active');
-            const bottomNav = document.getElementById('bottomNav');
-            if (bottomNav) bottomNav.classList.remove('show');
-            currentPage = 'auth';
-            return;
-        }
-        
-        if (!currentUser && page !== 'auth') {
-            window.navigateTo('auth');
-            return;
-        }
-        
-        // Переключаємо сторінку
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        const target = document.getElementById(`page-${page}`);
-        if (target) target.classList.add('active');
-        
-        const bottomNav = document.getElementById('bottomNav');
-        if (bottomNav) bottomNav.classList.add('show');
-        
-        currentPage = page;
-        if (historyStack[historyStack.length - 1] !== page) historyStack.push(page);
-        
-        // МИТТЄВИЙ РЕНДЕРИНГ - дані вже є в кеші
-        switch(page) {
-            case 'home':
-                renderHome();
-                break;
-            case 'search':
-                renderSearch(document.getElementById('searchInput')?.value || '');
-                break;
-            case 'favorites':
-                renderFavorites();
-                break;
-            case 'chats':
-                renderChats();
-                break;
-            case 'profile':
-                updateUI();
-                updateProfileStats();
-                updateNav('profile');
-                break;
-            case 'my-listings':
-                renderMyListings();
-                break;
-            case 'settings-city':
-                renderCities();
-                break;
-            case 'detail':
-                // Відкриваємо деталі
-                break;
-            default:
-                renderAll();
-        }
-        
-        updateNav(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-    
-    // ================================================================
-    // 3. ШВИДКИЙ РЕНДЕРИНГ (без запитів)
-    // ================================================================
-    
-    // Перевизначаємо renderAll для швидкості
-    window.renderAll = function() {
-        if (!currentUser && currentPage !== 'auth') {
-            window.navigateTo('auth');
-            return;
-        }
-        
-        // Дані вже є в глобальних змінних
-        switch(currentPage) {
-            case 'home':
-                renderHome();
-                break;
-            case 'search':
-                renderSearch(document.getElementById('searchInput')?.value || '');
-                break;
-            case 'favorites':
-                renderFavorites();
-                break;
-            case 'chats':
-                renderChats();
-                break;
-            case 'profile':
-                updateUI();
-                updateProfileStats();
-                updateNav('profile');
-                break;
-            case 'my-listings':
-                renderMyListings();
-                break;
-            case 'settings-city':
-                renderCities();
-                break;
-            default:
-                // Нічого не робимо
-        }
-    };
-    
-    // ================================================================
-    // 4. ОНОВЛЕННЯ ПРИ ЗМІНІ ДАНИХ
-    // ================================================================
-    
-    // Перевизначаємо функції, які змінюють дані
-    const _origSubmitListing = window.submitListing;
-    window.submitListing = async function() {
-        await _origSubmitListing.apply(this, arguments);
-        AppStore.clear();
-        setTimeout(() => AppStore.loadAll(), 300);
-    };
-    
-    const _origToggleFavorite = window.toggleFavorite;
-    window.toggleFavorite = async function(id) {
-        await _origToggleFavorite.apply(this, arguments);
-        AppStore.clear();
-        setTimeout(() => AppStore.loadAll(), 300);
-    };
-    
-    const _origSendMessage = window.sendMessage;
-    window.sendMessage = async function() {
-        await _origSendMessage.apply(this, arguments);
-        AppStore.clear();
-        setTimeout(() => AppStore.loadAll(), 300);
-    };
-    
-    const _origSaveProfile = window.saveProfile;
-    window.saveProfile = async function() {
-        await _origSaveProfile.apply(this, arguments);
-        AppStore.clear();
-        setTimeout(() => AppStore.loadAll(), 300);
-    };
-    
-    // ================================================================
-    // 5. ІНІЦІАЛІЗАЦІЯ
-    // ================================================================
-    
-    // Зберігаємо оригінальний DOMContentLoaded
-    const origInit = window.initApp || function() {};
-    
-    // Нова ініціалізація
-    window.initApp = function() {
-        console.log('🚀 Швидкий режим UAMO активовано!');
-        
-        // Завантажуємо дані в фоні
-        if (currentUser) {
-            AppStore.loadAll().then(() => {
-                console.log('✅ Готово до роботи!');
-                // Оновлюємо UI після завантаження
-                renderAll();
-                updateProfileStats();
-                updateChatBadge();
-            });
-        }
-    };
-    
-    // Патчимо DOMContentLoaded
-    const origDOMReady = document.addEventListener;
-    document.addEventListener = function(event, callback) {
-        if (event === 'DOMContentLoaded') {
-            // Замінюємо оригінальний callback
-            const wrapped = function() {
-                callback();
-                // Запускаємо швидкий режим після завантаження
-                setTimeout(() => {
-                    if (currentUser) {
-                        AppStore.loadAll();
-                    }
-                }, 100);
-            };
-            origDOMReady.call(document, event, wrapped);
-        } else {
-            origDOMReady.call(document, event, callback);
-        }
-    };
-    
-    // Експортуємо AppStore
-    window.AppStore = AppStore;
-    
-    console.log('🔥 Супер-швидкий режим увімкнено!');
-    
-})();
