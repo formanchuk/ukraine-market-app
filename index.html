@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* =========================== ГЛОБАЛЬНІ СТИЛІ =========================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0B1E3A; --primary-light: #1A3A6B; --accent: #0066FF; --accent-hover: #0052CC;
@@ -24,7 +23,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .hidden { display: none !important; }
 
-        /* =========================== HEADER =========================== */
         .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 0 12px 0; background: var(--bg); position: sticky; top: 0; z-index: 20; }
         .logo { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; cursor: pointer; }
         .logo span { color: var(--accent); }
@@ -40,7 +38,6 @@
         .status-error { background: var(--danger); color: white; }
         .status-waiting { background: #F59E0B; color: white; }
 
-        /* =========================== AUTH =========================== */
         .auth-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; padding: 20px; }
         .auth-box { background: var(--card-bg); border-radius: var(--radius); padding: 32px 24px; width: 100%; max-width: 400px; border: 1px solid var(--border); box-shadow: var(--shadow); }
         .auth-box .auth-title { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 8px; color: var(--primary); }
@@ -69,7 +66,6 @@
         .forgot-password a { color: var(--text-secondary); cursor: pointer; text-decoration: none; }
         .forgot-password a:hover { color: var(--accent); }
 
-        /* =========================== SEARCH BAR =========================== */
         .search-bar { padding: 4px 0 12px 0; }
         .search-bar-inner { display: flex; align-items: center; background: var(--card-bg); border-radius: 60px; padding: 0 18px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: var(--transition); }
         .search-bar-inner:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,102,255,0.10); }
@@ -77,7 +73,6 @@
         .search-bar-inner input { flex: 1; border: none; outline: none; padding: 13px 12px; font-size: 15px; font-family: var(--font); background: transparent; color: var(--text); }
         .search-bar-inner input::placeholder { color: var(--text-secondary); font-weight: 400; }
 
-        /* =========================== CATEGORIES =========================== */
         .category-slider { padding: 4px 0 14px 0; overflow-x: auto; white-space: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; display: flex; gap: 10px; }
         .category-slider::-webkit-scrollbar { display: none; }
         .category-item { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--card-bg); border-radius: var(--radius-sm); padding: 10px 16px; min-width: 64px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: var(--transition); cursor: pointer; gap: 4px; }
@@ -85,13 +80,11 @@
         .category-item i { font-size: 22px; color: var(--primary); }
         .category-item span { font-size: 10px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
 
-        /* =========================== SECTION HEADER =========================== */
         .section-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 0 4px 0; }
         .section-header h2 { font-size: 17px; font-weight: 600; color: var(--primary); }
         .section-header a { font-size: 13px; font-weight: 500; color: var(--accent); text-decoration: none; transition: var(--transition); cursor: pointer; }
         .section-header a:hover { color: var(--accent-hover); }
 
-        /* =========================== LISTING CARDS =========================== */
         .listing-scroll { display: flex; gap: 12px; padding: 6px 0 16px 0; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .listing-scroll::-webkit-scrollbar { display: none; }
         .listing-card { flex: 0 0 160px; background: var(--card-bg); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); transition: var(--transition); cursor: pointer; }
@@ -105,12 +98,10 @@
         .listing-card-body .title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
         .listing-card-body .location { font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
 
-        /* =========================== CTA =========================== */
         .cta-add { margin: 4px 0 16px 0; }
         .cta-add button { width: 100%; padding: 15px; background: var(--accent); border: none; border-radius: 60px; color: #fff; font-size: 16px; font-weight: 600; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: var(--transition); box-shadow: 0 6px 20px rgba(0,102,255,0.25); }
         .cta-add button:hover { background: var(--accent-hover); transform: scale(1.01); }
 
-        /* =========================== BOTTOM NAV =========================== */
         .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--card-bg); border-top: 1px solid var(--border); display: none; justify-content: space-around; padding: 6px 0 12px 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(255,255,255,0.94); }
         .bottom-nav.show { display: flex; }
         .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 1px; background: none; border: none; font-family: var(--font); font-size: 9px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: var(--transition); padding: 4px 12px; position: relative; }
@@ -122,12 +113,10 @@
         .bottom-nav-item .badge-count { position: absolute; top: -2px; right: -4px; background: #EF4444; color: #fff; font-size: 9px; font-weight: 700; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
         .bottom-nav-item.add-btn i { font-size: 26px; color: #fff; background: var(--accent); border-radius: 50%; padding: 8px; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; margin-top: -10px; box-shadow: 0 4px 16px rgba(0,102,255,0.3); }
 
-        /* =========================== PAGES =========================== */
         .page { display: none; animation: fadeUp 0.25s ease; }
         .page.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* =========================== SEARCH PAGE =========================== */
         .search-filters { display: flex; gap: 8px; padding: 4px 0 14px 0; flex-wrap: wrap; }
         .search-filters button { background: var(--card-bg); border: 1px solid var(--border); border-radius: 40px; padding: 7px 14px; font-size: 12px; font-weight: 500; font-family: var(--font); color: var(--text-secondary); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 5px; }
         .search-filters button:hover { border-color: var(--accent); color: var(--primary); }
@@ -142,12 +131,10 @@
         .search-result-card .info .meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 12px; margin-top: 2px; flex-wrap: wrap; }
         .search-result-card .info .meta .condition { background: var(--bg); padding: 0 8px; border-radius: 10px; }
 
-        /* =========================== FAVORITES =========================== */
         .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
         .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; }
         .favorites-empty h3 { font-weight: 600; font-size: 18px; color: var(--text); }
 
-        /* =========================== PROFILE =========================== */
         .profile-header { padding: 16px 0 12px 0; display: flex; align-items: center; gap: 14px; }
         .profile-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 600; color: var(--primary); border: 2px solid var(--accent); overflow: hidden; flex-shrink: 0; cursor: pointer; }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -165,7 +152,6 @@
         .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
         .profile-menu-item.danger { color: var(--danger); }
 
-        /* =========================== ADD LISTING =========================== */
         .add-listing-form .form-group { margin-bottom: 14px; }
         .add-listing-form label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--primary); }
         .add-listing-form input, .add-listing-form textarea, .add-listing-form select { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 14px; background: var(--card-bg); transition: var(--transition); outline: none; color: var(--text); }
@@ -180,7 +166,6 @@
         .btn-submit { width: 100%; padding: 15px; background: var(--primary); color: #fff; border: none; border-radius: 60px; font-size: 16px; font-weight: 600; font-family: var(--font); cursor: pointer; transition: var(--transition); }
         .btn-submit:hover { background: var(--primary-light); }
 
-        /* =========================== DETAIL =========================== */
         .detail-gallery { height: 220px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 42px; color: var(--text-secondary); position: relative; border-radius: var(--radius); overflow: hidden; background-size: cover; background-position: center; }
         .detail-gallery .dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
         .detail-gallery .dots span { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: var(--transition); }
@@ -213,7 +198,6 @@
         .seller-box .actions .btn-call { background: var(--border); color: var(--text); }
         .seller-box .actions .btn-call:hover { background: #d1d8e0; }
 
-        /* =========================== CHAT =========================== */
         .chat-messages { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; max-height: 55vh; overflow-y: auto; }
         .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 14px; word-wrap: break-word; position: relative; }
         .chat-message .message-actions { position: absolute; top: 4px; right: 4px; display: flex; gap: 4px; opacity: 0; transition: var(--transition); }
@@ -230,7 +214,6 @@
         .chat-input button { padding: 10px 18px; background: var(--accent); border: none; border-radius: 10px; color: white; cursor: pointer; font-size: 18px; transition: var(--transition); }
         .chat-input button:hover { background: var(--accent-hover); }
 
-        /* =========================== SETTINGS =========================== */
         .settings-group { margin-bottom: 20px; }
         .settings-group .settings-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         .settings-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -248,13 +231,11 @@
         .radio-item input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
         .radio-item.active { color: var(--text); }
 
-        /* =========================== BACK HEADER =========================== */
         .back-header { display: flex; align-items: center; gap: 12px; padding: 8px 0 12px 0; }
         .back-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary); padding: 4px 0; transition: var(--transition); }
         .back-btn:hover { color: var(--primary); }
         .back-header .title { font-weight: 600; font-size: 16px; color: var(--text); }
 
-        /* =========================== SUCCESS MODAL =========================== */
         .success-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.3s ease; }
         .success-modal.show { display: flex; }
         .success-modal .modal-box { background: var(--card-bg); border-radius: var(--radius); padding: 32px 24px; max-width: 360px; width: 90%; text-align: center; }
@@ -268,11 +249,9 @@
         .success-modal .modal-box .btn-group .btn-secondary-modal { background: var(--bg); color: var(--text); }
         .success-modal .modal-box .btn-group .btn-secondary-modal:hover { background: var(--border); }
 
-        /* =========================== EMPTY STATE =========================== */
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
         .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
 
-        /* =========================== FILTER MODAL =========================== */
         .filter-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 200; }
         .filter-modal.show { display: flex; }
         .filter-modal .filter-content { background: var(--card-bg); border-radius: var(--radius); padding: 24px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
@@ -291,12 +270,10 @@
         .filter-modal .filter-content .filter-actions .reset { background: var(--bg); color: var(--text); }
         .filter-modal .filter-content .filter-actions .reset:hover { background: var(--border); }
 
-        /* =========================== SELLER PROFILE =========================== */
         .seller-profile .profile-avatar { width: 80px; height: 80px; font-size: 32px; }
         .seller-profile .profile-info h3 { font-size: 20px; }
         .seller-profile .profile-info p { font-size: 14px; }
 
-        /* =========================== RESPONSIVE =========================== */
         @media (min-width: 640px) { .app-container { max-width: 600px; padding: 0 24px 80px 24px; } .bottom-nav { max-width: 600px; border-radius: 16px 16px 0 0; } }
         @media (max-width: 400px) { .listing-card { flex: 0 0 140px; } .listing-card-image { height: 95px; } .category-item { min-width: 56px; padding: 8px 12px; } .category-item i { font-size: 18px; } }
     </style>
@@ -853,7 +830,8 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+<!-- ВИПРАВЛЕНО: ЗАМІНЕНО CDN НА UNPKG -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <script>
 // =====================================================================
@@ -1044,7 +1022,6 @@ function applyTranslations() {
     setText('detailTitle',tr.detail);setText('writeSellerBtn',tr.writeSeller);
     setText('successHomeBtn',tr.home);setText('successViewBtn','Переглянути');
     setText('sellerProfileTitle',tr.sellerProfile);
-    setText('sellerProfileRating','⭐ '+ (userData.rating||0).toFixed(1)+' ('+(userData.ratingCount||0)+' '+tr.reviews+')');
 }
 
 function updateUI() {
@@ -1094,7 +1071,7 @@ function initSupabase() {
             throw new Error('Supabase SDK не завантажений');
         }
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase client initialized successfully');
+        console.log('✅ Supabase client initialized successfully:', !!supabase);
         document.getElementById('statusBadge').textContent='✅';
         document.getElementById('statusBadge').className='status-badge status-connected';
         return true;
@@ -1200,7 +1177,10 @@ function toggleAuthMode(){
 
 async function handleAuth() {
     hideAuthMessages();
-    if(!supabase){showAuthError('Підключення до сервера не встановлено.');return;}
+    if(!supabase){
+        showAuthError('Підключення до сервера не встановлено. Спробуйте перезавантажити сторінку.');
+        return;
+    }
     const email=document.getElementById('authEmail').value.trim();
     const password=document.getElementById('authPassword').value;
     const confirmPassword=document.getElementById('authConfirmPassword')?.value;
@@ -1286,9 +1266,15 @@ async function createUserRecord(userId,email,username){
 
 async function apiRequest(endpoint,options={}){
     try{
-        const session=supabase?(await supabase.auth.getSession()).data.session:null;
-        const headers={'apikey':SUPABASE_ANON_KEY,'Content-Type':'application/json',...options.headers};
-        if(session?.access_token) headers['Authorization']='Bearer '+session.access_token;
+        const { data: { session } } = await supabase.auth.getSession();
+        const headers={
+            'apikey': SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+        if(session?.access_token){
+            headers['Authorization'] = 'Bearer ' + session.access_token;
+        }
         const res=await fetch(SUPABASE_URL+'/rest/v1/'+endpoint,{...options,headers});
         const text=await res.text();let data=null;
         try{data=text?JSON.parse(text):null;}catch{data=text;}
@@ -1305,7 +1291,7 @@ async function loadUserData() {
     if(!currentUser)return;
     try{
         const res=await fetch(SUPABASE_URL+'/rest/v1/users?id=eq.'+currentUser.id+'&select=*',{
-            headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}
+            headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+ (await supabase.auth.getSession()).data.session?.access_token}
         });
         if(res.ok){
             const data=await res.json();
@@ -1705,7 +1691,6 @@ function openDetail(id){
         specsContainer.style.display='grid';
     }else{specsContainer.style.display='none';}
     
-    // Отримуємо рейтинг продавця
     if(listing.user_id){
         apiRequest('users?id=eq.'+listing.user_id+'&select=rating,rating_count').then(function(data){
             if(data&&data.length>0){
@@ -2022,22 +2007,53 @@ function init(){
 // ЕКСПОРТ ГЛОБАЛЬНИХ ЗМІННИХ
 // =====================================================================
 
-window.handleAuth=handleAuth;window.toggleAuthMode=toggleAuthMode;window.handleForgotPassword=handleForgotPassword;
-window.navigateTo=navigateTo;window.goBack=goBack;window.filterByCategory=filterByCategory;window.showFilters=showFilters;
-window.openDetail=openDetail;window.changeDetailPhoto=changeDetailPhoto;window.toggleDetailFavorite=toggleDetailFavorite;
-window.toggleFavorite=toggleFavorite;window.renderSearch=renderSearch;window.handlePhotos=handlePhotos;
-window.submitListing=submitListing;window.uploadAvatar=uploadAvatar;window.editUploadAvatar=editUploadAvatar;
-window.saveProfile=saveProfile;window.selectCity=selectCity;window.filterCities=filterCities;window.saveLanguage=saveLanguage;
-window.toggleSetting=toggleSetting;window.showHelp=showHelp;window.showAbout=showAbout;window.handleLogout=handleLogout;
-window.renderAll=renderAll;window.openChatDetail=openChatDetail;window.sendMessage=sendMessage;window.editListing=editListing;
-window.deleteListing=deleteListing;window.updateListing=updateListing;window.goBackFromDetail=goBackFromDetail;
-window.openChatFromDetail=openChatFromDetail;window.changeEmail=changeEmail;window.changePhone=changePhone;
-window.changePassword=changePassword;window.showForgotPassword=showForgotPassword;window.closeSuccessModal=closeSuccessModal;
-window.togglePasswordVisibility=togglePasswordVisibility;window.openSellerProfile=openSellerProfile;
-window.callSellerFromProfile=callSellerFromProfile;window.openChatFromSellerProfile=openChatFromSellerProfile;
-window.openSellerProfileFromDetail=openSellerProfileFromDetail;window.callSellerFromDetail=callSellerFromDetail;
-window.openFilterModal=openFilterModal;window.closeFilterModal=closeFilterModal;window.applyFilters=applyFilters;
-window.resetFilters=resetFilters;window.deleteMessage=deleteMessage;
+window.handleAuth=handleAuth;
+window.toggleAuthMode=toggleAuthMode;
+window.handleForgotPassword=handleForgotPassword;
+window.navigateTo=navigateTo;
+window.goBack=goBack;
+window.filterByCategory=filterByCategory;
+window.openFilterModal=openFilterModal;
+window.closeFilterModal=closeFilterModal;
+window.applyFilters=applyFilters;
+window.resetFilters=resetFilters;
+window.openDetail=openDetail;
+window.changeDetailPhoto=changeDetailPhoto;
+window.toggleDetailFavorite=toggleDetailFavorite;
+window.toggleFavorite=toggleFavorite;
+window.renderSearch=renderSearch;
+window.handlePhotos=handlePhotos;
+window.submitListing=submitListing;
+window.uploadAvatar=uploadAvatar;
+window.editUploadAvatar=editUploadAvatar;
+window.saveProfile=saveProfile;
+window.selectCity=selectCity;
+window.filterCities=filterCities;
+window.saveLanguage=saveLanguage;
+window.toggleSetting=toggleSetting;
+window.showHelp=showHelp;
+window.showAbout=showAbout;
+window.handleLogout=handleLogout;
+window.renderAll=renderAll;
+window.openChatDetail=openChatDetail;
+window.sendMessage=sendMessage;
+window.editListing=editListing;
+window.deleteListing=deleteListing;
+window.updateListing=updateListing;
+window.goBackFromDetail=goBackFromDetail;
+window.openChatFromDetail=openChatFromDetail;
+window.changeEmail=changeEmail;
+window.changePhone=changePhone;
+window.changePassword=changePassword;
+window.showForgotPassword=showForgotPassword;
+window.closeSuccessModal=closeSuccessModal;
+window.togglePasswordVisibility=togglePasswordVisibility;
+window.openSellerProfile=openSellerProfile;
+window.callSellerFromProfile=callSellerFromProfile;
+window.openChatFromSellerProfile=openChatFromSellerProfile;
+window.openSellerProfileFromDetail=openSellerProfileFromDetail;
+window.callSellerFromDetail=callSellerFromDetail;
+window.deleteMessage=deleteMessage;
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
