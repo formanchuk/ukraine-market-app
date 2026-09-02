@@ -140,6 +140,7 @@
         .search-result-card .info .price { font-weight: 700; font-size: 15px; color: var(--primary); }
         .search-result-card .info .title { font-weight: 500; font-size: 13px; }
         .search-result-card .info .meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 12px; margin-top: 2px; }
+        .search-result-card .info .condition { font-size: 11px; color: var(--text-secondary); background: var(--bg); padding: 2px 8px; border-radius: 12px; display: inline-block; margin-top: 2px; }
 
         .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
         .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; }
@@ -254,6 +255,22 @@
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
         .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
 
+        /* Filter Modal */
+        .filter-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .filter-modal.show { display: flex; }
+        .filter-modal .filter-content { background: var(--card-bg); border-radius: var(--radius); padding: 24px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .filter-modal .filter-content h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .filter-modal .filter-content .filter-group { margin-bottom: 16px; }
+        .filter-modal .filter-content .filter-group label { display: block; font-weight: 500; font-size: 13px; margin-bottom: 4px; color: var(--text-secondary); }
+        .filter-modal .filter-content .filter-group input, .filter-modal .filter-content .filter-group select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 14px; background: var(--bg); outline: none; }
+        .filter-modal .filter-content .filter-group input:focus, .filter-modal .filter-content .filter-group select:focus { border-color: var(--accent); }
+        .filter-modal .filter-content .filter-actions { display: flex; gap: 10px; margin-top: 16px; }
+        .filter-modal .filter-content .filter-actions button { flex: 1; padding: 12px; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .filter-modal .filter-content .filter-actions .apply-btn { background: var(--accent); color: #fff; }
+        .filter-modal .filter-content .filter-actions .apply-btn:hover { background: var(--accent-hover); }
+        .filter-modal .filter-content .filter-actions .reset-btn { background: var(--bg); color: var(--text); }
+        .filter-modal .filter-content .filter-actions .reset-btn:hover { background: var(--border); }
+
         @media (min-width: 640px) { .app-container { max-width: 600px; padding: 0 24px 80px 24px; } .bottom-nav { max-width: 600px; border-radius: 16px 16px 0 0; } }
         @media (max-width: 400px) { .listing-card { flex: 0 0 140px; } .listing-card-image { height: 95px; } .category-item { min-width: 56px; padding: 8px 12px; } .category-item i { font-size: 18px; } }
     </style>
@@ -356,9 +373,48 @@
                 <button onclick="filterByCategory('services')"><i class="fas fa-wrench"></i> <span id="filterServices">Послуги</span></button>
                 <button onclick="filterByCategory('realestate')"><i class="fas fa-building"></i> <span id="filterRealestate">Нерухом.</span></button>
                 <button onclick="filterByCategory('transport')"><i class="fas fa-car"></i> <span id="filterTransport">Транспорт</span></button>
-                <button onclick="showFilters()"><i class="fas fa-sliders-h"></i> <span id="filterFilters">Фільтри</span></button>
+                <button onclick="openFilterModal()"><i class="fas fa-sliders-h"></i> <span id="filterFilters">Фільтри</span></button>
             </div>
             <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <!-- FILTER MODAL -->
+    <div class="filter-modal" id="filterModal">
+        <div class="filter-content">
+            <h3 id="filterTitle">🔍 Фільтри</h3>
+            <div class="filter-group">
+                <label id="filterPriceLabel">Ціна (грн)</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="number" id="filterPriceMin" placeholder="від" style="width:50%;" />
+                    <input type="number" id="filterPriceMax" placeholder="до" style="width:50%;" />
+                </div>
+            </div>
+            <div class="filter-group">
+                <label id="filterCityLabel">Місто</label>
+                <input type="text" id="filterCity" placeholder="Введіть місто" />
+            </div>
+            <div class="filter-group">
+                <label id="filterConditionLabel">Стан</label>
+                <select id="filterCondition">
+                    <option value="all">Всі</option>
+                    <option value="new">Новий</option>
+                    <option value="used">Б/В</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label id="filterDateLabel">Дата</label>
+                <select id="filterDate">
+                    <option value="all">За весь час</option>
+                    <option value="today">Сьогодні</option>
+                    <option value="week">Цей тиждень</option>
+                    <option value="month">Цей місяць</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button class="apply-btn" onclick="applyFilters()" id="filterApplyBtn">Застосувати</button>
+                <button class="reset-btn" onclick="resetFilters()" id="filterResetBtn">Скинути</button>
+            </div>
         </div>
     </div>
 
@@ -387,6 +443,13 @@
                 <div class="form-group">
                     <label id="addDescLabel">Опис</label>
                     <textarea id="addDesc" placeholder="Детальний опис..." rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label id="addConditionLabel">Стан</label>
+                    <select id="addCondition">
+                        <option value="new">Новий</option>
+                        <option value="used">Б/В</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label id="addPhotoLabel">Фото</label>
@@ -796,23 +859,24 @@
                 <div class="price" id="detailPrice">8 500 грн</div>
                 <div class="title" id="detailTitleText">Диван сучасний</div>
                 <div class="meta" id="detailMeta">
-                    <span><i class="fas fa-map-marker-alt"></i> <span id="detailLocation">Київ, Оболонь</span></span>
-                    <span><i class="far fa-clock"></i> <span id="detailTime">Сьогодні о 14:30</span></span>
+                    <span><i class="fas fa-map-marker-alt"></i> <span id="detailLocation">Київ</span></span>
+                    <span><i class="far fa-clock"></i> <span id="detailTime">Сьогодні</span></span>
+                    <span id="detailCondition"><span class="condition-badge">Новий</span></span>
                 </div>
                 <div class="divider"></div>
-                <div class="description" id="detailDesc">Зручний кутовий диван із тканинною оббивкою. Стан — новий.</div>
+                <div class="description" id="detailDesc">Опис оголошення</div>
                 <div class="specs" id="detailSpecs">
-                    <div class="spec-item"><span class="label">Стан</span> <span>Новий</span></div>
-                    <div class="spec-item"><span class="label">Категорія</span> <span>Меблі</span></div>
+                    <div class="spec-item"><span class="label">Стан</span> <span id="detailConditionText">Новий</span></div>
+                    <div class="spec-item"><span class="label">Категорія</span> <span id="detailCategoryText">Товари</span></div>
                 </div>
                 <div class="divider"></div>
                 <button class="btn-submit" style="background:var(--accent);" onclick="openChatFromDetail()">
                     <i class="fas fa-comment"></i> <span id="writeSellerBtn">Написати продавцю</span>
                 </button>
                 <div class="seller-box" id="detailSeller">
-                    <div class="avatar" id="sellerAvatar">А</div>
+                    <div class="avatar" id="sellerAvatar">👤</div>
                     <div class="info">
-                        <div class="name" id="sellerName">Анна Коваленко</div>
+                        <div class="name" id="sellerName">Продавець</div>
                         <div class="since" id="sellerSince">На UAMO з 2024</div>
                     </div>
                     <div class="actions">
@@ -900,7 +964,11 @@ const translations = {
         notifNew: 'Нові оголошення', notifRecommend: 'Рекомендації UAMO',
         writeSeller: 'Написати продавцю', detail: 'Оголошення',
         securityChangePassword: 'Змінити пароль', securityChangeEmail: 'Змінити email',
-        securityChangePhone: 'Змінити номер телефону', securitySessions: 'Активні сеанси'
+        securityChangePhone: 'Змінити номер телефону', securitySessions: 'Активні сеанси',
+        condition: 'Стан', new: 'Новий', used: 'Б/В', conditionNew: 'Новий', conditionUsed: 'Б/В',
+        filterTitle: 'Фільтри', filterPrice: 'Ціна (грн)', filterCity: 'Місто',
+        filterCondition: 'Стан', filterDate: 'Дата', filterApply: 'Застосувати', filterReset: 'Скинути',
+        allTime: 'За весь час', today: 'Сьогодні', week: 'Цей тиждень', month: 'Цей місяць'
     },
     en: {
         home: 'Home', search: 'Search', add: 'Add', addListing: 'Add listing',
@@ -937,7 +1005,11 @@ const translations = {
         notifNew: 'New listings', notifRecommend: 'UAMO recommendations',
         writeSeller: 'Write to seller', detail: 'Listing',
         securityChangePassword: 'Change password', securityChangeEmail: 'Change email',
-        securityChangePhone: 'Change phone number', securitySessions: 'Active sessions'
+        securityChangePhone: 'Change phone number', securitySessions: 'Active sessions',
+        condition: 'Condition', new: 'New', used: 'Used', conditionNew: 'New', conditionUsed: 'Used',
+        filterTitle: 'Filters', filterPrice: 'Price (UAH)', filterCity: 'City',
+        filterCondition: 'Condition', filterDate: 'Date', filterApply: 'Apply', filterReset: 'Reset',
+        allTime: 'All time', today: 'Today', week: 'This week', month: 'This month'
     },
     pl: {
         home: 'Strona główna', search: 'Szukaj', add: 'Dodaj', addListing: 'Dodaj ogłoszenie',
@@ -974,7 +1046,11 @@ const translations = {
         notifNew: 'Nowe ogłoszenia', notifRecommend: 'Rekomendacje UAMO',
         writeSeller: 'Napisz do sprzedawcy', detail: 'Ogłoszenie',
         securityChangePassword: 'Zmień hasło', securityChangeEmail: 'Zmień email',
-        securityChangePhone: 'Zmień numer telefonu', securitySessions: 'Aktywne sesje'
+        securityChangePhone: 'Zmień numer telefonu', securitySessions: 'Aktywne sesje',
+        condition: 'Stan', new: 'Nowy', used: 'Używany', conditionNew: 'Nowy', conditionUsed: 'Używany',
+        filterTitle: 'Filtry', filterPrice: 'Cena (UAH)', filterCity: 'Miasto',
+        filterCondition: 'Stan', filterDate: 'Data', filterApply: 'Zastosuj', filterReset: 'Resetuj',
+        allTime: 'Cały czas', today: 'Dzisiaj', week: 'Ten tydzień', month: 'Ten miesiąc'
     },
     de: {
         home: 'Startseite', search: 'Suche', add: 'Hinzufügen', addListing: 'Anzeige hinzufügen',
@@ -1011,7 +1087,11 @@ const translations = {
         notifNew: 'Neue Anzeigen', notifRecommend: 'UAMO Empfehlungen',
         writeSeller: 'An Verkäufer schreiben', detail: 'Anzeige',
         securityChangePassword: 'Passwort ändern', securityChangeEmail: 'Email ändern',
-        securityChangePhone: 'Telefonnummer ändern', securitySessions: 'Aktive Sitzungen'
+        securityChangePhone: 'Telefonnummer ändern', securitySessions: 'Aktive Sitzungen',
+        condition: 'Zustand', new: 'Neu', used: 'Gebraucht', conditionNew: 'Neu', conditionUsed: 'Gebraucht',
+        filterTitle: 'Filter', filterPrice: 'Preis (UAH)', filterCity: 'Stadt',
+        filterCondition: 'Zustand', filterDate: 'Datum', filterApply: 'Anwenden', filterReset: 'Zurücksetzen',
+        allTime: 'Alle Zeiten', today: 'Heute', week: 'Diese Woche', month: 'Diesen Monat'
     },
     fr: {
         home: 'Accueil', search: 'Recherche', add: 'Ajouter', addListing: 'Ajouter une annonce',
@@ -1048,7 +1128,11 @@ const translations = {
         notifNew: 'Nouvelles annonces', notifRecommend: 'Recommandations UAMO',
         writeSeller: 'Écrire au vendeur', detail: 'Annonce',
         securityChangePassword: 'Changer mot de passe', securityChangeEmail: 'Changer email',
-        securityChangePhone: 'Changer numéro de téléphone', securitySessions: 'Sessions actives'
+        securityChangePhone: 'Changer numéro de téléphone', securitySessions: 'Sessions actives',
+        condition: 'État', new: 'Neuf', used: 'Occasion', conditionNew: 'Neuf', conditionUsed: 'Occasion',
+        filterTitle: 'Filtres', filterPrice: 'Prix (UAH)', filterCity: 'Ville',
+        filterCondition: 'État', filterDate: 'Date', filterApply: 'Appliquer', filterReset: 'Réinitialiser',
+        allTime: 'Tout le temps', today: 'Aujourd\'hui', week: 'Cette semaine', month: 'Ce mois'
     },
     es: {
         home: 'Inicio', search: 'Buscar', add: 'Añadir', addListing: 'Añadir anuncio',
@@ -1085,7 +1169,11 @@ const translations = {
         notifNew: 'Nuevos anuncios', notifRecommend: 'Recomendaciones UAMO',
         writeSeller: 'Escribir al vendedor', detail: 'Anuncio',
         securityChangePassword: 'Cambiar contraseña', securityChangeEmail: 'Cambiar email',
-        securityChangePhone: 'Cambiar número de teléfono', securitySessions: 'Sesiones activas'
+        securityChangePhone: 'Cambiar número de teléfono', securitySessions: 'Sesiones activas',
+        condition: 'Estado', new: 'Nuevo', used: 'Usado', conditionNew: 'Nuevo', conditionUsed: 'Usado',
+        filterTitle: 'Filtros', filterPrice: 'Precio (UAH)', filterCity: 'Ciudad',
+        filterCondition: 'Estado', filterDate: 'Fecha', filterApply: 'Aplicar', filterReset: 'Restablecer',
+        allTime: 'Todo el tiempo', today: 'Hoy', week: 'Esta semana', month: 'Este mes'
     },
     it: {
         home: 'Home', search: 'Cerca', add: 'Aggiungi', addListing: 'Aggiungi annuncio',
@@ -1122,7 +1210,11 @@ const translations = {
         notifNew: 'Nuovi annunci', notifRecommend: 'Raccomandazioni UAMO',
         writeSeller: 'Scrivi al venditore', detail: 'Annuncio',
         securityChangePassword: 'Cambia password', securityChangeEmail: 'Cambia email',
-        securityChangePhone: 'Cambia numero di telefono', securitySessions: 'Sessioni attive'
+        securityChangePhone: 'Cambia numero di telefono', securitySessions: 'Sessioni attive',
+        condition: 'Condizione', new: 'Nuovo', used: 'Usato', conditionNew: 'Nuovo', conditionUsed: 'Usato',
+        filterTitle: 'Filtri', filterPrice: 'Prezzo (UAH)', filterCity: 'Città',
+        filterCondition: 'Condizione', filterDate: 'Data', filterApply: 'Applica', filterReset: 'Reimposta',
+        allTime: 'Sempre', today: 'Oggi', week: 'Questa settimana', month: 'Questo mese'
     },
     cs: {
         home: 'Domů', search: 'Hledat', add: 'Přidat', addListing: 'Přidat inzerát',
@@ -1159,7 +1251,11 @@ const translations = {
         notifNew: 'Nové inzeráty', notifRecommend: 'Doporučení UAMO',
         writeSeller: 'Napsat prodejci', detail: 'Inzerát',
         securityChangePassword: 'Změnit heslo', securityChangeEmail: 'Změnit email',
-        securityChangePhone: 'Změnit telefonní číslo', securitySessions: 'Aktivní sezení'
+        securityChangePhone: 'Změnit telefonní číslo', securitySessions: 'Aktivní sezení',
+        condition: 'Stav', new: 'Nový', used: 'Použitý', conditionNew: 'Nový', conditionUsed: 'Použitý',
+        filterTitle: 'Filtry', filterPrice: 'Cena (UAH)', filterCity: 'Město',
+        filterCondition: 'Stav', filterDate: 'Datum', filterApply: 'Použít', filterReset: 'Resetovat',
+        allTime: 'Vždy', today: 'Dnes', week: 'Tento týden', month: 'Tento měsíc'
     },
     sk: {
         home: 'Domov', search: 'Hľadať', add: 'Pridať', addListing: 'Pridať inzerát',
@@ -1196,7 +1292,11 @@ const translations = {
         notifNew: 'Nové inzeráty', notifRecommend: 'Odporúčania UAMO',
         writeSeller: 'Napísať predajcovi', detail: 'Inzerát',
         securityChangePassword: 'Zmeniť heslo', securityChangeEmail: 'Zmeniť email',
-        securityChangePhone: 'Zmeniť telefónne číslo', securitySessions: 'Aktívne relácie'
+        securityChangePhone: 'Zmeniť telefónne číslo', securitySessions: 'Aktívne relácie',
+        condition: 'Stav', new: 'Nový', used: 'Použitý', conditionNew: 'Nový', conditionUsed: 'Použitý',
+        filterTitle: 'Filtre', filterPrice: 'Cena (UAH)', filterCity: 'Mesto',
+        filterCondition: 'Stav', filterDate: 'Dátum', filterApply: 'Použiť', filterReset: 'Resetovať',
+        allTime: 'Vždy', today: 'Dnes', week: 'Tento týždeň', month: 'Tento mesiac'
     },
     ro: {
         home: 'Acasă', search: 'Căutare', add: 'Adaugă', addListing: 'Adaugă anunț',
@@ -1233,7 +1333,11 @@ const translations = {
         notifNew: 'Anunțuri noi', notifRecommend: 'Recomandări UAMO',
         writeSeller: 'Scrie vânzătorului', detail: 'Anunț',
         securityChangePassword: 'Schimbă parola', securityChangeEmail: 'Schimbă email',
-        securityChangePhone: 'Schimbă numărul de telefon', securitySessions: 'Sesiuni active'
+        securityChangePhone: 'Schimbă numărul de telefon', securitySessions: 'Sesiuni active',
+        condition: 'Stare', new: 'Nou', used: 'Folosit', conditionNew: 'Nou', conditionUsed: 'Folosit',
+        filterTitle: 'Filtre', filterPrice: 'Preț (UAH)', filterCity: 'Oraș',
+        filterCondition: 'Stare', filterDate: 'Data', filterApply: 'Aplică', filterReset: 'Resetează',
+        allTime: 'Tot timpul', today: 'Astăzi', week: 'Săptămâna aceasta', month: 'Luna aceasta'
     },
     tr: {
         home: 'Ana Sayfa', search: 'Ara', add: 'Ekle', addListing: 'İlan Ekle',
@@ -1270,7 +1374,11 @@ const translations = {
         notifNew: 'Yeni ilanlar', notifRecommend: 'UAMO önerileri',
         writeSeller: 'Satıcıya yaz', detail: 'İlan',
         securityChangePassword: 'Şifre değiştir', securityChangeEmail: 'Email değiştir',
-        securityChangePhone: 'Telefon numarasını değiştir', securitySessions: 'Aktif oturumlar'
+        securityChangePhone: 'Telefon numarasını değiştir', securitySessions: 'Aktif oturumlar',
+        condition: 'Durum', new: 'Yeni', used: 'Kullanılmış', conditionNew: 'Yeni', conditionUsed: 'Kullanılmış',
+        filterTitle: 'Filtreler', filterPrice: 'Fiyat (UAH)', filterCity: 'Şehir',
+        filterCondition: 'Durum', filterDate: 'Tarih', filterApply: 'Uygula', filterReset: 'Sıfırla',
+        allTime: 'Her zaman', today: 'Bugün', week: 'Bu hafta', month: 'Bu ay'
     }
 };
 
@@ -1316,6 +1424,7 @@ let userData = {
     id: null, name: 'Користувач', last_name: '', username: '', phone: '', email: '', city: 'Київ', avatar: 'К', language: 'uk'
 };
 let unreadCount = 0;
+let filterData = { priceMin: '', priceMax: '', city: '', condition: 'all', date: 'all' };
 
 // ================================================================
 // ФУНКЦІЇ ПЕРЕКЛАДУ
@@ -1348,11 +1457,36 @@ function applyTranslations() {
     setText('filterTransport', tr.transport);
     setText('filterFilters', tr.filters);
 
+    // Фільтри модалка
+    setText('filterTitle', tr.filterTitle);
+    setText('filterPriceLabel', tr.filterPrice);
+    setText('filterCityLabel', tr.filterCity);
+    setText('filterConditionLabel', tr.filterCondition);
+    setText('filterDateLabel', tr.filterDate);
+    setText('filterApplyBtn', tr.filterApply);
+    setText('filterResetBtn', tr.filterReset);
+    
+    // Опції фільтрів
+    const conditionSelect = document.getElementById('filterCondition');
+    if (conditionSelect) {
+        conditionSelect.options[0].text = tr.all;
+        conditionSelect.options[1].text = tr.new;
+        conditionSelect.options[2].text = tr.used;
+    }
+    const dateSelect = document.getElementById('filterDate');
+    if (dateSelect) {
+        dateSelect.options[0].text = tr.allTime;
+        dateSelect.options[1].text = tr.today;
+        dateSelect.options[2].text = tr.week;
+        dateSelect.options[3].text = tr.month;
+    }
+
     // Додати оголошення
     setText('addListingTitle', tr.addListing);
     setText('addCategoryLabel', tr.category);
     setText('addTitleLabel', tr.title);
     setText('addDescLabel', tr.description);
+    setText('addConditionLabel', tr.condition);
     setText('addPhotoLabel', tr.photo);
     setText('addPhotoText', tr.addPhoto);
     setText('addPriceLabel', tr.price);
@@ -1514,6 +1648,45 @@ function updateUI() {
 
     const radios = document.querySelectorAll('input[name="language"]');
     radios.forEach(r => { r.checked = r.value === currentLang; r.parentElement.classList.toggle('active', r.checked); });
+}
+
+// ================================================================
+// ФІЛЬТРИ
+// ================================================================
+
+function openFilterModal() {
+    document.getElementById('filterModal').classList.add('show');
+    // Заповнюємо поточними значеннями
+    document.getElementById('filterPriceMin').value = filterData.priceMin || '';
+    document.getElementById('filterPriceMax').value = filterData.priceMax || '';
+    document.getElementById('filterCity').value = filterData.city || '';
+    document.getElementById('filterCondition').value = filterData.condition || 'all';
+    document.getElementById('filterDate').value = filterData.date || 'all';
+}
+
+function closeFilterModal() {
+    document.getElementById('filterModal').classList.remove('show');
+}
+
+function applyFilters() {
+    filterData.priceMin = document.getElementById('filterPriceMin').value.trim();
+    filterData.priceMax = document.getElementById('filterPriceMax').value.trim();
+    filterData.city = document.getElementById('filterCity').value.trim();
+    filterData.condition = document.getElementById('filterCondition').value;
+    filterData.date = document.getElementById('filterDate').value;
+    closeFilterModal();
+    renderSearch(document.getElementById('searchInput')?.value || '');
+}
+
+function resetFilters() {
+    filterData = { priceMin: '', priceMax: '', city: '', condition: 'all', date: 'all' };
+    document.getElementById('filterPriceMin').value = '';
+    document.getElementById('filterPriceMax').value = '';
+    document.getElementById('filterCity').value = '';
+    document.getElementById('filterCondition').value = 'all';
+    document.getElementById('filterDate').value = 'all';
+    closeFilterModal();
+    renderSearch(document.getElementById('searchInput')?.value || '');
 }
 
 // ================================================================
@@ -1845,7 +2018,8 @@ async function loadListings() {
     listings = data.map(item => ({
         id: item.id, title: item.title || 'Без назви', price: item.price ? String(item.price) : '0',
         location: item.city || 'не вказано', image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-        photos: item.photos || null, category: item.category || 'Інше',
+        photos: item.photos || null, category: item.category || 'products',
+        condition: item.condition || 'new',
         isNew: new Date(item.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000),
         isFeatured: item.is_featured || false, createdAt: item.created_at || new Date().toISOString(),
         description: item.description || 'Без опису', specs: item.specs || {},
@@ -1861,7 +2035,8 @@ async function loadMyListings() {
     myListings = data.map(item => ({
         id: item.id, title: item.title || 'Без назви', price: item.price ? String(item.price) : '0',
         location: item.city || 'не вказано', image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-        photos: item.photos || null, category: item.category || 'Інше',
+        photos: item.photos || null, category: item.category || 'products',
+        condition: item.condition || 'new',
         createdAt: item.created_at || new Date().toISOString(),
         description: item.description || 'Без опису', phone: item.phone || '', status: item.status || 'active'
     }));
@@ -1911,6 +2086,12 @@ function getFirstPhoto(listing) {
 
 function isFavorite(id) { return favorites.some(f => f === id); }
 
+function getConditionLabel(condition) {
+    if (condition === 'new') return t('new');
+    if (condition === 'used') return t('used');
+    return t('new');
+}
+
 function updateChatBadge() {
     const badge = document.getElementById('chatBadge');
     if (!badge) return;
@@ -1948,6 +2129,7 @@ function renderCategories() {
 function renderListingCard(listing) {
     const fav = isFavorite(listing.id);
     const photo = getFirstPhoto(listing);
+    const conditionLabel = getConditionLabel(listing.condition);
     return '<div class="listing-card" onclick="openDetail(\'' + listing.id + '\')">' +
         '<div class="listing-card-image" style="' + (photo ? 'background-image:url(\'' + photo + '\')' : 'background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--text-secondary);') + '">' +
         (!photo ? listing.image || '📦' : '') +
@@ -1958,11 +2140,13 @@ function renderListingCard(listing) {
         '<div class="price">' + listing.price + ' грн</div>' +
         '<div class="title">' + listing.title + '</div>' +
         '<div class="location"><i class="fas fa-map-marker-alt"></i> ' + listing.location + '</div>' +
+        '<div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">' + conditionLabel + '</div>' +
         '</div></div>';
 }
 
 function renderSearchResult(listing) {
     const photo = getFirstPhoto(listing);
+    const conditionLabel = getConditionLabel(listing.condition);
     return '<div class="search-result-card" onclick="openDetail(\'' + listing.id + '\')">' +
         '<div class="img" style="' + (photo ? 'background-image:url(\'' + photo + '\')' : 'background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;') + '">' +
         (!photo ? listing.image || '📦' : '') +
@@ -1973,7 +2157,50 @@ function renderSearchResult(listing) {
         '<div class="meta">' +
         '<span><i class="fas fa-map-marker-alt"></i> ' + listing.location + '</span>' +
         '<span><i class="far fa-clock"></i> ' + timeAgo(listing.createdAt) + '</span>' +
-        '</div></div></div>';
+        '</div>' +
+        '<div class="condition">' + conditionLabel + '</div>' +
+        '</div></div>';
+}
+
+function applyFiltersToListings(results) {
+    let filtered = results;
+    
+    // Ціна
+    if (filterData.priceMin) {
+        const min = parseFloat(filterData.priceMin);
+        filtered = filtered.filter(l => parseFloat(l.price) >= min);
+    }
+    if (filterData.priceMax) {
+        const max = parseFloat(filterData.priceMax);
+        filtered = filtered.filter(l => parseFloat(l.price) <= max);
+    }
+    
+    // Місто
+    if (filterData.city.trim()) {
+        const city = filterData.city.trim().toLowerCase();
+        filtered = filtered.filter(l => l.location.toLowerCase().includes(city));
+    }
+    
+    // Стан
+    if (filterData.condition && filterData.condition !== 'all') {
+        filtered = filtered.filter(l => l.condition === filterData.condition);
+    }
+    
+    // Дата
+    if (filterData.date && filterData.date !== 'all') {
+        const now = new Date();
+        let cutoff = new Date();
+        if (filterData.date === 'today') {
+            cutoff.setHours(0, 0, 0, 0);
+        } else if (filterData.date === 'week') {
+            cutoff.setDate(cutoff.getDate() - 7);
+        } else if (filterData.date === 'month') {
+            cutoff.setMonth(cutoff.getMonth() - 1);
+        }
+        filtered = filtered.filter(l => new Date(l.createdAt) >= cutoff);
+    }
+    
+    return filtered;
 }
 
 function renderHome() {
@@ -1998,6 +2225,8 @@ function renderSearch(query) {
         const q = query.trim().toLowerCase();
         results = results.filter(l => l.title.toLowerCase().includes(q) || l.location.toLowerCase().includes(q) || l.category.toLowerCase().includes(q));
     }
+    // Застосовуємо фільтри
+    results = applyFiltersToListings(results);
     if (results.length === 0) {
         container.innerHTML = '<div class="empty-state"><i class="fas fa-search"></i> ' + t('noResults') + '</div>';
     } else {
@@ -2056,10 +2285,12 @@ function renderMyListings() {
     } else {
         container.innerHTML = myListings.map(item => {
             const photo = getFirstPhoto(item);
+            const conditionLabel = getConditionLabel(item.condition);
             return '<div class="search-result-card" style="flex-wrap:wrap;">' +
                 '<div class="img" style="' + (photo ? 'background-image:url(\'' + photo + '\')' : 'display:flex; align-items:center; justify-content:center; font-size:24px;') + '">' + (!photo ? '📦' : '') + '</div>' +
                 '<div class="info" style="flex:1;"><div class="price">' + item.price + ' грн</div><div class="title">' + item.title + '</div>' +
-                '<div class="meta"><span><i class="fas fa-map-marker-alt"></i> ' + item.location + '</span><span><i class="far fa-clock"></i> ' + timeAgo(item.createdAt) + '</span></div></div>' +
+                '<div class="meta"><span><i class="fas fa-map-marker-alt"></i> ' + item.location + '</span><span><i class="far fa-clock"></i> ' + timeAgo(item.createdAt) + '</span></div>' +
+                '<div class="condition">' + conditionLabel + '</div></div>' +
                 '<div style="display:flex; gap:6px; width:100%; margin-top:8px;">' +
                 '<button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1;" onclick="openDetail(\'' + item.id + '\')">👁 ' + t('listings') + '</button>' +
                 '<button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1;" onclick="editListing(\'' + item.id + '\')">✏️</button>' +
@@ -2137,7 +2368,7 @@ function updateNav(page) {
 function goBackFromDetail() { if (currentPage === 'detail') { navigateTo('home'); } }
 
 // ================================================================
-// FILTERS
+// FILTERS - CATEGORY
 // ================================================================
 
 let currentFilter = 'all';
@@ -2154,8 +2385,6 @@ function filterByCategory(cat) {
         renderSearch(input.value);
     }
 }
-
-function showFilters() { alert('🔍 ' + t('filters') + ':\n- ' + t('price') + '\n- ' + t('city') + '\n- Стан (новий/б/в)\n- ' + t('newListings')); }
 
 // ================================================================
 // LISTING OPERATIONS
@@ -2188,6 +2417,7 @@ async function submitListing() {
     const phone = document.getElementById('addPhone').value.trim() || userData.phone;
     const desc = document.getElementById('addDesc').value.trim();
     const category = document.getElementById('addCategory').value;
+    const condition = document.getElementById('addCondition').value;
 
     if (!title) { alert(t('enterTitle')); return; }
     if (!price) { alert(t('enterPrice')); return; }
@@ -2198,7 +2428,7 @@ async function submitListing() {
     const newItem = {
         user_id: currentUser.id, title: title, price: numericPrice, city: city,
         phone: phone || null, description: desc || null, category: category,
-        photos: selectedPhotos.length > 0 ? selectedPhotos : null, status: 'active'
+        condition: condition, photos: selectedPhotos.length > 0 ? selectedPhotos : null, status: 'active'
     };
 
     try {
@@ -2259,13 +2489,14 @@ function openDetail(id) {
     document.getElementById('detailLocation').textContent = listing.location;
     document.getElementById('detailTime').textContent = timeAgo(listing.createdAt);
     document.getElementById('detailDesc').textContent = listing.description || 'Без опису';
+    document.getElementById('detailConditionText').textContent = getConditionLabel(listing.condition);
+    
+    const catNames = { products: t('products'), jobs: t('jobs'), services: t('services'), realestate: t('realestate'), transport: t('transport') };
+    document.getElementById('detailCategoryText').textContent = catNames[listing.category] || listing.category;
+    
     const specsContainer = document.getElementById('detailSpecs');
-    if (listing.specs && Object.keys(listing.specs).length > 0) {
-        specsContainer.innerHTML = Object.entries(listing.specs).map(function(entry) {
-            return '<div class="spec-item"><span class="label">' + entry[0] + '</span> <span>' + entry[1] + '</span></div>';
-        }).join('');
-        specsContainer.style.display = 'grid';
-    } else { specsContainer.style.display = 'none'; }
+    specsContainer.style.display = 'grid';
+    
     if (listing.seller) {
         document.getElementById('sellerName').textContent = listing.seller.name || 'Продавець';
         document.getElementById('sellerSince').textContent = 'На UAMO з ' + (listing.seller.since || '2024');
@@ -2592,6 +2823,7 @@ function editListing(id) {
     document.getElementById('addPhone').value = listing.phone || '';
     document.getElementById('addDesc').value = listing.description || '';
     document.getElementById('addCategory').value = listing.category || 'products';
+    document.getElementById('addCondition').value = listing.condition || 'new';
     selectedPhotos = listing.photos || [];
     renderPhotoPreviews();
     const btn = document.querySelector('.add-listing-form .btn-submit');
@@ -2608,10 +2840,11 @@ async function updateListing(id) {
     const phone = document.getElementById('addPhone').value.trim() || userData.phone;
     const desc = document.getElementById('addDesc').value.trim();
     const category = document.getElementById('addCategory').value;
+    const condition = document.getElementById('addCondition').value;
     if (!title || !price) { alert(t('enterTitle') + ' та ' + t('enterPrice')); return; }
     await apiRequest('listings?id=eq.' + id, {
         method: 'PATCH',
-        body: JSON.stringify({ title: title, price: parseFloat(price), city: city, phone: phone, description: desc || '', category: category, photos: selectedPhotos.length > 0 ? selectedPhotos : null })
+        body: JSON.stringify({ title: title, price: parseFloat(price), city: city, phone: phone, description: desc || '', category: category, condition: condition, photos: selectedPhotos.length > 0 ? selectedPhotos : null })
     });
     selectedPhotos = [];
     renderPhotoPreviews();
@@ -2728,7 +2961,9 @@ window.handleForgotPassword = handleForgotPassword;
 window.navigateTo = navigateTo;
 window.goBack = goBack;
 window.filterByCategory = filterByCategory;
-window.showFilters = showFilters;
+window.openFilterModal = openFilterModal;
+window.applyFilters = applyFilters;
+window.resetFilters = resetFilters;
 window.openDetail = openDetail;
 window.changeDetailPhoto = changeDetailPhoto;
 window.toggleDetailFavorite = toggleDetailFavorite;
