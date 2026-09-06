@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0B1E3A" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>UAMO</title>
+    
+    <!-- Capacitor для Android -->
+    <script>
+        // Перевірка чи це Android через Capacitor
+        const isCapacitor = () => {
+            return window.location.protocol === 'capacitor:' || 
+                   window.hasOwnProperty('Capacitor') ||
+                   window.location.hostname === 'localhost';
+        };
+        
+        // Завантажуємо Capacitor тільки якщо це Android додаток
+        if (isCapacitor()) {
+            document.write('<script src="capacitor://localhost/capacitor.js"><\/script>');
+        }
+    </script>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js">
+    </script>
+    <link rel="icon" href="data:," />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <div id="app">
+        <!-- ===== ВЕСЬ ВАШ HTML КОД UAMO ===== -->
+        <!-- Сюди вставляєте ВЕСЬ HTML з вашого index.html -->
+        <!-- Але без тегів <html>, <head>, <body> -->
+    </div>
+
+    <!-- ===== ВЕСЬ ВАШ JAVASCRIPT КОД UAMO ===== -->
+    <!-- Сюди вставляєте ВЕСЬ JavaScript з вашого index.html -->
+    
+    <script>
+        // ================================================================
+        // ANDROID NATIVE INTEGRATION
+        // ================================================================
+
+        // Перевірка чи це Android додаток
+        const isAndroid = () => {
+            return window.location.protocol === 'capacitor:' || 
+                   window.hasOwnProperty('Capacitor') ||
+                   navigator.userAgent.includes('Android') ||
+                   window.location.hostname === 'localhost';
+        };
+
+        // Ініціалізація Capacitor плагінів
+        async function initCapacitor() {
+            if (!isAndroid()) return;
+            
+            try {
+                // Камера
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Camera) {
+                    const { Camera } = window.Capacitor.Plugins;
+                    window.AndroidCamera = Camera;
+                    console.log('✅ Camera plugin loaded');
+                }
+                
+                // Push Notifications
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.PushNotifications) {
+                    const { PushNotifications } = window.Capacitor.Plugins;
+                    window.AndroidPush = PushNotifications;
+                    
+                    // Реєстрація для Push
+                    await PushNotifications.requestPermissions();
+                    await PushNotifications.register();
+                    
+                    console.log('✅ Push Notifications loaded');
+                }
+                
+                // Share
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Share) {
+                    const { Share } = window.Capacitor.Plugins;
+                    window.AndroidShare = Share;
+                    console.log('✅ Share plugin loaded');
+                }
+                
+                // Status Bar
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
+                    const { StatusBar } = window.Capacitor.Plugins;
+                    await StatusBar.setStyle({ style: 'dark' });
+                    await StatusBar.setBackgroundColor({ color: '#0B1E3A' });
+                    console.log('✅ Status Bar configured');
+                }
+                
+                // Splash Screen
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+                    const { SplashScreen } = window.Capacitor.Plugins;
+                    setTimeout(async () => {
+                        await SplashScreen.hide();
+                    }, 1500);
+                    console.log('✅ Splash Screen loaded');
+                }
+                
+            } catch (e) {
+                console.error('❌ Capacitor init error:', e);
+            }
+        }
+
+        // Android Back Button
+        if (isAndroid()) {
+            document.addEventListener('backbutton', function(e) {
+                e.preventDefault();
+                if (window.history && window.history.length > 1) {
+                    window.history.back();
+                } else if (window.navigateTo) {
+                    window.navigateTo('home');
+                } else {
+                    // Закриття додатку
+                    if (window.navigator && window.navigator.app) {
+                        window.navigator.app.exitApp();
+                    }
+                }
+            }, false);
+        }
+
+        // Deep Link Handler
+        window.handleDeepLink = function(url) {
+            console.log('🔗 Deep Link:', url);
+            try {
+                const parsedUrl = new URL(url);
+                const path = parsedUrl.pathname;
+                
+                if (path.startsWith('/listing/')) {
+                    const id = path.split('/')[2];
+                    if (id && window.openDetail) {
+                        setTimeout(() => {
+                            window.openDetail(id);
+                        }, 500);
+                    }
+                } else if (path === '/profile' && window.navigateTo) {
+                    setTimeout(() => {
+                        window.navigateTo('profile');
+                    }, 500);
+                } else if (path === '/chats' && window.navigateTo) {
+                    setTimeout(() => {
+                        window.navigateTo('chats');
+                    }, 500);
+                } else if (path === '/home' && window.navigateTo) {
+                    setTimeout(() => {
+                        window.navigateTo('home');
+                    }, 500);
+                }
+            } catch (e) {
+                console.error('❌ Deep Link error:', e);
+            }
+        };
+
+        // Обробка посилань з зовнішніх джерел
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && link.target !== '_blank') {
+                if (link.href.startsWith('tel:')) {
+                    e.preventDefault();
+                    if (isAndroid() && window.Capacitor) {
+                        // Відкриваємо телефон через нативний діалог
+                        window.location.href = link.href;
+                    }
+                }
+            }
+        });
+
+        // Функція для Android Share
+        window.androidShare = async function(text, title) {
+            if (!isAndroid() || !window.AndroidShare) {
+                // Fallback для вебу
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: title || 'UAMO',
+                            text: text
+                        });
+                    } catch (e) {}
+                } else {
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert('✅ Посилання скопійовано');
+                    }).catch(() => {
+                        prompt('Скопіюйте:', text);
+                    });
+                }
+                return;
+            }
+            
+            try {
+                await window.AndroidShare.share({
+                    title: title || 'UAMO',
+                    text: text,
+                    dialogTitle: 'Поділитися через'
+                });
+            } catch (e) {
+                console.error('❌ Share error:', e);
+            }
+        };
+
+        // Функція для Android Camera
+        window.androidCamera = async function() {
+            if (!isAndroid() || !window.AndroidCamera) {
+                // Fallback для вебу - використовуємо input
+                return new Promise((resolve) => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                resolve(e.target.result);
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            resolve(null);
+                        }
+                    };
+                    input.click();
+                });
+            }
+            
+            try {
+                const result = await window.AndroidCamera.getPhoto({
+                    quality: 90,
+                    allowEditing: true,
+                    resultType: 'dataUrl'
+                });
+                return result.dataUrl || null;
+            } catch (e) {
+                console.error('❌ Camera error:', e);
+                return null;
+            }
+        };
+
+        // Функція для вибору з галереї
+        window.androidGallery = async function() {
+            if (!isAndroid() || !window.AndroidCamera) {
+                // Fallback для вебу
+                return new Promise((resolve) => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.multiple = true;
+                    input.onchange = (e) => {
+                        const files = Array.from(e.target.files);
+                        const results = [];
+                        let loaded = 0;
+                        files.forEach((file) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                results.push(e.target.result);
+                                loaded++;
+                                if (loaded === files.length) {
+                                    resolve(results);
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                        if (files.length === 0) resolve([]);
+                    };
+                    input.click();
+                });
+            }
+            
+            try {
+                const result = await window.AndroidCamera.getPhoto({
+                    quality: 90,
+                    allowEditing: true,
+                    resultType: 'dataUrl',
+                    source: 'gallery'
+                });
+                return result.dataUrl ? [result.dataUrl] : [];
+            } catch (e) {
+                console.error('❌ Gallery error:', e);
+                return [];
+            }
+        };
+
+        // Ініціалізація при завантаженні
+        document.addEventListener('DOMContentLoaded', function() {
+            if (isAndroid()) {
+                console.log('📱 Android UAMO запущено!');
+                initCapacitor();
+            } else {
+                console.log('🌐 Web UAMO запущено!');
+            }
+        });
+
+        // Експорт функцій
+        window.isAndroid = isAndroid;
+        window.isCapacitor = isAndroid;
+
+        console.log('✅ Android UAMO готовий!');
+    </script>
+
+</body>
+</html>
