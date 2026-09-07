@@ -3108,99 +3108,103 @@ const HELP_DATA = [
         // ================================================================
         // AUTH HANDLERS
         // ================================================================
-        async function handleAuth() {
-            document.getElementById('authError').className = 'auth-error';
-            document.getElementById('authSuccess').className = 'auth-success';
+async function handleAuth() {
+    document.getElementById('authError').className = 'auth-error';
+    document.getElementById('authSuccess').className = 'auth-success';
 
-            if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
+    // ===== ДОДАЙТЕ ЦЕ =====
+    console.log('🔍 handleAuth called');
+    console.log('🔍 supabase:', supabase);
+    console.log('🔍 isAuthMode:', isAuthMode);
+    // ======================
 
-            const email = document.getElementById('authEmail').value.trim();
-            const password = document.getElementById('authPassword').value;
-            const confirmPassword = document.getElementById('authConfirmPassword')?.value;
+    if (!supabase) { 
+        console.error('❌ Supabase is null!');
+        showAuthError('Підключення до сервера не встановлено'); 
+        return; 
+    }
 
-            if (!email) { showAuthError('Введіть email');
-                document.getElementById('authEmail').focus(); return; }
-            if (!email.includes('@')) { showAuthError('Введіть коректний email');
-                document.getElementById('authEmail').focus(); return; }
-            if (!password) { showAuthError('Введіть пароль');
-                document.getElementById('authPassword').focus(); return; }
-            if (password.length < 6) { showAuthError('Пароль має бути не менше 6 символів');
-                document.getElementById('authPassword').focus(); return; }
-            if (isAuthMode === 'register') {
-                if (!confirmPassword) { showAuthError('Підтвердіть пароль');
-                    document.getElementById('authConfirmPassword').focus(); return; }
-                if (password !== confirmPassword) { showAuthError('Паролі не співпадають');
-                    document.getElementById('authConfirmPassword').focus(); return; }
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const confirmPassword = document.getElementById('authConfirmPassword')?.value;
+
+    console.log('🔍 email:', email);
+    console.log('🔍 password length:', password?.length);
+
+    if (!email) { showAuthError('Введіть email');
+        document.getElementById('authEmail').focus(); return; }
+    if (!email.includes('@')) { showAuthError('Введіть коректний email');
+        document.getElementById('authEmail').focus(); return; }
+    if (!password) { showAuthError('Введіть пароль');
+        document.getElementById('authPassword').focus(); return; }
+    if (password.length < 6) { showAuthError('Пароль має бути не менше 6 символів');
+        document.getElementById('authPassword').focus(); return; }
+    if (isAuthMode === 'register') {
+        if (!confirmPassword) { showAuthError('Підтвердіть пароль');
+            document.getElementById('authConfirmPassword').focus(); return; }
+        if (password !== confirmPassword) { showAuthError('Паролі не співпадають');
+            document.getElementById('authConfirmPassword').focus(); return; }
+    }
+
+    setLoading(true);
+    try {
+        console.log('🔍 Attempting', isAuthMode === 'login' ? 'login' : 'register');
+        
+        if (isAuthMode === 'login') {
+            console.log('🔍 Calling supabase.auth.signInWithPassword...');
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            console.log('🔍 Login response:', { data, error });
+            
+            setLoading(false);
+            if (error) {
+                console.error('❌ Login error:', error);
+                if (error.message.includes('Invalid login')) showAuthError('Невірний email або пароль');
+                else if (error.message.includes('Email not confirmed')) showAuthError('Email не підтверджено');
+                else showAuthError(`Помилка: ${error.message}`);
+                return;
             }
-
-            setLoading(true);
-            try {
-                if (isAuthMode === 'login') {
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                    setLoading(false);
-                    if (error) {
-                        if (error.message.includes('Invalid login')) showAuthError('Невірний email або пароль');
-                        else if (error.message.includes('Email not confirmed')) showAuthError(
-                        'Email не підтверджено');
-                        else showAuthError(`Помилка: ${error.message}`);
-                        return;
-                    }
-                    if (data?.user) {
-                        currentUser = data.user;
-                        showAuthSuccess('✅ Вхід виконано!');
-                        await loadAllData();
-                        setTimeout(() => navigateTo('home'), 200);
-                    }
-                } else {
-                    const { data, error } = await supabase.auth.signUp({
-                        email,
-                        password,
-                        options: {
-                            data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' },
-                            emailRedirectTo: window.location.origin
-                        }
-                    });
-                    setLoading(false);
-                    if (error) {
-                        if (error.message.includes('User already')) showAuthError('Цей email вже зареєстровано');
-                        else showAuthError(`Помилка: ${error.message}`);
-                        return;
-                    }
-                    if (data?.user) {
-                        showAuthSuccess('✅ Реєстрація успішна! Перевірте пошту для підтвердження.');
-                        setTimeout(() => { toggleAuthMode();
-                            document.getElementById('authEmail').value = email;
-                            document.getElementById('authPassword').value = '';
-                            showAuthSuccess('Тепер увійдіть у свій акаунт'); }, 1500);
-                    }
+            if (data?.user) {
+                console.log('✅ Login success:', data.user);
+                currentUser = data.user;
+                showAuthSuccess('✅ Вхід виконано!');
+                await loadAllData();
+                setTimeout(() => navigateTo('home'), 200);
+            }
+        } else {
+            console.log('🔍 Calling supabase.auth.signUp...');
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' },
+                    emailRedirectTo: window.location.origin
                 }
-            } catch (e) {
-                setLoading(false);
-                showAuthError('Несподівана помилка. Спробуйте ще раз.');
+            });
+            console.log('🔍 Register response:', { data, error });
+            
+            setLoading(false);
+            if (error) {
+                console.error('❌ Register error:', error);
+                if (error.message.includes('User already')) showAuthError('Цей email вже зареєстровано');
+                else showAuthError(`Помилка: ${error.message}`);
+                return;
+            }
+            if (data?.user) {
+                console.log('✅ Register success:', data.user);
+                showAuthSuccess('✅ Реєстрація успішна! Перевірте пошту для підтвердження.');
+                setTimeout(() => { toggleAuthMode();
+                    document.getElementById('authEmail').value = email;
+                    document.getElementById('authPassword').value = '';
+                    showAuthSuccess('Тепер увійдіть у свій акаунт'); }, 1500);
             }
         }
-
-        async function handleForgotPassword() {
-            if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
-            const email = document.getElementById('authEmail').value.trim();
-            if (!email) { showAuthError('Введіть email');
-                document.getElementById('authEmail').focus(); return; }
-            if (!email.includes('@')) { showAuthError('Введіть коректний email'); return; }
-
-            setLoading(true);
-            try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-                setLoading(false);
-                if (error) {
-                    if (error.message.includes('User not found')) showAuthError('Користувача не знайдено');
-                    else showAuthError(`Помилка: ${error.message}`);
-                    return;
-                }
-                showAuthSuccess(`✅ Лист з посиланням надіслано на ${email}`);
-            } catch (e) { setLoading(false);
-                showAuthError('Помилка. Спробуйте ще раз.'); }
-        }
-
+    } catch (e) {
+        console.error('❌ CATCH ERROR:', e);
+        console.error('❌ Error stack:', e.stack);
+        setLoading(false);
+        showAuthError('Несподівана помилка. Спробуйте ще раз.');
+    }
+}
 // ================================================================
 // ГЛОБАЛЬНІ ЗМІННІ
 // ================================================================
