@@ -1674,6 +1674,185 @@
             background: var(--border);
         }
 
+        /* ================================================================
+           📚 СТОРІНКА ДОПОМОГИ
+           ================================================================ */
+        #page-help .help-search {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            padding: 8px 0 12px 0;
+            z-index: 5;
+        }
+        #page-help .help-search .search-bar-inner {
+            background: var(--card-bg);
+        }
+
+        .help-category {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .help-category:hover {
+            border-color: var(--accent);
+        }
+        .help-category .help-cat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            gap: 12px;
+        }
+        .help-category .help-cat-header:hover {
+            background: var(--bg);
+        }
+        .help-category .help-cat-header .cat-icon {
+            font-size: 22px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 102, 255, 0.08);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .help-category .help-cat-header .cat-info {
+            flex: 1;
+        }
+        .help-category .help-cat-header .cat-info .cat-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text);
+        }
+        .help-category .help-cat-header .cat-info .cat-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .help-category .help-cat-header .cat-arrow {
+            font-size: 16px;
+            color: var(--text-dim);
+            transition: var(--transition);
+        }
+        .help-category .help-cat-header .cat-arrow.open {
+            transform: rotate(180deg);
+        }
+        .help-category .help-cat-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            padding: 0 16px;
+        }
+        .help-category .help-cat-body.open {
+            max-height: 800px;
+            padding: 0 16px 16px 16px;
+        }
+        .help-category .help-cat-body .help-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .help-category .help-cat-body .help-item:last-child {
+            border-bottom: none;
+        }
+        .help-category .help-cat-body .help-item .item-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .help-category .help-cat-body .help-item .item-title i {
+            color: var(--accent);
+            font-size: 12px;
+            width: 20px;
+        }
+        .help-category .help-cat-body .help-item .item-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-top: 4px;
+            padding-left: 28px;
+        }
+        .help-category .help-cat-body .help-item .item-desc ul {
+            margin: 4px 0 0 16px;
+            padding-left: 4px;
+        }
+        .help-category .help-cat-body .help-item .item-desc ul li {
+            margin-bottom: 2px;
+            list-style: disc;
+        }
+        .help-category .help-cat-body .help-item .item-desc .highlight-box {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            margin-top: 6px;
+            border-left: 3px solid var(--accent);
+            font-size: 13px;
+        }
+        .help-no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+        .help-no-results i {
+            font-size: 40px;
+            color: var(--border);
+            margin-bottom: 12px;
+            display: block;
+        }
+        .help-no-results h3 {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .interactive-block {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-top: 8px;
+            border: 1px solid var(--border);
+        }
+        .interactive-block .interactive-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .interactive-block .interactive-title i {
+            color: var(--accent);
+        }
+        .interactive-block .interactive-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .interactive-block .interactive-content .btn-small {
+            padding: 6px 16px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            margin-top: 6px;
+        }
+        .interactive-block .interactive-content .btn-small:hover {
+            background: var(--accent-hover);
+        }
+
         @media (min-width: 640px) {
             .app-container {
                 max-width: 600px;
@@ -1958,7 +2137,7 @@
                     <div class="profile-menu-item" onclick="navigateTo('favorites')"><i class="fas fa-heart"></i> Обране <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('chats')"><i class="fas fa-comment-dots"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Налаштування <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="showHelp()"><i class="fas fa-question-circle"></i> Допомога <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('help')"><i class="fas fa-question-circle"></i> Допомога <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="showAbout()"><i class="fas fa-info-circle"></i> Про UAMO <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Вийти <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
@@ -2241,6 +2420,31 @@
                     <div class="profile-menu-item" onclick="navigateTo('settings-phone')"><i class="fas fa-phone"></i> Змінити номер телефону <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="alert('Активні сеанси: ви ввійшли з 2 пристроїв')"><i class="fas fa-laptop"></i> Активні сеанси <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ================================================================
+             📚 СТОРІНКА ДОПОМОГИ (ПОВНОЦІННА)
+             ================================================================ -->
+        <div class="page" id="page-help">
+            <div class="app-container">
+                <div class="back-header">
+                    <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
+                    <span class="title">📚 Допомога UAMO</span>
+                </div>
+
+                <!-- Пошук по допомозі -->
+                <div class="help-search">
+                    <div class="search-bar" style="padding:0;">
+                        <div class="search-bar-inner">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="helpSearchInput" placeholder="🔍 Пошук по допомозі..." oninput="searchHelp(this.value)" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Контейнер для категорій -->
+                <div id="helpCategoriesContainer"></div>
             </div>
         </div>
 
@@ -2673,6 +2877,137 @@
         let unreadCount = 0;
         let dataLoaded = false;
         let currentFilterCategory = 'all';
+        // Кеш-бастер для фото
+        let avatarCacheBuster = Date.now();
+
+        // ================================================================
+        // 📚 ДАНІ ДЛЯ СТОРІНКИ ДОПОМОГИ
+        // ================================================================
+        const HELP_DATA = [{
+            id: 'getting_started',
+            icon: '🚀',
+            title: 'Початок роботи',
+            description: 'Як створити акаунт, увійти та почати користуватися UAMO',
+            items: [{
+                title: 'Реєстрація',
+                desc: 'Введіть email та пароль (мін. 6 символів) у формі авторизації. Натисніть "Зареєструватися". Підтвердіть email за посиланням у листі.',
+                icon: 'fa-user-plus'
+            }, {
+                title: 'Вхід в акаунт',
+                desc: 'Введіть email та пароль у формі входу. Натисніть "Увійти". Якщо ви забули пароль — скористайтеся "Забули пароль?".',
+                icon: 'fa-sign-in-alt'
+            }, {
+                title: 'Перші кроки',
+                desc: 'Після входу ви потрапите на головну сторінку. Тут ви побачите рекомендації та нові оголошення.',
+                icon: 'fa-rocket'
+            }]
+        }, {
+            id: 'listings',
+            icon: '📦',
+            title: 'Оголошення',
+            description: 'Створення, редагування, перегляд та видалення оголошень',
+            items: [{
+                title: 'Створення оголошення',
+                desc: 'Натисніть "+" в нижньому меню або "Додати оголошення" на головній. Заповніть поля: категорія, назва, опис, фото, ціна, місто, телефон. Натисніть "Опублікувати".',
+                icon: 'fa-plus-circle'
+            }, {
+                title: 'Редагування оголошення',
+                desc: 'Перейдіть у "Мої оголошення" в профілі. Натисніть "Редагувати" біля потрібного оголошення. Змініть дані та натисніть "Оновити".',
+                icon: 'fa-edit'
+            }, {
+                title: 'Видалення оголошення',
+                desc: 'У "Мої оголошення" натисніть "Видалити" біля оголошення. Підтвердіть дію.',
+                icon: 'fa-trash-alt'
+            }, {
+                title: 'Перегляд оголошення',
+                desc: 'Клікніть по картці оголошення. Ви побачите детальну інформацію, фото, опис та контакти продавця.',
+                icon: 'fa-eye'
+            }]
+        }, {
+            id: 'filters',
+            icon: '🔍',
+            title: 'Пошук та фільтри',
+            description: 'Як швидко знайти потрібне оголошення',
+            items: [{
+                title: 'Пошук за текстом',
+                desc: 'Введіть ключові слова у пошуковий рядок на головній або на сторінці пошуку. Натисніть Enter для пошуку.',
+                icon: 'fa-search'
+            }, {
+                title: 'Фільтр за категорією',
+                desc: 'Натисніть на категорію (наприклад, "Електроніка", "Одяг") у верхньому слайдері або на сторінці пошуку.',
+                icon: 'fa-tags'
+            }, {
+                title: 'Розширені фільтри',
+                desc: 'Натисніть "Фільтри" на сторінці пошуку. Можна задати ціновий діапазон, місто, стан товару та дату публікації.',
+                icon: 'fa-sliders-h'
+            }]
+        }, {
+            id: 'favorites',
+            icon: '❤️',
+            title: 'Обране',
+            description: 'Зберігання улюблених оголошень',
+            items: [{
+                title: 'Додати в обране',
+                desc: 'Натисніть ❤️ на картці оголошення або на сторінці детального перегляду. Іконка стане червоною.',
+                icon: 'fa-heart'
+            }, {
+                title: 'Переглянути обране',
+                desc: 'Натисніть "Обране" в профілі або виберіть вкладку "Обране" в нижньому меню.',
+                icon: 'fa-heart-broken'
+            }, {
+                title: 'Видалити з обраного',
+                desc: 'Натисніть ❤️ ще раз, щоб прибрати оголошення з обраного.',
+                icon: 'fa-heart-broken'
+            }]
+        }, {
+            id: 'chats',
+            icon: '💬',
+            title: 'Чати та повідомлення',
+            description: 'Спілкування з продавцями та покупцями',
+            items: [{
+                title: 'Написати продавцю',
+                desc: 'Відкрийте оголошення, натисніть "Написати продавцю". Чат створиться автоматично.',
+                icon: 'fa-comment'
+            }, {
+                title: 'Переглянути чати',
+                desc: 'Натисніть "Чати" в нижньому меню або в профілі. Тут зібрані всі ваші діалоги.',
+                icon: 'fa-comment-dots'
+            }, {
+                title: 'Відправка повідомлення',
+                desc: 'Напишіть текст у полі внизу та натисніть Enter або кнопку 📨. Повідомлення буде доставлено миттєво.',
+                icon: 'fa-paper-plane'
+            }, {
+                title: 'Сповіщення про нові повідомлення',
+                desc: 'На іконці чату з'являється червоний кружець із кількістю непрочитаних повідомлень.',
+                icon: 'fa-bell'
+            }]
+        }, {
+            id: 'profile',
+            icon: '👤',
+            title: 'Профіль та налаштування',
+            description: 'Керування профілем, налаштуваннями та безпекою',
+            items: [{
+                title: 'Редагування профілю',
+                desc: 'Натисніть "Редагувати профіль" у профілі. Змініть ім\'я, прізвище, нікнейм, телефон, місто та фото.',
+                icon: 'fa-user-edit'
+            }, {
+                title: 'Зміна фото профілю',
+                desc: 'Натисніть на аватар у профілі або на сторінці редагування. Виберіть фото з галереї. Фото оновиться автоматично з кеш-бастером для примусового оновлення.',
+                icon: 'fa-camera'
+            }, {
+                title: 'Налаштування',
+                desc: 'У розділі "Налаштування" ви можете змінити: обліковий запис, сповіщення, місто, мову, конфіденційність, повідомлення та безпеку.',
+                icon: 'fa-cog'
+            }, {
+                title: 'Безпека',
+                desc: 'У налаштуваннях безпеки можна змінити пароль, email, телефон та переглянути активні сеанси.',
+                icon: 'fa-shield-alt'
+            }, {
+                title: 'Вихід з акаунта',
+                desc: 'Натисніть "Вийти" внизу меню профілю. Підтвердіть дію.',
+                icon: 'fa-sign-out-alt'
+            }]
+        }];
 
         // ================================================================
         // ІНІЦІАЛІЗАЦІЯ SUPABASE
@@ -2944,6 +3279,8 @@
                         avatar: u.avatar_url || 'К',
                         language: u.language || 'uk'
                     };
+                    // Оновлюємо кеш-бастер при завантаженні аватара
+                    avatarCacheBuster = Date.now();
                     updateUI();
                     updateAvatar();
                 }
@@ -3009,18 +3346,28 @@
             alert('📬 Сповіщень поки що немає');
         }
 
+        // ================================================================
+        // ФУНКЦІЯ ОНОВЛЕННЯ АВАТАРА З КЕШ-БАСТЕРОМ
+        // ================================================================
         function updateAvatar() {
             const avatarElements = document.querySelectorAll('.profile-avatar, .avatar-small, #profileAvatar, #editAvatar, #headerAvatar');
 
             avatarElements.forEach(el => {
                 let letterSpan = el.querySelector('.avatar-letter') || el.querySelector('span');
 
+                // Використовуємо кеш-бастер для примусового оновлення фото
                 if (userData.avatar && (userData.avatar.startsWith('http') || userData.avatar.startsWith(
                         'data:image'))) {
                     let img = el.querySelector('img');
                     if (!img) { img = document.createElement('img');
                         el.appendChild(img); }
-                    img.src = userData.avatar;
+                    // Додаємо кеш-бастер до URL (якщо це не data:image)
+                    let src = userData.avatar;
+                    if (!src.startsWith('data:image')) {
+                        const hasQuery = src.includes('?');
+                        src += (hasQuery ? '&' : '?') + 't=' + avatarCacheBuster;
+                    }
+                    img.src = src;
                     img.style.display = 'block';
                     if (letterSpan) letterSpan.style.display = 'none';
                 } else {
@@ -3031,6 +3378,145 @@
                 }
             });
         }
+
+        // ================================================================
+        // ФУНКЦІЯ ЗАВАНТАЖЕННЯ АВАТАРА З КЕШ-БАСТЕРОМ
+        // ================================================================
+        function uploadAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const avatarUrl = e.target.result;
+                userData.avatar = avatarUrl;
+                // Оновлюємо кеш-бастер для примусового оновлення
+                avatarCacheBuster = Date.now();
+                updateUI();
+                updateAvatar();
+                supabase.from('users').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
+                alert('✅ Фото профілю оновлено!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function editUploadAvatar(event) { uploadAvatar(event); }
+
+        // ================================================================
+        // ФУНКЦІЯ ПОШУКУ ПО ДОПОМОЗІ
+        // ================================================================
+        function searchHelp(query) {
+            const container = document.getElementById('helpCategoriesContainer');
+            if (!container) return;
+
+            const q = query.toLowerCase().trim();
+
+            if (!q) {
+                renderHelp(container);
+                return;
+            }
+
+            let found = false;
+            let html = '';
+
+            HELP_DATA.forEach(cat => {
+                const matchedItems = cat.items.filter(item =>
+                    item.title.toLowerCase().includes(q) ||
+                    item.desc.toLowerCase().includes(q)
+                );
+                if (matchedItems.length > 0 || cat.title.toLowerCase().includes(q) || cat.description.toLowerCase()
+                    .includes(q)) {
+                    found = true;
+                    const itemsToShow = matchedItems.length > 0 ? matchedItems : cat.items;
+                    html += `
+                                <div class="help-category">
+                                    <div class="help-cat-header" onclick="toggleHelpCategory(this)">
+                                        <div class="cat-icon">${cat.icon}</div>
+                                        <div class="cat-info">
+                                            <div class="cat-title">${cat.title}</div>
+                                            <div class="cat-desc">${cat.description}</div>
+                                        </div>
+                                        <div class="cat-arrow open"><i class="fas fa-chevron-down"></i></div>
+                                    </div>
+                                    <div class="help-cat-body open">
+                                        ${itemsToShow.map(item => `
+                                            <div class="help-item">
+                                                <div class="item-title"><i class="fas ${item.icon}"></i> ${item.title}</div>
+                                                <div class="item-desc">${item.desc}</div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                }
+            });
+
+            if (!found) {
+                container.innerHTML = `
+                            <div class="help-no-results">
+                                <i class="fas fa-search"></i>
+                                <h3>Нічого не знайдено</h3>
+                                <p>Спробуйте змінити пошуковий запит</p>
+                            </div>
+                        `;
+            } else {
+                container.innerHTML = html;
+            }
+        }
+
+        // ================================================================
+        // ФУНКЦІЯ РЕНДЕРИНГУ СТОРІНКИ ДОПОМОГИ
+        // ================================================================
+        function renderHelp(container) {
+            if (!container) container = document.getElementById('helpCategoriesContainer');
+            if (!container) return;
+
+            container.innerHTML = HELP_DATA.map(cat => `
+                        <div class="help-category" data-category="${cat.id}">
+                            <div class="help-cat-header" onclick="toggleHelpCategory(this)">
+                                <div class="cat-icon">${cat.icon}</div>
+                                <div class="cat-info">
+                                    <div class="cat-title">${cat.title}</div>
+                                    <div class="cat-desc">${cat.description}</div>
+                                </div>
+                                <div class="cat-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="help-cat-body">
+                                ${cat.items.map(item => `
+                                    <div class="help-item">
+                                        <div class="item-title"><i class="fas ${item.icon}"></i> ${item.title}</div>
+                                        <div class="item-desc">${item.desc}</div>
+                                        ${item.interactive ? `
+                                            <div class="interactive-block">
+                                                <div class="interactive-title"><i class="fas fa-hand-pointer"></i> Інтерактивний блок</div>
+                                                <div class="interactive-content">
+                                                    ${item.interactive}
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+        }
+
+        // ================================================================
+        // ФУНКЦІЯ РОЗКРИТТЯ КАТЕГОРІЇ ДОПОМОГИ
+        // ================================================================
+        function toggleHelpCategory(header) {
+            const body = header.nextElementSibling;
+            const arrow = header.querySelector('.cat-arrow');
+            if (body) {
+                body.classList.toggle('open');
+                if (arrow) {
+                    arrow.classList.toggle('open');
+                }
+            }
+        }
+
+        // ================================================================
+        // РЕНДЕРИНГ КАТЕГОРІЙ
+        // ================================================================
 
         function resetPhotoForm() {
             selectedPhotos = [];
@@ -3193,7 +3679,7 @@
         }
 
         // ================================================================
-        // ФІЛЬТРИ ТА ПОШУК
+        // ФІЛЬТРИ ТА ПОШУК (ВИПРАВЛЕНО)
         // ================================================================
 
         function getFilteredListings() {
@@ -3207,6 +3693,7 @@
 
             let results = [...listings];
 
+            // Фільтр за категорією
             if (category !== 'all') {
                 const categoryMap = {
                     'products': ['товари', 'products'],
@@ -3232,6 +3719,7 @@
                 });
             }
 
+            // Пошук за текстом
             if (searchQuery) {
                 results = results.filter(l =>
                     l.title?.toLowerCase().includes(searchQuery) ||
@@ -3240,19 +3728,23 @@
                 );
             }
 
+            // Фільтр за ціною
             results = results.filter(l => {
                 const price = parseFloat(l.price) || 0;
                 return price >= priceMin && price <= priceMax;
             });
 
+            // Фільтр за містом
             if (city) {
                 results = results.filter(l => l.location?.toLowerCase().includes(city));
             }
 
+            // Фільтр за станом
             if (condition !== 'all') {
                 results = results.filter(l => l.condition === condition);
             }
 
+            // Фільтр за датою
             if (dateFilter !== 'all') {
                 const now = new Date();
                 let cutoff = new Date();
@@ -3544,6 +4036,12 @@
                 case 'settings-city':
                     renderCities();
                     break;
+                case 'help':
+                    renderHelp();
+                    // Очищаємо пошук при переході
+                    const helpInput = document.getElementById('helpSearchInput');
+                    if (helpInput) helpInput.value = '';
+                    break;
                 default:
                     break;
             }
@@ -3593,7 +4091,7 @@
         function goBackFromDetail() { if (currentPage === 'detail') window.navigateTo('home'); }
 
         // ================================================================
-        // ФІЛЬТРИ
+        // ФІЛЬТРИ (ВИПРАВЛЕНО)
         // ================================================================
 
         function filterByCategory(cat) {
@@ -3719,7 +4217,7 @@
                 'show'); }
 
         // ================================================================
-        // CHAT FUNCTIONS (ПОВНОЦІННИЙ МЕСЕНДЖЕР)
+        // CHAT FUNCTIONS
         // ================================================================
 
         async function findOrCreateChat(sellerId, listingId) {
@@ -4035,7 +4533,7 @@
             renderAll(); }
 
         // ================================================================
-        // OPTIONS MODAL (3 ТОЧКИ)
+        // OPTIONS MODAL
         // ================================================================
 
         function openOptionsModal() {
@@ -4090,7 +4588,6 @@
             const reason = prompt('📋 Вкажіть причину скарги:\n1. Спам\n2. Шахрайство\n3. Некоректний зміст\n4. Інше');
             if (reason) {
                 alert('✅ Скаргу надіслано! Ми розглянемо її найближчим часом.');
-                // Тут можна додати відправку скарги в базу даних
             }
             closeOptionsModal();
         }
@@ -4257,22 +4754,6 @@
                 alert('Помилка збереження'); }
         }
 
-        function uploadAvatar(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const avatarUrl = e.target.result;
-                userData.avatar = avatarUrl;
-                updateUI();
-                updateAvatar();
-                supabase.from('users').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function editUploadAvatar(event) { uploadAvatar(event); }
-
         // ================================================================
         // SETTINGS FUNCTIONS
         // ================================================================
@@ -4373,16 +4854,7 @@
         // HELP / ABOUT / LOGOUT
         // ================================================================
 
-        function showHelp() {
-            alert('📚 Допомога UAMO\n\n' +
-                '• Як додати оголошення?\n' +
-                '  Натисніть "+" в нижньому меню\n\n' +
-                '• Як зв\'язатися з продавцем?\n' +
-                '  Відкрийте оголошення та натисніть "Написати продавцю"\n\n' +
-                '• Як зберегти оголошення?\n' +
-                '  Натисніть ❤️ на картці оголошення\n\n' +
-                '• Підтримка: support@uamo.ua');
-        }
+        function showHelp() { window.navigateTo('help'); }
 
         function showAbout() {
             alert('🟦 UAMO v2.0\n\n' +
@@ -4471,7 +4943,6 @@
         window.goBack = goBack;
         window.goBackFromDetail = goBackFromDetail;
         window.filterByCategory = filterByCategory;
-        window.showFilters = showFilters;
         window.openFilterModal = openFilterModal;
         window.closeFilterModal = closeFilterModal;
         window.applyFilters = applyFilters;
@@ -4517,6 +4988,9 @@
         window.shareListing = shareListing;
         window.copyListingLink = copyListingLink;
         window.reportListing = reportListing;
+        window.searchHelp = searchHelp;
+        window.toggleHelpCategory = toggleHelpCategory;
+        window.renderHelp = renderHelp;
 
         console.log('✅ UAMO додаток готовий до роботи! 🚀');
     </script>
