@@ -3201,124 +3201,44 @@ const HELP_DATA = [
                 showAuthError('Помилка. Спробуйте ще раз.'); }
         }
 
-        // ================================================================
-        // 🚀 ГОЛОВНА ФУНКЦІЯ ЗАВАНТАЖЕННЯ ВСІХ ДАНИХ
-        // ================================================================
-
-        async function loadAllData() {
-            if (dataLoaded) return;
-            if (!currentUser) return;
-
-            console.log('📡 Завантаження всіх даних...');
-            const start = performance.now();
-
-            try {
-                const [listingsRes, userRes, favRes, chatsRes, myRes] = await Promise.all([
-                    supabase.from('listings_with_users').select('*').limit(50),
-                    supabase.from('users').select('*').eq('id', currentUser.id).single(),
-                    supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
-                    supabase.from('chats')
-                    .select(`
-                                *,
-                                listings:listing_id (title),
-                                buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
-                                seller:users!chats_seller_id_fkey (first_name, avatar_url)
-                            `)
-                    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
-                    .order('updated_at', { ascending: false })
-                    .limit(30),
-                    supabase.from('listings')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .order('created_at', { ascending: false })
-                    .limit(30)
-                ]);
-
-                if (!listingsRes.error) {
-                    listings = listingsRes.data.map(item => ({
-                        id: item.id,
-                        title: item.title || 'Без назви',
-                        price: item.price ? String(item.price) : '0',
-                        location: item.city || 'не вказано',
-                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                        photos: item.photos || null,
-                        category: item.category || 'Інше',
-                        condition: item.condition || 'new',
-                        isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
-                        isFeatured: item.is_featured || false,
-                        createdAt: item.created_at || new Date().toISOString(),
-                        description: item.description || 'Без опису',
-                        specs: item.specs || {},
-                        seller: {
-                            name: item.seller_name || 'Продавець',
-                            avatar: item.seller_avatar || '👤',
-                            since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
-                        },
-                        user_id: item.user_id,
-                        phone: item.phone || '',
-                        status: item.status || 'active'
-                    }));
-                }
-
-                if (!userRes.error && userRes.data) {
-                    const u = userRes.data;
-                    userData = {
-                        id: u.id,
-                        name: u.first_name || 'Користувач',
-                        last_name: u.last_name || '',
-                        username: u.username || '',
-                        phone: u.phone || '',
-                        email: u.email || currentUser.email || '',
-                        city: u.city || 'Київ',
-                        avatar: u.avatar_url || 'К',
-                        language: u.language || 'uk'
-                    };
-                    // Оновлюємо кеш-бастер при завантаженні аватара
-                    avatarCacheBuster = Date.now();
-                    updateUI();
-                    updateAvatar();
-                }
-
-                if (!favRes.error) {
-                    favorites = favRes.data.map(f => f.listing_id);
-                }
-
-                if (!chatsRes.error) {
-                    chats = chatsRes.data || [];
-                }
-
-                if (!myRes.error) {
-                    myListings = myRes.data.map(item => ({
-                        id: item.id,
-                        title: item.title || 'Без назви',
-                        price: item.price ? String(item.price) : '0',
-                        location: item.city || 'не вказано',
-                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                        photos: item.photos || null,
-                        category: item.category || 'Інше',
-                        condition: item.condition || 'new',
-                        createdAt: item.created_at || new Date().toISOString(),
-                        description: item.description || 'Без опису',
-                        phone: item.phone || '',
-                        status: item.status || 'active'
-                    }));
-                }
-
-                dataLoaded = true;
-
-                const elapsed = (performance.now() - start).toFixed(2);
-                console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
-
-                updateProfileStats();
-                updateChatBadge();
-                fixNotificationBadge();
-                renderAll();
-
-            } catch (e) {
-                console.error('❌ Помилка завантаження:', e);
-            }
-        }
-
+// ================================================================
+// ГЛОБАЛЬНІ ЗМІННІ
+// ================================================================
+let supabase = null;
+let currentUser = null;
+let isAuthMode = 'login';
+let currentPage = 'auth';
+let historyStack = ['auth'];
+let selectedPhotos = [];
+let favorites = [];
+let listings = [];
+let myListings = [];
+let chats = [];
+let chatMessages = [];
+let currentChatId = null;
+let currentDetailId = null;
+let detailPhotos = [];
+let detailIndex = 0;
+let currentDetailListing = null;
+let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця',
+    'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк',
+    'Ужгород', 'Хмельницький'
+];
+let userData = {
+    id: null,
+    name: 'Користувач',
+    last_name: '',
+    username: '',
+    phone: '',
+    email: '',
+    city: 'Київ',
+    avatar: 'К',
+    language: 'uk'
+};
+let unreadCount = 0;
+let dataLoaded = false;
+let currentFilterCategory = 'all';
+let avatarCacheBuster = Date.now();
         // ================================================================
         // 🔧 ВИПРАВЛЕННЯ
         // ================================================================
