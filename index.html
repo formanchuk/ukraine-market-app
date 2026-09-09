@@ -140,6 +140,7 @@
             border: 2px solid transparent;
             transition: var(--transition);
             overflow: hidden;
+            flex-shrink: 0;
         }
         .avatar-small img {
             width: 100%;
@@ -1674,20 +1675,19 @@
             background: var(--border);
         }
 
-        /* ================================================================
-           📚 СТОРІНКА ДОПОМОГИ
-           ================================================================ */
-        #page-help .help-search {
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            padding: 8px 0 12px 0;
-            z-index: 5;
+        .help-category .help-cat-header .cat-arrow.open {
+            transform: rotate(180deg);
         }
-        #page-help .help-search .search-bar-inner {
-            background: var(--card-bg);
+        .help-category .help-cat-body.open {
+            max-height: 800px;
+            padding: 0 16px 16px 16px;
         }
-
+        .help-category .help-cat-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            padding: 0 16px;
+        }
         .help-category {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -1739,19 +1739,6 @@
             color: var(--text-dim);
             transition: var(--transition);
         }
-        .help-category .help-cat-header .cat-arrow.open {
-            transform: rotate(180deg);
-        }
-        .help-category .help-cat-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease, padding 0.3s ease;
-            padding: 0 16px;
-        }
-        .help-category .help-cat-body.open {
-            max-height: 800px;
-            padding: 0 16px 16px 16px;
-        }
         .help-category .help-cat-body .help-item {
             padding: 12px 0;
             border-bottom: 1px solid var(--border);
@@ -1779,22 +1766,6 @@
             margin-top: 4px;
             padding-left: 28px;
         }
-        .help-category .help-cat-body .help-item .item-desc ul {
-            margin: 4px 0 0 16px;
-            padding-left: 4px;
-        }
-        .help-category .help-cat-body .help-item .item-desc ul li {
-            margin-bottom: 2px;
-            list-style: disc;
-        }
-        .help-category .help-cat-body .help-item .item-desc .highlight-box {
-            background: var(--bg);
-            border-radius: var(--radius-sm);
-            padding: 10px 14px;
-            margin-top: 6px;
-            border-left: 3px solid var(--accent);
-            font-size: 13px;
-        }
         .help-no-results {
             text-align: center;
             padding: 40px 20px;
@@ -1805,11 +1776,6 @@
             color: var(--border);
             margin-bottom: 12px;
             display: block;
-        }
-        .help-no-results h3 {
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--text);
         }
 
         .interactive-block {
@@ -2423,27 +2389,19 @@
             </div>
         </div>
 
-        <!-- ================================================================
-             📚 СТОРІНКА ДОПОМОГИ (ПОВНОЦІННА)
-             ================================================================ -->
+        <!-- HELP PAGE -->
         <div class="page" id="page-help">
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
                     <span class="title">📚 Допомога UAMO</span>
                 </div>
-
-                <!-- Пошук по допомозі -->
-                <div class="help-search">
-                    <div class="search-bar" style="padding:0;">
-                        <div class="search-bar-inner">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="helpSearchInput" placeholder="🔍 Пошук по допомозі..." oninput="searchHelp(this.value)" />
-                        </div>
+                <div class="search-bar" style="padding:0 0 12px 0;">
+                    <div class="search-bar-inner">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="🔍 Пошук по допомозі..." id="helpSearchInput" oninput="searchHelp(this.value)" />
                     </div>
                 </div>
-
-                <!-- Контейнер для категорій -->
                 <div id="helpCategoriesContainer"></div>
             </div>
         </div>
@@ -2605,9 +2563,47 @@
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cHNtZWxwc3Nnbml3b2hqYnh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODYzNDksImV4cCI6MjEwMzc2MjM0OX0.I6oOuOn68QKJH_bAPUS9QG8CscEcFeeN_MQBzohWaEw';
 
         // ================================================================
-        // КАТЕГОРІЇ
+        // ГЛОБАЛЬНІ ЗМІННІ
         // ================================================================
+        let supabase = null;
+        let currentUser = null;
+        let isAuthMode = 'login';
+        let currentPage = 'auth';
+        let historyStack = ['auth'];
+        let selectedPhotos = [];
+        let favorites = [];
+        let listings = [];
+        let myListings = [];
+        let chats = [];
+        let chatMessages = [];
+        let currentChatId = null;
+        let currentDetailId = null;
+        let detailPhotos = [];
+        let detailIndex = 0;
+        let currentDetailListing = null;
+        let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця',
+            'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк',
+            'Ужгород', 'Хмельницький'
+        ];
+        let userData = {
+            id: null,
+            name: 'Користувач',
+            last_name: '',
+            username: '',
+            phone: '',
+            email: '',
+            city: 'Київ',
+            avatar: 'К',
+            language: 'uk'
+        };
+        let unreadCount = 0;
+        let dataLoaded = false;
+        let currentFilterCategory = 'all';
+        let avatarCacheBuster = Date.now();
 
+        // ================================================================
+        // КАТЕГОРІЇ З РОЗШИРЕНИМИ ПІДКАТЕГОРІЯМИ
+        // ================================================================
         const CATEGORIES_CONFIG = {
             'products': {
                 name: 'Товари',
@@ -2627,7 +2623,8 @@
                 placeholder: 'Введіть назву пристрою',
                 fields: [
                     { id: 'device_type', label: 'Тип пристрою', type: 'select', options: ['Смартфон', 'Ноутбук',
-                            'Планшет', 'Телевізор', 'Навушники', 'Камера'
+                            'Планшет', 'Телевізор', 'Навушники', 'Камера', 'Смарт-годинник', 'Зарядний пристрій',
+                            'Чохол', 'Скло/Плівка', 'Колонка', 'Монітор', 'Клавіатура', 'Миша'
                         ] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Apple, Samsung, Sony...' },
                     { id: 'model', label: 'Модель', type: 'text', placeholder: 'iPhone 14 Pro, Galaxy S23...' },
@@ -2641,10 +2638,14 @@
                 icon: 'fa-tshirt',
                 placeholder: 'Введіть назву одягу',
                 fields: [
-                    { id: 'clothing_type', label: 'Тип одягу', type: 'select', options: ['Чоловічий', 'Жіночий',
-                            'Дитячий'
+                    { id: 'clothing_type', label: 'Тип одягу', type: 'select', options: ['Футболка', 'Світшот',
+                            'Джинси', 'Штани', 'Сукня', 'Спідниця', 'Піджак', 'Пальто', 'Куртка', 'Шапка',
+                            'Шарф', 'Рукавички', 'Спортивний костюм', 'Піжама'
                         ] },
-                    { id: 'size', label: 'Розмір', type: 'select', options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+                    { id: 'gender', label: 'Стать', type: 'select', options: ['Чоловічий', 'Жіночий', 'Дитячий',
+                            'Унісекс'
+                        ] },
+                    { id: 'size', label: 'Розмір', type: 'select', options: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike, Adidas, Gucci...' },
                     { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Білий...' },
                     { id: 'material', label: 'Матеріал', type: 'text', placeholder: 'Бавона, Шкіра...' },
@@ -2657,7 +2658,8 @@
                 placeholder: 'Введіть назву меблів',
                 fields: [
                     { id: 'furniture_type', label: 'Тип меблів', type: 'select', options: ['Диван', 'Крісло',
-                            'Стіл', 'Ліжко', 'Шафа'
+                            'Стіл', 'Ліжко', 'Шафа', 'Комод', 'Тумба', 'Стелаж', 'Кухонний гарнітур',
+                            'Офісне крісло', 'Стільці', 'Пуф', 'Журнальний столик', 'Вішалка', 'Дзеркало'
                         ] },
                     { id: 'material', label: 'Матеріал', type: 'text', placeholder: 'Дерево, Шкіра, Тканина...' },
                     { id: 'color', label: 'Колір', type: 'text', placeholder: 'Коричневий, Білий...' },
@@ -2674,7 +2676,7 @@
                     { id: 'position', label: 'Посада', type: 'text', placeholder: 'Програміст, Менеджер...' },
                     { id: 'salary', label: 'Зарплата', type: 'text', placeholder: 'Від 20000 грн' },
                     { id: 'schedule', label: 'Графік', type: 'select', options: ['Повний день', 'Неповний день',
-                            'Віддалено', 'Гнучкий'
+                            'Віддалено', 'Гнучкий', 'Змінний'
                         ] },
                     { id: 'experience', label: 'Досвід', type: 'select', options: ['Без досвіду', '1-2 роки',
                             '3-5 років', '5+ років'
@@ -2700,7 +2702,7 @@
                 placeholder: 'Введіть назву об\'єкту',
                 fields: [
                     { id: 'property_type', label: 'Тип', type: 'select', options: ['Квартира', 'Будинок', 'Кімната',
-                            'Офіс', 'Гараж'
+                            'Офіс', 'Гараж', 'Склад', 'Земельна ділянка', 'Комерційна нерухомість'
                         ] },
                     { id: 'rooms', label: 'Кімнат', type: 'number', placeholder: '1, 2, 3...' },
                     { id: 'area', label: 'Площа (м²)', type: 'number', placeholder: '50' },
@@ -2720,7 +2722,8 @@
                 placeholder: 'Введіть назву транспорту',
                 fields: [
                     { id: 'vehicle_type', label: 'Тип', type: 'select', options: ['Легковий', 'Вантажний',
-                            'Мотоцикл', 'Скутер', 'Велосипед'
+                            'Мотоцикл', 'Скутер', 'Велосипед', 'Автобус', 'Мікроавтобус', 'Трейлер',
+                            'Спецтехніка', 'Водний транспорт'
                         ] },
                     { id: 'brand', label: 'Марка', type: 'text', placeholder: 'Toyota, BMW, Tesla...' },
                     { id: 'model', label: 'Модель', type: 'text', placeholder: 'Camry, X5, Model 3...' },
@@ -2741,7 +2744,7 @@
                 placeholder: 'Введіть назву тварини',
                 fields: [
                     { id: 'animal_type', label: 'Тип', type: 'select', options: ['Собака', 'Кіт', 'Птах', 'Гризун',
-                            'Риба', 'Інше'
+                            'Риба', 'Рептилія', 'Хорек', 'Кролик'
                         ] },
                     { id: 'breed', label: 'Порода', type: 'text', placeholder: 'Німецька вівчарка, Британський...' },
                     { id: 'age', label: 'Вік', type: 'text', placeholder: '2 роки, 3 місяці...' },
@@ -2756,7 +2759,8 @@
                 placeholder: 'Введіть назву дитячого товару',
                 fields: [
                     { id: 'kids_type', label: 'Тип', type: 'select', options: ['Одяг', 'Іграшки', 'Візочок',
-                            'Автокрісло', 'Ліжечко', 'Харчування'
+                            'Автокрісло', 'Ліжечко', 'Харчування', 'Підгузки', 'Горщик', 'Велосипед',
+                            'Санки', 'Коляска', 'Манеж', 'Стільчик для годування'
                         ] },
                     { id: 'age_range', label: 'Вік', type: 'text', placeholder: '0-3 міс, 1-3 роки...' },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Chicco, Fisher-Price...' },
@@ -2769,7 +2773,8 @@
                 placeholder: 'Введіть назву спортивного товару',
                 fields: [
                     { id: 'sport_type', label: 'Тип', type: 'select', options: ['Футбол', 'Баскетбол', 'Теніс',
-                            'Плавання', 'Фітнес', 'Велоспорт'
+                            'Плавання', 'Фітнес', 'Велоспорт', 'Біг', 'Гірські лижі', 'Ковзани',
+                            'Гольф', 'Бокс', 'Йога', 'Скелелазіння'
                         ] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike, Adidas, Puma...' },
                     { id: 'size', label: 'Розмір', type: 'text', placeholder: 'S, M, L, XL...' },
@@ -2782,7 +2787,8 @@
                 placeholder: 'Введіть назву книги',
                 fields: [
                     { id: 'book_type', label: 'Тип', type: 'select', options: ['Художня', 'Наукова', 'Дитяча',
-                            'Підручник', 'Комікс'
+                            'Підручник', 'Комікс', 'Фентезі', 'Детектив', 'Роман', 'Поезія', 'Історія',
+                            'Філософія', 'Психологія', 'Саморозвиток'
                         ] },
                     { id: 'author', label: 'Автор', type: 'text', placeholder: 'Тарас Шевченко...' },
                     { id: 'language', label: 'Мова', type: 'text', placeholder: 'Українська, Англійська...' },
@@ -2796,7 +2802,8 @@
                 placeholder: 'Введіть назву музичного інструменту',
                 fields: [
                     { id: 'music_type', label: 'Тип', type: 'select', options: ['Гітара', 'Фортепіано', 'Барабани',
-                            'Скрипка', 'Синтезатор'
+                            'Скрипка', 'Синтезатор', 'Баян', 'Аккордеон', 'Труба', 'Саксофон', 'Флейта',
+                            'Кларнет', 'Віолончель', 'Контрабас', 'Мандоліна'
                         ] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Fender, Yamaha...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
@@ -2808,7 +2815,8 @@
                 placeholder: 'Введіть назву товару для краси',
                 fields: [
                     { id: 'beauty_type', label: 'Тип', type: 'select', options: ['Косметика', 'Парфуми',
-                            'Аксесуари', 'Обладнання'
+                            'Аксесуари', 'Обладнання', 'Засоби для волосся', 'Засоби для тіла', 'Манікюр',
+                            'Дезодоранти', 'Маски для обличчя'
                         ] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'L\'Oreal, Chanel...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
@@ -2820,7 +2828,8 @@
                 placeholder: 'Введіть назву фототехніки',
                 fields: [
                     { id: 'photo_type', label: 'Тип', type: 'select', options: ['Камера', 'Об\'єктив', 'Спалах',
-                            'Штатив', 'Аксесуари'
+                            'Штатив', 'Аксесуари', 'Світло', 'Фільтри', 'Сумка для фототехніки',
+                            'Карта пам\'яті', 'Зарядний пристрій', 'Монопод', 'Дрон'
                         ] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Canon, Nikon, Sony...' },
                     { id: 'model', label: 'Модель', type: 'text', placeholder: 'EOS R5, A7III...' },
@@ -2840,169 +2849,135 @@
         CATEGORY_ICONS['all'] = 'fa-list';
         CATEGORY_NAMES['all'] = 'Всі';
 
-// ================================================================
-// 📚 ДАНІ ДЛЯ СТОРІНКИ ДОПОМОГИ
-// ================================================================
-const HELP_DATA = [
-    {
-        id: 'getting_started',
-        icon: '🚀',
-        title: 'Початок роботи',
-        description: 'Як створити акаунт, увійти та почати користуватися UAMO',
-        items: [
-            {
+        // ================================================================
+        // 📚 ДАНІ ДЛЯ СТОРІНКИ ДОПОМОГИ
+        // ================================================================
+        const HELP_DATA = [{
+            id: 'getting_started',
+            icon: '🚀',
+            title: 'Початок роботи',
+            description: 'Як створити акаунт, увійти та почати користуватися UAMO',
+            items: [{
                 title: 'Реєстрація',
                 desc: 'Введіть email та пароль (мін. 6 символів) у формі авторизації. Натисніть "Зареєструватися". Підтвердіть email за посиланням у листі.',
                 icon: 'fa-user-plus'
-            },
-            {
+            }, {
                 title: 'Вхід в акаунт',
                 desc: 'Введіть email та пароль у формі входу. Натисніть "Увійти". Якщо ви забули пароль — скористайтеся "Забули пароль?".',
                 icon: 'fa-sign-in-alt'
-            },
-            {
+            }, {
                 title: 'Перші кроки',
                 desc: 'Після входу ви потрапите на головну сторінку. Тут ви побачите рекомендації та нові оголошення.',
                 icon: 'fa-rocket'
-            }
-        ]
-    },
-    {
-        id: 'listings',
-        icon: '📦',
-        title: 'Оголошення',
-        description: 'Створення, редагування, перегляд та видалення оголошень',
-        items: [
-            {
+            }]
+        }, {
+            id: 'listings',
+            icon: '📦',
+            title: 'Оголошення',
+            description: 'Створення, редагування, перегляд та видалення оголошень',
+            items: [{
                 title: 'Створення оголошення',
                 desc: 'Натисніть "+" в нижньому меню або "Додати оголошення" на головній. Заповніть поля: категорія, назва, опис, фото, ціна, місто, телефон. Натисніть "Опублікувати".',
                 icon: 'fa-plus-circle'
-            },
-            {
+            }, {
                 title: 'Редагування оголошення',
                 desc: 'Перейдіть у "Мої оголошення" в профілі. Натисніть "Редагувати" біля потрібного оголошення. Змініть дані та натисніть "Оновити".',
                 icon: 'fa-edit'
-            },
-            {
+            }, {
                 title: 'Видалення оголошення',
                 desc: 'У "Мої оголошення" натисніть "Видалити" біля оголошення. Підтвердіть дію.',
                 icon: 'fa-trash-alt'
-            },
-            {
+            }, {
                 title: 'Перегляд оголошення',
                 desc: 'Клікніть по картці оголошення. Ви побачите детальну інформацію, фото, опис та контакти продавця.',
                 icon: 'fa-eye'
-            }
-        ]
-    },
-    {
-        id: 'filters',
-        icon: '🔍',
-        title: 'Пошук та фільтри',
-        description: 'Як швидко знайти потрібне оголошення',
-        items: [
-            {
+            }]
+        }, {
+            id: 'filters',
+            icon: '🔍',
+            title: 'Пошук та фільтри',
+            description: 'Як швидко знайти потрібне оголошення',
+            items: [{
                 title: 'Пошук за текстом',
                 desc: 'Введіть ключові слова у пошуковий рядок на головній або на сторінці пошуку. Натисніть Enter для пошуку.',
                 icon: 'fa-search'
-            },
-            {
+            }, {
                 title: 'Фільтр за категорією',
                 desc: 'Натисніть на категорію (наприклад, "Електроніка", "Одяг") у верхньому слайдері або на сторінці пошуку.',
                 icon: 'fa-tags'
-            },
-            {
+            }, {
                 title: 'Розширені фільтри',
                 desc: 'Натисніть "Фільтри" на сторінці пошуку. Можна задати ціновий діапазон, місто, стан товару та дату публікації.',
                 icon: 'fa-sliders-h'
-            }
-        ]
-    },
-    {
-        id: 'favorites',
-        icon: '❤️',
-        title: 'Обране',
-        description: 'Зберігання улюблених оголошень',
-        items: [
-            {
+            }]
+        }, {
+            id: 'favorites',
+            icon: '❤️',
+            title: 'Обране',
+            description: 'Зберігання улюблених оголошень',
+            items: [{
                 title: 'Додати в обране',
                 desc: 'Натисніть ❤️ на картці оголошення або на сторінці детального перегляду. Іконка стане червоною.',
                 icon: 'fa-heart'
-            },
-            {
+            }, {
                 title: 'Переглянути обране',
                 desc: 'Натисніть "Обране" в профілі або виберіть вкладку "Обране" в нижньому меню.',
                 icon: 'fa-heart-broken'
-            },
-            {
+            }, {
                 title: 'Видалити з обраного',
                 desc: 'Натисніть ❤️ ще раз, щоб прибрати оголошення з обраного.',
                 icon: 'fa-heart-broken'
-            }
-        ]
-    },
-    {
-        id: 'chats',
-        icon: '💬',
-        title: 'Чати та повідомлення',
-        description: 'Спілкування з продавцями та покупцями',
-        items: [
-            {
+            }]
+        }, {
+            id: 'chats',
+            icon: '💬',
+            title: 'Чати та повідомлення',
+            description: 'Спілкування з продавцями та покупцями',
+            items: [{
                 title: 'Написати продавцю',
                 desc: 'Відкрийте оголошення, натисніть "Написати продавцю". Чат створиться автоматично.',
                 icon: 'fa-comment'
-            },
-            {
+            }, {
                 title: 'Переглянути чати',
                 desc: 'Натисніть "Чати" в нижньому меню або в профілі. Тут зібрані всі ваші діалоги.',
                 icon: 'fa-comment-dots'
-            },
-            {
+            }, {
                 title: 'Відправка повідомлення',
                 desc: 'Напишіть текст у полі внизу та натисніть Enter або кнопку 📨. Повідомлення буде доставлено миттєво.',
                 icon: 'fa-paper-plane'
-            },
-            {
+            }, {
                 title: 'Сповіщення про нові повідомлення',
                 desc: "На іконці чату з'являється червоний кружець із кількістю непрочитаних повідомлень.",
                 icon: 'fa-bell'
-            }
-        ]
-    },
-    {
-        id: 'profile',
-        icon: '👤',
-        title: 'Профіль та налаштування',
-        description: 'Керування профілем, налаштуваннями та безпекою',
-        items: [
-            {
+            }]
+        }, {
+            id: 'profile',
+            icon: '👤',
+            title: 'Профіль та налаштування',
+            description: 'Керування профілем, налаштуваннями та безпекою',
+            items: [{
                 title: 'Редагування профілю',
                 desc: 'Натисніть "Редагувати профіль" у профілі. Змініть ім\'я, прізвище, нікнейм, телефон, місто та фото.',
                 icon: 'fa-user-edit'
-            },
-            {
+            }, {
                 title: 'Зміна фото профілю',
                 desc: 'Натисніть на аватар у профілі або на сторінці редагування. Виберіть фото з галереї. Фото оновиться автоматично з кеш-бастером для примусового оновлення.',
                 icon: 'fa-camera'
-            },
-            {
+            }, {
                 title: 'Налаштування',
                 desc: 'У розділі "Налаштування" ви можете змінити: обліковий запис, сповіщення, місто, мову, конфіденційність, повідомлення та безпеку.',
                 icon: 'fa-cog'
-            },
-            {
+            }, {
                 title: 'Безпека',
                 desc: 'У налаштуваннях безпеки можна змінити пароль, email, телефон та переглянути активні сеанси.',
                 icon: 'fa-shield-alt'
-            },
-            {
+            }, {
                 title: 'Вихід з акаунта',
                 desc: 'Натисніть "Вийти" внизу меню профілю. Підтвердіть дію.',
                 icon: 'fa-sign-out-alt'
-            }
-        ]
-    }
-];
+            }]
+        }];
+
         // ================================================================
         // ІНІЦІАЛІЗАЦІЯ SUPABASE
         // ================================================================
@@ -3105,264 +3080,221 @@ const HELP_DATA = [
             document.getElementById('authSuccess').className = 'auth-success';
         }
 
-
-// ================================================================
-// ЗАВАНТАЖЕННЯ ДАНИХ
-// ================================================================
-async function loadAllData() {
-    if (dataLoaded) return;
-    if (!currentUser) return;
-
-    console.log('📡 Завантаження всіх даних...');
-    const start = performance.now();
-
-    try {
-        const [listingsRes, userRes, favRes, chatsRes, myRes] = await Promise.all([
-            supabase.from('listings_with_users').select('*').limit(50),
-            supabase.from('users').select('*').eq('id', currentUser.id).single(),
-            supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
-            supabase.from('chats')
-                .select(`
-                    *,
-                    listings:listing_id (title),
-                    buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
-                    seller:users!chats_seller_id_fkey (first_name, avatar_url)
-                `)
-                .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
-                .order('updated_at', { ascending: false })
-                .limit(30),
-            supabase.from('listings')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .order('created_at', { ascending: false })
-                .limit(30)
-        ]);
-
-        if (!listingsRes.error) {
-            listings = listingsRes.data.map(item => ({
-                id: item.id,
-                title: item.title || 'Без назви',
-                price: item.price ? String(item.price) : '0',
-                location: item.city || 'не вказано',
-                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                photos: item.photos || null,
-                category: item.category || 'Інше',
-                condition: item.condition || 'new',
-                isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
-                isFeatured: item.is_featured || false,
-                createdAt: item.created_at || new Date().toISOString(),
-                description: item.description || 'Без опису',
-                specs: item.specs || {},
-                seller: {
-                    name: item.seller_name || 'Продавець',
-                    avatar: item.seller_avatar || '👤',
-                    since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
-                },
-                user_id: item.user_id,
-                phone: item.phone || '',
-                status: item.status || 'active'
-            }));
-        }
-
-        if (!userRes.error && userRes.data) {
-            const u = userRes.data;
-            userData = {
-                id: u.id,
-                name: u.first_name || 'Користувач',
-                last_name: u.last_name || '',
-                username: u.username || '',
-                phone: u.phone || '',
-                email: u.email || currentUser.email || '',
-                city: u.city || 'Київ',
-                avatar: u.avatar_url || 'К',
-                language: u.language || 'uk'
-            };
-            avatarCacheBuster = Date.now();
-            updateUI();
-            updateAvatar();
-        }
-
-        if (!favRes.error) {
-            favorites = favRes.data.map(f => f.listing_id);
-        }
-
-        if (!chatsRes.error) {
-            chats = chatsRes.data || [];
-        }
-
-        if (!myRes.error) {
-            myListings = myRes.data.map(item => ({
-                id: item.id,
-                title: item.title || 'Без назви',
-                price: item.price ? String(item.price) : '0',
-                location: item.city || 'не вказано',
-                image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                photos: item.photos || null,
-                category: item.category || 'Інше',
-                condition: item.condition || 'new',
-                createdAt: item.created_at || new Date().toISOString(),
-                description: item.description || 'Без опису',
-                phone: item.phone || '',
-                status: item.status || 'active'
-            }));
-        }
-
-        dataLoaded = true;
-
-        const elapsed = (performance.now() - start).toFixed(2);
-        console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
-
-        updateProfileStats();
-        updateChatBadge();
-        fixNotificationBadge();
-        renderAll();
-
-    } catch (e) {
-        console.error('❌ Помилка завантаження:', e);
-    }
-}
         // ================================================================
         // AUTH HANDLERS
         // ================================================================
-async function handleAuth() {
-    document.getElementById('authError').className = 'auth-error';
-    document.getElementById('authSuccess').className = 'auth-success';
+        async function handleAuth() {
+            document.getElementById('authError').className = 'auth-error';
+            document.getElementById('authSuccess').className = 'auth-success';
 
-    // ===== ДОДАЙТЕ ЦЕ =====
-    console.log('🔍 handleAuth called');
-    console.log('🔍 supabase:', supabase);
-    console.log('🔍 isAuthMode:', isAuthMode);
-    // ======================
+            if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
 
-    if (!supabase) { 
-        console.error('❌ Supabase is null!');
-        showAuthError('Підключення до сервера не встановлено'); 
-        return; 
-    }
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const confirmPassword = document.getElementById('authConfirmPassword')?.value;
 
-    const email = document.getElementById('authEmail').value.trim();
-    const password = document.getElementById('authPassword').value;
-    const confirmPassword = document.getElementById('authConfirmPassword')?.value;
-
-    console.log('🔍 email:', email);
-    console.log('🔍 password length:', password?.length);
-
-    if (!email) { showAuthError('Введіть email');
-        document.getElementById('authEmail').focus(); return; }
-    if (!email.includes('@')) { showAuthError('Введіть коректний email');
-        document.getElementById('authEmail').focus(); return; }
-    if (!password) { showAuthError('Введіть пароль');
-        document.getElementById('authPassword').focus(); return; }
-    if (password.length < 6) { showAuthError('Пароль має бути не менше 6 символів');
-        document.getElementById('authPassword').focus(); return; }
-    if (isAuthMode === 'register') {
-        if (!confirmPassword) { showAuthError('Підтвердіть пароль');
-            document.getElementById('authConfirmPassword').focus(); return; }
-        if (password !== confirmPassword) { showAuthError('Паролі не співпадають');
-            document.getElementById('authConfirmPassword').focus(); return; }
-    }
-
-    setLoading(true);
-    try {
-        console.log('🔍 Attempting', isAuthMode === 'login' ? 'login' : 'register');
-        
-        if (isAuthMode === 'login') {
-            console.log('🔍 Calling supabase.auth.signInWithPassword...');
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            console.log('🔍 Login response:', { data, error });
-            
-            setLoading(false);
-            if (error) {
-                console.error('❌ Login error:', error);
-                if (error.message.includes('Invalid login')) showAuthError('Невірний email або пароль');
-                else if (error.message.includes('Email not confirmed')) showAuthError('Email не підтверджено');
-                else showAuthError(`Помилка: ${error.message}`);
-                return;
+            if (!email) { showAuthError('Введіть email');
+                document.getElementById('authEmail').focus(); return; }
+            if (!email.includes('@')) { showAuthError('Введіть коректний email');
+                document.getElementById('authEmail').focus(); return; }
+            if (!password) { showAuthError('Введіть пароль');
+                document.getElementById('authPassword').focus(); return; }
+            if (password.length < 6) { showAuthError('Пароль має бути не менше 6 символів');
+                document.getElementById('authPassword').focus(); return; }
+            if (isAuthMode === 'register') {
+                if (!confirmPassword) { showAuthError('Підтвердіть пароль');
+                    document.getElementById('authConfirmPassword').focus(); return; }
+                if (password !== confirmPassword) { showAuthError('Паролі не співпадають');
+                    document.getElementById('authConfirmPassword').focus(); return; }
             }
-            if (data?.user) {
-                console.log('✅ Login success:', data.user);
-                currentUser = data.user;
-                showAuthSuccess('✅ Вхід виконано!');
-                await loadAllData();
-                setTimeout(() => navigateTo('home'), 200);
-            }
-        } else {
-            console.log('🔍 Calling supabase.auth.signUp...');
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' },
-                    emailRedirectTo: window.location.origin
+
+            setLoading(true);
+            try {
+                if (isAuthMode === 'login') {
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    setLoading(false);
+                    if (error) {
+                        if (error.message.includes('Invalid login')) showAuthError('Невірний email або пароль');
+                        else if (error.message.includes('Email not confirmed')) showAuthError(
+                        'Email не підтверджено');
+                        else showAuthError(`Помилка: ${error.message}`);
+                        return;
+                    }
+                    if (data?.user) {
+                        currentUser = data.user;
+                        showAuthSuccess('✅ Вхід виконано!');
+                        await loadAllData();
+                        setTimeout(() => navigateTo('home'), 200);
+                    }
+                } else {
+                    const { data, error } = await supabase.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' },
+                            emailRedirectTo: window.location.origin
+                        }
+                    });
+                    setLoading(false);
+                    if (error) {
+                        if (error.message.includes('User already')) showAuthError('Цей email вже зареєстровано');
+                        else showAuthError(`Помилка: ${error.message}`);
+                        return;
+                    }
+                    if (data?.user) {
+                        showAuthSuccess('✅ Реєстрація успішна! Перевірте пошту для підтвердження.');
+                        setTimeout(() => { toggleAuthMode();
+                            document.getElementById('authEmail').value = email;
+                            document.getElementById('authPassword').value = '';
+                            showAuthSuccess('Тепер увійдіть у свій акаунт'); }, 1500);
+                    }
                 }
-            });
-            console.log('🔍 Register response:', { data, error });
-            
-            setLoading(false);
-            if (error) {
-                console.error('❌ Register error:', error);
-                if (error.message.includes('User already')) showAuthError('Цей email вже зареєстровано');
-                else showAuthError(`Помилка: ${error.message}`);
-                return;
-            }
-            if (data?.user) {
-                console.log('✅ Register success:', data.user);
-                showAuthSuccess('✅ Реєстрація успішна! Перевірте пошту для підтвердження.');
-                setTimeout(() => { toggleAuthMode();
-                    document.getElementById('authEmail').value = email;
-                    document.getElementById('authPassword').value = '';
-                    showAuthSuccess('Тепер увійдіть у свій акаунт'); }, 1500);
+            } catch (e) {
+                setLoading(false);
+                showAuthError('Несподівана помилка. Спробуйте ще раз.');
             }
         }
-    } catch (e) {
-        console.error('❌ CATCH ERROR:', e);
-        console.error('❌ Error stack:', e.stack);
-        setLoading(false);
-        showAuthError('Несподівана помилка. Спробуйте ще раз.');
-    }
-}
-// ================================================================
-// ГЛОБАЛЬНІ ЗМІННІ
-// ================================================================
-let supabase = null;
-let currentUser = null;
-let isAuthMode = 'login';
-let currentPage = 'auth';
-let historyStack = ['auth'];
-let selectedPhotos = [];
-let favorites = [];
-let listings = [];
-let myListings = [];
-let chats = [];
-let chatMessages = [];
-let currentChatId = null;
-let currentDetailId = null;
-let detailPhotos = [];
-let detailIndex = 0;
-let currentDetailListing = null;
-let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця',
-    'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк',
-    'Ужгород', 'Хмельницький'
-];
-let userData = {
-    id: null,
-    name: 'Користувач',
-    last_name: '',
-    username: '',
-    phone: '',
-    email: '',
-    city: 'Київ',
-    avatar: 'К',
-    language: 'uk'
-};
-let unreadCount = 0;
-let dataLoaded = false;
-let currentFilterCategory = 'all';
-let avatarCacheBuster = Date.now();
-        // ================================================================
-        // 🔧 ВИПРАВЛЕННЯ
-        // ================================================================
 
+        async function handleForgotPassword() {
+            if (!supabase) { showAuthError('Підключення до сервера не встановлено'); return; }
+            const email = document.getElementById('authEmail').value.trim();
+            if (!email) { showAuthError('Введіть email');
+                document.getElementById('authEmail').focus(); return; }
+            if (!email.includes('@')) { showAuthError('Введіть коректний email'); return; }
+
+            setLoading(true);
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+                setLoading(false);
+                if (error) {
+                    if (error.message.includes('User not found')) showAuthError('Користувача не знайдено');
+                    else showAuthError(`Помилка: ${error.message}`);
+                    return;
+                }
+                showAuthSuccess(`✅ Лист з посиланням надіслано на ${email}`);
+            } catch (e) { setLoading(false);
+                showAuthError('Помилка. Спробуйте ще раз.'); }
+        }
+
+        // ================================================================
+        // ЗАВАНТАЖЕННЯ ВСІХ ДАНИХ
+        // ================================================================
+        async function loadAllData() {
+            if (dataLoaded) return;
+            if (!currentUser) return;
+
+            console.log('📡 Завантаження всіх даних...');
+            const start = performance.now();
+
+            try {
+                const [listingsRes, userRes, favRes, chatsRes, myRes] = await Promise.all([
+                    supabase.from('listings_with_users').select('*').limit(50),
+                    supabase.from('users').select('*').eq('id', currentUser.id).single(),
+                    supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
+                    supabase.from('chats')
+                    .select(`
+                                *,
+                                listings:listing_id (title),
+                                buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
+                                seller:users!chats_seller_id_fkey (first_name, avatar_url)
+                            `)
+                    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+                    .order('updated_at', { ascending: false })
+                    .limit(30),
+                    supabase.from('listings')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false })
+                    .limit(30)
+                ]);
+
+                if (!listingsRes.error) {
+                    listings = listingsRes.data.map(item => ({
+                        id: item.id,
+                        title: item.title || 'Без назви',
+                        price: item.price ? String(item.price) : '0',
+                        location: item.city || 'не вказано',
+                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                        photos: item.photos || null,
+                        category: item.category || 'Інше',
+                        condition: item.condition || 'new',
+                        isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
+                        isFeatured: item.is_featured || false,
+                        createdAt: item.created_at || new Date().toISOString(),
+                        description: item.description || 'Без опису',
+                        specs: item.specs || {},
+                        seller: {
+                            name: item.seller_name || 'Продавець',
+                            avatar: item.seller_avatar || '👤',
+                            since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
+                        },
+                        user_id: item.user_id,
+                        phone: item.phone || '',
+                        status: item.status || 'active'
+                    }));
+                }
+
+                if (!userRes.error && userRes.data) {
+                    const u = userRes.data;
+                    userData = {
+                        id: u.id,
+                        name: u.first_name || 'Користувач',
+                        last_name: u.last_name || '',
+                        username: u.username || '',
+                        phone: u.phone || '',
+                        email: u.email || currentUser.email || '',
+                        city: u.city || 'Київ',
+                        avatar: u.avatar_url || 'К',
+                        language: u.language || 'uk'
+                    };
+                    avatarCacheBuster = Date.now();
+                    updateUI();
+                    updateAvatar();
+                }
+
+                if (!favRes.error) {
+                    favorites = favRes.data.map(f => f.listing_id);
+                }
+
+                if (!chatsRes.error) {
+                    chats = chatsRes.data || [];
+                }
+
+                if (!myRes.error) {
+                    myListings = myRes.data.map(item => ({
+                        id: item.id,
+                        title: item.title || 'Без назви',
+                        price: item.price ? String(item.price) : '0',
+                        location: item.city || 'не вказано',
+                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
+                        photos: item.photos || null,
+                        category: item.category || 'Інше',
+                        condition: item.condition || 'new',
+                        createdAt: item.created_at || new Date().toISOString(),
+                        description: item.description || 'Без опису',
+                        phone: item.phone || '',
+                        status: item.status || 'active'
+                    }));
+                }
+
+                dataLoaded = true;
+
+                const elapsed = (performance.now() - start).toFixed(2);
+                console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
+
+                updateProfileStats();
+                updateChatBadge();
+                fixNotificationBadge();
+                renderAll();
+
+            } catch (e) {
+                console.error('❌ Помилка завантаження:', e);
+            }
+        }
+
+        // ================================================================
+        // ВИПРАВЛЕННЯ
+        // ================================================================
         function fixNotificationBadge() {
             const badge = document.getElementById('notif-badge');
             if (badge) { badge.textContent = '0';
@@ -3381,7 +3313,7 @@ let avatarCacheBuster = Date.now();
         }
 
         // ================================================================
-        // ФУНКЦІЯ ОНОВЛЕННЯ АВАТАРА З КЕШ-БАСТЕРОМ
+        // ОНОВЛЕННЯ АВАТАРА З КЕШ-БАСТЕРОМ
         // ================================================================
         function updateAvatar() {
             const avatarElements = document.querySelectorAll('.profile-avatar, .avatar-small, #profileAvatar, #editAvatar, #headerAvatar');
@@ -3389,13 +3321,11 @@ let avatarCacheBuster = Date.now();
             avatarElements.forEach(el => {
                 let letterSpan = el.querySelector('.avatar-letter') || el.querySelector('span');
 
-                // Використовуємо кеш-бастер для примусового оновлення фото
                 if (userData.avatar && (userData.avatar.startsWith('http') || userData.avatar.startsWith(
                         'data:image'))) {
                     let img = el.querySelector('img');
                     if (!img) { img = document.createElement('img');
                         el.appendChild(img); }
-                    // Додаємо кеш-бастер до URL (якщо це не data:image)
                     let src = userData.avatar;
                     if (!src.startsWith('data:image')) {
                         const hasQuery = src.includes('?');
@@ -3413,9 +3343,6 @@ let avatarCacheBuster = Date.now();
             });
         }
 
-        // ================================================================
-        // ФУНКЦІЯ ЗАВАНТАЖЕННЯ АВАТАРА З КЕШ-БАСТЕРОМ
-        // ================================================================
         function uploadAvatar(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -3423,7 +3350,6 @@ let avatarCacheBuster = Date.now();
             reader.onload = function(e) {
                 const avatarUrl = e.target.result;
                 userData.avatar = avatarUrl;
-                // Оновлюємо кеш-бастер для примусового оновлення
                 avatarCacheBuster = Date.now();
                 updateUI();
                 updateAvatar();
@@ -3436,134 +3362,8 @@ let avatarCacheBuster = Date.now();
         function editUploadAvatar(event) { uploadAvatar(event); }
 
         // ================================================================
-        // ФУНКЦІЯ ПОШУКУ ПО ДОПОМОЗІ
+        // ДОПОМІЖНІ ФУНКЦІЇ
         // ================================================================
-        function searchHelp(query) {
-            const container = document.getElementById('helpCategoriesContainer');
-            if (!container) return;
-
-            const q = query.toLowerCase().trim();
-
-            if (!q) {
-                renderHelp(container);
-                return;
-            }
-
-            let found = false;
-            let html = '';
-
-            HELP_DATA.forEach(cat => {
-                const matchedItems = cat.items.filter(item =>
-                    item.title.toLowerCase().includes(q) ||
-                    item.desc.toLowerCase().includes(q)
-                );
-                if (matchedItems.length > 0 || cat.title.toLowerCase().includes(q) || cat.description.toLowerCase()
-                    .includes(q)) {
-                    found = true;
-                    const itemsToShow = matchedItems.length > 0 ? matchedItems : cat.items;
-                    html += `
-                                <div class="help-category">
-                                    <div class="help-cat-header" onclick="toggleHelpCategory(this)">
-                                        <div class="cat-icon">${cat.icon}</div>
-                                        <div class="cat-info">
-                                            <div class="cat-title">${cat.title}</div>
-                                            <div class="cat-desc">${cat.description}</div>
-                                        </div>
-                                        <div class="cat-arrow open"><i class="fas fa-chevron-down"></i></div>
-                                    </div>
-                                    <div class="help-cat-body open">
-                                        ${itemsToShow.map(item => `
-                                            <div class="help-item">
-                                                <div class="item-title"><i class="fas ${item.icon}"></i> ${item.title}</div>
-                                                <div class="item-desc">${item.desc}</div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                }
-            });
-
-            if (!found) {
-                container.innerHTML = `
-                            <div class="help-no-results">
-                                <i class="fas fa-search"></i>
-                                <h3>Нічого не знайдено</h3>
-                                <p>Спробуйте змінити пошуковий запит</p>
-                            </div>
-                        `;
-            } else {
-                container.innerHTML = html;
-            }
-        }
-
-        // ================================================================
-        // ФУНКЦІЯ РЕНДЕРИНГУ СТОРІНКИ ДОПОМОГИ
-        // ================================================================
-        function renderHelp(container) {
-            if (!container) container = document.getElementById('helpCategoriesContainer');
-            if (!container) return;
-
-            container.innerHTML = HELP_DATA.map(cat => `
-                        <div class="help-category" data-category="${cat.id}">
-                            <div class="help-cat-header" onclick="toggleHelpCategory(this)">
-                                <div class="cat-icon">${cat.icon}</div>
-                                <div class="cat-info">
-                                    <div class="cat-title">${cat.title}</div>
-                                    <div class="cat-desc">${cat.description}</div>
-                                </div>
-                                <div class="cat-arrow"><i class="fas fa-chevron-down"></i></div>
-                            </div>
-                            <div class="help-cat-body">
-                                ${cat.items.map(item => `
-                                    <div class="help-item">
-                                        <div class="item-title"><i class="fas ${item.icon}"></i> ${item.title}</div>
-                                        <div class="item-desc">${item.desc}</div>
-                                        ${item.interactive ? `
-                                            <div class="interactive-block">
-                                                <div class="interactive-title"><i class="fas fa-hand-pointer"></i> Інтерактивний блок</div>
-                                                <div class="interactive-content">
-                                                    ${item.interactive}
-                                                </div>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('');
-        }
-
-        // ================================================================
-        // ФУНКЦІЯ РОЗКРИТТЯ КАТЕГОРІЇ ДОПОМОГИ
-        // ================================================================
-        function toggleHelpCategory(header) {
-            const body = header.nextElementSibling;
-            const arrow = header.querySelector('.cat-arrow');
-            if (body) {
-                body.classList.toggle('open');
-                if (arrow) {
-                    arrow.classList.toggle('open');
-                }
-            }
-        }
-
-        // ================================================================
-        // РЕНДЕРИНГ КАТЕГОРІЙ
-        // ================================================================
-
-        function resetPhotoForm() {
-            selectedPhotos = [];
-            const grid = document.getElementById('photoPreviewGrid');
-            if (grid) grid.innerHTML = '';
-            const input = document.getElementById('photoInput');
-            if (input) input.value = '';
-        }
-
-        // ================================================================
-        // КАТЕГОРІЇ ТА ПОЛЯ
-        // ================================================================
-
         function getCategoryFields(category) {
             return CATEGORIES_CONFIG[category]?.fields || [];
         }
@@ -3621,42 +3421,13 @@ let avatarCacheBuster = Date.now();
             }).join('');
         }
 
-        // ================================================================
-        // ОСНОВНІ ФУНКЦІЇ
-        // ================================================================
-
-        function loadListings() {
-            if (listings.length > 0) { renderAll(); return; }
-            if (!dataLoaded) loadAllData();
+        function resetPhotoForm() {
+            selectedPhotos = [];
+            const grid = document.getElementById('photoPreviewGrid');
+            if (grid) grid.innerHTML = '';
+            const input = document.getElementById('photoInput');
+            if (input) input.value = '';
         }
-
-        function loadFavorites() {
-            if (favorites.length > 0 || dataLoaded) { renderAll();
-                updateProfileStats(); return; }
-            if (!dataLoaded) loadAllData();
-        }
-
-        function loadChats() {
-            if (chats.length > 0 || dataLoaded) {
-                if (currentPage === 'chats') renderChats();
-                updateChatBadge();
-                return;
-            }
-            if (!dataLoaded) loadAllData();
-        }
-
-        function loadMyListings() {
-            if (myListings.length > 0 || dataLoaded) {
-                if (currentPage === 'my-listings') renderMyListings();
-                updateProfileStats();
-                return;
-            }
-            if (!dataLoaded) loadAllData();
-        }
-
-        // ================================================================
-        // RENDER HELPERS
-        // ================================================================
 
         function timeAgo(dateStr) {
             if (!dateStr) return 'нещодавно';
@@ -3679,6 +3450,9 @@ let avatarCacheBuster = Date.now();
 
         function isFavorite(id) { return favorites.some(f => f === id); }
 
+        // ================================================================
+        // RENDER FUNCTIONS
+        // ================================================================
         function updateUI() {
             const el = (id) => document.getElementById(id);
             if (el('profileName')) el('profileName').textContent = userData.name || 'Користувач';
@@ -3711,92 +3485,6 @@ let avatarCacheBuster = Date.now();
             if (el('statFavorites')) el('statFavorites').textContent = favorites.length;
             if (el('statMessages')) el('statMessages').textContent = chats.length;
         }
-
-        // ================================================================
-        // ФІЛЬТРИ ТА ПОШУК (ВИПРАВЛЕНО)
-        // ================================================================
-
-        function getFilteredListings() {
-            const searchQuery = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-            const category = currentFilterCategory || 'all';
-            const priceMin = parseFloat(document.getElementById('filterPriceMin')?.value) || 0;
-            const priceMax = parseFloat(document.getElementById('filterPriceMax')?.value) || Infinity;
-            const city = document.getElementById('filterCity')?.value?.toLowerCase() || '';
-            const condition = document.querySelector('input[name="condition"]:checked')?.value || 'all';
-            const dateFilter = document.querySelector('input[name="date"]:checked')?.value || 'all';
-
-            let results = [...listings];
-
-            // Фільтр за категорією
-            if (category !== 'all') {
-                const categoryMap = {
-                    'products': ['товари', 'products'],
-                    'electronics': ['електроніка', 'electronics', 'телефон', 'ноутбук'],
-                    'clothing': ['одяг', 'clothing', 'взуття'],
-                    'furniture': ['меблі', 'furniture', 'диван', 'стіл'],
-                    'jobs': ['робота', 'jobs', 'вакансії'],
-                    'services': ['послуги', 'services'],
-                    'realestate': ['нерухомість', 'realestate', 'квартира', 'будинок'],
-                    'transport': ['транспорт', 'transport', 'авто', 'car'],
-                    'animals': ['тварини', 'animals', 'собака', 'кіт'],
-                    'kids': ['дитяче', 'kids', 'іграшки'],
-                    'sport': ['спорт', 'sport', 'футбол'],
-                    'books': ['книги', 'books'],
-                    'music': ['музика', 'music', 'гітара'],
-                    'beauty': ['краса', 'beauty', 'косметика'],
-                    'photo': ['фото', 'photo', 'камера']
-                };
-                const keywords = categoryMap[category] || [category];
-                results = results.filter(l => {
-                    const catLower = (l.category || '').toLowerCase();
-                    return keywords.some(k => catLower.includes(k));
-                });
-            }
-
-            // Пошук за текстом
-            if (searchQuery) {
-                results = results.filter(l =>
-                    l.title?.toLowerCase().includes(searchQuery) ||
-                    l.description?.toLowerCase().includes(searchQuery) ||
-                    l.location?.toLowerCase().includes(searchQuery)
-                );
-            }
-
-            // Фільтр за ціною
-            results = results.filter(l => {
-                const price = parseFloat(l.price) || 0;
-                return price >= priceMin && price <= priceMax;
-            });
-
-            // Фільтр за містом
-            if (city) {
-                results = results.filter(l => l.location?.toLowerCase().includes(city));
-            }
-
-            // Фільтр за станом
-            if (condition !== 'all') {
-                results = results.filter(l => l.condition === condition);
-            }
-
-            // Фільтр за датою
-            if (dateFilter !== 'all') {
-                const now = new Date();
-                let cutoff = new Date();
-                if (dateFilter === 'today') { cutoff.setHours(0, 0, 0, 0); } else if (dateFilter === 'week') { cutoff
-                        .setDate(now.getDate() - 7); } else if (dateFilter === 'month') { cutoff.setMonth(now.getMonth() -
-                        1); }
-                results = results.filter(l => {
-                    const date = new Date(l.createdAt);
-                    return date >= cutoff;
-                });
-            }
-
-            return results;
-        }
-
-        // ================================================================
-        // RENDER PAGES
-        // ================================================================
 
         function renderCategories() {
             const mainCategories = ['all', 'products', 'electronics', 'clothing', 'furniture', 'jobs', 'services',
@@ -4044,47 +3732,103 @@ let avatarCacheBuster = Date.now();
             ).join('');
         }
 
-        function renderAll() {
-            if (!currentUser && currentPage !== 'auth') { navigateTo('auth'); return; }
-            switch (currentPage) {
-                case 'home':
-                    renderHome();
-                    break;
-                case 'search':
-                    renderSearch(document.getElementById('searchInput')?.value || '');
-                    break;
-                case 'favorites':
-                    renderFavorites();
-                    break;
-                case 'chats':
-                    renderChats();
-                    break;
-                case 'profile':
-                    updateUI();
-                    updateProfileStats();
-                    updateNav('profile');
-                    break;
-                case 'my-listings':
-                    renderMyListings();
-                    break;
-                case 'settings-city':
-                    renderCities();
-                    break;
-                case 'help':
-                    renderHelp();
-                    // Очищаємо пошук при переході
-                    const helpInput = document.getElementById('helpSearchInput');
-                    if (helpInput) helpInput.value = '';
-                    break;
-                default:
-                    break;
+        function renderHelp() {
+            const container = document.getElementById('helpCategoriesContainer');
+            if (!container) return;
+
+            container.innerHTML = HELP_DATA.map(cat => `
+                        <div class="help-category">
+                            <div class="help-cat-header" onclick="toggleHelpCategory(this)">
+                                <div class="cat-icon">${cat.icon}</div>
+                                <div class="cat-info">
+                                    <div class="cat-title">${cat.title}</div>
+                                    <div class="cat-desc">${cat.description}</div>
+                                </div>
+                                <div class="cat-arrow"><i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="help-cat-body">
+                                ${cat.items.map(item => `
+                                    <div class="help-item">
+                                        <div class="item-title"><i class="fas ${item.icon}"></i> ${item.title}</div>
+                                        <div class="item-desc">${item.desc}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+        }
+
+        function toggleHelpCategory(header) {
+            const body = header.nextElementSibling;
+            const arrow = header.querySelector('.cat-arrow');
+            if (body) {
+                body.classList.toggle('open');
+                if (arrow) arrow.classList.toggle('open');
+            }
+        }
+
+        function searchHelp(query) {
+            const container = document.getElementById('helpCategoriesContainer');
+            if (!container) return;
+
+            const q = query.toLowerCase().trim();
+
+            if (!q) {
+                renderHelp();
+                return;
+            }
+
+            let found = false;
+            let html = '';
+
+            HELP_DATA.forEach(cat => {
+                const matchedItems = cat.items.filter(item =>
+                    item.title.toLowerCase().includes(q) ||
+                    item.desc.toLowerCase().includes(q)
+                );
+                if (matchedItems.length > 0 || cat.title.toLowerCase().includes(q) || cat.description.toLowerCase()
+                    .includes(q)) {
+                    found = true;
+                    const itemsToShow = matchedItems.length > 0 ? matchedItems : cat.items;
+                    html += `
+                                <div class="help-category">
+                                    <div class="help-cat-header" onclick="toggleHelpCategory(this)">
+                                        <div class="cat-icon">${cat.icon}</div>
+                                        <div class="cat-info">
+                                            <div class="cat-title">${cat.title}</div>
+                                            <div class="cat-desc">${cat.description}</div>
+                                        </div>
+                                        <div class="cat-arrow open"><i class="fas fa-chevron-down"></i></div>
+                                    </div>
+                                    <div class="help-cat-body open">
+                                        ${itemsToShow.map(item => `
+                                            <div class="help-item">
+                                                <div class="item-title"><i class="fas ${item.icon}"></i> ${item.title}</div>
+                                                <div class="item-desc">${item.desc}</div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                }
+            });
+
+            if (!found) {
+                container.innerHTML = `
+                            <div class="help-no-results">
+                                <i class="fas fa-search"></i>
+                                <h3>Нічого не знайдено</h3>
+                                <p>Спробуйте змінити пошуковий запит</p>
+                            </div>
+                        `;
+            } else {
+                container.innerHTML = html;
             }
         }
 
         // ================================================================
         // NAVIGATION
         // ================================================================
-
         window.navigateTo = function(page) {
             if (page === 'auth') {
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -4124,9 +3868,116 @@ let avatarCacheBuster = Date.now();
 
         function goBackFromDetail() { if (currentPage === 'detail') window.navigateTo('home'); }
 
+        function renderAll() {
+            if (!currentUser && currentPage !== 'auth') { navigateTo('auth'); return; }
+            switch (currentPage) {
+                case 'home':
+                    renderHome();
+                    break;
+                case 'search':
+                    renderSearch(document.getElementById('searchInput')?.value || '');
+                    break;
+                case 'favorites':
+                    renderFavorites();
+                    break;
+                case 'chats':
+                    renderChats();
+                    break;
+                case 'profile':
+                    updateUI();
+                    updateProfileStats();
+                    updateNav('profile');
+                    break;
+                case 'my-listings':
+                    renderMyListings();
+                    break;
+                case 'settings-city':
+                    renderCities();
+                    break;
+                case 'help':
+                    renderHelp();
+                    const helpInput = document.getElementById('helpSearchInput');
+                    if (helpInput) helpInput.value = '';
+                    break;
+                default:
+                    break;
+            }
+        }
+
         // ================================================================
-        // ФІЛЬТРИ (ВИПРАВЛЕНО)
+        // ФІЛЬТРИ
         // ================================================================
+        function getFilteredListings() {
+            const searchQuery = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+            const category = currentFilterCategory || 'all';
+            const priceMin = parseFloat(document.getElementById('filterPriceMin')?.value) || 0;
+            const priceMax = parseFloat(document.getElementById('filterPriceMax')?.value) || Infinity;
+            const city = document.getElementById('filterCity')?.value?.toLowerCase() || '';
+            const condition = document.querySelector('input[name="condition"]:checked')?.value || 'all';
+            const dateFilter = document.querySelector('input[name="date"]:checked')?.value || 'all';
+
+            let results = [...listings];
+
+            if (category !== 'all') {
+                const categoryMap = {
+                    'products': ['товари', 'products'],
+                    'electronics': ['електроніка', 'electronics', 'телефон', 'ноутбук'],
+                    'clothing': ['одяг', 'clothing', 'взуття'],
+                    'furniture': ['меблі', 'furniture', 'диван', 'стіл'],
+                    'jobs': ['робота', 'jobs', 'вакансії'],
+                    'services': ['послуги', 'services'],
+                    'realestate': ['нерухомість', 'realestate', 'квартира', 'будинок'],
+                    'transport': ['транспорт', 'transport', 'авто', 'car'],
+                    'animals': ['тварини', 'animals', 'собака', 'кіт'],
+                    'kids': ['дитяче', 'kids', 'іграшки'],
+                    'sport': ['спорт', 'sport', 'футбол'],
+                    'books': ['книги', 'books'],
+                    'music': ['музика', 'music', 'гітара'],
+                    'beauty': ['краса', 'beauty', 'косметика'],
+                    'photo': ['фото', 'photo', 'камера']
+                };
+                const keywords = categoryMap[category] || [category];
+                results = results.filter(l => {
+                    const catLower = (l.category || '').toLowerCase();
+                    return keywords.some(k => catLower.includes(k));
+                });
+            }
+
+            if (searchQuery) {
+                results = results.filter(l =>
+                    l.title?.toLowerCase().includes(searchQuery) ||
+                    l.description?.toLowerCase().includes(searchQuery) ||
+                    l.location?.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            results = results.filter(l => {
+                const price = parseFloat(l.price) || 0;
+                return price >= priceMin && price <= priceMax;
+            });
+
+            if (city) {
+                results = results.filter(l => l.location?.toLowerCase().includes(city));
+            }
+
+            if (condition !== 'all') {
+                results = results.filter(l => l.condition === condition);
+            }
+
+            if (dateFilter !== 'all') {
+                const now = new Date();
+                let cutoff = new Date();
+                if (dateFilter === 'today') { cutoff.setHours(0, 0, 0, 0); } else if (dateFilter === 'week') { cutoff
+                        .setDate(now.getDate() - 7); } else if (dateFilter === 'month') { cutoff.setMonth(now.getMonth() -
+                        1); }
+                results = results.filter(l => {
+                    const date = new Date(l.createdAt);
+                    return date >= cutoff;
+                });
+            }
+
+            return results;
+        }
 
         function filterByCategory(cat) {
             currentFilterCategory = cat;
@@ -4160,7 +4011,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // LISTING OPERATIONS
         // ================================================================
-
         async function toggleFavorite(listingId) {
             if (!currentUser) { window.navigateTo('auth'); return; }
             const isFav = favorites.includes(listingId);
@@ -4251,9 +4101,8 @@ let avatarCacheBuster = Date.now();
                 'show'); }
 
         // ================================================================
-        // CHAT FUNCTIONS
+        // CHAT FUNCTIONS (ПОВНОЦІННИЙ МЕСЕНДЖЕР)
         // ================================================================
-
         async function findOrCreateChat(sellerId, listingId) {
             if (!currentUser) return null;
 
@@ -4452,7 +4301,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // DETAIL
         // ================================================================
-
         function openDetail(id) {
             const listing = listings.find(l => l.id === id);
             if (!listing) { alert('Оголошення не знайдено'); return; }
@@ -4569,67 +4417,42 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // OPTIONS MODAL
         // ================================================================
+        function openOptionsModal() { document.getElementById('optionsModal').classList.add('show'); }
 
-        function openOptionsModal() {
-            document.getElementById('optionsModal').classList.add('show');
-        }
-
-        function closeOptionsModal() {
-            document.getElementById('optionsModal').classList.remove('show');
-        }
+        function closeOptionsModal() { document.getElementById('optionsModal').classList.remove('show'); }
 
         function shareListing() {
-            if (!currentDetailListing) {
-                alert('Оголошення не знайдено');
-                return;
-            }
-            const text = `📢 ${currentDetailListing.title}\n💰 ${currentDetailListing.price} грн\n📍 ${currentDetailListing.location}\n\n${window.location.href}?id=${currentDetailListing.id}`;
+            if (!currentDetailListing) { alert('Оголошення не знайдено'); return; }
+            const text =
+                `📢 ${currentDetailListing.title}\n💰 ${currentDetailListing.price} грн\n📍 ${currentDetailListing.location}\n\n${window.location.href}?id=${currentDetailListing.id}`;
             if (navigator.share) {
-                navigator.share({
-                    title: currentDetailListing.title,
-                    text: text,
-                    url: window.location.href + '?id=' + currentDetailListing.id
-                }).catch(() => {});
+                navigator.share({ title: currentDetailListing.title, text: text, url: window.location.href + '?id=' +
+                        currentDetailListing.id }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('✅ Посилання скопійовано в буфер обміну!');
-                }).catch(() => {
-                    prompt('Скопіюйте це посилання:', text);
-                });
+                navigator.clipboard.writeText(text).then(() => { alert('✅ Посилання скопійовано!'); }).catch(() => { prompt(
+                        'Скопіюйте:', text); });
             }
             closeOptionsModal();
         }
 
         function copyListingLink() {
-            if (!currentDetailListing) {
-                alert('Оголошення не знайдено');
-                return;
-            }
+            if (!currentDetailListing) { alert('Оголошення не знайдено'); return; }
             const link = window.location.href + '?id=' + currentDetailListing.id;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('✅ Посилання скопійовано в буфер обміну!');
-            }).catch(() => {
-                prompt('Скопіюйте це посилання:', link);
-            });
+            navigator.clipboard.writeText(link).then(() => { alert('✅ Посилання скопійовано!'); }).catch(() => { prompt(
+                    'Скопіюйте:', link); });
             closeOptionsModal();
         }
 
         function reportListing() {
-            if (!currentDetailListing) {
-                alert('Оголошення не знайдено');
-                return;
-            }
+            if (!currentDetailListing) { alert('Оголошення не знайдено'); return; }
             const reason = prompt('📋 Вкажіть причину скарги:\n1. Спам\n2. Шахрайство\n3. Некоректний зміст\n4. Інше');
-            if (reason) {
-                alert('✅ Скаргу надіслано! Ми розглянемо її найближчим часом.');
-            }
+            if (reason) { alert('✅ Скаргу надіслано!'); }
             closeOptionsModal();
         }
 
         // ================================================================
         // PHOTO HANDLING
         // ================================================================
-
         function handlePhotos(event) {
             const files = event.target.files;
             if (!files) return;
@@ -4656,9 +4479,8 @@ let avatarCacheBuster = Date.now();
             renderPhotoPreviews(); }
 
         // ================================================================
-        // EDIT LISTING
+        // EDIT / DELETE LISTING
         // ================================================================
-
         function editListing(id) {
             const listing = myListings.find(l => l.id === id) || listings.find(l => l.id === id);
             if (!listing) { alert('Оголошення не знайдено'); return; }
@@ -4753,7 +4575,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // PROFILE FUNCTIONS
         // ================================================================
-
         async function saveProfile() {
             if (!currentUser) { window.navigateTo('auth'); return; }
 
@@ -4791,7 +4612,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // SETTINGS FUNCTIONS
         // ================================================================
-
         function toggleSetting(el) { el.classList.toggle('active'); }
 
         function selectCity(city) {
@@ -4826,7 +4646,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // CHANGE PASSWORD / EMAIL / PHONE
         // ================================================================
-
         async function changePassword() {
             if (!supabase) { alert('Підключення до сервера не встановлено'); return; }
 
@@ -4887,13 +4706,10 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // HELP / ABOUT / LOGOUT
         // ================================================================
-
         function showHelp() { window.navigateTo('help'); }
 
         function showAbout() {
-            alert('🟦 UAMO v2.0\n\n' +
-                'Українська платформа для купівлі та продажу.\n' +
-                'Приєднуйтесь до спільноти! 💙💛');
+            alert('🟦 UAMO v2.0\n\nУкраїнська платформа для купівлі та продажу.\nПриєднуйтесь до спільноти! 💙💛');
         }
 
         async function handleLogout() {
@@ -4912,7 +4728,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // TELEGRAM WEBAPP SUPPORT
         // ================================================================
-
         function initTelegramWebApp() {
             try {
                 if (window.Telegram && window.Telegram.WebApp) {
@@ -4927,7 +4742,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // INITIALIZATION
         // ================================================================
-
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 UAMO App starting...');
             initTelegramWebApp();
@@ -4968,7 +4782,6 @@ let avatarCacheBuster = Date.now();
         // ================================================================
         // EXPOSE FUNCTIONS TO GLOBAL SCOPE
         // ================================================================
-
         window.handleAuth = handleAuth;
         window.toggleAuthMode = toggleAuthMode;
         window.togglePasswordVisibility = togglePasswordVisibility;
@@ -5022,9 +4835,9 @@ let avatarCacheBuster = Date.now();
         window.shareListing = shareListing;
         window.copyListingLink = copyListingLink;
         window.reportListing = reportListing;
-        window.searchHelp = searchHelp;
-        window.toggleHelpCategory = toggleHelpCategory;
         window.renderHelp = renderHelp;
+        window.toggleHelpCategory = toggleHelpCategory;
+        window.searchHelp = searchHelp;
 
         console.log('✅ UAMO додаток готовий до роботи! 🚀');
     </script>
