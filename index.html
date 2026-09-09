@@ -3312,55 +3312,144 @@
             alert('📬 Сповіщень поки що немає');
         }
 
-        // ================================================================
-        // ОНОВЛЕННЯ АВАТАРА З КЕШ-БАСТЕРОМ
-        // ================================================================
-        function updateAvatar() {
-            const avatarElements = document.querySelectorAll('.profile-avatar, .avatar-small, #profileAvatar, #editAvatar, #headerAvatar');
+// ================================================================
+// ОНОВЛЕННЯ АВАТАРА З КЕШ-БАСТЕРОМ
+// ================================================================
+function updateAvatar() {
+    const avatarElements = document.querySelectorAll('.profile-avatar, .avatar-small, #profileAvatar, #editAvatar, #headerAvatar');
 
-            avatarElements.forEach(el => {
-                let letterSpan = el.querySelector('.avatar-letter') || el.querySelector('span');
+    avatarElements.forEach(el => {
+        let letterSpan = el.querySelector('.avatar-letter') || el.querySelector('span');
 
-                if (userData.avatar && (userData.avatar.startsWith('http') || userData.avatar.startsWith(
-                        'data:image'))) {
-                    let img = el.querySelector('img');
-                    if (!img) { img = document.createElement('img');
-                        el.appendChild(img); }
-                    let src = userData.avatar;
-                    if (!src.startsWith('data:image')) {
-                        const hasQuery = src.includes('?');
-                        src += (hasQuery ? '&' : '?') + 't=' + avatarCacheBuster;
-                    }
-                    img.src = src;
-                    img.style.display = 'block';
-                    if (letterSpan) letterSpan.style.display = 'none';
-                } else {
-                    const img = el.querySelector('img');
-                    if (img) img.style.display = 'none';
-                    if (letterSpan) { letterSpan.style.display = 'block';
-                        letterSpan.textContent = userData.avatar || 'К'; }
-                }
+        if (userData.avatar && (userData.avatar.startsWith('http') || userData.avatar.startsWith(
+                'data:image'))) {
+            let img = el.querySelector('img');
+            if (!img) { img = document.createElement('img');
+                el.appendChild(img); }
+            let src = userData.avatar;
+            if (!src.startsWith('data:image')) {
+                const hasQuery = src.includes('?');
+                src += (hasQuery ? '&' : '?') + 't=' + avatarCacheBuster;
+            }
+            img.src = src;
+            img.style.display = 'block';
+            if (letterSpan) letterSpan.style.display = 'none';
+        } else {
+            const img = el.querySelector('img');
+            if (img) img.style.display = 'none';
+            if (letterSpan) { letterSpan.style.display = 'block';
+                letterSpan.textContent = userData.avatar || 'К'; }
+        }
+    });
+}
+
+// ================================================================
+// ЗАВАНТАЖЕННЯ ФОТО В SUPABASE STORAGE (НОВА ВЕРСІЯ)
+// ================================================================
+async function uploadAvatarToStorage(file) {
+    if (!currentUser) { 
+        alert('Увійдіть в акаунт'); 
+        return; 
+    }
+    
+    try {
+        // Перевіряємо чи існує бакет 'avatars'
+        const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+        
+        // Якщо бакет не існує, створюємо його (потрібні права адміністратора)
+        // Або просто використовуємо існуючий
+        console.log('📁 Доступні бакети:', buckets);
+        
+        // Унікальне ім'я файлу
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${currentUser.id}_${Date.now()}.${fileExt}`;
+        const filePath = `avatars/${fileName}`;
+        
+        console.log('📤 Завантаження файлу:', filePath);
+        
+        // Завантажуємо в Supabase Storage
+        const { data, error } = await supabase.storage
+            .from('avatars')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: true
             });
+            
+        if (error) {
+            console.error('❌ Помилка завантаження в Storage:', error);
+            
+            // Якщо бакет не існує, пропонуємо створити його через SQL
+            if (error.message.includes('bucket not found')) {
+                alert('❌ Бакет "avatars" не знайдено.\n\n' +
+                      'Будь ласка, створіть його в Supabase Dashboard:\n' +
+                      '1. Зайдіть у Storage\n' +
+                      '2. Натисніть "Create new bucket"\n' +
+                      '3. Назва: avatars\n' +
+                      '4. Поставте галочку "Public bucket"\n\n' +
+                      'Або виконайте SQL запит:\n' +
+                      'INSERT INTO storage.buckets (id, name, public) VALUES (\'avatars\', \'avatars\', true);');
+                return;
+            }
+            throw error;
         }
+        
+        console.log('✅ Файл завантажено:', data);
+        
+        // Отримуємо публічне посилання
+        const { data: urlData } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
+            
+        const avatarUrl = urlData.publicUrl;
+        console.log('🔗 Публічне посилання:', avatarUrl);
+        
+        // Оновлюємо базу
+        const { error: updateError } = await supabase
+            .from('users')
+            .update({ avatar_url: avatarUrl })
+            .eq('id', currentUser.id);
+            
+        if (updateError) throw updateError;
+        
+        // Оновлюємо UI
+        userData.avatar = avatarUrl;
+        avatarCacheBuster = Date.now();
+        updateUI();
+        updateAvatar();
+        
+        alert('✅ Фото профілю оновлено!');
+        
+    } catch (e) {
+        console.error('❌ Помилка завантаження:', e);
+        alert('❌ Помилка завантаження фото: ' + e.message);
+    }
+}
 
-        function uploadAvatar(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const avatarUrl = e.target.result;
-                userData.avatar = avatarUrl;
-                avatarCacheBuster = Date.now();
-                updateUI();
-                updateAvatar();
-                supabase.from('users').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
-                alert('✅ Фото профілю оновлено!');
-            };
-            reader.readAsDataURL(file);
-        }
+// Функція вибору фото (оновлена)
+function uploadAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Перевіряємо розмір (макс 5 МБ)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('❌ Файл завеликий! Максимум 5 МБ');
+        event.target.value = '';
+        return;
+    }
+    
+    // Перевіряємо тип
+    if (!file.type.startsWith('image/')) {
+        alert('❌ Будь ласка, виберіть зображення');
+        event.target.value = '';
+        return;
+    }
+    
+    uploadAvatarToStorage(file);
+}
 
-        function editUploadAvatar(event) { uploadAvatar(event); }
-
+function editUploadAvatar(event) { 
+    uploadAvatar(event); 
+}
         // ================================================================
         // ДОПОМІЖНІ ФУНКЦІЇ
         // ================================================================
