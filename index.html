@@ -1429,18 +1429,27 @@
         }
 
         /* ================================================================
-           FIX: Нормальний розмір іконок порожніх станів
+           FIX: МАЛЕНЬКІ іконки порожніх станів (14px)
            ================================================================ */
         .empty-state i,
         .favorites-empty i {
-            font-size: 22px !important;
+            font-size: 14px !important;
             line-height: 1;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .empty-state,
         .favorites-empty {
             padding: 40px 20px;
+        }
+
+        /* Іконки в кнопках порожніх станів */
+        .favorites-empty .btn-submit i,
+        .empty-state .btn-submit i,
+        .favorites-empty button i,
+        .empty-state button i {
+            font-size: 14px !important;
+            margin: 0 !important;
         }
 
         /* Глобальний контроль розмірів іконок */
