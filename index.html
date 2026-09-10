@@ -8,7 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <link rel="icon" href="data:," />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Font Awesome 6 з jsdelivr (надійніше) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
     <style>
         * {
             margin: 0;
@@ -55,7 +56,34 @@
         }
         .hidden { display: none !important; }
 
-        /* HEADER */
+        /* ================================================================
+           ФІКС ДЛЯ ІКОНОК FONT AWESOME
+           ================================================================ */
+        .fas, .far, .fab, .fa {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", sans-serif !important;
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            line-height: 1;
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            text-align: center;
+        }
+        .fas { font-weight: 900; }
+        .far { font-weight: 400; }
+        .fab { font-weight: 400; font-family: "Font Awesome 6 Brands" !important; }
+
+        i.fas, i.far, i.fab, i.fa {
+            max-width: 1.5em;
+            max-height: 1.5em;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* ================================================================
+           HEADER
+           ================================================================ */
         .header {
             display: flex;
             align-items: center;
@@ -76,7 +104,7 @@
             cursor: pointer;
         }
         .logo span { color: var(--accent); }
-        .logo i { color: var(--gold); font-size: 18px; }
+        .logo i { color: var(--gold); font-size: 18px; max-width: 18px; max-height: 18px; }
         .header-actions {
             display: flex;
             align-items: center;
@@ -91,8 +119,14 @@
             transition: var(--transition);
             position: relative;
             padding: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .header-actions button:hover { color: var(--primary); }
+        .header-actions button i { max-width: 22px; max-height: 22px; }
         .badge {
             position: absolute;
             top: -2px;
@@ -138,7 +172,9 @@
         .status-error { background: var(--danger); color: white; }
         .status-waiting { background: #F59E0B; color: white; }
 
-        /* AUTH */
+        /* ================================================================
+           AUTH
+           ================================================================ */
         .auth-container {
             display: flex;
             flex-direction: column;
@@ -290,7 +326,9 @@
             text-decoration: none;
         }
 
-        /* SEARCH BAR */
+        /* ================================================================
+           SEARCH BAR
+           ================================================================ */
         .search-bar { padding: 4px 0 12px 0; }
         .search-bar-inner {
             display: flex;
@@ -306,7 +344,7 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.10);
         }
-        .search-bar-inner i { color: var(--text-secondary); font-size: 16px; }
+        .search-bar-inner i { color: var(--text-secondary); font-size: 16px; max-width: 18px; max-height: 18px; }
         .search-bar-inner input {
             flex: 1;
             border: none;
@@ -318,7 +356,9 @@
             color: var(--text);
         }
 
-        /* CATEGORIES */
+        /* ================================================================
+           CATEGORIES
+           ================================================================ */
         .category-slider {
             padding: 4px 0 14px 0;
             overflow-x: auto;
@@ -355,13 +395,15 @@
             gap: 2px;
         }
         .category-item:hover { transform: translateY(-2px); border-color: var(--accent); }
-        .category-item i { font-size: 18px; color: var(--primary); }
+        .category-item i { font-size: 18px; color: var(--primary); max-width: 20px; max-height: 20px; }
         .category-item span { font-size: 9px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
         .category-item.active { border-color: var(--accent); background: rgba(0, 102, 255, 0.05); }
         .category-item.active i { color: var(--accent); }
         .category-item.active span { color: var(--accent); }
 
-        /* SECTION HEADER */
+        /* ================================================================
+           SECTION HEADER
+           ================================================================ */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -377,7 +419,9 @@
             cursor: pointer;
         }
 
-        /* LISTING CARDS */
+        /* ================================================================
+           LISTING CARDS
+           ================================================================ */
         .listing-scroll {
             display: flex;
             gap: 12px;
@@ -466,7 +510,9 @@
             box-shadow: 0 6px 20px rgba(0, 102, 255, 0.25);
         }
 
-        /* BOTTOM NAV */
+        /* ================================================================
+           BOTTOM NAV
+           ================================================================ */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -498,7 +544,7 @@
             padding: 4px 12px;
             position: relative;
         }
-        .bottom-nav-item i { font-size: 20px; }
+        .bottom-nav-item i { font-size: 20px; max-width: 22px; max-height: 22px; }
         .bottom-nav-item.active { color: var(--accent); }
         .bottom-nav-item .badge-count {
             position: absolute;
@@ -523,6 +569,8 @@
             padding: 8px;
             width: 46px;
             height: 46px;
+            max-width: 46px;
+            max-height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -537,7 +585,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* SEARCH PAGE */
+        /* ================================================================
+           SEARCH PAGE
+           ================================================================ */
         .search-filters {
             display: flex;
             gap: 8px;
@@ -603,15 +653,19 @@
             color: var(--text-dim);
         }
 
-        /* FAVORITES */
+        /* ================================================================
+           FAVORITES
+           ================================================================ */
         .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
-        .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; }
+        .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; max-width: 48px; max-height: 48px; }
         .favorites-empty h3 { font-weight: 600; font-size: 18px; color: var(--text); }
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
-        .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; }
+        .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; max-width: 40px; max-height: 40px; margin-left: auto; margin-right: auto; }
         .empty-state h3 { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 4px; }
 
-        /* PROFILE */
+        /* ================================================================
+           PROFILE
+           ================================================================ */
         .profile-header { padding: 16px 0 12px 0; display: flex; align-items: center; gap: 14px; }
         .profile-avatar {
             width: 60px;
@@ -664,11 +718,13 @@
         }
         .profile-menu-item:last-child { border-bottom: none; }
         .profile-menu-item:hover { background: var(--bg); }
-        .profile-menu-item i { width: 20px; color: var(--text-secondary); font-size: 16px; }
+        .profile-menu-item i { width: 20px; max-width: 20px; max-height: 20px; color: var(--text-secondary); font-size: 16px; flex-shrink: 0; }
         .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
         .profile-menu-item.danger { color: var(--danger); }
 
-        /* ADD LISTING */
+        /* ================================================================
+           ADD LISTING
+           ================================================================ */
         .add-listing-form .form-group { margin-bottom: 14px; }
         .add-listing-form label {
             display: block;
@@ -723,7 +779,9 @@
             cursor: pointer;
         }
 
-        /* DETAIL */
+        /* ================================================================
+           DETAIL
+           ================================================================ */
         .detail-gallery {
             height: 220px;
             background: var(--border);
@@ -831,7 +889,9 @@
         .seller-box .actions .btn-chat { background: var(--accent); color: #fff; }
         .seller-box .actions .btn-call { background: var(--border); color: var(--text); }
 
-        /* CHAT */
+        /* ================================================================
+           CHAT
+           ================================================================ */
         .chat-messages {
             display: flex;
             flex-direction: column;
@@ -883,7 +943,9 @@
             font-size: 18px;
         }
 
-        /* SETTINGS */
+        /* ================================================================
+           SETTINGS
+           ================================================================ */
         .settings-group { margin-bottom: 20px; }
         .settings-item {
             display: flex;
@@ -913,6 +975,7 @@
             position: absolute;
             top: 2px;
             left: 2px;
+            transition: 0.2s;
         }
         .toggle-switch.active .toggle-thumb { left: 22px; }
         .settings-select {
@@ -946,7 +1009,9 @@
         }
         .back-header .title { font-weight: 600; font-size: 16px; }
 
-        /* MODALS */
+        /* ================================================================
+           MODALS
+           ================================================================ */
         .options-modal, .filter-modal, .success-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1000,7 +1065,7 @@
             font-size: 15px;
         }
         .options-item:last-child { border-bottom: none; }
-        .options-item i { width: 24px; font-size: 18px; color: var(--text-secondary); }
+        .options-item i { width: 24px; max-width: 24px; max-height: 24px; font-size: 18px; color: var(--text-secondary); }
         .options-item.danger { color: var(--danger); }
 
         .filter-group { margin-bottom: 16px; }
@@ -1048,7 +1113,9 @@
             cursor: pointer;
         }
 
-        /* HELP */
+        /* ================================================================
+           HELP
+           ================================================================ */
         .help-category {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -1070,6 +1137,8 @@
             font-size: 22px;
             width: 40px;
             height: 40px;
+            max-width: 40px;
+            max-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1080,12 +1149,13 @@
         .help-category .help-cat-header .cat-info { flex: 1; }
         .help-category .help-cat-header .cat-info .cat-title { font-weight: 600; font-size: 15px; }
         .help-category .help-cat-header .cat-info .cat-desc { font-size: 12px; color: var(--text-secondary); }
-        .help-category .help-cat-header .cat-arrow { font-size: 16px; color: var(--text-dim); }
+        .help-category .help-cat-header .cat-arrow { font-size: 16px; color: var(--text-dim); transition: 0.2s; max-width: 18px; max-height: 18px; }
         .help-category .help-cat-header .cat-arrow.open { transform: rotate(180deg); }
         .help-category .help-cat-body {
             max-height: 0;
             overflow: hidden;
             padding: 0 16px;
+            transition: max-height 0.4s, padding 0.3s;
         }
         .help-category .help-cat-body.open { max-height: 800px; padding: 0 16px 16px 16px; }
         .help-category .help-cat-body .help-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -1097,7 +1167,7 @@
             align-items: center;
             gap: 8px;
         }
-        .help-category .help-cat-body .help-item .item-title i { color: var(--accent); font-size: 12px; width: 20px; }
+        .help-category .help-cat-body .help-item .item-title i { color: var(--accent); font-size: 12px; width: 20px; max-width: 20px; max-height: 20px; flex-shrink: 0; }
         .help-category .help-cat-body .help-item .item-desc {
             font-size: 13px;
             color: var(--text-secondary);
@@ -1106,7 +1176,7 @@
             padding-left: 28px;
         }
         .help-no-results { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
-        .help-no-results i { font-size: 40px; color: var(--border); margin-bottom: 12px; display: block; }
+        .help-no-results i { font-size: 40px; color: var(--border); margin-bottom: 12px; display: block; max-width: 40px; max-height: 40px; margin-left: auto; margin-right: auto; }
 
         /* ================================================================
            UAMO PRO СТИЛІ
@@ -1167,7 +1237,7 @@
         }
         .pro-features h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--primary); }
         .pro-feature-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
-        .pro-feature-item i { width: 24px; color: var(--success); font-size: 16px; }
+        .pro-feature-item i { width: 24px; max-width: 24px; max-height: 24px; color: var(--success); font-size: 16px; flex-shrink: 0; }
         .pro-plan {
             background: var(--card-bg);
             border: 2px solid var(--border);
@@ -1243,7 +1313,7 @@
             align-items: center;
             gap: 8px;
         }
-        .card-section h3 i { color: var(--accent); }
+        .card-section h3 i { color: var(--accent); max-width: 18px; max-height: 18px; flex-shrink: 0; }
         .card-section p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
         .card-contact-item {
             display: flex;
@@ -1253,7 +1323,7 @@
             font-size: 14px;
             cursor: pointer;
         }
-        .card-contact-item i { width: 20px; color: var(--accent); }
+        .card-contact-item i { width: 20px; max-width: 20px; max-height: 20px; color: var(--accent); flex-shrink: 0; }
         .card-socials { display: flex; gap: 10px; flex-wrap: wrap; }
         .card-social-btn {
             display: flex;
@@ -1341,6 +1411,7 @@
             align-items: center;
             gap: 6px;
         }
+        .saved-search-item .search-info .search-name i { max-width: 14px; max-height: 14px; font-size: 12px; color: var(--accent); }
         .saved-search-item .search-info .search-params {
             font-size: 12px;
             color: var(--text-secondary);
@@ -1883,7 +1954,7 @@
             </div>
         </div>
 
-        <!-- UAMO PRO - ГОЛОВНА -->
+        <!-- UAMO PRO -->
         <div class="page" id="page-pro">
             <div class="app-container">
                 <div class="back-header">
@@ -1894,7 +1965,6 @@
             </div>
         </div>
 
-        <!-- UAMO PRO - ПІДКЛЮЧЕННЯ -->
         <div class="page" id="page-pro-subscribe">
             <div class="app-container">
                 <div class="back-header">
@@ -1905,7 +1975,6 @@
             </div>
         </div>
 
-        <!-- UAMO PRO - ВІЗИТКА -->
         <div class="page" id="page-pro-card">
             <div class="app-container">
                 <div class="back-header">
@@ -1916,7 +1985,6 @@
             </div>
         </div>
 
-        <!-- UAMO PRO - РЕДАГУВАННЯ ВІЗИТКИ -->
         <div class="page" id="page-pro-card-edit">
             <div class="app-container">
                 <div class="back-header">
@@ -1927,7 +1995,6 @@
             </div>
         </div>
 
-        <!-- UAMO PRO - ПОРТФОЛІО -->
         <div class="page" id="page-pro-portfolio">
             <div class="app-container">
                 <div class="back-header">
@@ -1938,7 +2005,6 @@
             </div>
         </div>
 
-        <!-- ПУБЛІЧНА ВІЗИТКА -->
         <div class="page" id="page-public-card">
             <div class="app-container">
                 <div class="back-header">
@@ -1949,7 +2015,6 @@
             </div>
         </div>
 
-        <!-- ЗБЕРЕЖЕНІ ПОШУКИ -->
         <div class="page" id="page-saved-searches">
             <div class="app-container">
                 <div class="back-header">
@@ -2155,6 +2220,7 @@
         };
         let unreadCount = 0;
         let dataLoaded = false;
+        let isLoadingData = false;
         let currentFilterCategory = 'all';
         let avatarCacheBuster = Date.now();
         // PRO змінні
@@ -2504,23 +2570,21 @@
         }
 
         // ================================================================
-        // ЗАВАНТАЖЕННЯ ДАНИХ
+        // ЗАВАНТАЖЕННЯ ДАНИХ (з кешуванням та розділенням на 2 етапи)
         // ================================================================
         async function loadAllData() {
             if (dataLoaded) return;
             if (!currentUser) return;
+            if (isLoadingData) return;
+            isLoadingData = true;
             console.log('📡 Завантаження...');
+            const start = performance.now();
             try {
-                const [listingsRes, userRes, favRes, chatsRes, myRes, proRes, cardRes, portfolioRes, searchRes] = await Promise.all([
+                // ЕТАП 1: критичні дані
+                const [listingsRes, userRes, favRes] = await Promise.all([
                     supabase.from('listings_with_users').select('*').limit(50),
                     supabase.from('users').select('*').eq('id', currentUser.id).single(),
-                    supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
-                    supabase.from('chats').select(`*, listings:listing_id (title), buyer:users!chats_buyer_id_fkey (first_name, avatar_url), seller:users!chats_seller_id_fkey (first_name, avatar_url)`).or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`).order('updated_at', { ascending: false }).limit(30),
-                    supabase.from('listings').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(30),
-                    supabase.from('pro_users').select('*').eq('user_id', currentUser.id).maybeSingle(),
-                    supabase.from('business_cards').select('*').eq('user_id', currentUser.id).maybeSingle(),
-                    supabase.from('portfolio_items').select('*').eq('user_id', currentUser.id).order('sort_order', { ascending: true }),
-                    supabase.from('saved_searches').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false })
+                    supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id)
                 ]);
 
                 if (!listingsRes.error) {
@@ -2556,8 +2620,26 @@
                 }
 
                 if (!favRes.error) favorites = favRes.data.map(f => f.listing_id);
-                if (!chatsRes.error) chats = chatsRes.data || [];
 
+                // Показуємо головну одразу
+                dataLoaded = true;
+                updateProfileStats();
+                renderAll();
+
+                const elapsed1 = (performance.now() - start).toFixed(2);
+                console.log(`✅ Критичні дані за ${elapsed1}ms`);
+
+                // ЕТАП 2: другорядні дані (у фоні)
+                const [chatsRes, myRes, proRes, cardRes, portfolioRes, searchRes] = await Promise.all([
+                    supabase.from('chats').select(`*, listings:listing_id (title), buyer:users!chats_buyer_id_fkey (first_name, avatar_url), seller:users!chats_seller_id_fkey (first_name, avatar_url)`).or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`).order('updated_at', { ascending: false }).limit(30),
+                    supabase.from('listings').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(30),
+                    supabase.from('pro_users').select('*').eq('user_id', currentUser.id).maybeSingle(),
+                    supabase.from('business_cards').select('*').eq('user_id', currentUser.id).maybeSingle(),
+                    supabase.from('portfolio_items').select('*').eq('user_id', currentUser.id).order('sort_order', { ascending: true }),
+                    supabase.from('saved_searches').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false })
+                ]);
+
+                if (!chatsRes.error) chats = chatsRes.data || [];
                 if (!myRes.error) {
                     myListings = myRes.data.map(item => ({
                         id: item.id, title: item.title || 'Без назви',
@@ -2572,18 +2654,24 @@
                         phone: item.phone || '', status: item.status || 'active'
                     }));
                 }
-
                 proData = !proRes.error ? proRes.data : null;
                 businessCard = !cardRes.error ? cardRes.data : null;
                 portfolioItems = !portfolioRes.error ? (portfolioRes.data || []) : [];
                 savedSearches = !searchRes.error ? (searchRes.data || []) : [];
 
-                dataLoaded = true;
                 updateProfileStats();
                 updateChatBadge();
                 fixNotificationBadge();
                 renderAll();
-            } catch (e) { console.error('❌ Помилка:', e); }
+
+                const totalElapsed = (performance.now() - start).toFixed(2);
+                console.log(`✅ Всі дані за ${totalElapsed}ms`);
+
+            } catch (e) {
+                console.error('❌ Помилка:', e);
+            } finally {
+                isLoadingData = false;
+            }
         }
 
         function fixNotificationBadge() {
@@ -3382,7 +3470,7 @@
             container.innerHTML = savedSearches.map(s => `
                 <div class="saved-search-item">
                     <div class="search-info" onclick="applySavedSearch('${s.id}')">
-                        <div class="search-name"><i class="fas fa-bookmark" style="color:var(--accent); font-size:12px;"></i> ${s.name}</div>
+                        <div class="search-name"><i class="fas fa-bookmark"></i> ${s.name}</div>
                         <div class="search-params">${s.query ? `<span class="param-badge">🔍 ${s.query}</span>` : ''}${s.category && s.category !== 'all' ? `<span class="param-badge">${getCategoryName(s.category)}</span>` : ''}${s.city ? `<span class="param-badge">📍 ${s.city}</span>` : ''}${s.price_min > 0 || s.price_max > 0 ? `<span class="param-badge">💰 ${s.price_min || 0} - ${s.price_max || '∞'}</span>` : ''}</div>
                     </div>
                     <div class="search-toggle"><div class="toggle-switch ${s.notifications_enabled ? 'active' : ''}" onclick="toggleSearchNotifications('${s.id}', this)"><div class="toggle-thumb"></div></div></div>
