@@ -8,36 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <link rel="icon" href="data:," />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./fontawesome-free-6.4.0-web/css/all.min.css" />
+    <!-- Font Awesome з jsdelivr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
     <style>
-        /* ================================================================
-           ПРИМУСОВЕ ЗАВАНТАЖЕННЯ ШРИФТІВ Font Awesome
-           ================================================================ */
-        @font-face {
-            font-family: "Font Awesome 6 Free";
-            font-style: normal;
-            font-weight: 900;
-            font-display: block;
-            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2") format("woff2"),
-                 url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.ttf") format("truetype");
-        }
-        @font-face {
-            font-family: "Font Awesome 6 Free";
-            font-style: normal;
-            font-weight: 400;
-            font-display: block;
-            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2") format("woff2"),
-                 url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.ttf") format("truetype");
-        }
-        @font-face {
-            font-family: "Font Awesome 6 Brands";
-            font-style: normal;
-            font-weight: 400;
-            font-display: block;
-            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2") format("woff2"),
-                 url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.ttf") format("truetype");
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -84,7 +57,7 @@
         .hidden { display: none !important; }
 
         /* ================================================================
-           МІНІМАЛЬНІ РОЗМІРИ ІКОНОК (не ламають Font Awesome)
+           ІКОНКИ — розміри (Font Awesome контролює гліфи)
            ================================================================ */
         .logo i { font-size: 18px; color: var(--gold); }
         .header-actions button i { font-size: 20px; }
@@ -137,7 +110,6 @@
         .header-actions button {
             background: none;
             border: none;
-            font-size: 20px;
             color: var(--text-secondary);
             cursor: pointer;
             transition: var(--transition);
@@ -580,11 +552,11 @@
             justify-content: center;
         }
         .bottom-nav-item.add-btn i {
-            font-size: 24px;
+            font-size: 22px;
             color: #fff;
             background: var(--accent);
             border-radius: 50%;
-            padding: 10px;
+            padding: 12px;
             width: 46px;
             height: 46px;
             display: flex;
@@ -1211,14 +1183,6 @@
             margin-bottom: 16px;
             position: relative;
             overflow: hidden;
-        }
-        .pro-status-card::before {
-            content: '⭐';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            font-size: 120px;
-            opacity: 0.1;
         }
         .pro-status-card .pro-title {
             font-size: 22px;
@@ -1871,7 +1835,7 @@
                 <div class="search-bar" style="padding:0 0 12px 0;">
                     <div class="search-bar-inner">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="🔍 Пошук міста" id="citySearchInput" oninput="filterCities(this.value)" />
+                        <input type="text" placeholder="Пошук міста" id="citySearchInput" oninput="filterCities(this.value)" />
                     </div>
                 </div>
                 <div id="citiesList"></div>
@@ -1953,12 +1917,12 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">📚 Допомога UAMO</span>
+                    <span class="title">Допомога UAMO</span>
                 </div>
                 <div class="search-bar" style="padding:0 0 12px 0;">
                     <div class="search-bar-inner">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="🔍 Пошук по допомозі..." id="helpSearchInput" oninput="searchHelp(this.value)" />
+                        <input type="text" placeholder="Пошук по допомозі..." id="helpSearchInput" oninput="searchHelp(this.value)" />
                     </div>
                 </div>
                 <div id="helpCategoriesContainer"></div>
@@ -1970,7 +1934,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">⭐ UAMO PRO</span>
+                    <span class="title">UAMO PRO</span>
                 </div>
                 <div id="proContent"></div>
             </div>
@@ -1980,7 +1944,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('pro')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">⭐ Підключити PRO</span>
+                    <span class="title">Підключити PRO</span>
                 </div>
                 <div id="proSubscribeContent"></div>
             </div>
@@ -1990,7 +1954,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('pro')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">💼 Моя Візитка</span>
+                    <span class="title">Моя Візитка</span>
                 </div>
                 <div id="proCardContent"></div>
             </div>
@@ -2000,7 +1964,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('pro-card')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">✏️ Редагувати Візитку</span>
+                    <span class="title">Редагувати Візитку</span>
                 </div>
                 <div class="add-listing-form" id="proCardEditForm"></div>
             </div>
@@ -2010,7 +1974,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('pro-card')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">🎨 Моє Портфоліо</span>
+                    <span class="title">Моє Портфоліо</span>
                 </div>
                 <div id="proPortfolioContent"></div>
             </div>
@@ -2020,7 +1984,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">💼 Візитка</span>
+                    <span class="title">Візитка</span>
                 </div>
                 <div id="publicCardContent"></div>
             </div>
@@ -2030,7 +1994,7 @@
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('profile')"><i class="fas fa-arrow-left"></i></button>
-                    <span class="title">🔖 Збережені пошуки</span>
+                    <span class="title">Збережені пошуки</span>
                 </div>
                 <div id="savedSearchesContent"></div>
             </div>
@@ -2088,7 +2052,7 @@
         <div class="options-modal" id="optionsModal">
             <div class="options-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
-                    <h3>📋 Опції</h3>
+                    <h3>Опції</h3>
                     <button style="background:none; border:none; font-size:24px; color:var(--text-dim); cursor:pointer;" onclick="closeOptionsModal()">&times;</button>
                 </div>
                 <div class="options-item" onclick="shareListing()"><i class="fas fa-share-alt"></i> Поділитися</div>
@@ -2122,7 +2086,7 @@
     <div class="success-modal" id="successModal">
         <div class="modal-box">
             <div class="icon"><i class="fas fa-check-circle"></i></div>
-            <h3 id="successTitle">✓ Готово!</h3>
+            <h3 id="successTitle">Готово!</h3>
             <p id="successMessage">Операція виконана успішно.</p>
             <div class="btn-group">
                 <button class="btn-primary-modal" id="successPrimaryBtn" onclick="closeSuccessModal()">OK</button>
@@ -2135,7 +2099,7 @@
     <div class="filter-modal" id="filterModal">
         <div class="filter-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
-                <h3>🔍 Фільтри</h3>
+                <h3>Фільтри</h3>
                 <button style="background:none; border:none; font-size:24px; color:var(--text-dim); cursor:pointer;" onclick="closeFilterModal()">&times;</button>
             </div>
             <div class="filter-group">
@@ -2154,16 +2118,16 @@
                 <h4>Стан</h4>
                 <div class="filter-options">
                     <label class="filter-option"><input type="radio" name="condition" value="all" checked /> Всі</label>
-                    <label class="filter-option"><input type="radio" name="condition" value="new" /> 🆕 Новий</label>
-                    <label class="filter-option"><input type="radio" name="condition" value="used" /> 🔄 Б/В</label>
+                    <label class="filter-option"><input type="radio" name="condition" value="new" /> Новий</label>
+                    <label class="filter-option"><input type="radio" name="condition" value="used" /> Б/В</label>
                 </div>
             </div>
             <div class="filter-group">
                 <h4>Дата публікації</h4>
                 <div class="filter-options">
                     <label class="filter-option"><input type="radio" name="date" value="all" checked /> Всі</label>
-                    <label class="filter-option"><input type="radio" name="date" value="today" /> 📅 Сьогодні</label>
-                    <label class="filter-option"><input type="radio" name="date" value="week" /> 📅 Цей тиждень</label>
+                    <label class="filter-option"><input type="radio" name="date" value="today" /> Сьогодні</label>
+                    <label class="filter-option"><input type="radio" name="date" value="week" /> Цей тиждень</label>
                 </div>
             </div>
             <div class="filter-actions">
@@ -2177,7 +2141,7 @@
     <div class="filter-modal" id="saveSearchModal">
         <div class="filter-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
-                <h3>🔖 Зберегти пошук</h3>
+                <h3>Зберегти пошук</h3>
                 <button style="background:none; border:none; font-size:24px; color:var(--text-dim); cursor:pointer;" onclick="closeSaveSearchModal()">&times;</button>
             </div>
             <div class="filter-group">
@@ -2234,7 +2198,6 @@
         let isLoadingData = false;
         let currentFilterCategory = 'all';
         let avatarCacheBuster = Date.now();
-        // PRO змінні
         let proData = null;
         let businessCard = null;
         let portfolioItems = [];
@@ -2551,7 +2514,7 @@
         }
 
         // ================================================================
-        // ЗАВАНТАЖЕННЯ ДАНИХ (2 етапи: критичні + другорядні)
+        // ЗАВАНТАЖЕННЯ ДАНИХ (2 етапи)
         // ================================================================
         async function loadAllData() {
             if (dataLoaded) return;
@@ -2561,7 +2524,6 @@
             console.log('📡 Завантаження...');
             const start = performance.now();
             try {
-                // ЕТАП 1
                 const [listingsRes, userRes, favRes] = await Promise.all([
                     supabase.from('listings_with_users').select('*').limit(50),
                     supabase.from('users').select('*').eq('id', currentUser.id).single(),
@@ -2605,11 +2567,8 @@
                 dataLoaded = true;
                 updateProfileStats();
                 renderAll();
+                console.log(`✅ Критичні дані за ${(performance.now() - start).toFixed(2)}ms`);
 
-                const elapsed1 = (performance.now() - start).toFixed(2);
-                console.log(`✅ Критичні дані за ${elapsed1}ms`);
-
-                // ЕТАП 2
                 const [chatsRes, myRes, proRes, cardRes, portfolioRes, searchRes] = await Promise.all([
                     supabase.from('chats').select(`*, listings:listing_id (title), buyer:users!chats_buyer_id_fkey (first_name, avatar_url), seller:users!chats_seller_id_fkey (first_name, avatar_url)`).or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`).order('updated_at', { ascending: false }).limit(30),
                     supabase.from('listings').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(30),
@@ -2643,9 +2602,7 @@
                 updateChatBadge();
                 fixNotificationBadge();
                 renderAll();
-
-                const totalElapsed = (performance.now() - start).toFixed(2);
-                console.log(`✅ Всі дані за ${totalElapsed}ms`);
+                console.log(`✅ Всі дані за ${(performance.now() - start).toFixed(2)}ms`);
             } catch (e) {
                 console.error('❌ Помилка:', e);
             } finally {
@@ -2803,7 +2760,7 @@
         }
 
         // ================================================================
-        // RENDER FUNCTIONS
+        // RENDER
         // ================================================================
         function renderCategories() {
             const main = ['all', 'products', 'electronics', 'clothing', 'furniture', 'jobs', 'services', 'realestate', 'transport', 'animals', 'kids', 'sport', 'books', 'music', 'beauty', 'photo'];
@@ -2822,7 +2779,7 @@
             const cond = getConditionLabel(l.condition);
             return `<div class="listing-card" onclick="openDetail('${l.id}')">
                 <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px;`}">
-                    ${!photo ? '📦' : ''}
+                    ${!photo ? '<i class="fas fa-image" style="font-size:32px; color:var(--text-secondary);"></i>' : ''}
                     <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${l.id}')"><i class="${fav ? 'fas' : 'far'} fa-heart"></i></button>
                 </div>
                 <div class="listing-card-body">
@@ -2839,13 +2796,13 @@
             const cond = getConditionLabel(l.condition);
             const cat = getCategoryName(l.category);
             return `<div class="search-result-card" onclick="openDetail('${l.id}')">
-                <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:24px;`}">${!photo ? '📦' : ''}</div>
+                <div class="img" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center;`}">${!photo ? '<i class="fas fa-image" style="font-size:24px; color:var(--text-secondary);"></i>' : ''}</div>
                 <div class="info">
                     <div class="price">${l.price} грн</div>
                     <div class="title">${l.title}</div>
                     <div class="meta">
                         <span><i class="fas fa-map-marker-alt"></i> ${l.location}</span>
-                        <span><i class="far fa-clock"></i> ${timeAgo(l.createdAt)}</span>
+                        <span><i class="fas fa-clock"></i> ${timeAgo(l.createdAt)}</span>
                         ${l.condition ? `<span class="condition-badge">${cond}</span>` : ''}
                         ${l.category ? `<span class="condition-badge">${cat}</span>` : ''}
                     </div>
@@ -2924,22 +2881,22 @@
             const container = document.getElementById('myListingsContainer');
             if (!container) return;
             if (myListings.length === 0) {
-                container.innerHTML = `<div class="favorites-empty"><i class="fas fa-list-ul" style="color:var(--accent);"></i><h3>Немає оголошень</h3><button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo('add')">+ Додати</button></div>`;
+                container.innerHTML = `<div class="favorites-empty"><i class="fas fa-list-ul" style="color:var(--accent);"></i><h3>Немає оголошень</h3><button class="btn-submit" style="margin-top:12px; background:var(--accent);" onclick="navigateTo('add')"><i class="fas fa-plus"></i> Додати</button></div>`;
             } else {
                 container.innerHTML = myListings.map(item => {
                     const photo = getFirstPhoto(item);
                     const cond = getConditionLabel(item.condition);
                     return `<div class="search-result-card" style="flex-wrap:wrap;">
-                        <div class="img" style="${photo ? `background-image:url('${photo}')` : `display:flex; align-items:center; justify-content:center; font-size:24px;`}">${!photo ? '📦' : ''}</div>
+                        <div class="img" style="${photo ? `background-image:url('${photo}')` : `display:flex; align-items:center; justify-content:center;`}">${!photo ? '<i class="fas fa-image" style="font-size:24px; color:var(--text-secondary);"></i>' : ''}</div>
                         <div class="info" style="flex:1;">
                             <div class="price">${item.price} грн</div>
                             <div class="title">${item.title}</div>
                             <div class="meta"><span><i class="fas fa-map-marker-alt"></i> ${item.location}</span>${item.condition ? `<span class="condition-badge">${cond}</span>` : ''}</div>
                         </div>
                         <div style="display:flex; gap:6px; width:100%; margin-top:8px;">
-                            <button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1; font-size:13px;" onclick="openDetail('${item.id}')">👁 Відкрити</button>
-                            <button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1; font-size:13px;" onclick="editListing('${item.id}')">✏️</button>
-                            <button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1; font-size:13px;" onclick="deleteListing('${item.id}')">🗑</button>
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--accent); flex:1; font-size:13px;" onclick="openDetail('${item.id}')"><i class="fas fa-eye"></i> Відкрити</button>
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--primary-light); flex:1; font-size:13px;" onclick="editListing('${item.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-submit" style="padding:8px 12px; background:var(--danger); flex:1; font-size:13px;" onclick="deleteListing('${item.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>`;
                 }).join('');
@@ -3169,11 +3126,11 @@
             ];
             container.innerHTML = `
                 <div style="text-align:center; margin-bottom:20px;">
-                    <div style="font-size:48px; margin-bottom:8px;">⭐</div>
+                    <div style="margin-bottom:8px;"><i class="fas fa-star" style="font-size:48px; color:var(--gold);"></i></div>
                     <h2 style="font-size:22px; font-weight:700; color:var(--primary); margin-bottom:4px;">UAMO PRO</h2>
                     <p style="font-size:14px; color:var(--text-secondary);">Виберіть тариф</p>
                 </div>
-                ${plans.map(p => `<div class="pro-plan ${selectedPlan === p.id ? 'selected' : ''}" onclick="selectPlan('${p.id}')">${p.popular ? '<span class="plan-badge">🔥 Популярний</span>' : ''}<div class="plan-name">${p.name}</div><div class="plan-price">${p.price} грн <span>/ ${p.period}</span></div><div class="plan-features">${p.features.map(f => `<div>✓ ${f}</div>`).join('')}</div></div>`).join('')}
+                ${plans.map(p => `<div class="pro-plan ${selectedPlan === p.id ? 'selected' : ''}" onclick="selectPlan('${p.id}')">${p.popular ? '<span class="plan-badge"><i class="fas fa-fire"></i> Популярний</span>' : ''}<div class="plan-name">${p.name}</div><div class="plan-price">${p.price} грн <span>/ ${p.period}</span></div><div class="plan-features">${p.features.map(f => `<div><i class="fas fa-check" style="color:var(--success); margin-right:6px;"></i>${f}</div>`).join('')}</div></div>`).join('')}
                 <button class="btn-submit" style="background:linear-gradient(135deg, #FFD700, #FFA500); color:var(--primary); font-weight:700; margin-top:12px;" onclick="activatePro()"><i class="fas fa-star"></i> Активувати PRO</button>
                 <p style="text-align:center; font-size:12px; color:var(--text-secondary); margin-top:12px;"><i class="fas fa-info-circle"></i> Оплата буде доступна найближчим часом</p>
             `;
@@ -3224,7 +3181,7 @@
             const card = businessCard;
             container.innerHTML = `
                 <div class="card-header-block">
-                    <div class="card-avatar">${card.avatar_url ? `<img src="${card.avatar_url}" />` : '<span>👤</span>'}</div>
+                    <div class="card-avatar">${card.avatar_url ? `<img src="${card.avatar_url}" />` : '<i class="fas fa-user" style="font-size:32px;"></i>'}</div>
                     <div class="card-name">${card.display_name || userData.name || 'Ім\'я'}</div>
                     ${card.profession ? `<div class="card-profession">${card.profession}</div>` : ''}
                     ${card.sphere ? `<div class="card-sphere">${card.sphere}</div>` : ''}
@@ -3283,7 +3240,7 @@
                 <div class="form-group"><label>Години роботи</label>
                     ${days.map(d => `<div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;"><span style="width:90px; font-size:13px;">${d.label}</span><input type="text" id="hours_${d.key}" value="${hours[d.key] || ''}" placeholder="9:00-18:00" style="flex:1; padding:8px 10px; font-size:13px;" /></div>`).join('')}
                 </div>
-                <button class="btn-submit" onclick="saveBusinessCard()">💾 Зберегти</button>
+                <button class="btn-submit" onclick="saveBusinessCard()"><i class="fas fa-save"></i> Зберегти</button>
             `;
         }
 
@@ -3357,7 +3314,7 @@
             const days = [{ key: 'mon', label: 'Пн' }, { key: 'tue', label: 'Вт' }, { key: 'wed', label: 'Ср' }, { key: 'thu', label: 'Чт' }, { key: 'fri', label: 'Пт' }, { key: 'sat', label: 'Сб' }, { key: 'sun', label: 'Нд' }];
             container.innerHTML = `
                 <div class="card-header-block">
-                    <div class="card-avatar">${card.avatar_url ? `<img src="${card.avatar_url}" />` : '<span>👤</span>'}</div>
+                    <div class="card-avatar">${card.avatar_url ? `<img src="${card.avatar_url}" />` : '<i class="fas fa-user" style="font-size:32px;"></i>'}</div>
                     <div class="card-name">${card.display_name || 'Користувач'}</div>
                     ${card.profession ? `<div class="card-profession">${card.profession}</div>` : ''}
                     ${card.sphere ? `<div class="card-sphere">${card.sphere}</div>` : ''}
@@ -3384,7 +3341,7 @@
             container.innerHTML = `
                 <button class="btn-submit" style="background:var(--accent); margin-bottom:16px;" onclick="document.getElementById('portfolioInput').click()"><i class="fas fa-plus"></i> Додати роботу</button>
                 <input type="file" id="portfolioInput" accept="image/*" style="display:none;" onchange="addPortfolioItem(event)" />
-                ${portfolioItems.length === 0 ? `<div class="favorites-empty"><i class="fas fa-images"></i><h3>Портфоліо порожнє</h3></div>` : `<div class="portfolio-grid">${portfolioItems.map((item, idx) => `<div class="portfolio-item"><div class="portfolio-img" style="background-image:url('${item.image_url}')"></div><div class="portfolio-body"><div class="portfolio-title">${item.title || 'Без назви'}</div></div><div class="portfolio-actions">${idx > 0 ? `<button onclick="movePortfolioItem('${item.id}', -1)">↑</button>` : ''}${idx < portfolioItems.length - 1 ? `<button onclick="movePortfolioItem('${item.id}', 1)">↓</button>` : ''}<button class="delete-btn" onclick="deletePortfolioItem('${item.id}')">🗑</button></div></div>`).join('')}</div>`}
+                ${portfolioItems.length === 0 ? `<div class="favorites-empty"><i class="fas fa-images"></i><h3>Портфоліо порожнє</h3></div>` : `<div class="portfolio-grid">${portfolioItems.map((item, idx) => `<div class="portfolio-item"><div class="portfolio-img" style="background-image:url('${item.image_url}')"></div><div class="portfolio-body"><div class="portfolio-title">${item.title || 'Без назви'}</div></div><div class="portfolio-actions">${idx > 0 ? `<button onclick="movePortfolioItem('${item.id}', -1)"><i class="fas fa-arrow-up"></i></button>` : ''}${idx < portfolioItems.length - 1 ? `<button onclick="movePortfolioItem('${item.id}', 1)"><i class="fas fa-arrow-down"></i></button>` : ''}<button class="delete-btn" onclick="deletePortfolioItem('${item.id}')"><i class="fas fa-trash"></i></button></div></div>`).join('')}</div>`}
             `;
         }
 
@@ -3452,7 +3409,7 @@
                 <div class="saved-search-item">
                     <div class="search-info" onclick="applySavedSearch('${s.id}')">
                         <div class="search-name"><i class="fas fa-bookmark"></i> ${s.name}</div>
-                        <div class="search-params">${s.query ? `<span class="param-badge">🔍 ${s.query}</span>` : ''}${s.category && s.category !== 'all' ? `<span class="param-badge">${getCategoryName(s.category)}</span>` : ''}${s.city ? `<span class="param-badge">📍 ${s.city}</span>` : ''}${s.price_min > 0 || s.price_max > 0 ? `<span class="param-badge">💰 ${s.price_min || 0} - ${s.price_max || '∞'}</span>` : ''}</div>
+                        <div class="search-params">${s.query ? `<span class="param-badge"><i class="fas fa-search"></i> ${s.query}</span>` : ''}${s.category && s.category !== 'all' ? `<span class="param-badge">${getCategoryName(s.category)}</span>` : ''}${s.city ? `<span class="param-badge"><i class="fas fa-map-marker-alt"></i> ${s.city}</span>` : ''}${s.price_min > 0 || s.price_max > 0 ? `<span class="param-badge"><i class="fas fa-hryvnia-sign"></i> ${s.price_min || 0} - ${s.price_max || '∞'}</span>` : ''}</div>
                     </div>
                     <div class="search-toggle"><div class="toggle-switch ${s.notifications_enabled ? 'active' : ''}" onclick="toggleSearchNotifications('${s.id}', this)"><div class="toggle-thumb"></div></div></div>
                     <button style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:16px;" onclick="deleteSavedSearch('${s.id}')"><i class="fas fa-trash"></i></button>
@@ -3465,7 +3422,7 @@
             if (container) {
                 const q = document.getElementById('searchInput')?.value || '';
                 const city = document.getElementById('filterCity')?.value || '';
-                container.innerHTML = `${q ? `<div>🔍 Запит: <b>${q}</b></div>` : ''}<div>📁 Категорія: <b>${getCategoryName(currentFilterCategory)}</b></div>${city ? `<div>📍 Місто: <b>${city}</b></div>` : ''}`;
+                container.innerHTML = `${q ? `<div><i class="fas fa-search"></i> Запит: <b>${q}</b></div>` : ''}<div><i class="fas fa-folder"></i> Категорія: <b>${getCategoryName(currentFilterCategory)}</b></div>${city ? `<div><i class="fas fa-map-marker-alt"></i> Місто: <b>${city}</b></div>` : ''}`;
             }
             document.getElementById('saveSearchName').value = '';
             document.getElementById('saveSearchModal').classList.add('show');
@@ -3688,7 +3645,7 @@
             const el = (id) => document.getElementById(id);
             if (el('detailPrice')) el('detailPrice').textContent = `${listing.price} грн`;
             if (el('detailTitle')) el('detailTitle').textContent = listing.title;
-            if (el('detailMeta')) el('detailMeta').innerHTML = `<span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span><span><i class="far fa-clock"></i> ${timeAgo(listing.createdAt)}</span>`;
+            if (el('detailMeta')) el('detailMeta').innerHTML = `<span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span><span><i class="fas fa-clock"></i> ${timeAgo(listing.createdAt)}</span>`;
             if (el('detailDesc')) el('detailDesc').textContent = listing.description || 'Без опису';
             const specsContainer = document.getElementById('detailSpecs');
             if (specsContainer) {
@@ -3702,9 +3659,9 @@
                 if (detailPhotos.length > 0) {
                     gallery.style.backgroundImage = `url('${detailPhotos[0]}')`;
                     gallery.style.backgroundSize = 'cover';
-                    gallery.innerHTML = `<button class="nav-arrow left" onclick="changeDetailPhoto(-1)">‹</button><button class="nav-arrow right" onclick="changeDetailPhoto(1)">›</button><div class="dots" id="detailDots"></div>`;
+                    gallery.innerHTML = `<button class="nav-arrow left" onclick="changeDetailPhoto(-1)"><i class="fas fa-chevron-left"></i></button><button class="nav-arrow right" onclick="changeDetailPhoto(1)"><i class="fas fa-chevron-right"></i></button><div class="dots" id="detailDots"></div>`;
                     renderDetailDots();
-                } else { gallery.innerHTML = `<i class="fas fa-image"></i>`; }
+                } else { gallery.innerHTML = `<i class="fas fa-image" style="font-size:42px; color:var(--text-secondary);"></i>`; }
             }
             if (el('sellerAvatar')) el('sellerAvatar').textContent = listing.seller?.avatar || '👤';
             if (el('sellerName')) el('sellerName').textContent = listing.seller?.name || 'Продавець';
@@ -3712,8 +3669,8 @@
             const isOwn = listing.user_id === currentUser?.id;
             const chatBtn = document.querySelector('.btn-submit[onclick*="openChatFromDetail"]');
             if (chatBtn) {
-                if (isOwn) { chatBtn.textContent = '✏️ Редагувати'; chatBtn.onclick = () => editListing(listing.id); }
-                else { chatBtn.textContent = '💬 Написати продавцю'; chatBtn.onclick = openChatFromDetail; }
+                if (isOwn) { chatBtn.innerHTML = '<i class="fas fa-edit"></i> Редагувати'; chatBtn.onclick = () => editListing(listing.id); }
+                else { chatBtn.innerHTML = '<i class="fas fa-comment"></i> Написати продавцю'; chatBtn.onclick = openChatFromDetail; }
             }
             if (el('sellerCallBtn')) {
                 el('sellerCallBtn').onclick = () => {
@@ -3767,7 +3724,7 @@
         function closeOptionsModal() { document.getElementById('optionsModal')?.classList.remove('show'); }
         function shareListing() {
             if (!currentDetailListing) return;
-            const text = `📢 ${currentDetailListing.title}\n💰 ${currentDetailListing.price} грн\n📍 ${currentDetailListing.location}`;
+            const text = `${currentDetailListing.title}\n${currentDetailListing.price} грн\n${currentDetailListing.location}`;
             if (navigator.share) navigator.share({ title: currentDetailListing.title, text }).catch(() => {});
             else navigator.clipboard.writeText(text).then(() => alert('✅ Скопійовано!'));
             closeOptionsModal();
@@ -3799,7 +3756,7 @@
         function renderPhotoPreviews() {
             const grid = document.getElementById('photoPreviewGrid');
             if (!grid) return;
-            grid.innerHTML = selectedPhotos.map((p, i) => `<div class="photo-preview-item" style="background-image:url('${p}');"><button class="remove-photo" onclick="removePhoto(${i})">×</button></div>`).join('');
+            grid.innerHTML = selectedPhotos.map((p, i) => `<div class="photo-preview-item" style="background-image:url('${p}');"><button class="remove-photo" onclick="removePhoto(${i})">&times;</button></div>`).join('');
         }
 
         function removePhoto(i) { selectedPhotos.splice(i, 1); renderPhotoPreviews(); }
@@ -3823,7 +3780,7 @@
             renderPhotoPreviews();
             navigateTo('add');
             const btn = document.querySelector('.btn-submit');
-            if (btn) { btn.textContent = '💾 Оновити'; btn.onclick = () => updateListing(id); }
+            if (btn) { btn.innerHTML = '<i class="fas fa-save"></i> Оновити'; btn.onclick = () => updateListing(id); }
         }
 
         async function updateListing(id) {
@@ -3948,7 +3905,7 @@
 
         function showForgotPassword() { navigateTo('auth'); handleForgotPassword(); }
         function showHelp() { navigateTo('help'); }
-        function showAbout() { alert('🟦 UAMO v2.0\n\nУкраїнська платформа'); }
+        function showAbout() { alert('UAMO v2.0\n\nУкраїнська платформа'); }
 
         async function handleLogout() {
             if (!confirm('Вийти?')) return;
@@ -3976,7 +3933,7 @@
             }
         });
 
-        // Експорт функцій
+        // Експорт
         window.handleAuth = handleAuth;
         window.toggleAuthMode = toggleAuthMode;
         window.togglePasswordVisibility = togglePasswordVisibility;
@@ -4033,7 +3990,6 @@
         window.renderHelp = renderHelp;
         window.toggleHelpCategory = toggleHelpCategory;
         window.searchHelp = searchHelp;
-        // PRO
         window.renderPro = renderPro;
         window.renderProSubscribe = renderProSubscribe;
         window.selectPlan = selectPlan;
@@ -4051,7 +4007,6 @@
         window.deletePortfolioItem = deletePortfolioItem;
         window.movePortfolioItem = movePortfolioItem;
         window.viewSellerCard = viewSellerCard;
-        // Saved searches
         window.renderSavedSearches = renderSavedSearches;
         window.openSaveSearchModal = openSaveSearchModal;
         window.closeSaveSearchModal = closeSaveSearchModal;
