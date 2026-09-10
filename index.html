@@ -3176,122 +3176,121 @@
                 showAuthError('Помилка. Спробуйте ще раз.'); }
         }
 
-        // ================================================================
-        // ЗАВАНТАЖЕННЯ ВСІХ ДАНИХ
-        // ================================================================
-        async function loadAllData() {
-            if (dataLoaded) return;
-            if (!currentUser) return;
+// ================================================================
+// ЗАВАНТАЖЕННЯ ВСІХ ДАНИХ
+// ================================================================
+async function loadAllData() {
+    if (dataLoaded) return;
+    if (!currentUser) return;
 
-            console.log('📡 Завантаження всіх даних...');
-            const start = performance.now();
+    console.log('📡 Завантаження всіх даних...');
+    const start = performance.now();
 
-            try {
-                const [listingsRes, userRes, favRes, chatsRes, myRes] = await Promise.all([
-                    supabase.from('listings_with_users').select('*').limit(50),
-                    supabase.from('users').select('*').eq('id', currentUser.id).single(),
-                    supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
-                    supabase.from('chats')
-                    .select(`
-                                *,
-                                listings:listing_id (title),
-                                buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
-                                seller:users!chats_seller_id_fkey (first_name, avatar_url)
-                            `)
-                    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
-                    .order('updated_at', { ascending: false })
-                    .limit(30),
-                    supabase.from('listings')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .order('created_at', { ascending: false })
-                    .limit(30)
-                ]);
+    try {
+        const [listingsRes, userRes, favRes, chatsRes, myRes] = await Promise.all([
+            supabase.from('listings_with_users').select('*').limit(50),
+            supabase.from('users').select('*').eq('id', currentUser.id).single(),
+            supabase.from('favorites').select('listing_id').eq('user_id', currentUser.id),
+            supabase.from('chats')
+            .select(`
+                        *,
+                        listings:listing_id (title),
+                        buyer:users!chats_buyer_id_fkey (first_name, avatar_url),
+                        seller:users!chats_seller_id_fkey (first_name, avatar_url)
+                    `)
+            .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`)
+            .order('updated_at', { ascending: false })
+            .limit(30),
+            supabase.from('listings')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .order('created_at', { ascending: false })
+            .limit(30)
+        ]);
 
-                if (!listingsRes.error) {
-                    listings = listingsRes.data.map(item => ({
-                        id: item.id,
-                        title: item.title || 'Без назви',
-                        price: item.price ? String(item.price) : '0',
-                        location: item.city || 'не вказано',
-                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                        photos: item.photos || null,
-                        category: item.category || 'Інше',
-                        condition: item.condition || 'new',
-                        isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
-                        isFeatured: item.is_featured || false,
-                        createdAt: item.created_at || new Date().toISOString(),
-                        description: item.description || 'Без опису',
-                        specs: item.specs || {},
-                        seller: {
-                            name: item.seller_name || 'Продавець',
-                            avatar: item.seller_avatar || '👤',
-                            since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
-                        },
-                        user_id: item.user_id,
-                        phone: item.phone || '',
-                        status: item.status || 'active'
-                    }));
-                }
-
-                if (!userRes.error && userRes.data) {
-                    const u = userRes.data;
-                    userData = {
-                        id: u.id,
-                        name: u.first_name || 'Користувач',
-                        last_name: u.last_name || '',
-                        username: u.username || '',
-                        phone: u.phone || '',
-                        email: u.email || currentUser.email || '',
-                        city: u.city || 'Київ',
-                        avatar: u.avatar_url || 'К',
-                        language: u.language || 'uk'
-                    };
-                    avatarCacheBuster = Date.now();
-                    updateUI();
-                    updateAvatar();
-                }
-
-                if (!favRes.error) {
-                    favorites = favRes.data.map(f => f.listing_id);
-                }
-
-                if (!chatsRes.error) {
-                    chats = chatsRes.data || [];
-                }
-
-                if (!myRes.error) {
-                    myListings = myRes.data.map(item => ({
-                        id: item.id,
-                        title: item.title || 'Без назви',
-                        price: item.price ? String(item.price) : '0',
-                        location: item.city || 'не вказано',
-                        image: item.photos && item.photos.length > 0 ? item.photos[0] : '📦',
-                        photos: item.photos || null,
-                        category: item.category || 'Інше',
-                        condition: item.condition || 'new',
-                        createdAt: item.created_at || new Date().toISOString(),
-                        description: item.description || 'Без опису',
-                        phone: item.phone || '',
-                        status: item.status || 'active'
-                    }));
-                }
-
-                dataLoaded = true;
-
-                const elapsed = (performance.now() - start).toFixed(2);
-                console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
-
-                updateProfileStats();
-                updateChatBadge();
-                fixNotificationBadge();
-                renderAll();
-
-            } catch (e) {
-                console.error('❌ Помилка завантаження:', e);
-            }
+        if (!listingsRes.error) {
+            listings = listingsRes.data.map(item => ({
+                id: item.id,
+                title: item.title || 'Без назви',
+                price: item.price ? String(item.price) : '0',
+                location: item.city || 'не вказано',
+                image: item.photos && item.photos.length > 0 ? item.photos[0] : null,  // ← ВИПРАВЛЕНО
+                photos: item.photos || null,
+                category: item.category || 'Інше',
+                condition: item.condition || 'new',
+                isNew: new Date(item.created_at) > new Date(Date.now() - 86400000),
+                isFeatured: item.is_featured || false,
+                createdAt: item.created_at || new Date().toISOString(),
+                description: item.description || 'Без опису',
+                specs: item.specs || {},
+                seller: {
+                    name: item.seller_name || 'Продавець',
+                    avatar: item.seller_avatar || '👤',
+                    since: item.seller_joined ? new Date(item.seller_joined).getFullYear() : '2024'
+                },
+                user_id: item.user_id,
+                phone: item.phone || '',
+                status: item.status || 'active'
+            }));
         }
 
+        if (!userRes.error && userRes.data) {
+            const u = userRes.data;
+            userData = {
+                id: u.id,
+                name: u.first_name || 'Користувач',
+                last_name: u.last_name || '',
+                username: u.username || '',
+                phone: u.phone || '',
+                email: u.email || currentUser.email || '',
+                city: u.city || 'Київ',
+                avatar: u.avatar_url || 'К',
+                language: u.language || 'uk'
+            };
+            avatarCacheBuster = Date.now();
+            updateUI();
+            updateAvatar();
+        }
+
+        if (!favRes.error) {
+            favorites = favRes.data.map(f => f.listing_id);
+        }
+
+        if (!chatsRes.error) {
+            chats = chatsRes.data || [];
+        }
+
+        if (!myRes.error) {
+            myListings = myRes.data.map(item => ({
+                id: item.id,
+                title: item.title || 'Без назви',
+                price: item.price ? String(item.price) : '0',
+                location: item.city || 'не вказано',
+                image: item.photos && item.photos.length > 0 ? item.photos[0] : null,  // ← ВИПРАВЛЕНО
+                photos: item.photos || null,
+                category: item.category || 'Інше',
+                condition: item.condition || 'new',
+                createdAt: item.created_at || new Date().toISOString(),
+                description: item.description || 'Без опису',
+                phone: item.phone || '',
+                status: item.status || 'active'
+            }));
+        }
+
+        dataLoaded = true;
+
+        const elapsed = (performance.now() - start).toFixed(2);
+        console.log(`✅ Всі дані завантажено за ${elapsed}ms`);
+
+        updateProfileStats();
+        updateChatBadge();
+        fixNotificationBadge();
+        renderAll();
+
+    } catch (e) {
+        console.error('❌ Помилка завантаження:', e);
+    }
+}
         // ================================================================
         // ВИПРАВЛЕННЯ
         // ================================================================
@@ -3450,94 +3449,115 @@ function uploadAvatar(event) {
 function editUploadAvatar(event) { 
     uploadAvatar(event); 
 }
-        // ================================================================
-        // ДОПОМІЖНІ ФУНКЦІЇ
-        // ================================================================
-        function getCategoryFields(category) {
-            return CATEGORIES_CONFIG[category]?.fields || [];
+// ================================================================
+// ДОПОМІЖНІ ФУНКЦІЇ
+// ================================================================
+function getCategoryFields(category) {
+    return CATEGORIES_CONFIG[category]?.fields || [];
+}
+
+function getCategoryName(cat) {
+    return CATEGORY_NAMES[cat] || cat || 'Інше';
+}
+
+function getCategoryIcon(cat) {
+    return CATEGORY_ICONS[cat] || 'fa-tag';
+}
+
+function getCategoryPlaceholder(cat) {
+    return CATEGORY_PLACEHOLDERS[cat] || 'Введіть назву';
+}
+
+function getConditionLabel(condition) {
+    const labels = { 'new': '🆕 Новий', 'used': '🔄 Б/В', 'refurbished': '🔧 Відновлений' };
+    return labels[condition] || condition || 'Не вказано';
+}
+
+function renderCategoryFields(category) {
+    const fields = getCategoryFields(category);
+    const container = document.getElementById('categoryFieldsContainer');
+    if (!container) return;
+
+    const titleInput = document.getElementById('addTitle');
+    if (titleInput) {
+        titleInput.placeholder = getCategoryPlaceholder(category) || 'Введіть назву';
+    }
+
+    if (fields.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = fields.map(field => {
+        if (field.type === 'select') {
+            return `
+                        <div class="form-group">
+                            <label>${field.label}</label>
+                            <select id="field_${field.id}" class="category-field">
+                                ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+        } else {
+            return `
+                        <div class="form-group">
+                            <label>${field.label}</label>
+                            <input type="${field.type}" id="field_${field.id}" class="category-field" placeholder="${field.placeholder || ''}" />
+                        </div>
+                    `;
         }
+    }).join('');
+}
 
-        function getCategoryName(cat) {
-            return CATEGORY_NAMES[cat] || cat || 'Інше';
+function resetPhotoForm() {
+    selectedPhotos = [];
+    const grid = document.getElementById('photoPreviewGrid');
+    if (grid) grid.innerHTML = '';
+    const input = document.getElementById('photoInput');
+    if (input) input.value = '';
+}
+
+function timeAgo(dateStr) {
+    if (!dateStr) return 'нещодавно';
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const min = Math.floor(diff / 60000);
+    if (min < 1) return 'щойно';
+    if (min < 60) return `${min} хв тому`;
+    const hrs = Math.floor(min / 60);
+    if (hrs < 24) return `${hrs} год тому`;
+    const days = Math.floor(hrs / 24);
+    if (days < 7) return `${days} дн тому`;
+    return new Date(dateStr).toLocaleDateString();
+}
+
+// ================================================================
+// ВИПРАВЛЕНА ФУНКЦІЯ getFirstPhoto
+// ================================================================
+function getFirstPhoto(listing) {
+    // Перевіряємо photos (масив)
+    if (listing.photos && listing.photos.length > 0) {
+        const photo = listing.photos[0];
+        // Перевіряємо, чи це справжнє зображення (URL або base64)
+        if (photo && typeof photo === 'string' && 
+            (photo.startsWith('http://') || 
+             photo.startsWith('https://') || 
+             photo.startsWith('data:image'))) {
+            return photo;
         }
-
-        function getCategoryIcon(cat) {
-            return CATEGORY_ICONS[cat] || 'fa-tag';
+    }
+    // Перевіряємо image (одне фото)
+    if (listing.image && typeof listing.image === 'string') {
+        if (listing.image.startsWith('http://') || 
+            listing.image.startsWith('https://') || 
+            listing.image.startsWith('data:image')) {
+            return listing.image;
         }
+    }
+    // Повертаємо порожній рядок, якщо немає справжнього фото
+    return '';
+}
 
-        function getCategoryPlaceholder(cat) {
-            return CATEGORY_PLACEHOLDERS[cat] || 'Введіть назву';
-        }
-
-        function getConditionLabel(condition) {
-            const labels = { 'new': '🆕 Новий', 'used': '🔄 Б/В', 'refurbished': '🔧 Відновлений' };
-            return labels[condition] || condition || 'Не вказано';
-        }
-
-        function renderCategoryFields(category) {
-            const fields = getCategoryFields(category);
-            const container = document.getElementById('categoryFieldsContainer');
-            if (!container) return;
-
-            const titleInput = document.getElementById('addTitle');
-            if (titleInput) {
-                titleInput.placeholder = getCategoryPlaceholder(category) || 'Введіть назву';
-            }
-
-            if (fields.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            container.innerHTML = fields.map(field => {
-                if (field.type === 'select') {
-                    return `
-                                <div class="form-group">
-                                    <label>${field.label}</label>
-                                    <select id="field_${field.id}" class="category-field">
-                                        ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-                                    </select>
-                                </div>
-                            `;
-                } else {
-                    return `
-                                <div class="form-group">
-                                    <label>${field.label}</label>
-                                    <input type="${field.type}" id="field_${field.id}" class="category-field" placeholder="${field.placeholder || ''}" />
-                                </div>
-                            `;
-                }
-            }).join('');
-        }
-
-        function resetPhotoForm() {
-            selectedPhotos = [];
-            const grid = document.getElementById('photoPreviewGrid');
-            if (grid) grid.innerHTML = '';
-            const input = document.getElementById('photoInput');
-            if (input) input.value = '';
-        }
-
-        function timeAgo(dateStr) {
-            if (!dateStr) return 'нещодавно';
-            const diff = Date.now() - new Date(dateStr).getTime();
-            const min = Math.floor(diff / 60000);
-            if (min < 1) return 'щойно';
-            if (min < 60) return `${min} хв тому`;
-            const hrs = Math.floor(min / 60);
-            if (hrs < 24) return `${hrs} год тому`;
-            const days = Math.floor(hrs / 24);
-            if (days < 7) return `${days} дн тому`;
-            return new Date(dateStr).toLocaleDateString();
-        }
-
-        function getFirstPhoto(listing) {
-            if (listing.photos && listing.photos.length > 0) return listing.photos[0];
-            if (listing.image) return listing.image;
-            return '';
-        }
-
-        function isFavorite(id) { return favorites.some(f => f === id); }
+function isFavorite(id) { return favorites.some(f => f === id); }
 
         // ================================================================
         // RENDER FUNCTIONS
