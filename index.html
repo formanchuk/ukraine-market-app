@@ -8,9 +8,36 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <link rel="icon" href="data:," />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-    <!-- Font Awesome 6 з jsdelivr (надійніше) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
+        /* ================================================================
+           ПРИМУСОВЕ ЗАВАНТАЖЕННЯ ШРИФТІВ Font Awesome
+           ================================================================ */
+        @font-face {
+            font-family: "Font Awesome 6 Free";
+            font-style: normal;
+            font-weight: 900;
+            font-display: block;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Font Awesome 6 Free";
+            font-style: normal;
+            font-weight: 400;
+            font-display: block;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Font Awesome 6 Brands";
+            font-style: normal;
+            font-weight: 400;
+            font-display: block;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2") format("woff2"),
+                 url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.ttf") format("truetype");
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -57,29 +84,27 @@
         .hidden { display: none !important; }
 
         /* ================================================================
-           ФІКС ДЛЯ ІКОНОК FONT AWESOME
+           МІНІМАЛЬНІ РОЗМІРИ ІКОНОК (не ламають Font Awesome)
            ================================================================ */
-        .fas, .far, .fab, .fa {
-            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", sans-serif !important;
-            font-style: normal;
-            font-variant: normal;
-            text-rendering: auto;
-            line-height: 1;
-            display: inline-block;
-            width: 1em;
-            height: 1em;
-            text-align: center;
-        }
-        .fas { font-weight: 900; }
-        .far { font-weight: 400; }
-        .fab { font-weight: 400; font-family: "Font Awesome 6 Brands" !important; }
-
-        i.fas, i.far, i.fab, i.fa {
-            max-width: 1.5em;
-            max-height: 1.5em;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
+        .logo i { font-size: 18px; color: var(--gold); }
+        .header-actions button i { font-size: 20px; }
+        .profile-menu-item i { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+        .bottom-nav-item i { font-size: 20px; }
+        .card-section h3 i { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+        .pro-feature-item i { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
+        .category-item i { font-size: 18px; }
+        .back-btn i { font-size: 20px; }
+        .favorites-empty i { font-size: 48px; }
+        .empty-state i { font-size: 40px; }
+        .help-cat-header .cat-icon { font-size: 22px; }
+        .options-item i { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+        .card-contact-item i { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+        .search-bar-inner i { font-size: 16px; }
+        .listing-card-image .favorite-icon i { font-size: 13px; }
+        .seller-box .actions button i { font-size: 14px; }
+        .chat-input button i { font-size: 18px; }
+        .success-modal .icon i { font-size: 56px; }
+        .auth-box .password-toggle i { font-size: 18px; }
 
         /* ================================================================
            HEADER
@@ -104,7 +129,6 @@
             cursor: pointer;
         }
         .logo span { color: var(--accent); }
-        .logo i { color: var(--gold); font-size: 18px; max-width: 18px; max-height: 18px; }
         .header-actions {
             display: flex;
             align-items: center;
@@ -126,7 +150,6 @@
             justify-content: center;
         }
         .header-actions button:hover { color: var(--primary); }
-        .header-actions button i { max-width: 22px; max-height: 22px; }
         .badge {
             position: absolute;
             top: -2px;
@@ -241,7 +264,6 @@
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 18px;
             padding: 4px;
             z-index: 2;
         }
@@ -344,7 +366,7 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.10);
         }
-        .search-bar-inner i { color: var(--text-secondary); font-size: 16px; max-width: 18px; max-height: 18px; }
+        .search-bar-inner i { color: var(--text-secondary); }
         .search-bar-inner input {
             flex: 1;
             border: none;
@@ -363,7 +385,6 @@
             padding: 4px 0 14px 0;
             overflow-x: auto;
             scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -374,7 +395,6 @@
             gap: 8px;
             overflow-x: auto;
             scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
             padding: 2px 0;
         }
         .category-row::-webkit-scrollbar { display: none; }
@@ -395,7 +415,7 @@
             gap: 2px;
         }
         .category-item:hover { transform: translateY(-2px); border-color: var(--accent); }
-        .category-item i { font-size: 18px; color: var(--primary); max-width: 20px; max-height: 20px; }
+        .category-item i { color: var(--primary); }
         .category-item span { font-size: 9px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
         .category-item.active { border-color: var(--accent); background: rgba(0, 102, 255, 0.05); }
         .category-item.active i { color: var(--accent); }
@@ -464,7 +484,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
             color: var(--text-secondary);
             border: none;
             cursor: pointer;
@@ -544,7 +563,6 @@
             padding: 4px 12px;
             position: relative;
         }
-        .bottom-nav-item i { font-size: 20px; max-width: 22px; max-height: 22px; }
         .bottom-nav-item.active { color: var(--accent); }
         .bottom-nav-item .badge-count {
             position: absolute;
@@ -562,15 +580,13 @@
             justify-content: center;
         }
         .bottom-nav-item.add-btn i {
-            font-size: 26px;
+            font-size: 24px;
             color: #fff;
             background: var(--accent);
             border-radius: 50%;
-            padding: 8px;
+            padding: 10px;
             width: 46px;
             height: 46px;
-            max-width: 46px;
-            max-height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -657,10 +673,10 @@
            FAVORITES
            ================================================================ */
         .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
-        .favorites-empty i { font-size: 48px; color: var(--border); margin-bottom: 16px; max-width: 48px; max-height: 48px; }
+        .favorites-empty i { color: var(--border); margin-bottom: 16px; }
         .favorites-empty h3 { font-weight: 600; font-size: 18px; color: var(--text); }
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
-        .empty-state i { font-size: 40px; color: var(--border); display: block; margin-bottom: 12px; max-width: 40px; max-height: 40px; margin-left: auto; margin-right: auto; }
+        .empty-state i { color: var(--border); display: block; margin-bottom: 12px; margin-left: auto; margin-right: auto; }
         .empty-state h3 { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 4px; }
 
         /* ================================================================
@@ -718,7 +734,7 @@
         }
         .profile-menu-item:last-child { border-bottom: none; }
         .profile-menu-item:hover { background: var(--bg); }
-        .profile-menu-item i { width: 20px; max-width: 20px; max-height: 20px; color: var(--text-secondary); font-size: 16px; flex-shrink: 0; }
+        .profile-menu-item i { color: var(--text-secondary); }
         .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
         .profile-menu-item.danger { color: var(--danger); }
 
@@ -940,7 +956,6 @@
             border-radius: 10px;
             color: white;
             cursor: pointer;
-            font-size: 18px;
         }
 
         /* ================================================================
@@ -1002,7 +1017,6 @@
         .back-btn {
             background: none;
             border: none;
-            font-size: 20px;
             cursor: pointer;
             color: var(--text-secondary);
             padding: 4px 0;
@@ -1039,7 +1053,7 @@
             width: 90%;
             text-align: center;
         }
-        .success-modal .modal-box .icon { font-size: 56px; color: var(--success); margin-bottom: 12px; }
+        .success-modal .modal-box .icon { color: var(--success); margin-bottom: 12px; }
         .success-modal .modal-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
         .success-modal .modal-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
         .success-modal .modal-box .btn-group { display: flex; gap: 10px; }
@@ -1065,7 +1079,7 @@
             font-size: 15px;
         }
         .options-item:last-child { border-bottom: none; }
-        .options-item i { width: 24px; max-width: 24px; max-height: 24px; font-size: 18px; color: var(--text-secondary); }
+        .options-item i { color: var(--text-secondary); }
         .options-item.danger { color: var(--danger); }
 
         .filter-group { margin-bottom: 16px; }
@@ -1134,11 +1148,8 @@
         }
         .help-category .help-cat-header:hover { background: var(--bg); }
         .help-category .help-cat-header .cat-icon {
-            font-size: 22px;
             width: 40px;
             height: 40px;
-            max-width: 40px;
-            max-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1149,7 +1160,7 @@
         .help-category .help-cat-header .cat-info { flex: 1; }
         .help-category .help-cat-header .cat-info .cat-title { font-weight: 600; font-size: 15px; }
         .help-category .help-cat-header .cat-info .cat-desc { font-size: 12px; color: var(--text-secondary); }
-        .help-category .help-cat-header .cat-arrow { font-size: 16px; color: var(--text-dim); transition: 0.2s; max-width: 18px; max-height: 18px; }
+        .help-category .help-cat-header .cat-arrow { color: var(--text-dim); transition: 0.2s; }
         .help-category .help-cat-header .cat-arrow.open { transform: rotate(180deg); }
         .help-category .help-cat-body {
             max-height: 0;
@@ -1167,7 +1178,7 @@
             align-items: center;
             gap: 8px;
         }
-        .help-category .help-cat-body .help-item .item-title i { color: var(--accent); font-size: 12px; width: 20px; max-width: 20px; max-height: 20px; flex-shrink: 0; }
+        .help-category .help-cat-body .help-item .item-title i { color: var(--accent); flex-shrink: 0; }
         .help-category .help-cat-body .help-item .item-desc {
             font-size: 13px;
             color: var(--text-secondary);
@@ -1176,7 +1187,7 @@
             padding-left: 28px;
         }
         .help-no-results { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
-        .help-no-results i { font-size: 40px; color: var(--border); margin-bottom: 12px; display: block; max-width: 40px; max-height: 40px; margin-left: auto; margin-right: auto; }
+        .help-no-results i { color: var(--border); margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
 
         /* ================================================================
            UAMO PRO СТИЛІ
@@ -1237,7 +1248,7 @@
         }
         .pro-features h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--primary); }
         .pro-feature-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
-        .pro-feature-item i { width: 24px; max-width: 24px; max-height: 24px; color: var(--success); font-size: 16px; flex-shrink: 0; }
+        .pro-feature-item i { color: var(--success); }
         .pro-plan {
             background: var(--card-bg);
             border: 2px solid var(--border);
@@ -1313,7 +1324,7 @@
             align-items: center;
             gap: 8px;
         }
-        .card-section h3 i { color: var(--accent); max-width: 18px; max-height: 18px; flex-shrink: 0; }
+        .card-section h3 i { color: var(--accent); }
         .card-section p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
         .card-contact-item {
             display: flex;
@@ -1323,7 +1334,7 @@
             font-size: 14px;
             cursor: pointer;
         }
-        .card-contact-item i { width: 20px; max-width: 20px; max-height: 20px; color: var(--accent); flex-shrink: 0; }
+        .card-contact-item i { color: var(--accent); }
         .card-socials { display: flex; gap: 10px; flex-wrap: wrap; }
         .card-social-btn {
             display: flex;
@@ -1411,7 +1422,7 @@
             align-items: center;
             gap: 6px;
         }
-        .saved-search-item .search-info .search-name i { max-width: 14px; max-height: 14px; font-size: 12px; color: var(--accent); }
+        .saved-search-item .search-info .search-name i { color: var(--accent); }
         .saved-search-item .search-info .search-params {
             font-size: 12px;
             color: var(--text-secondary);
@@ -2234,18 +2245,15 @@
         // КАТЕГОРІЇ
         // ================================================================
         const CATEGORIES_CONFIG = {
-            'products': {
-                name: 'Товари', icon: 'fa-tag', placeholder: 'Введіть назву товару',
+            'products': { name: 'Товари', icon: 'fa-tag', placeholder: 'Введіть назву товару',
                 fields: [
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Apple, Samsung, Nike...' },
                     { id: 'model', label: 'Модель', type: 'text', placeholder: 'iPhone 14 Pro...' },
                     { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Білий...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В', 'Відновлений'] },
                     { id: 'warranty', label: 'Гарантія', type: 'select', options: ['Є', 'Немає'] }
-                ]
-            },
-            'electronics': {
-                name: 'Електроніка', icon: 'fa-laptop', placeholder: 'Введіть назву пристрою',
+                ] },
+            'electronics': { name: 'Електроніка', icon: 'fa-laptop', placeholder: 'Введіть назву пристрою',
                 fields: [
                     { id: 'device_type', label: 'Тип пристрою', type: 'select', options: ['Смартфон', 'Ноутбук', 'Планшет', 'Телевізор', 'Навушники', 'Камера', 'Смарт-годинник', 'Зарядний пристрій', 'Чохол', 'Скло/Плівка', 'Колонка', 'Монітор', 'Клавіатура', 'Миша'] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Apple, Samsung, Sony...' },
@@ -2253,10 +2261,8 @@
                     { id: 'memory', label: 'Пам\'ять', type: 'text', placeholder: '128 ГБ, 8 ГБ RAM' },
                     { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Синій...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Як новий', 'Б/В'] }
-                ]
-            },
-            'clothing': {
-                name: 'Одяг', icon: 'fa-tshirt', placeholder: 'Введіть назву одягу',
+                ] },
+            'clothing': { name: 'Одяг', icon: 'fa-tshirt', placeholder: 'Введіть назву одягу',
                 fields: [
                     { id: 'clothing_type', label: 'Тип одягу', type: 'select', options: ['Футболка', 'Світшот', 'Джинси', 'Штани', 'Сукня', 'Спідниця', 'Піджак', 'Пальто', 'Куртка', 'Шапка', 'Шарф', 'Рукавички', 'Спортивний костюм', 'Піжама'] },
                     { id: 'gender', label: 'Стать', type: 'select', options: ['Чоловічий', 'Жіночий', 'Дитячий', 'Унісекс'] },
@@ -2264,39 +2270,31 @@
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike, Adidas...' },
                     { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Білий...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий з биркою', 'Новий', 'Б/В'] }
-                ]
-            },
-            'furniture': {
-                name: 'Меблі', icon: 'fa-couch', placeholder: 'Введіть назву меблів',
+                ] },
+            'furniture': { name: 'Меблі', icon: 'fa-couch', placeholder: 'Введіть назву меблів',
                 fields: [
                     { id: 'furniture_type', label: 'Тип меблів', type: 'select', options: ['Диван', 'Крісло', 'Стіл', 'Ліжко', 'Шафа', 'Комод', 'Тумба', 'Стелаж', 'Кухонний гарнітур', 'Офісне крісло', 'Стільці', 'Пуф', 'Журнальний столик', 'Вішалка', 'Дзеркало'] },
                     { id: 'material', label: 'Матеріал', type: 'text', placeholder: 'Дерево, Шкіра...' },
                     { id: 'color', label: 'Колір', type: 'text', placeholder: 'Коричневий...' },
                     { id: 'dimensions', label: 'Розміри', type: 'text', placeholder: '200x80x90 см' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
-                ]
-            },
-            'jobs': {
-                name: 'Робота', icon: 'fa-briefcase', placeholder: 'Введіть назву вакансії',
+                ] },
+            'jobs': { name: 'Робота', icon: 'fa-briefcase', placeholder: 'Введіть назву вакансії',
                 fields: [
                     { id: 'company', label: 'Компанія', type: 'text', placeholder: 'Назва компанії' },
                     { id: 'position', label: 'Посада', type: 'text', placeholder: 'Програміст...' },
                     { id: 'salary', label: 'Зарплата', type: 'text', placeholder: 'Від 20000 грн' },
                     { id: 'schedule', label: 'Графік', type: 'select', options: ['Повний день', 'Неповний день', 'Віддалено', 'Гнучкий', 'Змінний'] },
                     { id: 'experience', label: 'Досвід', type: 'select', options: ['Без досвіду', '1-2 роки', '3-5 років', '5+ років'] }
-                ]
-            },
-            'services': {
-                name: 'Послуги', icon: 'fa-wrench', placeholder: 'Введіть назву послуги',
+                ] },
+            'services': { name: 'Послуги', icon: 'fa-wrench', placeholder: 'Введіть назву послуги',
                 fields: [
                     { id: 'service_type', label: 'Тип послуги', type: 'text', placeholder: 'Ремонт, Прибирання...' },
                     { id: 'price_type', label: 'Ціна', type: 'text', placeholder: 'За годину...' },
                     { id: 'duration', label: 'Тривалість', type: 'text', placeholder: '1 година...' },
                     { id: 'certified', label: 'Сертифікація', type: 'select', options: ['Є сертифікат', 'Без сертифікату'] }
-                ]
-            },
-            'realestate': {
-                name: 'Нерухомість', icon: 'fa-building', placeholder: 'Введіть назву об\'єкту',
+                ] },
+            'realestate': { name: 'Нерухомість', icon: 'fa-building', placeholder: 'Введіть назву об\'єкту',
                 fields: [
                     { id: 'property_type', label: 'Тип', type: 'select', options: ['Квартира', 'Будинок', 'Кімната', 'Офіс', 'Гараж', 'Склад', 'Земельна ділянка'] },
                     { id: 'rooms', label: 'Кімнат', type: 'number', placeholder: '1, 2, 3...' },
@@ -2304,10 +2302,8 @@
                     { id: 'floor', label: 'Поверх', type: 'number', placeholder: '3' },
                     { id: 'heating', label: 'Опалення', type: 'select', options: ['Центральне', 'Автономне', 'Пічне'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Після ремонту', 'Потребує ремонту'] }
-                ]
-            },
-            'transport': {
-                name: 'Транспорт', icon: 'fa-car', placeholder: 'Введіть назву транспорту',
+                ] },
+            'transport': { name: 'Транспорт', icon: 'fa-car', placeholder: 'Введіть назву транспорту',
                 fields: [
                     { id: 'vehicle_type', label: 'Тип', type: 'select', options: ['Легковий', 'Вантажний', 'Мотоцикл', 'Скутер', 'Велосипед', 'Автобус', 'Мікроавтобус', 'Трейлер', 'Спецтехніка'] },
                     { id: 'brand', label: 'Марка', type: 'text', placeholder: 'Toyota...' },
@@ -2316,70 +2312,55 @@
                     { id: 'mileage', label: 'Пробіг (км)', type: 'number', placeholder: '50000' },
                     { id: 'fuel', label: 'Паливо', type: 'select', options: ['Бензин', 'Дизель', 'Газ', 'Електро', 'Гібрид'] },
                     { id: 'transmission', label: 'Коробка', type: 'select', options: ['Автомат', 'Механіка', 'Робот', 'Варіатор'] }
-                ]
-            },
-            'animals': {
-                name: 'Тварини', icon: 'fa-paw', placeholder: 'Введіть назву тварини',
+                ] },
+            'animals': { name: 'Тварини', icon: 'fa-paw', placeholder: 'Введіть назву тварини',
                 fields: [
                     { id: 'animal_type', label: 'Тип', type: 'select', options: ['Собака', 'Кіт', 'Птах', 'Гризун', 'Риба', 'Рептилія', 'Хорек', 'Кролик'] },
                     { id: 'breed', label: 'Порода', type: 'text', placeholder: 'Німецька вівчарка...' },
                     { id: 'age', label: 'Вік', type: 'text', placeholder: '2 роки...' },
                     { id: 'gender', label: 'Стать', type: 'select', options: ['Самець', 'Самка'] },
                     { id: 'vaccinated', label: 'Вакцинація', type: 'select', options: ['Є', 'Немає'] }
-                ]
-            },
-            'kids': {
-                name: 'Дитяче', icon: 'fa-child', placeholder: 'Введіть назву дитячого товару',
+                ] },
+            'kids': { name: 'Дитяче', icon: 'fa-child', placeholder: 'Введіть назву дитячого товару',
                 fields: [
                     { id: 'kids_type', label: 'Тип', type: 'select', options: ['Одяг', 'Іграшки', 'Візочок', 'Автокрісло', 'Ліжечко', 'Харчування', 'Підгузки', 'Горщик', 'Велосипед', 'Санки', 'Коляска', 'Манеж'] },
                     { id: 'age_range', label: 'Вік', type: 'text', placeholder: '0-3 міс...' },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Chicco...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
-                ]
-            },
-            'sport': {
-                name: 'Спорт', icon: 'fa-football-ball', placeholder: 'Введіть назву спортивного товару',
+                ] },
+            'sport': { name: 'Спорт', icon: 'fa-football-ball', placeholder: 'Введіть назву спортивного товару',
                 fields: [
                     { id: 'sport_type', label: 'Тип', type: 'select', options: ['Футбол', 'Баскетбол', 'Теніс', 'Плавання', 'Фітнес', 'Велоспорт', 'Біг', 'Гірські лижі', 'Ковзани', 'Гольф', 'Бокс', 'Йога'] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike...' },
                     { id: 'size', label: 'Розмір', type: 'text', placeholder: 'S, M, L...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
-                ]
-            },
-            'books': {
-                name: 'Книги', icon: 'fa-book', placeholder: 'Введіть назву книги',
+                ] },
+            'books': { name: 'Книги', icon: 'fa-book', placeholder: 'Введіть назву книги',
                 fields: [
                     { id: 'book_type', label: 'Тип', type: 'select', options: ['Художня', 'Наукова', 'Дитяча', 'Підручник', 'Комікс', 'Фентезі', 'Детектив', 'Роман', 'Поезія', 'Історія', 'Філософія', 'Психологія'] },
                     { id: 'author', label: 'Автор', type: 'text', placeholder: 'Тарас Шевченко...' },
                     { id: 'language', label: 'Мова', type: 'text', placeholder: 'Українська...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
-                ]
-            },
-            'music': {
-                name: 'Музика', icon: 'fa-music', placeholder: 'Введіть назву інструменту',
+                ] },
+            'music': { name: 'Музика', icon: 'fa-music', placeholder: 'Введіть назву інструменту',
                 fields: [
-                    { id: 'music_type', label: 'Тип', type: 'select', options: ['Гітара', 'Фортепіано', 'Барабани', 'Скрипка', 'Синтезатор', 'Баян', 'Аккордеон', 'Труба', 'Саксофон', 'Флейта', 'Кларнет', 'Віолончель'] },
+                    { id: 'music_type', label: 'Тип', type: 'select', options: ['Гітара', 'Фортепіано', 'Барабани', 'Скрипка', 'Синтезатор', 'Баян', 'Акордеон', 'Труба', 'Саксофон', 'Флейта', 'Кларнет', 'Віолончель'] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Fender...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
-                ]
-            },
-            'beauty': {
-                name: 'Краса', icon: 'fa-spa', placeholder: 'Введіть назву товару',
+                ] },
+            'beauty': { name: 'Краса', icon: 'fa-spa', placeholder: 'Введіть назву товару',
                 fields: [
                     { id: 'beauty_type', label: 'Тип', type: 'select', options: ['Косметика', 'Парфуми', 'Аксесуари', 'Обладнання', 'Засоби для волосся', 'Засоби для тіла', 'Манікюр', 'Дезодоранти', 'Маски для обличчя'] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'L\'Oreal...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
-                ]
-            },
-            'photo': {
-                name: 'Фото', icon: 'fa-camera', placeholder: 'Введіть назву фототехніки',
+                ] },
+            'photo': { name: 'Фото', icon: 'fa-camera', placeholder: 'Введіть назву фототехніки',
                 fields: [
                     { id: 'photo_type', label: 'Тип', type: 'select', options: ['Камера', 'Об\'єктив', 'Спалах', 'Штатив', 'Аксесуари', 'Світло', 'Фільтри', 'Сумка', 'Карта пам\'яті', 'Дрон'] },
                     { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Canon...' },
                     { id: 'model', label: 'Модель', type: 'text', placeholder: 'EOS R5...' },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
-                ]
-            }
+                ] }
         };
 
         const CATEGORY_ICONS = {};
@@ -2436,7 +2417,7 @@
         }];
 
         // ================================================================
-        // ІНІЦІАЛІЗАЦІЯ
+        // ІНІЦІАЛІЗАЦІЯ SUPABASE
         // ================================================================
         function initSupabase() {
             try {
@@ -2451,6 +2432,9 @@
             } catch (e) { console.error('❌ Supabase error:', e); return false; }
         }
 
+        // ================================================================
+        // AUTH
+        // ================================================================
         function showAuthError(msg) {
             const el = document.getElementById('authError');
             if (el) { el.textContent = msg; el.className = 'auth-error show'; }
@@ -2541,10 +2525,7 @@
                 } else {
                     const { data, error } = await supabase.auth.signUp({
                         email, password,
-                        options: {
-                            data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' },
-                            emailRedirectTo: window.location.origin
-                        }
+                        options: { data: { first_name: email.split('@')[0], username: email.split('@')[0], city: 'Київ' }, emailRedirectTo: window.location.origin }
                     });
                     setLoading(false);
                     if (error) { showAuthError(`Помилка: ${error.message}`); return; }
@@ -2570,7 +2551,7 @@
         }
 
         // ================================================================
-        // ЗАВАНТАЖЕННЯ ДАНИХ (з кешуванням та розділенням на 2 етапи)
+        // ЗАВАНТАЖЕННЯ ДАНИХ (2 етапи: критичні + другорядні)
         // ================================================================
         async function loadAllData() {
             if (dataLoaded) return;
@@ -2580,7 +2561,7 @@
             console.log('📡 Завантаження...');
             const start = performance.now();
             try {
-                // ЕТАП 1: критичні дані
+                // ЕТАП 1
                 const [listingsRes, userRes, favRes] = await Promise.all([
                     supabase.from('listings_with_users').select('*').limit(50),
                     supabase.from('users').select('*').eq('id', currentUser.id).single(),
@@ -2621,7 +2602,6 @@
 
                 if (!favRes.error) favorites = favRes.data.map(f => f.listing_id);
 
-                // Показуємо головну одразу
                 dataLoaded = true;
                 updateProfileStats();
                 renderAll();
@@ -2629,7 +2609,7 @@
                 const elapsed1 = (performance.now() - start).toFixed(2);
                 console.log(`✅ Критичні дані за ${elapsed1}ms`);
 
-                // ЕТАП 2: другорядні дані (у фоні)
+                // ЕТАП 2
                 const [chatsRes, myRes, proRes, cardRes, portfolioRes, searchRes] = await Promise.all([
                     supabase.from('chats').select(`*, listings:listing_id (title), buyer:users!chats_buyer_id_fkey (first_name, avatar_url), seller:users!chats_seller_id_fkey (first_name, avatar_url)`).or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`).order('updated_at', { ascending: false }).limit(30),
                     supabase.from('listings').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(30),
@@ -2666,7 +2646,6 @@
 
                 const totalElapsed = (performance.now() - start).toFixed(2);
                 console.log(`✅ Всі дані за ${totalElapsed}ms`);
-
             } catch (e) {
                 console.error('❌ Помилка:', e);
             } finally {
@@ -2692,9 +2671,7 @@
                     let img = el.querySelector('img');
                     if (!img) { img = document.createElement('img'); el.appendChild(img); }
                     let src = userData.avatar;
-                    if (!src.startsWith('data:image')) {
-                        src += (src.includes('?') ? '&' : '?') + 't=' + avatarCacheBuster;
-                    }
+                    if (!src.startsWith('data:image')) src += (src.includes('?') ? '&' : '?') + 't=' + avatarCacheBuster;
                     img.src = src; img.style.display = 'block';
                     if (letterSpan) letterSpan.style.display = 'none';
                 } else {
@@ -2826,7 +2803,7 @@
         }
 
         // ================================================================
-        // RENDER - ГОЛОВНА
+        // RENDER FUNCTIONS
         // ================================================================
         function renderCategories() {
             const main = ['all', 'products', 'electronics', 'clothing', 'furniture', 'jobs', 'services', 'realestate', 'transport', 'animals', 'kids', 'sport', 'books', 'music', 'beauty', 'photo'];
@@ -3139,7 +3116,7 @@
         }
 
         // ================================================================
-        // UAMO PRO - ЛОГІКА
+        // UAMO PRO
         // ================================================================
         function isPro() {
             if (!proData) return false;
@@ -3147,12 +3124,10 @@
             if (proData.expires_at && new Date(proData.expires_at) < new Date()) return false;
             return true;
         }
-
         function getProPlanName(plan) {
             const names = { 'basic': 'Базовий', 'standard': 'Стандарт', 'premium': 'Преміум' };
             return names[plan] || 'Базовий';
         }
-
         function renderPro() {
             const container = document.getElementById('proContent');
             if (!container) return;
@@ -3232,7 +3207,9 @@
             } catch (e) { alert('❌ ' + e.message); }
         }
 
+        // ================================================================
         // ВІЗИТКА
+        // ================================================================
         function renderProCard() {
             const container = document.getElementById('proCardContent');
             if (!container) return;
@@ -3396,7 +3373,9 @@
             `;
         }
 
+        // ================================================================
         // ПОРТФОЛІО
+        // ================================================================
         function renderProPortfolio() {
             const container = document.getElementById('proPortfolioContent');
             if (!container) return;
@@ -3459,7 +3438,9 @@
             });
         }
 
+        // ================================================================
         // ЗБЕРЕЖЕНІ ПОШУКИ
+        // ================================================================
         function renderSavedSearches() {
             const container = document.getElementById('savedSearchesContent');
             if (!container) return;
