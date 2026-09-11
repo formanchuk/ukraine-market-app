@@ -3936,11 +3936,18 @@
                             newBtn.addEventListener('click', (e) => {
                                 e.preventDefault();
                                 console.log('📞 Клік! Відкриваємо:', phoneUrl);
-                                if (window.Telegram?.WebApp?.openLink) {
-                                    window.Telegram.WebApp.openLink(phoneUrl);
-                                } else {
-                                    window.location.href = phoneUrl;
-                                }
+                                
+                                // Для tel: використовуємо window.location (не Telegram.openLink)
+                                window.location.href = phoneUrl;
+                                
+                                // Або через try/catch
+                                setTimeout(() => {
+                                    try {
+                                        window.open(phoneUrl, '_blank');
+                                    } catch (err) {
+                                        console.error('Помилка дзвінка:', err);
+                                    }
+                                }, 100);
                             });
                         }
                     }, 100);
