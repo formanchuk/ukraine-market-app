@@ -3794,6 +3794,7 @@
             if (el('detailTitle')) el('detailTitle').textContent = listing.title;
             if (el('detailMeta')) el('detailMeta').innerHTML = `<span><i class="fas fa-map-marker-alt"></i> ${listing.location}</span><span><i class="fas fa-clock"></i> ${timeAgo(listing.createdAt)}</span>`;
             if (el('detailDesc')) el('detailDesc').textContent = listing.description || 'Без опису';
+            
             const specsContainer = document.getElementById('detailSpecs');
             if (specsContainer) {
                 if (listing.specs && Object.keys(listing.specs).length > 0) {
@@ -3801,6 +3802,7 @@
                     specsContainer.style.display = 'grid';
                 } else specsContainer.style.display = 'none';
             }
+            
             const gallery = document.getElementById('detailGallery');
             if (gallery) {
                 if (detailPhotos.length > 0) {
@@ -3808,28 +3810,63 @@
                     gallery.style.backgroundSize = 'cover';
                     gallery.innerHTML = `<button class="nav-arrow left" onclick="changeDetailPhoto(-1)"><i class="fas fa-chevron-left"></i></button><button class="nav-arrow right" onclick="changeDetailPhoto(1)"><i class="fas fa-chevron-right"></i></button><div class="dots" id="detailDots"></div>`;
                     renderDetailDots();
-                } else { gallery.innerHTML = `<i class="fas fa-image" style="font-size:42px; color:var(--text-secondary);"></i>`; }
+                } else { 
+                    gallery.innerHTML = `<i class="fas fa-image" style="font-size:42px; color:var(--text-secondary);"></i>`; 
+                }
             }
+            
             if (el('sellerAvatar')) el('sellerAvatar').textContent = listing.seller?.avatar || '👤';
             if (el('sellerName')) el('sellerName').textContent = listing.seller?.name || 'Продавець';
             if (el('sellerSince')) el('sellerSince').textContent = listing.seller?.since || 'На UAMO';
+            
             const isOwn = listing.user_id === currentUser?.id;
             const chatBtn = document.querySelector('.btn-submit[onclick*="openChatFromDetail"]');
             if (chatBtn) {
-                if (isOwn) { chatBtn.innerHTML = '<i class="fas fa-edit"></i> Редагувати'; chatBtn.onclick = () => editListing(listing.id); }
-                else { chatBtn.innerHTML = '<i class="fas fa-comment"></i> Написати продавцю'; chatBtn.onclick = openChatFromDetail; }
+                if (isOwn) { 
+                    chatBtn.innerHTML = '<i class="fas fa-edit"></i> Редагувати'; 
+                    chatBtn.onclick = () => editListing(listing.id); 
+                } else { 
+                    chatBtn.innerHTML = '<i class="fas fa-comment"></i> Написати продавцю'; 
+                    chatBtn.onclick = openChatFromDetail; 
+                }
             }
             
+            // ================================================================
+            // ДЗВІНОК — виправлено
+            // ================================================================
             const callBtn = el('sellerCallBtn');
             if (callBtn) {
                 const phone = listing.phone || userData.phone || '';
                 const cleanPhone = phone.replace(/[^\d+]/g, '');
                 
+                console.log('📞 === ДЗВІНОК ===');
+                console.log('📞 phone:', phone);
+                console.log('📞 cleanPhone:', cleanPhone);
+                console.log('📞 length:', cleanPhone.length);
+                
                 if (cleanPhone && cleanPhone.length >= 10) {
-                    callBtn.outerHTML = `<a href="tel:${cleanPhone}" class="btn-call" id="sellerCallBtn" style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none; cursor:pointer;"><i class="fas fa-phone"></i></a>`;
+                    const phoneUrl = `tel:+${cleanPhone.replace(/^\+/, '')}`;
+                    console.log('📞 URL:', phoneUrl);
+                    
+                    callBtn.outerHTML = `<a href="${phoneUrl}" class="btn-call" id="sellerCallBtn" style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none; cursor:pointer; padding:7px 12px; border-radius:40px; background:var(--border); color:var(--text); font-weight:600; font-size:12px;"><i class="fas fa-phone"></i></a>`;
+                    
+                    setTimeout(() => {
+                        const newBtn = document.getElementById('sellerCallBtn');
+                        if (newBtn && newBtn.tagName === 'A') {
+                            newBtn.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                console.log('📞 Клік! Відкриваємо:', phoneUrl);
+                                if (window.Telegram?.WebApp?.openLink) {
+                                    window.Telegram.WebApp.openLink(phoneUrl);
+                                } else {
+                                    window.location.href = phoneUrl;
+                                }
+                            });
+                        }
+                    }, 100);
                 } else {
                     callBtn.onclick = () => {
-                        alert('📞 Номер телефону не вказано\n\nЗв\'яжіться з продавцем через чат');
+                        alert(`📞 Номер телефону не вказано\n\nПеревірте, чи вказано телефон у профілі`);
                     };
                 }
             }
@@ -3843,35 +3880,6 @@
             updateDetailFavoriteBtn();
             navigateTo('detail');
         }
-
-        function renderDetailDots() {
-            const c = document.getElementById('detailDots');
-            if (!c) return;
-            if (detailPhotos.length <= 1) { c.innerHTML = ''; return; }
-            c.innerHTML = detailPhotos.map((_, i) => `<span class="${i === detailIndex ? 'active' : ''}" onclick="changeDetailPhoto(${i - detailIndex})"></span>`).join('');
-        }
-
-        function changeDetailPhoto(dir) {
-            if (detailPhotos.length === 0) return;
-            detailIndex = (detailIndex + dir + detailPhotos.length) % detailPhotos.length;
-            const g = document.getElementById('detailGallery');
-            if (g) g.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
-            renderDetailDots();
-        }
-
-        function updateDetailFavoriteBtn() {
-            const btn = document.getElementById('detailFavoriteBtn');
-            if (!btn) return;
-            if (currentDetailId && isFavorite(currentDetailId)) { btn.className = 'fas fa-heart'; btn.style.color = '#EF4444'; }
-            else { btn.className = 'far fa-heart'; btn.style.color = 'var(--text-secondary)'; }
-        }
-
-        function toggleDetailFavorite() {
-            if (!currentDetailId) return;
-            toggleFavorite(currentDetailId);
-            updateDetailFavoriteBtn();
-        }
-
         // ================================================================
         // OPTIONS
         // ================================================================
