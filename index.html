@@ -3809,9 +3809,9 @@
             }
         }
 
-        // ================================================================
+        // ============================================================
         // RENDER: повідомлення чату
-        // ================================================================
+        // ============================================================
         function renderChatMessages(container) {
             if (chatMessages.length === 0) {
                 container.innerHTML = `
@@ -3834,6 +3834,32 @@
                         <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
                     </div>`;
                 }).join('');
+            }
+        }
+
+        // ============================================================
+        // Відкриття чату з оголошення
+        // ============================================================
+        async function openChatFromDetail() {
+            if (!currentUser) { navigateTo('auth'); return; }
+            if (!currentDetailListing) {
+                alert('Оголошення не знайдено');
+                return;
+            }
+            const sellerId = currentDetailListing.user_id;
+            
+            // Якщо це власне оголошення — редагуємо
+            if (sellerId === currentUser.id) { 
+                editListing(currentDetailId); 
+                return; 
+            }
+            
+            // Знаходимо або створюємо чат
+            const chat = await findOrCreateChat(sellerId, currentDetailListing.id);
+            if (chat) {
+                openChatDetail(chat.id);
+            } else {
+                alert('❌ Не вдалося створити чат');
             }
         }
         // ================================================================
