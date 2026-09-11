@@ -3888,9 +3888,6 @@
                 }
             }
             
-            // ================================================================
-            // ДЗВІНОК — виправлено
-            // ================================================================
             const callBtn = el('sellerCallBtn');
             if (callBtn) {
                 const phone = listing.phone || userData.phone || '';
@@ -3937,6 +3934,44 @@
             updateDetailFavoriteBtn();
             navigateTo('detail');
         }
+
+        // ================================================================
+        // DETAIL: допоміжні функції (ОБОВ'ЯЗКОВО!)
+        // ================================================================
+        function renderDetailDots() {
+            const c = document.getElementById('detailDots');
+            if (!c) return;
+            if (detailPhotos.length <= 1) { c.innerHTML = ''; return; }
+            c.innerHTML = detailPhotos.map((_, i) => `<span class="${i === detailIndex ? 'active' : ''}" onclick="changeDetailPhoto(${i - detailIndex})"></span>`).join('');
+        }
+
+        function changeDetailPhoto(dir) {
+            if (detailPhotos.length === 0) return;
+            detailIndex = (detailIndex + dir + detailPhotos.length) % detailPhotos.length;
+            const g = document.getElementById('detailGallery');
+            if (g) g.style.backgroundImage = `url('${detailPhotos[detailIndex]}')`;
+            renderDetailDots();
+        }
+
+        function updateDetailFavoriteBtn() {
+            const btn = document.getElementById('detailFavoriteBtn');
+            if (!btn) return;
+            if (currentDetailId && isFavorite(currentDetailId)) { 
+                btn.className = 'fas fa-heart'; 
+                btn.style.color = '#EF4444'; 
+            }
+            else { 
+                btn.className = 'far fa-heart'; 
+                btn.style.color = 'var(--text-secondary)'; 
+            }
+        }
+
+        function toggleDetailFavorite() {
+            if (!currentDetailId) return;
+            toggleFavorite(currentDetailId);
+            updateDetailFavoriteBtn();
+        }
+
         // ================================================================
         // OPTIONS
         // ================================================================
@@ -3958,7 +3993,6 @@
             alert('✅ Скаргу надіслано!');
             closeOptionsModal();
         }
-
         // ================================================================
         // ФОТО
         // ================================================================
