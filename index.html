@@ -3092,7 +3092,18 @@
         // ================================================================
         // NAVIGATION
         // ================================================================
-        window.navigateTo = function(page) {
+         window.navigateTo = function(page) {
+            // ============================================================
+            // REALTIME: відписуємось при виході з чату
+            // ============================================================
+            if (currentPage === 'chat-detail' && page !== 'chat-detail') {
+                if (typeof realtimeSubscription !== 'undefined' && realtimeSubscription) {
+                    supabase.removeChannel(realtimeSubscription);
+                    realtimeSubscription = null;
+                    console.log('📡 Realtime відключено');
+                }
+            }
+            
             if (page === 'auth') {
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById('page-auth')?.classList.add('active');
@@ -3702,8 +3713,17 @@
             } catch (e) { alert('❌ ' + e.message); }
         }
 
+        let realtimeSubscription = null;
+
         async function openChatDetail(chatId) {
             currentChatId = chatId;
+            
+            // Відписуємось від попередньої підписки (якщо є)
+            if (realtimeSubscription) {
+                supabase.removeChannel(realtimeSubscription);
+                realtimeSubscription = null;
+            }
+            
             try {
                 const { data: messages } = await supabase
                     .from('messages')
@@ -3716,28 +3736,7 @@
                 const container = document.getElementById('chatMessages');
                 if (!container) return;
                 
-                if (chatMessages.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align:center; color:var(--text-secondary); padding:30px;">
-                            <i class="fas fa-comment-dots" style="font-size:32px; margin-bottom:10px; display:block;"></i>
-                            <p>Немає повідомлень</p>
-                            <p style="font-size:12px;">Напишіть перше повідомлення</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = chatMessages.map(msg => {
-                        const isOwn = msg.sender_id === currentUser.id;
-                        const status = isOwn 
-                            ? (msg.is_read 
-                                ? '<i class="fas fa-check-double"></i>'
-                                : '<i class="fas fa-check"></i>')
-                            : '';
-                        return `<div class="chat-message ${isOwn ? 'own' : 'other'}">
-                            ${msg.text}
-                            <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
-                        </div>`;
-                    }).join('');
-                }
+                renderChatMessages(container);
                 
                 const chat = chats.find(c => c.id === chatId);
                 if (chat) {
@@ -3764,21 +3763,79 @@
                 if (localChat) localChat.unread_count = 0;
                 updateChatBadge();
                 
+                // ============================================================
+                // REALTIME: підписка на нові повідомлення в цьому чаті
+                // ============================================================
+                console.log('📡 Підписка на чат:', chatId);
+                
+                realtimeSubscription = supabase
+                    .channel(`chat-${chatId}`)
+                    .on('postgres_changes', {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'messages',
+                        filter: `chat_id=eq.${chatId}`
+                    }, (payload) => {
+                        console.log('📨 Нове повідомлення (realtime):', payload.new);
+                        const newMsg = payload.new;
+                        
+                        // Перевірка на дублікат
+                        if (chatMessages.find(m => m.id === newMsg.id)) return;
+                        
+                        chatMessages.push(newMsg);
+                        
+                        const container = document.getElementById('chatMessages');
+                        if (container) {
+                            const isOwn = newMsg.sender_id === currentUser.id;
+                            const msgDiv = document.createElement('div');
+                            msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
+                            msgDiv.innerHTML = `${newMsg.text}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
+                            container.appendChild(msgDiv);
+                            container.scrollTop = container.scrollHeight;
+                        }
+                        
+                        // Якщо повідомлення не від нас — позначаємо прочитаним
+                        if (newMsg.sender_id !== currentUser.id) {
+                            markMessagesAsRead(chatId);
+                        }
+                    })
+                    .subscribe((status) => {
+                        console.log('📡 Realtime status:', status);
+                    });
+                
             } catch (e) {
                 console.error('Помилка відкриття чату:', e);
                 alert('❌ ' + e.message);
             }
         }
 
-        async function openChatFromDetail() {
-            if (!currentUser) { navigateTo('auth'); return; }
-            if (!currentDetailListing) return;
-            const sellerId = currentDetailListing.user_id;
-            if (sellerId === currentUser.id) { editListing(currentDetailId); return; }
-            const chat = await findOrCreateChat(sellerId, currentDetailListing.id);
-            if (chat) openChatDetail(chat.id);
+        // ================================================================
+        // RENDER: повідомлення чату
+        // ================================================================
+        function renderChatMessages(container) {
+            if (chatMessages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; color:var(--text-secondary); padding:30px;">
+                        <i class="fas fa-comment-dots" style="font-size:32px; margin-bottom:10px; display:block;"></i>
+                        <p>Немає повідомлень</p>
+                        <p style="font-size:12px;">Напишіть перше повідомлення</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = chatMessages.map(msg => {
+                    const isOwn = msg.sender_id === currentUser.id;
+                    const status = isOwn 
+                        ? (msg.is_read 
+                            ? '<i class="fas fa-check-double"></i>'
+                            : '<i class="fas fa-check"></i>')
+                        : '';
+                    return `<div class="chat-message ${isOwn ? 'own' : 'other'}">
+                        ${msg.text}
+                        <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
+                    </div>`;
+                }).join('');
+            }
         }
-
         // ================================================================
         // DETAIL
         // ================================================================
