@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <link rel="icon" href="data:," />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-    <!-- Font Awesome з jsdelivr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@6.5.1/css/all.min.css" />
     <style>
         * {
@@ -56,9 +55,7 @@
         }
         .hidden { display: none !important; }
 
-        /* ================================================================
-           ІКОНКИ — розміри (Font Awesome контролює гліфи)
-           ================================================================ */
+        /* ІКОНКИ — розміри */
         .logo i { font-size: 18px; color: var(--gold); }
         .header-actions button i { font-size: 20px; }
         .profile-menu-item i { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
@@ -67,8 +64,8 @@
         .pro-feature-item i { font-size: 16px; width: 24px; text-align: center; flex-shrink: 0; }
         .category-item i { font-size: 18px; }
         .back-btn i { font-size: 20px; }
-        .favorites-empty i { font-size: 22px !important; }   /* ← ЗМІНЕНО */
-        .empty-state i { font-size: 22px !important; }       /* ← ЗМІНЕНО */
+        .favorites-empty i { font-size: 48px; }
+        .empty-state i { font-size: 40px; }
         .help-cat-header .cat-icon { font-size: 22px; }
         .options-item i { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
         .card-contact-item i { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
@@ -79,9 +76,7 @@
         .success-modal .icon i { font-size: 56px; }
         .auth-box .password-toggle i { font-size: 18px; }
 
-        /* ================================================================
-           HEADER
-           ================================================================ */
+        /* HEADER */
         .header {
             display: flex;
             align-items: center;
@@ -167,9 +162,7 @@
         .status-error { background: var(--danger); color: white; }
         .status-waiting { background: #F59E0B; color: white; }
 
-        /* ================================================================
-           AUTH
-           ================================================================ */
+        /* AUTH */
         .auth-container {
             display: flex;
             flex-direction: column;
@@ -320,9 +313,7 @@
             text-decoration: none;
         }
 
-        /* ================================================================
-           SEARCH BAR
-           ================================================================ */
+        /* SEARCH BAR */
         .search-bar { padding: 4px 0 12px 0; }
         .search-bar-inner {
             display: flex;
@@ -350,9 +341,7 @@
             color: var(--text);
         }
 
-        /* ================================================================
-           CATEGORIES
-           ================================================================ */
+        /* CATEGORIES */
         .category-slider {
             padding: 4px 0 14px 0;
             overflow-x: auto;
@@ -393,9 +382,7 @@
         .category-item.active i { color: var(--accent); }
         .category-item.active span { color: var(--accent); }
 
-        /* ================================================================
-           SECTION HEADER
-           ================================================================ */
+        /* SECTION HEADER */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -411,9 +398,7 @@
             cursor: pointer;
         }
 
-        /* ================================================================
-           LISTING CARDS
-           ================================================================ */
+        /* LISTING CARDS */
         .listing-scroll {
             display: flex;
             gap: 12px;
@@ -501,9 +486,7 @@
             box-shadow: 0 6px 20px rgba(0, 102, 255, 0.25);
         }
 
-        /* ================================================================
-           BOTTOM NAV
-           ================================================================ */
+        /* BOTTOM NAV */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -573,9 +556,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ================================================================
-           SEARCH PAGE
-           ================================================================ */
+        /* SEARCH PAGE */
         .search-filters {
             display: flex;
             gap: 8px;
@@ -641,9 +622,7 @@
             color: var(--text-dim);
         }
 
-        /* ================================================================
-           FAVORITES
-           ================================================================ */
+        /* FAVORITES */
         .favorites-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
         .favorites-empty i { color: var(--border); margin-bottom: 16px; }
         .favorites-empty h3 { font-weight: 600; font-size: 18px; color: var(--text); }
@@ -651,9 +630,7 @@
         .empty-state i { color: var(--border); display: block; margin-bottom: 12px; margin-left: auto; margin-right: auto; }
         .empty-state h3 { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 4px; }
 
-        /* ================================================================
-           PROFILE
-           ================================================================ */
+        /* PROFILE */
         .profile-header { padding: 16px 0 12px 0; display: flex; align-items: center; gap: 14px; }
         .profile-avatar {
             width: 60px;
@@ -710,9 +687,7 @@
         .profile-menu-item .arrow { margin-left: auto; color: var(--border); }
         .profile-menu-item.danger { color: var(--danger); }
 
-        /* ================================================================
-           ADD LISTING
-           ================================================================ */
+        /* ADD LISTING */
         .add-listing-form .form-group { margin-bottom: 14px; }
         .add-listing-form label {
             display: block;
@@ -767,9 +742,7 @@
             cursor: pointer;
         }
 
-        /* ================================================================
-           DETAIL
-           ================================================================ */
+        /* DETAIL */
         .detail-gallery {
             height: 220px;
             background: var(--border);
@@ -865,7 +838,8 @@
         .seller-box .info .name { font-weight: 600; font-size: 14px; }
         .seller-box .info .since { font-size: 12px; color: var(--text-secondary); }
         .seller-box .actions { display: flex; gap: 6px; }
-        .seller-box .actions button {
+        .seller-box .actions button,
+        .seller-box .actions a {
             padding: 7px 12px;
             border: none;
             border-radius: 40px;
@@ -873,13 +847,15 @@
             font-size: 12px;
             font-family: var(--font);
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
         }
         .seller-box .actions .btn-chat { background: var(--accent); color: #fff; }
         .seller-box .actions .btn-call { background: var(--border); color: var(--text); }
 
-        /* ================================================================
-           CHAT
-           ================================================================ */
+        /* CHAT */
         .chat-messages {
             display: flex;
             flex-direction: column;
@@ -930,9 +906,7 @@
             cursor: pointer;
         }
 
-        /* ================================================================
-           SETTINGS
-           ================================================================ */
+        /* SETTINGS */
         .settings-group { margin-bottom: 20px; }
         .settings-item {
             display: flex;
@@ -995,9 +969,7 @@
         }
         .back-header .title { font-weight: 600; font-size: 16px; }
 
-        /* ================================================================
-           MODALS
-           ================================================================ */
+        /* MODALS */
         .options-modal, .filter-modal, .success-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -1099,9 +1071,7 @@
             cursor: pointer;
         }
 
-        /* ================================================================
-           HELP
-           ================================================================ */
+        /* HELP */
         .help-category {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -1161,9 +1131,7 @@
         .help-no-results { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
         .help-no-results i { color: var(--border); margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
 
-        /* ================================================================
-           UAMO PRO СТИЛІ
-           ================================================================ */
+        /* UAMO PRO */
         .pro-badge {
             display: inline-flex;
             align-items: center;
@@ -1414,6 +1382,29 @@
             left: 18px;
         }
 
+        /* ЧАТИ — онлайн-статус, час, прочитано */
+        .chat-online-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--success);
+            border: 2px solid var(--card-bg);
+            position: absolute; bottom: 0; right: 0;
+        }
+        .chat-online-dot.offline { background: var(--text-dim); }
+        .chat-partner-avatar-wrap { position: relative; display: inline-block; flex-shrink: 0; }
+        .chat-partner-avatar-wrap .avatar-small,
+        .chat-partner-avatar-wrap img {
+            width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+        }
+        .chat-status-text { font-size: 11px; color: var(--success); margin-top: 2px; }
+        .chat-status-text.offline { color: var(--text-dim); }
+        .chat-message-status { font-size: 10px; margin-left: 6px; opacity: 0.8; }
+        .chat-message-status .fa-check { color: rgba(255, 255, 255, 0.6); }
+        .chat-message-status .fa-check-double { color: #4FC3F7; }
+        .chat-delete-btn {
+            background: none; border: none; color: var(--danger);
+            cursor: pointer; font-size: 16px; padding: 8px;
+        }
+
         @media (min-width: 640px) {
             .app-container { max-width: 600px; padding: 0 24px 80px 24px; }
             .bottom-nav { max-width: 600px; border-radius: 16px 16px 0 0; }
@@ -1427,51 +1418,6 @@
             .category-item i { font-size: 16px; }
             .category-item span { font-size: 8px; }
         }
-
-        /* ================================================================
-           FIX: Оптимальний розмір іконок (22px)
-           ================================================================ */
-        .empty-state i,
-        .favorites-empty i {
-            font-size: 22px !important;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-
-        .empty-state,
-        .favorites-empty {
-            padding: 40px 20px;
-        }
-
-        /* Іконки в кнопках порожніх станів */
-        .favorites-empty .btn-submit i,
-        .empty-state .btn-submit i,
-        .favorites-empty button i,
-        .empty-state button i {
-            font-size: 16px !important;
-            margin: 0 !important;
-        }
-
-        /* Глобальний контроль розмірів іконок */
-        .logo i { font-size: 18px !important; }
-        .header-actions button i { font-size: 20px !important; }
-        .profile-menu-item i { font-size: 16px !important; width: 20px !important; text-align: center; }
-        .bottom-nav-item i { font-size: 20px !important; }
-        .card-section h3 i { font-size: 14px !important; width: 18px !important; text-align: center; }
-        .pro-feature-item i { font-size: 16px !important; width: 24px !important; text-align: center; }
-        .category-item i { font-size: 18px !important; }
-        .back-btn i { font-size: 20px !important; }
-        .help-cat-header .cat-icon { font-size: 22px !important; }
-        .options-item i { font-size: 18px !important; width: 24px !important; text-align: center; }
-        .card-contact-item i { font-size: 16px !important; width: 20px !important; text-align: center; }
-        .search-bar-inner i { font-size: 16px !important; }
-        .listing-card-image .favorite-icon i { font-size: 13px !important; }
-        .seller-box .actions button i { font-size: 14px !important; }
-        .chat-input button i { font-size: 18px !important; }
-        .success-modal .icon i { font-size: 56px !important; }
-        .auth-box .password-toggle i { font-size: 18px !important; }
-        .detail-gallery i { font-size: 42px !important; }
-        
     </style>
 </head>
 <body>
@@ -2230,9 +2176,41 @@
         let detailPhotos = [];
         let detailIndex = 0;
         let currentDetailListing = null;
-        let cities = ['Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв', 'Вінниця',
-            'Полтава', 'Чернігів', 'Черкаси', 'Суми', 'Житомир', 'Рівне', 'Івано-Франківськ', 'Тернопіль', 'Луцьк',
-            'Ужгород', 'Хмельницький'
+        let cities = [
+            'Київ', 'Харків', 'Одеса', 'Дніпро', 'Львів', 'Запоріжжя', 'Кривий Ріг', 'Миколаїв',
+            'Маріуполь', 'Луганськ', 'Вінниця', 'Херсон', 'Полтава', 'Чернігів', 'Черкаси',
+            'Житомир', 'Суми', 'Хмельницький', 'Чернівці', 'Горлівка', 'Рівне', 'Кропивницький',
+            'Івано-Франківськ', 'Кременчук', 'Тернопіль', 'Луцьк', 'Біла Церква', 'Краматорськ',
+            'Мелітополь', 'Керч', 'Нікополь', 'Бердянськ', 'Слов\'янськ', 'Ужгород', 'Алчевськ',
+            'Павлоград', 'Сєвєродонецьк', 'Кам\'янець-Подільський', 'Ковель', 'Мукачево',
+            'Умань', 'Бровари', 'Бердичів', 'Ірпінь', 'Дрогобич', 'Ніжин', 'Стрий',
+            'Коломия', 'Новомосковськ', 'Конотоп', 'Лозова', 'Червоноград', 'Прилуки',
+            'Бориспіль', 'Шостка', 'Ромни', 'Новоград-Волинський', 'Нововолинськ',
+            'Ізмаїл', 'Южне', 'Чорноморськ', 'Білгород-Дністровський', 'Подільськ',
+            'Балта', 'Вознесенськ', 'Первомайськ', 'Очаків', 'Арциз', 'Болград',
+            'Рені', 'Кілія', 'Вилкове', 'Теплодар', 'Южноукраїнськ', 'Врадіївка',
+            'Обухів', 'Вишгород', 'Васильків', 'Боярка', 'Вишневе', 'Буча', 'Гостомель',
+            'Славутич', 'Фастів', 'Сквира', 'Тараща', 'Богуслав', 'Миронівка', 'Кагарлик',
+            'Ржищів', 'Українка', 'Березань', 'Яготин', 'Переяслав',
+            'Золотоноша', 'Сміла', 'Канів', 'Корсунь-Шевченківський', 'Тальне',
+            'Жашків', 'Монастирище', 'Христинівка', 'Маньківка',
+            'Лебедин', 'Охтирка', 'Тростянець', 'Недригайлів',
+            'Білопілля', 'Ворожба', 'Глухів', 'Кролевець', 'Путивль', 'Середина-Буда',
+            'Дружба', 'Ямпіль', 'Новгород-Сіверський', 'Короп',
+            'Мена', 'Сосниця', 'Холми', 'Семенівка', 'Городня', 'Ріпки',
+            'Нові Млини', 'Батурин', 'Бахмач', 'Борзна', 'Ічня',
+            'Варва', 'Срібне', 'Линовиця', 'Мала Дівиця',
+            'Дубно', 'Кременець', 'Бережани', 'Чортків', 'Бучач', 'Зборів', 'Заліщики',
+            'Калуш', 'Надвірна', 'Долина', 'Болехів', 'Галич', 'Рогатин',
+            'Самбір', 'Трускавець', 'Борислав', 'Новояворівськ', 'Яворів', 'Судова Вишня',
+            'Сокаль', 'Радехів', 'Броди', 'Золочів', 'Перемишляни', 'Пустомити',
+            'Лубни', 'Миргород', 'Гадяч', 'Зіньків', 'Хорол',
+            'Знам\'янка', 'Олександрія', 'Світловодськ', 'Долинська', 'Бобринець',
+            'Каховка', 'Нова Каховка', 'Генічеськ', 'Скадовськ', 'Гола Пристань',
+            'Цюрупинськ', 'Берислав', 'Дунаївці', 'Новодністровськ', 'Хотин',
+            'Бахмут', 'Костянтинівка', 'Дружківка', 'Торецьк', 'Селидове', 'Мирноград',
+            'Покровськ', 'Курахове', 'Вугледар', 'Авдіївка', 'Ясинувата', 'Дебальцеве',
+            'Попасна', 'Лисичанськ', 'Рубіжне', 'Кремінна', 'Старобільськ', 'Щастя'
         ];
         let userData = {
             id: null, name: 'Користувач', last_name: '', username: '', phone: '', email: '',
@@ -2615,7 +2593,7 @@
                 console.log(`✅ Критичні дані за ${(performance.now() - start).toFixed(2)}ms`);
 
                 const [chatsRes, myRes, proRes, cardRes, portfolioRes, searchRes] = await Promise.all([
-                    supabase.from('chats').select(`*, listings:listing_id (title), buyer:users!chats_buyer_id_fkey (first_name, avatar_url), seller:users!chats_seller_id_fkey (first_name, avatar_url)`).or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`).order('updated_at', { ascending: false }).limit(30),
+                    supabase.from('chats').select(`*, listings:listing_id (title), buyer:users!chats_buyer_id_fkey (first_name, avatar_url, last_seen), seller:users!chats_seller_id_fkey (first_name, avatar_url, last_seen)`).or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`).order('updated_at', { ascending: false }).limit(30),
                     supabase.from('listings').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(30),
                     supabase.from('pro_users').select('*').eq('user_id', currentUser.id).maybeSingle(),
                     supabase.from('business_cards').select('*').eq('user_id', currentUser.id).maybeSingle(),
@@ -2823,7 +2801,7 @@
             const photo = getFirstPhoto(l);
             const cond = getConditionLabel(l.condition);
             return `<div class="listing-card" onclick="openDetail('${l.id}')">
-                <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center; font-size:32px;`}">
+                <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center;`}">
                     ${!photo ? '<i class="fas fa-image" style="font-size:32px; color:var(--text-secondary);"></i>' : ''}
                     <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${l.id}')"><i class="${fav ? 'fas' : 'far'} fa-heart"></i></button>
                 </div>
@@ -2897,24 +2875,41 @@
             const container = document.getElementById('chatsList');
             if (!container) return;
             if (chats.length === 0) {
-                container.innerHTML = `<div class="favorites-empty"><i class="fas fa-comment-dots" style="color:var(--accent);"></i><h3>Немає чатів</h3></div>`;
+                container.innerHTML = `<div class="favorites-empty"><i class="fas fa-comment-dots" style="color:var(--accent);"></i><h3>Немає чатів</h3><p style="margin-top:8px; color:var(--text-secondary); font-size:13px;">Напишіть продавцю, щоб почати діалог</p></div>`;
             } else {
                 container.innerHTML = chats.map(chat => {
                     const isBuyer = chat.buyer_id === currentUser.id;
                     const partner = isBuyer ? chat.seller : chat.buyer;
                     const name = partner?.first_name || 'Користувач';
-                    const avatar = partner?.avatar_url || name[0] || '👤';
+                    const avatar = partner?.avatar_url || '';
+                    const avatarLetter = name[0]?.toUpperCase() || '👤';
                     const unread = chat.unread_count || 0;
-                    return `<div class="search-result-card" onclick="openChatDetail('${chat.id}')">
-                        <div class="img" style="display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--border);">${avatar}</div>
-                        <div class="info">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-weight:600;">${name}</span>
-                                ${unread > 0 ? `<span style="background:#EF4444; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">${unread}</span>` : ''}
-                            </div>
-                            <div style="font-size:13px; color:var(--text-secondary);">${chat.last_message || 'Немає повідомлень'}</div>
-                            <div class="meta"><span><i class="fas fa-clock"></i> ${chat.last_message_time ? timeAgo(chat.last_message_time) : ''}</span></div>
+                    const lastMsg = chat.last_message || 'Немає повідомлень';
+                    const lastTime = chat.last_message_time ? timeAgo(chat.last_message_time) : '';
+                    const isOnline = partner?.last_seen && (Date.now() - new Date(partner.last_seen).getTime()) < 5 * 60 * 1000;
+                    
+                    return `<div class="search-result-card" onclick="openChatDetail('${chat.id}')" style="position:relative;">
+                        <div class="chat-partner-avatar-wrap">
+                            ${avatar 
+                                ? `<img src="${avatar}" alt="${name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" />`
+                                : `<div style="width:44px;height:44px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;color:var(--primary);">${avatarLetter}</div>`
+                            }
+                            <span class="chat-online-dot ${isOnline ? '' : 'offline'}"></span>
                         </div>
+                        <div class="info" style="flex:1; min-width:0;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                                <span style="font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</span>
+                                <span style="font-size:11px; color:var(--text-dim); white-space:nowrap; flex-shrink:0;">${lastTime}</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:2px;">
+                                <span style="font-size:13px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${lastMsg}</span>
+                                ${unread > 0 ? `<span style="background:#EF4444; color:#fff; border-radius:50%; min-width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; padding:0 6px;">${unread > 99 ? '99+' : unread}</span>` : ''}
+                            </div>
+                            ${isOnline ? `<div class="chat-status-text"><i class="fas fa-circle" style="font-size:6px;"></i> Онлайн</div>` : ''}
+                        </div>
+                        <button class="chat-delete-btn" onclick="event.stopPropagation(); deleteChat('${chat.id}')" title="Видалити чат">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>`;
                 }).join('');
             }
@@ -3175,7 +3170,7 @@
                     <h2 style="font-size:22px; font-weight:700; color:var(--primary); margin-bottom:4px;">UAMO PRO</h2>
                     <p style="font-size:14px; color:var(--text-secondary);">Виберіть тариф</p>
                 </div>
-                ${plans.map(p => `<div class="pro-plan ${selectedPlan === p.id ? 'selected' : ''}" onclick="selectPlan('${p.id}')">${p.popular ? '<span class="plan-badge"><i class="fas fa-fire"></i> Популярний</span>' : ''}<div class="plan-name">${p.name}</div><div class="plan-price">${p.price} грн <span>/ ${p.period}</span></div><div class="plan-features">${p.features.map(f => `<div><i class="fas fa-check" style="color:var(--success); margin-right:6px;"></i>${f}</div>`).join('')}</div></div>`).join('')}
+                ${plans.map(p => `<div class="pro-plan ${selectedPlan === p.id ? 'selected' : ''}" onclick="selectPlan('${p.id}')">${p.popular ? '<span class="plan-badge">Популярний</span>' : ''}<div class="plan-name">${p.name}</div><div class="plan-price">${p.price} грн <span>/ ${p.period}</span></div><div class="plan-features">${p.features.map(f => `<div><i class="fas fa-check" style="color:var(--success); margin-right:6px;"></i>${f}</div>`).join('')}</div></div>`).join('')}
                 <button class="btn-submit" style="background:linear-gradient(135deg, #FFD700, #FFA500); color:var(--primary); font-weight:700; margin-top:12px;" onclick="activatePro()"><i class="fas fa-star"></i> Активувати PRO</button>
                 <p style="text-align:center; font-size:12px; color:var(--text-secondary); margin-top:12px;"><i class="fas fa-info-circle"></i> Оплата буде доступна найближчим часом</p>
             `;
@@ -3597,6 +3592,38 @@
         // ================================================================
         // ЧАТИ
         // ================================================================
+        
+        async function deleteChat(chatId) {
+            if (!confirm('Видалити цей чат? Всі повідомлення будуть видалені.')) return;
+            try {
+                await supabase.from('messages').delete().eq('chat_id', chatId);
+                await supabase.from('chats').delete().eq('id', chatId);
+                chats = chats.filter(c => c.id !== chatId);
+                renderChats();
+                alert('✅ Чат видалено');
+            } catch (e) {
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+
+        async function markMessagesAsRead(chatId) {
+            if (!currentUser) return;
+            try {
+                await supabase
+                    .from('messages')
+                    .update({ is_read: true })
+                    .eq('chat_id', chatId)
+                    .neq('sender_id', currentUser.id);
+                
+                await supabase
+                    .from('chats')
+                    .update({ unread_count: 0 })
+                    .eq('id', chatId);
+            } catch (e) {
+                console.error('Помилка позначки прочитаного:', e);
+            }
+        }
+
         async function findOrCreateChat(sellerId, listingId) {
             if (!currentUser) return null;
             try {
@@ -3620,19 +3647,25 @@
             if (!content || !currentChatId || !currentUser) return;
             try {
                 const { error } = await supabase.from('messages').insert({
-                    chat_id: currentChatId, sender_id: currentUser.id, text: content,
+                    chat_id: currentChatId, 
+                    sender_id: currentUser.id, 
+                    text: content,
+                    is_read: false,
                     created_at: new Date().toISOString()
                 });
                 if (error) throw error;
+                
                 await supabase.from('chats').update({
-                    last_message: content, last_message_time: new Date().toISOString(),
+                    last_message: content, 
+                    last_message_time: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 }).eq('id', currentChatId);
+                
                 const container = document.getElementById('chatMessages');
                 if (container) {
                     const msgDiv = document.createElement('div');
                     msgDiv.className = 'chat-message own';
-                    msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())}</span>`;
+                    msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())} <span class="chat-message-status"><i class="fas fa-check"></i></span></span>`;
                     container.appendChild(msgDiv);
                     container.scrollTop = container.scrollHeight;
                 }
@@ -3643,29 +3676,69 @@
         async function openChatDetail(chatId) {
             currentChatId = chatId;
             try {
-                const { data: messages } = await supabase.from('messages').select('*').eq('chat_id', chatId).order('created_at', { ascending: true });
+                const { data: messages } = await supabase
+                    .from('messages')
+                    .select('*')
+                    .eq('chat_id', chatId)
+                    .order('created_at', { ascending: true });
+                
                 chatMessages = messages || [];
+                
                 const container = document.getElementById('chatMessages');
                 if (!container) return;
+                
                 if (chatMessages.length === 0) {
-                    container.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:30px;"><i class="fas fa-comment-dots" style="font-size:32px;"></i><p>Немає повідомлень</p></div>`;
+                    container.innerHTML = `
+                        <div style="text-align:center; color:var(--text-secondary); padding:30px;">
+                            <i class="fas fa-comment-dots" style="font-size:32px; margin-bottom:10px; display:block;"></i>
+                            <p>Немає повідомлень</p>
+                            <p style="font-size:12px;">Напишіть перше повідомлення</p>
+                        </div>
+                    `;
                 } else {
                     container.innerHTML = chatMessages.map(msg => {
                         const isOwn = msg.sender_id === currentUser.id;
-                        return `<div class="chat-message ${isOwn ? 'own' : 'other'}">${msg.text}<span class="chat-time">${timeAgo(msg.created_at)}</span></div>`;
+                        const status = isOwn 
+                            ? (msg.is_read 
+                                ? '<i class="fas fa-check-double"></i>'
+                                : '<i class="fas fa-check"></i>')
+                            : '';
+                        return `<div class="chat-message ${isOwn ? 'own' : 'other'}">
+                            ${msg.text}
+                            <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
+                        </div>`;
                     }).join('');
                 }
+                
                 const chat = chats.find(c => c.id === chatId);
                 if (chat) {
                     const isBuyer = chat.buyer_id === currentUser.id;
                     const partner = isBuyer ? chat.seller : chat.buyer;
-                    document.getElementById('chatPartnerName').textContent = partner?.first_name || 'Користувач';
-                    document.getElementById('chatPartnerAvatar').textContent = partner?.avatar_url || '👤';
+                    const partnerName = partner?.first_name || 'Користувач';
+                    
+                    document.getElementById('chatPartnerName').textContent = partnerName;
+                    
+                    const avatarEl = document.getElementById('chatPartnerAvatar');
+                    if (partner?.avatar_url) {
+                        avatarEl.innerHTML = `<img src="${partner.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+                    } else {
+                        avatarEl.textContent = partnerName[0]?.toUpperCase() || '👤';
+                    }
                 }
+                
                 navigateTo('chat-detail');
                 setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100);
-                await supabase.from('chats').update({ unread_count: 0 }).eq('id', chatId);
-            } catch (e) { alert('❌ ' + e.message); }
+                
+                await markMessagesAsRead(chatId);
+                
+                const localChat = chats.find(c => c.id === chatId);
+                if (localChat) localChat.unread_count = 0;
+                updateChatBadge();
+                
+            } catch (e) {
+                console.error('Помилка відкриття чату:', e);
+                alert('❌ ' + e.message);
+            }
         }
 
         async function openChatFromDetail() {
@@ -3717,13 +3790,21 @@
                 if (isOwn) { chatBtn.innerHTML = '<i class="fas fa-edit"></i> Редагувати'; chatBtn.onclick = () => editListing(listing.id); }
                 else { chatBtn.innerHTML = '<i class="fas fa-comment"></i> Написати продавцю'; chatBtn.onclick = openChatFromDetail; }
             }
-            if (el('sellerCallBtn')) {
-                el('sellerCallBtn').onclick = () => {
-                    const phone = listing.phone || userData.phone;
-                    if (phone) window.location.href = `tel:${phone}`;
-                    else alert('Номер не вказано');
-                };
+            
+            const callBtn = el('sellerCallBtn');
+            if (callBtn) {
+                const phone = listing.phone || userData.phone || '';
+                const cleanPhone = phone.replace(/[^\d+]/g, '');
+                
+                if (cleanPhone && cleanPhone.length >= 10) {
+                    callBtn.outerHTML = `<a href="tel:${cleanPhone}" class="btn-call" id="sellerCallBtn" style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none; cursor:pointer;"><i class="fas fa-phone"></i></a>`;
+                } else {
+                    callBtn.onclick = () => {
+                        alert('📞 Номер телефону не вказано\n\nЗв\'яжіться з продавцем через чат');
+                    };
+                }
             }
+            
             if (!isOwn) {
                 supabase.from('business_cards').select('id').eq('user_id', listing.user_id).maybeSingle().then(({ data }) => {
                     const btn = document.getElementById('viewSellerCardBtn');
@@ -3999,6 +4080,8 @@
         window.openChatFromDetail = openChatFromDetail;
         window.openChatDetail = openChatDetail;
         window.sendMessage = sendMessage;
+        window.deleteChat = deleteChat;
+        window.markMessagesAsRead = markMessagesAsRead;
         window.editListing = editListing;
         window.deleteListing = deleteListing;
         window.saveProfile = saveProfile;
