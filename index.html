@@ -1446,6 +1446,178 @@
             margin: 0 !important;
             display: inline-block !important;
         }       
+
+
+        /* ================================================================
+           БЕЗПЕКА — сесії, історія входів, небезпечна зона
+           ================================================================ */
+        .session-item {
+            background: var(--card-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .session-item.current {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.05);
+        }
+        .session-item .session-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 102, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .session-item.current .session-icon {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+        .session-item .session-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .session-item .session-info .device {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+        .session-item .session-info .meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .session-item .session-info .meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .session-item .session-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--success);
+            color: #fff;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .session-item .session-kill {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 6px;
+            flex-shrink: 0;
+        }
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .history-item .history-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+        .history-item .history-icon.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+        .history-item .history-icon.failed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        .history-item .history-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .history-item .history-info .title {
+            font-weight: 500;
+            color: var(--text);
+            font-size: 13px;
+        }
+        .history-item .history-info .meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .history-item .history-time {
+            font-size: 11px;
+            color: var(--text-dim);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .danger-zone {
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            background: rgba(239, 68, 68, 0.03);
+        }
+        .danger-zone .danger-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--danger);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .danger-zone .danger-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .danger-zone button {
+            width: 100%;
+            padding: 12px;
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: var(--font);
+        }
+        .sessions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .sessions-header .kill-all-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font);
+        }        
+
         
     </style>
 </head>
@@ -1914,24 +2086,88 @@
             </div>
         </div>
 
-        <!-- SETTINGS: SECURITY -->
+             <!-- SETTINGS: SECURITY -->
         <div class="page" id="page-settings-security">
             <div class="app-container">
                 <div class="back-header">
                     <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
                     <span class="title">Безпека</span>
                 </div>
+                
+                <!-- Основна інформація -->
                 <div class="settings-group">
                     <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
                         <span class="settings-label">Email</span>
                         <span class="settings-value" id="securityEmail">user@example.com</span>
                     </div>
+                    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                        <span class="settings-label">Телефон</span>
+                        <span class="settings-value" id="securityPhone">—</span>
+                    </div>
+                    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                        <span class="settings-label">Останній вхід</span>
+                        <span class="settings-value" id="securityLastLogin">—</span>
+                    </div>
+                </div>
+                
+                <!-- Дії -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Дії</div>
                     <div class="profile-menu-item" onclick="navigateTo('settings-password')"><i class="fas fa-key"></i> Змінити пароль <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('settings-email')"><i class="fas fa-envelope"></i> Змінити email <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-phone')"><i class="fas fa-phone"></i> Змінити телефон <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="toggleTwoFA()">
+                        <i class="fas fa-shield-alt"></i> 
+                        Двофакторна автентифікація 
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                    </div>
+                </div>
+                
+                <!-- Активні сесії -->
+                <div class="settings-group">
+                    <div class="sessions-header">
+                        <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px;">
+                            <i class="fas fa-laptop"></i> Активні сесії
+                        </div>
+                        <button class="kill-all-btn" onclick="killAllSessions()">
+                            <i class="fas fa-times-circle"></i> Завершити всі
+                        </button>
+                    </div>
+                    <div id="sessionsList">
+                        <div style="text-align:center; padding:20px; color:var(--text-secondary); font-size:13px;">
+                            <i class="fas fa-spinner fa-spin"></i> Завантаження...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Історія входів -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-history"></i> Історія входів
+                    </div>
+                    <div id="loginHistoryList">
+                        <div style="text-align:center; padding:20px; color:var(--text-secondary); font-size:13px;">
+                            <i class="fas fa-spinner fa-spin"></i> Завантаження...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Небезпечна зона -->
+                <div class="settings-group" style="margin-top:24px;">
+                    <div class="danger-zone">
+                        <div class="danger-title">
+                            <i class="fas fa-exclamation-triangle"></i> Небезпечна зона
+                        </div>
+                        <div class="danger-desc">
+                            Видалення акаунта призведе до втрати всіх даних: оголошень, чатів, повідомлень, обраного. Цю дію неможливо скасувати.
+                        </div>
+                        <button onclick="confirmDeleteAccount()">
+                            <i class="fas fa-trash-alt"></i> Видалити акаунт назавжди
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-
         <!-- HELP PAGE -->
         <div class="page" id="page-help">
             <div class="app-container">
@@ -2535,6 +2771,7 @@
                         currentUser = data.user;
                         showAuthSuccess('✅ Вхід виконано!');
                         await loadAllData();
+                        await recordSession();
                         setTimeout(() => navigateTo('home'), 200);
                     }
                 } else {
@@ -3148,10 +3385,13 @@
                 case 'pro-card-edit': renderProCardEdit(); break;
                 case 'pro-portfolio': renderProPortfolio(); break;
                 case 'saved-searches': renderSavedSearches(); break;
+                case 'settings-security':
+                    loadSessions();
+                    loadLoginHistory();
+                    break;
                 default: break;
             }
         }
-
         // ================================================================
         // UAMO PRO
         // ================================================================
@@ -4304,6 +4544,283 @@
         window.toggleSearchNotifications = toggleSearchNotifications;
         window.deleteSavedSearch = deleteSavedSearch;
 
+        // ================================================================
+        // БЕЗПЕКА: сесії, історія, 2FA, видалення
+        // ================================================================
+        
+        // Інформація про пристрій
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            let browser = 'Невідомий';
+            let os = 'Невідома';
+            
+            if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Chrome';
+            else if (ua.includes('Firefox')) browser = 'Firefox';
+            else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
+            else if (ua.includes('Edg')) browser = 'Edge';
+            else if (ua.includes('Opera') || ua.includes('OPR')) browser = 'Opera';
+            
+            if (ua.includes('Windows')) os = 'Windows';
+            else if (ua.includes('Mac')) os = 'macOS';
+            else if (ua.includes('Linux')) os = 'Linux';
+            else if (ua.includes('Android')) os = 'Android';
+            else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS';
+            
+            const isTelegram = !!window.Telegram?.WebApp?.initData;
+            if (isTelegram) browser = 'Telegram';
+            
+            const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+            
+            return {
+                device: isMobile ? '📱 Мобільний' : '💻 Комп\'ютер',
+                browser: browser,
+                os: os,
+                full: `${browser} • ${os}`,
+                isTelegram: isTelegram,
+                isMobile: isMobile
+            };
+        }
+        
+        // Завантаження сесій
+        async function loadSessions() {
+            const container = document.getElementById('sessionsList');
+            if (!container || !currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('user_sessions')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('last_active', { ascending: false })
+                    .limit(10);
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:var(--text-secondary); font-size:13px;">
+                            <i class="fas fa-info-circle"></i> Немає активних сесій
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.map(session => {
+                    const isCurrent = session.is_current;
+                    const icon = session.device_info?.includes('Мобільний') ? 'fa-mobile-alt' : 'fa-laptop';
+                    return `
+                        <div class="session-item ${isCurrent ? 'current' : ''}">
+                            <div class="session-icon">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div class="session-info">
+                                <div class="device">${session.device_info || 'Невідомий пристрій'}</div>
+                                <div class="meta">
+                                    <span><i class="fas fa-globe"></i> ${session.browser || 'Невідомо'} • ${session.os || 'Невідомо'}</span>
+                                    <span><i class="fas fa-clock"></i> ${timeAgo(session.last_active)}</span>
+                                </div>
+                            </div>
+                            ${isCurrent ? '<span class="session-badge">Поточна</span>' : 
+                                `<button class="session-kill" onclick="killSession('${session.id}')" title="Завершити сесію">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>`
+                            }
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('Помилка завантаження сесій:', e);
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--danger); font-size:13px;">Помилка завантаження</div>`;
+            }
+        }
+        
+        // Завершення сесії
+        async function killSession(sessionId) {
+            if (!confirm('Завершити цю сесію? Користувач буде виведений з акаунта на цьому пристрої.')) return;
+            try {
+                await supabase.from('user_sessions').delete().eq('id', sessionId);
+                await loadSessions();
+                alert('✅ Сесію завершено');
+            } catch (e) {
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Завершити всі інші сесії
+        async function killAllSessions() {
+            if (!confirm('Завершити ВСІ інші сесії? Всі пристрої, крім поточного, будуть виведені.')) return;
+            try {
+                await supabase.from('user_sessions')
+                    .delete()
+                    .eq('user_id', currentUser.id)
+                    .eq('is_current', false);
+                await loadSessions();
+                alert('✅ Всі інші сесії завершено');
+            } catch (e) {
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Завантаження історії входів
+        async function loadLoginHistory() {
+            const container = document.getElementById('loginHistoryList');
+            if (!container || !currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('login_history')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:var(--text-secondary); font-size:13px;">
+                            <i class="fas fa-info-circle"></i> Немає історії входів
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.map(entry => {
+                    const isSuccess = entry.status === 'success';
+                    return `
+                        <div class="history-item">
+                            <div class="history-icon ${isSuccess ? 'success' : 'failed'}">
+                                <i class="fas ${isSuccess ? 'fa-check' : 'fa-times'}"></i>
+                            </div>
+                            <div class="history-info">
+                                <div class="title">${entry.browser || 'Невідомо'} • ${entry.os || 'Невідомо'}</div>
+                                <div class="meta">${entry.ip_address || 'IP невідомий'} • ${entry.location || '—'}</div>
+                            </div>
+                            <div class="history-time">${timeAgo(entry.created_at)}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('Помилка завантаження історії:', e);
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--danger); font-size:13px;">Помилка завантаження</div>`;
+            }
+        }
+        
+        // Запис сесії при вході
+        async function recordSession() {
+            if (!currentUser) return;
+            try {
+                const deviceInfo = getDeviceInfo();
+                
+                await supabase.from('user_sessions')
+                    .update({ is_current: false })
+                    .eq('user_id', currentUser.id);
+                
+                await supabase.from('user_sessions').insert({
+                    user_id: currentUser.id,
+                    device_info: deviceInfo.device,
+                    browser: deviceInfo.browser,
+                    os: deviceInfo.os,
+                    ip_address: '—',
+                    location: '—',
+                    is_current: true,
+                    last_active: new Date().toISOString()
+                });
+                
+                await supabase.from('login_history').insert({
+                    user_id: currentUser.id,
+                    device_info: deviceInfo.device,
+                    browser: deviceInfo.browser,
+                    os: deviceInfo.os,
+                    ip_address: '—',
+                    location: '—',
+                    status: 'success'
+                });
+                
+                const lastLoginEl = document.getElementById('securityLastLogin');
+                if (lastLoginEl) lastLoginEl.textContent = new Date().toLocaleString('uk-UA');
+                
+                console.log('✅ Сесію записано');
+            } catch (e) {
+                console.error('Помилка запису сесії:', e);
+            }
+        }
+        
+        // Оновлення активності сесії
+        async function updateSessionActivity() {
+            if (!currentUser) return;
+            try {
+                await supabase.from('user_sessions')
+                    .update({ last_active: new Date().toISOString() })
+                    .eq('user_id', currentUser.id)
+                    .eq('is_current', true);
+            } catch (e) { /* ignore */ }
+        }
+        
+        // 2FA — заглушка
+        function toggleTwoFA() {
+            alert('🔐 Двофакторна автентифікація\n\n' +
+                  'Незабаром:\n' +
+                  '• Вхід через Telegram\n' +
+                  '• SMS-код\n' +
+                  '• Email-код\n\n' +
+                  'Функція в розробці 🚧');
+        }
+        
+        // Видалення акаунта
+        function confirmDeleteAccount() {
+            const confirm1 = prompt('⚠️ ВИДАЛЕННЯ АКАУНТА\n\nВсі ваші дані будуть ВИДАЛЕНІ НАЗАВЖДИ:\n• Оголошення\n• Чати та повідомлення\n• Обране\n• Профіль\n• PRO\n\nВведіть "ВИДАЛИТИ" для підтвердження:');
+            if (confirm1 !== 'ВИДАЛИТИ') {
+                if (confirm1 !== null) alert('❌ Скасовано');
+                return;
+            }
+            const confirm2 = confirm('🚨 ОСТАННЄ ПОПЕРЕДЖЕННЯ!\n\nВи впевнені? Цю дію НЕМОЖЛИВО скасувати.');
+            if (!confirm2) return;
+            deleteAccount();
+        }
+        
+        async function deleteAccount() {
+            if (!currentUser) return;
+            try {
+                await supabase.from('messages').delete().eq('sender_id', currentUser.id);
+                await supabase.from('chats').delete().or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`);
+                await supabase.from('favorites').delete().eq('user_id', currentUser.id);
+                await supabase.from('listings').delete().eq('user_id', currentUser.id);
+                await supabase.from('pro_users').delete().eq('user_id', currentUser.id);
+                await supabase.from('business_cards').delete().eq('user_id', currentUser.id);
+                await supabase.from('portfolio_items').delete().eq('user_id', currentUser.id);
+                await supabase.from('saved_searches').delete().eq('user_id', currentUser.id);
+                await supabase.from('user_sessions').delete().eq('user_id', currentUser.id);
+                await supabase.from('login_history').delete().eq('user_id', currentUser.id);
+                await supabase.from('users').delete().eq('id', currentUser.id);
+                
+                await supabase.auth.signOut();
+                
+                alert('✅ Акаунт видалено. До побачення!');
+                currentUser = null;
+                dataLoaded = false;
+                navigateTo('auth');
+            } catch (e) {
+                alert('❌ Помилка видалення: ' + e.message);
+            }
+        }
+        
+        // Експорт
+        window.killSession = killSession;
+        window.killAllSessions = killAllSessions;
+        window.toggleTwoFA = toggleTwoFA;
+        window.confirmDeleteAccount = confirmDeleteAccount;
+        window.loadSessions = loadSessions;
+        window.loadLoginHistory = loadLoginHistory;
+        window.recordSession = recordSession;
+        window.updateSessionActivity = updateSessionActivity;
+        
+        // Автооновлення активності кожні 2 хвилини
+        setInterval(() => {
+            if (currentUser) updateSessionActivity();
+        }, 120000);
+        
+        
         console.log('✅ UAMO готовий!');
     </script>
 
