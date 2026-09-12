@@ -1666,6 +1666,153 @@
         #twoFAToggle.active {
             background: var(--success);
         }
+
+
+        /* ================================================================
+           АНТИСПАМ — скарги, блокування, ліміти
+           ================================================================ */
+        .report-reason {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--card-bg);
+        }
+        .report-reason:hover {
+            border-color: var(--accent);
+            background: rgba(0, 102, 255, 0.02);
+        }
+        .report-reason.selected {
+            border-color: var(--accent);
+            background: rgba(0, 102, 255, 0.05);
+        }
+        .report-reason i {
+            width: 24px;
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        .report-reason.selected i {
+            color: var(--accent);
+        }
+        .report-reason .reason-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .report-reason .check-icon {
+            color: var(--accent);
+            display: none;
+        }
+        .report-reason.selected .check-icon {
+            display: block;
+        }
+        
+        .blocked-user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .blocked-user-item:last-child {
+            border-bottom: none;
+        }
+        .blocked-user-item .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .blocked-user-item .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .blocked-user-item .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .blocked-user-item .user-info .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+        .blocked-user-item .user-info .user-since {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        .blocked-user-item .unblock-btn {
+            padding: 6px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            font-family: var(--font);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .blocked-user-item .unblock-btn:hover {
+            background: var(--border);
+        }
+        
+        .limit-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #B45309;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .limit-warning i {
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .limit-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .limit-info {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         
         
     </style>
@@ -2166,10 +2313,46 @@
                     <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
                     <span class="title">Конфіденційність</span>
                 </div>
+                
+                <!-- Хто бачить -->
                 <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-eye"></i> Хто бачить
+                    </div>
                     <div class="settings-item"><span class="settings-label">Показувати номер телефону</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
                     <div class="settings-item"><span class="settings-label">Показувати місто</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Показувати онлайн-статус</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Показувати останній візит</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                </div>
+                
+                <!-- Хто може писати -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-comment"></i> Хто може писати
+                    </div>
                     <div class="settings-item"><span class="settings-label">Дозволити повідомлення від інших</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Дозволити дзвонити</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                </div>
+                
+                <!-- Пошук -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-search"></i> Пошук
+                    </div>
+                    <div class="settings-item"><span class="settings-label">Знаходити мене за номером</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item"><span class="settings-label">Знаходити мене за ім'ям</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                </div>
+                
+                <!-- Заблоковані -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-ban"></i> Заблоковані
+                    </div>
+                    <div class="profile-menu-item" onclick="openBlockedUsersModal()">
+                        <i class="fas fa-ban" style="color:var(--danger);"></i>
+                        Заблоковані користувачі
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2181,14 +2364,80 @@
                     <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
                     <span class="title">Повідомлення</span>
                 </div>
+                
+                <!-- Хто може писати -->
                 <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-user-check"></i> Хто може написати мені
+                    </div>
                     <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:8px;">
-                        <span class="settings-label">Хто може написати мені:</span>
                         <div class="radio-group">
                             <label class="radio-item active"><input type="radio" name="who_can_message" value="all" checked /> Усі</label>
-                            <label class="radio-item"><input type="radio" name="who_can_message" value="users" /> Користувачі UAMO</label>
+                            <label class="radio-item"><input type="radio" name="who_can_message" value="users" /> Тільки користувачі UAMO</label>
                             <label class="radio-item"><input type="radio" name="who_can_message" value="none" /> Ніхто</label>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Сповіщення -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-bell"></i> Сповіщення
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Звук нових повідомлень</span>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Вібрація</span>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Показувати на екрані блокування</span>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                </div>
+                
+                <!-- Читання -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-check-double"></i> Читання
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Показувати "прочитано"</span>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Показувати "друкує..."</span>
+                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                </div>
+                
+                <!-- Автоматичні відповіді -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-robot"></i> Автоматичні відповіді
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Автовідповідь коли я недоступний</span>
+                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                </div>
+                
+                <!-- Очищення -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-broom"></i> Очищення
+                    </div>
+                    <div class="profile-menu-item" onclick="confirmClearChats()">
+                        <i class="fas fa-trash-alt" style="color:var(--danger);"></i>
+                        Видалити всі чати
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                    </div>
+                    <div class="profile-menu-item" onclick="confirmArchiveChats()">
+                        <i class="fas fa-archive" style="color:var(--text-secondary);"></i>
+                        Архівувати всі чати
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
                     </div>
                 </div>
             </div>
@@ -2451,6 +2700,82 @@
         </nav>
     </div>
 
+
+    <!-- REPORT MODAL -->
+    <div class="filter-modal" id="reportModal">
+        <div class="filter-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+                <h3>🚩 Поскаржитися</h3>
+                <button style="background:none; border:none; font-size:24px; color:var(--text-dim); cursor:pointer;" onclick="closeReportModal()">&times;</button>
+            </div>
+            
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">
+                Оберіть причину скарги. Ми розглянемо її найближчим часом.
+            </p>
+            
+            <div id="reportReasons">
+                <div class="report-reason" data-reason="spam" onclick="selectReportReason(this)">
+                    <i class="fas fa-envelope"></i>
+                    <span class="reason-text">Спам або реклама</span>
+                    <i class="fas fa-check-circle check-icon"></i>
+                </div>
+                <div class="report-reason" data-reason="fraud" onclick="selectReportReason(this)">
+                    <i class="fas fa-user-secret"></i>
+                    <span class="reason-text">Шахрайство</span>
+                    <i class="fas fa-check-circle check-icon"></i>
+                </div>
+                <div class="report-reason" data-reason="inappropriate" onclick="selectReportReason(this)">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span class="reason-text">Некоректний зміст</span>
+                    <i class="fas fa-check-circle check-icon"></i>
+                </div>
+                <div class="report-reason" data-reason="wrong_category" onclick="selectReportReason(this)">
+                    <i class="fas fa-folder"></i>
+                    <span class="reason-text">Неправильна категорія</span>
+                    <i class="fas fa-check-circle check-icon"></i>
+                </div>
+                <div class="report-reason" data-reason="duplicate" onclick="selectReportReason(this)">
+                    <i class="fas fa-copy"></i>
+                    <span class="reason-text">Дублікат оголошення</span>
+                    <i class="fas fa-check-circle check-icon"></i>
+                </div>
+                <div class="report-reason" data-reason="other" onclick="selectReportReason(this)">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span class="reason-text">Інше</span>
+                    <i class="fas fa-check-circle check-icon"></i>
+                </div>
+            </div>
+            
+            <div class="filter-group" style="margin-top:16px;">
+                <h4>Додатковий коментар (необов'язково)</h4>
+                <textarea id="reportDescription" class="filter-input" rows="3" placeholder="Опишіть проблему детальніше..."></textarea>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="btn-apply" onclick="submitReport()">Надіслати скаргу</button>
+                <button class="btn-reset" onclick="closeReportModal()">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLOCKED USERS MODAL -->
+    <div class="success-modal" id="blockedUsersModal">
+        <div class="modal-box" style="max-width: 400px; text-align: left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+                <h3 style="font-size:18px; font-weight:700;">🚫 Заблоковані</h3>
+                <button style="background:none; border:none; font-size:24px; color:var(--text-dim); cursor:pointer;" onclick="closeBlockedUsersModal()">&times;</button>
+            </div>
+            
+            <div id="blockedUsersList">
+                <div style="text-align:center; padding:20px; color:var(--text-secondary); font-size:13px;">
+                    <i class="fas fa-spinner fa-spin"></i> Завантаження...
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
     <!-- 2FA MODAL -->
     <div class="success-modal" id="twoFAModal">
         <div class="modal-box" style="max-width: 400px;">
