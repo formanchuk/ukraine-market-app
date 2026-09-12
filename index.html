@@ -1618,6 +1618,55 @@
             font-family: var(--font);
         }        
 
+        /* ================================================================
+           2FA — двофакторна автентифікація
+           ================================================================ */
+        .twofa-input {
+            width: 46px;
+            height: 54px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            outline: none;
+            transition: var(--transition);
+        }
+        .twofa-input:focus {
+            border-color: var(--accent);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.15);
+        }
+        .twofa-input.filled {
+            border-color: var(--accent);
+            background: rgba(0, 102, 255, 0.05);
+        }
+        .twofa-input.error {
+            border-color: var(--danger);
+            animation: shake 0.3s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .backup-code {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--card-bg);
+            border-radius: 6px;
+            margin: 4px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+        #twoFAToggle.active {
+            background: var(--success);
+        }
+        
         
     </style>
 </head>
@@ -2175,10 +2224,15 @@
                     <div class="profile-menu-item" onclick="navigateTo('settings-password')"><i class="fas fa-key"></i> Змінити пароль <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('settings-email')"><i class="fas fa-envelope"></i> Змінити email <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('settings-phone')"><i class="fas fa-phone"></i> Змінити телефон <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="toggleTwoFA()">
+                    <div class="profile-menu-item" onclick="openTwoFASettings()">
                         <i class="fas fa-shield-alt"></i> 
-                        Двофакторна автентифікація 
-                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                        <div style="flex:1; display:flex; flex-direction:column;">
+                            <span>Двофакторна автентифікація</span>
+                            <span id="twoFAStatusText" style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Вимкнено</span>
+                        </div>
+                        <div class="toggle-switch" id="twoFAToggle" onclick="event.stopPropagation(); toggleTwoFA();">
+                            <div class="toggle-thumb"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -2397,6 +2451,70 @@
         </nav>
     </div>
 
+    <!-- 2FA MODAL -->
+    <div class="success-modal" id="twoFAModal">
+        <div class="modal-box" style="max-width: 400px;">
+            <div class="icon" style="color: var(--accent);"><i class="fas fa-shield-alt"></i></div>
+            <h3 id="twoFATitle">Підтвердження входу</h3>
+            <p id="twoFAMessage" style="margin-bottom: 20px;">Введіть 6-значний код, надісланий на вашу пошту</p>
+            
+            <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 20px;" id="twoFAInputs">
+                <input type="text" maxlength="1" class="twofa-input" data-index="0" inputmode="numeric" />
+                <input type="text" maxlength="1" class="twofa-input" data-index="1" inputmode="numeric" />
+                <input type="text" maxlength="1" class="twofa-input" data-index="2" inputmode="numeric" />
+                <input type="text" maxlength="1" class="twofa-input" data-index="3" inputmode="numeric" />
+                <input type="text" maxlength="1" class="twofa-input" data-index="4" inputmode="numeric" />
+                <input type="text" maxlength="1" class="twofa-input" data-index="5" inputmode="numeric" />
+            </div>
+            
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">
+                <span id="twoFATimer">Код дійсний: 10:00</span>
+            </div>
+            
+            <div class="btn-group" style="flex-direction: column; gap: 8px;">
+                <button class="btn-primary-modal" id="twoFAVerifyBtn" onclick="verifyTwoFACode()" style="width: 100%;">
+                    <i class="fas fa-check"></i> Підтвердити
+                </button>
+                <button class="btn-secondary-modal" onclick="resendTwoFACode()" style="width: 100%;">
+                    <i class="fas fa-redo"></i> Надіслати код знову
+                </button>
+                <button class="btn-secondary-modal" onclick="cancelTwoFA()" style="width: 100%; background: transparent; color: var(--danger);">
+                    Скасувати
+                </button>
+            </div>
+            
+            <div id="twoFAError" style="margin-top: 12px; color: var(--danger); font-size: 13px; display: none;"></div>
+        </div>
+    </div>
+
+    <!-- BACKUP CODES MODAL -->
+    <div class="success-modal" id="backupCodesModal">
+        <div class="modal-box" style="max-width: 400px;">
+            <div class="icon" style="color: var(--success);"><i class="fas fa-key"></i></div>
+            <h3>🔐 Резервні коди</h3>
+            <p style="margin-bottom: 16px; font-size: 13px;">Збережіть ці коди в безпечному місці. Кожен код можна використати <b>тільки один раз</b> для входу, якщо ви втратите доступ до пошти.</p>
+            
+            <div id="backupCodesList" style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px; font-family: monospace; font-size: 14px; line-height: 1.8; letter-spacing: 1px; text-align: center;">
+                <!-- Коди тут -->
+            </div>
+            
+            <div class="btn-group" style="flex-direction: column; gap: 8px;">
+                <button class="btn-primary-modal" onclick="copyBackupCodes()" style="width: 100%;">
+                    <i class="fas fa-copy"></i> Скопіювати всі
+                </button>
+                <button class="btn-secondary-modal" onclick="downloadBackupCodes()" style="width: 100%;">
+                    <i class="fas fa-download"></i> Завантажити
+                </button>
+                <button class="btn-secondary-modal" onclick="closeBackupCodesModal()" style="width: 100%; background: transparent;">
+                    Я зберіг коди ✓
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+
+    
     <!-- SUCCESS MODAL -->
     <div class="success-modal" id="successModal">
         <div class="modal-box">
@@ -4913,6 +5031,534 @@
         setInterval(() => {
             if (currentUser) updateSessionActivity();
         }, 120000);
+        
+
+        // ================================================================
+        // 2FA — Двофакторна автентифікація (Email)
+        // ================================================================
+        
+        let pending2FAUserId = null; // ID користувача, який проходить 2FA
+        let twoFAInterval = null;    // Таймер зворотного відліку
+        let twoFACurrentCode = null; // Поточний код (для тесту)
+        
+        // Генерація 6-значного коду
+        function generate2FACode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        
+        // Генерація 10 резервних кодів
+        function generateBackupCodes() {
+            const codes = [];
+            for (let i = 0; i < 10; i++) {
+                const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+                codes.push(code);
+            }
+            return codes;
+        }
+        
+        // Відкриття налаштувань 2FA
+        async function openTwoFASettings() {
+            if (!currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('two_factor_settings')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+                
+                if (error) throw error;
+                
+                const enabled = data?.enabled || false;
+                
+                if (enabled) {
+                    // Якщо вже увімкнено — показати меню
+                    const action = confirm(
+                        '🔐 Двофакторна автентифікація УВІМКНЕНА\n\n' +
+                        'При кожному вході ви отримуєте код на пошту.\n\n' +
+                        'OK — Вимкнути 2FA\n' +
+                        'Скасувати — залишити увімкненою'
+                    );
+                    if (action) {
+                        await disableTwoFA();
+                    }
+                } else {
+                    // Якщо вимкнено — запропонувати увімкнути
+                    const action = confirm(
+                        '🔐 Двофакторна автентифікація\n\n' +
+                        'Захистіть свій акаунт додатковим кодом при вході.\n\n' +
+                        'OK — Увімкнути 2FA\n' +
+                        'Скасувати — залишити вимкненою'
+                    );
+                    if (action) {
+                        await enableTwoFA();
+                    }
+                }
+            } catch (e) {
+                console.error('Помилка 2FA:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Toggle 2FA (перемикач)
+        async function toggleTwoFA() {
+            const toggle = document.getElementById('twoFAToggle');
+            if (!toggle || !currentUser) return;
+            
+            const isEnabled = toggle.classList.contains('active');
+            
+            if (isEnabled) {
+                if (confirm('🔐 Вимкнути 2FA?\n\nВаш акаунт стане менш захищеним.')) {
+                    await disableTwoFA();
+                }
+            } else {
+                if (confirm('🔐 Увімкнути 2FA?\n\nПри кожному вході ви будете отримувати код на пошту.')) {
+                    await enableTwoFA();
+                }
+            }
+        }
+        
+        // Увімкнення 2FA
+        async function enableTwoFA() {
+            if (!currentUser) return;
+            
+            try {
+                // Генеруємо резервні коди
+                const backupCodes = generateBackupCodes();
+                
+                // Зберігаємо налаштування
+                const { error } = await supabase
+                    .from('two_factor_settings')
+                    .upsert({
+                        user_id: currentUser.id,
+                        enabled: true,
+                        backup_codes: backupCodes,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'user_id' });
+                
+                if (error) throw error;
+                
+                // Оновлюємо UI
+                updateTwoFAUI(true);
+                
+                // Показуємо резервні коди
+                showBackupCodes(backupCodes);
+                
+            } catch (e) {
+                console.error('Помилка увімкнення 2FA:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Вимкнення 2FA
+        async function disableTwoFA() {
+            if (!currentUser) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('two_factor_settings')
+                    .update({ enabled: false, updated_at: new Date().toISOString() })
+                    .eq('user_id', currentUser.id);
+                
+                if (error) throw error;
+                
+                // Видаляємо всі коди
+                await supabase.from('two_factor_codes').delete().eq('user_id', currentUser.id);
+                
+                updateTwoFAUI(false);
+                alert('✅ 2FA вимкнено');
+                
+            } catch (e) {
+                console.error('Помилка вимкнення 2FA:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Оновлення UI для 2FA
+        function updateTwoFAUI(enabled) {
+            const toggle = document.getElementById('twoFAToggle');
+            const statusText = document.getElementById('twoFAStatusText');
+            
+            if (toggle) {
+                toggle.classList.toggle('active', enabled);
+            }
+            if (statusText) {
+                statusText.textContent = enabled ? 'Увімкнено ✓' : 'Вимкнено';
+                statusText.style.color = enabled ? 'var(--success)' : 'var(--text-secondary)';
+            }
+        }
+        
+        // Завантаження статусу 2FA при вході
+        async function loadTwoFAStatus() {
+            if (!currentUser) return;
+            
+            try {
+                const { data } = await supabase
+                    .from('two_factor_settings')
+                    .select('enabled')
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+                
+                updateTwoFAUI(data?.enabled || false);
+            } catch (e) {
+                console.error('Помилка завантаження 2FA:', e);
+            }
+        }
+        
+        // Показ резервних кодів
+        function showBackupCodes(codes) {
+            const modal = document.getElementById('backupCodesModal');
+            const list = document.getElementById('backupCodesList');
+            
+            if (!modal || !list) return;
+            
+            list.innerHTML = codes.map(code => 
+                `<span class="backup-code">${code}</span>`
+            ).join('');
+            
+            modal.classList.add('show');
+            
+            // Зберігаємо для копіювання
+            window.currentBackupCodes = codes;
+        }
+        
+        function closeBackupCodesModal() {
+            document.getElementById('backupCodesModal')?.classList.remove('show');
+        }
+        
+        // Копіювання резервних кодів
+        function copyBackupCodes() {
+            const codes = window.currentBackupCodes || [];
+            const text = '🔐 РЕЗЕРВНІ КОДИ UAMO\n\n' + codes.join('\n') + '\n\nЗбережіть у безпечному місці!';
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Коди скопійовано!');
+            }).catch(() => {
+                prompt('Скопіюйте коди:', text);
+            });
+        }
+        
+        // Завантаження резервних кодів як файл
+        function downloadBackupCodes() {
+            const codes = window.currentBackupCodes || [];
+            const text = '🔐 РЕЗЕРВНІ КОДИ UAMO\n\n' + codes.join('\n') + '\n\nЗбережіть у безпечному місці!';
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'uamo-backup-codes.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // ================================================================
+        // ВІДПРАВКА КОДУ
+        // ================================================================
+        
+        // Надсилання коду на email
+        async function send2FACode(userId, email) {
+            try {
+                const code = generate2FACode();
+                const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 хвилин
+                
+                // Зберігаємо код в базі
+                await supabase.from('two_factor_codes').insert({
+                    user_id: userId,
+                    code: code,
+                    expires_at: expiresAt.toISOString()
+                });
+                
+                twoFACurrentCode = code;
+                
+                console.log('📧 2FA код:', code); // Для тестування
+                
+                // Відправляємо email через Supabase (магічне посилання з кодом)
+                // Або використовуємо просту заглушку
+                try {
+                    // Спроба відправити через Supabase Auth
+                    // Це відправить email з посиланням, а не кодом
+                    // Але для простоти — показуємо код
+                } catch (emailError) {
+                    console.warn('Email не відправлено:', emailError);
+                }
+                
+                // Показуємо код (для тестування — потім приберемо)
+                alert(`📧 Код підтвердження: ${code}\n\n(В реальному додатку код прийде на email)`);
+                
+                return { success: true, code };
+                
+            } catch (e) {
+                console.error('Помилка відправки коду:', e);
+                return { success: false, error: e.message };
+            }
+        }
+        
+        // Показ модалки 2FA
+        async function show2FAModal(userId, email) {
+            pending2FAUserId = userId;
+            
+            // Надсилаємо код
+            const result = await send2FACode(userId, email);
+            
+            if (!result.success) {
+                alert('❌ Не вдалося надіслати код: ' + result.error);
+                return;
+            }
+            
+            // Показуємо модалку
+            const modal = document.getElementById('twoFAModal');
+            if (modal) {
+                modal.classList.add('show');
+                
+                // Фокус на перше поле
+                setTimeout(() => {
+                    document.querySelector('.twofa-input[data-index="0"]')?.focus();
+                }, 100);
+                
+                // Запускаємо таймер
+                start2FATimer();
+            }
+        }
+        
+        // Таймер зворотного відліку
+        function start2FATimer() {
+            if (twoFAInterval) clearInterval(twoFAInterval);
+            
+            let seconds = 600; // 10 хвилин
+            
+            const updateTimer = () => {
+                const timerEl = document.getElementById('twoFATimer');
+                if (!timerEl) return;
+                
+                const min = Math.floor(seconds / 60);
+                const sec = seconds % 60;
+                timerEl.textContent = `Код дійсний: ${min}:${sec.toString().padStart(2, '0')}`;
+                
+                if (seconds <= 0) {
+                    clearInterval(twoFAInterval);
+                    timerEl.textContent = 'Код прострочено';
+                    timerEl.style.color = 'var(--danger)';
+                }
+                seconds--;
+            };
+            
+            updateTimer();
+            twoFAInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // Перевірка коду
+        async function verifyTwoFACode() {
+            const inputs = document.querySelectorAll('.twofa-input');
+            const code = Array.from(inputs).map(i => i.value).join('');
+            const errorEl = document.getElementById('twoFAError');
+            
+            if (code.length !== 6) {
+                errorEl.textContent = 'Введіть усі 6 цифр';
+                errorEl.style.display = 'block';
+                return;
+            }
+            
+            try {
+                // Перевіряємо код
+                const { data, error } = await supabase
+                    .from('two_factor_codes')
+                    .select('*')
+                    .eq('user_id', pending2FAUserId)
+                    .eq('code', code)
+                    .eq('used', false)
+                    .gte('expires_at', new Date().toISOString())
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+                
+                if (error) throw error;
+                
+                if (!data) {
+                    // Перевіряємо резервні коди
+                    const { data: settings } = await supabase
+                        .from('two_factor_settings')
+                        .select('backup_codes')
+                        .eq('user_id', pending2FAUserId)
+                        .maybeSingle();
+                    
+                    if (settings?.backup_codes?.includes(code.toUpperCase())) {
+                        // Використовуємо резервний код
+                        const newCodes = settings.backup_codes.filter(c => c !== code.toUpperCase());
+                        await supabase.from('two_factor_settings')
+                            .update({ backup_codes: newCodes })
+                            .eq('user_id', pending2FAUserId);
+                        
+                        // Успіх
+                        complete2FA();
+                        return;
+                    }
+                    
+                    errorEl.textContent = '❌ Невірний або прострочений код';
+                    errorEl.style.display = 'block';
+                    inputs.forEach(i => i.classList.add('error'));
+                    setTimeout(() => inputs.forEach(i => i.classList.remove('error')), 500);
+                    return;
+                }
+                
+                // Позначаємо код як використаний
+                await supabase.from('two_factor_codes')
+                    .update({ used: true })
+                    .eq('id', data.id);
+                
+                complete2FA();
+                
+            } catch (e) {
+                console.error('Помилка перевірки коду:', e);
+                errorEl.textContent = '❌ Помилка: ' + e.message;
+                errorEl.style.display = 'block';
+            }
+        }
+        
+        // Успішне завершення 2FA
+        function complete2FA() {
+            const modal = document.getElementById('twoFAModal');
+            if (modal) modal.classList.remove('show');
+            
+            if (twoFAInterval) {
+                clearInterval(twoFAInterval);
+                twoFAInterval = null;
+            }
+            
+            pending2FAUserId = null;
+            twoFACurrentCode = null;
+            
+            // Входимо в акаунт
+            navigateTo('home');
+            alert('✅ Вхід підтверджено!');
+        }
+        
+        // Скасування 2FA
+        function cancelTwoFA() {
+            const modal = document.getElementById('twoFAModal');
+            if (modal) modal.classList.remove('show');
+            
+            if (twoFAInterval) {
+                clearInterval(twoFAInterval);
+                twoFAInterval = null;
+            }
+            
+            pending2FAUserId = null;
+            twoFACurrentCode = null;
+            
+            // Виходимо з акаунта
+            supabase.auth.signOut();
+            currentUser = null;
+            navigateTo('auth');
+        }
+        
+        // Повторна відправка коду
+        async function resendTwoFACode() {
+            if (!pending2FAUserId) return;
+            
+            const email = userData.email || currentUser?.email;
+            const result = await send2FACode(pending2FAUserId, email);
+            
+            if (result.success) {
+                // Очищаємо поля
+                document.querySelectorAll('.twofa-input').forEach(i => {
+                    i.value = '';
+                    i.classList.remove('filled');
+                });
+                
+                // Фокус на перше поле
+                document.querySelector('.twofa-input[data-index="0"]')?.focus();
+                
+                // Перезапускаємо таймер
+                start2FATimer();
+                
+                const errorEl = document.getElementById('twoFAError');
+                errorEl.textContent = '✅ Код надіслано повторно';
+                errorEl.style.color = 'var(--success)';
+                errorEl.style.display = 'block';
+                setTimeout(() => {
+                    errorEl.style.display = 'none';
+                    errorEl.style.color = 'var(--danger)';
+                }, 3000);
+            }
+        }
+        
+        // Автоматичний перехід між полями
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('twofa-input')) {
+                const value = e.target.value.replace(/\D/g, '');
+                e.target.value = value;
+                
+                if (value) {
+                    e.target.classList.add('filled');
+                    
+                    // Перехід до наступного поля
+                    const nextIndex = parseInt(e.target.dataset.index) + 1;
+                    const nextInput = document.querySelector(`.twofa-input[data-index="${nextIndex}"]`);
+                    if (nextInput) nextInput.focus();
+                    else e.target.blur(); // Останнє поле
+                } else {
+                    e.target.classList.remove('filled');
+                }
+            }
+        });
+        
+        // Backspace — назад
+        document.addEventListener('keydown', function(e) {
+            if (e.target.classList.contains('twofa-input') && e.key === 'Backspace') {
+                if (!e.target.value) {
+                    const prevIndex = parseInt(e.target.dataset.index) - 1;
+                    const prevInput = document.querySelector(`.twofa-input[data-index="${prevIndex}"]`);
+                    if (prevInput) {
+                        prevInput.focus();
+                        prevInput.value = '';
+                        prevInput.classList.remove('filled');
+                    }
+                }
+            }
+            
+            // Enter — перевірка
+            if (e.target.classList.contains('twofa-input') && e.key === 'Enter') {
+                verifyTwoFACode();
+            }
+        });
+        
+        // Вставка коду з буфера
+        document.addEventListener('paste', function(e) {
+            if (e.target.classList.contains('twofa-input')) {
+                e.preventDefault();
+                const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+                
+                if (pasted.length === 6) {
+                    document.querySelectorAll('.twofa-input').forEach((input, i) => {
+                        input.value = pasted[i] || '';
+                        if (input.value) input.classList.add('filled');
+                    });
+                    verifyTwoFACode();
+                }
+            }
+        });
+        
+        // Експорт
+        window.openTwoFASettings = openTwoFASettings;
+        window.toggleTwoFA = toggleTwoFA;
+        window.enableTwoFA = enableTwoFA;
+        window.disableTwoFA = disableTwoFA;
+        window.verifyTwoFACode = verifyTwoFACode;
+        window.cancelTwoFA = cancelTwoFA;
+        window.resendTwoFACode = resendTwoFACode;
+        window.copyBackupCodes = copyBackupCodes;
+        window.downloadBackupCodes = downloadBackupCodes;
+        window.closeBackupCodesModal = closeBackupCodesModal;
+        window.loadTwoFAStatus = loadTwoFAStatus;
+        window.show2FAModal = show2FAModal;
+        
+        // Завантажуємо статус 2FA при завантаженні даних
+        const originalLoadAllData = loadAllData;
+        loadAllData = async function() {
+            await originalLoadAllData();
+            await loadTwoFAStatus();
+        };
         
         
         console.log('✅ UAMO готовий!');
