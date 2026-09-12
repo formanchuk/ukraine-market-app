@@ -1948,10 +1948,69 @@
                     <button class="back-btn" onclick="navigateTo('settings')"><i class="fas fa-arrow-left"></i></button>
                     <span class="title">Обліковий запис</span>
                 </div>
-                <div class="profile-menu">
-                    <div class="profile-menu-item" onclick="navigateTo('settings-email')"><i class="fas fa-envelope"></i> Email <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-phone')"><i class="fas fa-phone"></i> Телефон <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-                    <div class="profile-menu-item" onclick="navigateTo('settings-password')"><i class="fas fa-key"></i> Пароль <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                
+                <!-- Профіль -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-user"></i> Профіль
+                    </div>
+                    <div class="profile-menu-item" onclick="navigateTo('profile-edit')">
+                        <i class="fas fa-user-edit"></i> Редагувати профіль
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                    </div>
+                </div>
+                
+                <!-- Контакти -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-address-card"></i> Контакти
+                    </div>
+                    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                        <span class="settings-label">Email</span>
+                        <span class="settings-value" id="accountEmail">—</span>
+                    </div>
+                    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                        <span class="settings-label">Телефон</span>
+                        <span class="settings-value" id="accountPhone">—</span>
+                    </div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-email')">
+                        <i class="fas fa-envelope"></i> Змінити Email
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                    </div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-phone')">
+                        <i class="fas fa-phone"></i> Змінити телефон
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                    </div>
+                </div>
+                
+                <!-- Місто -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-map-marker-alt"></i> Місто
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Поточне місто</span>
+                        <span class="settings-value" id="accountCity">Київ</span>
+                    </div>
+                    <div class="profile-menu-item" onclick="navigateTo('settings-city')">
+                        <i class="fas fa-city"></i> Змінити місто
+                        <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                    </div>
+                </div>
+                
+                <!-- Інформація -->
+                <div class="settings-group">
+                    <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                        <i class="fas fa-info-circle"></i> Інформація
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">ID акаунта</span>
+                        <span class="settings-value" id="accountId" style="font-family:monospace; font-size:11px;">—</span>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Дата реєстрації</span>
+                        <span class="settings-value" id="accountCreated">—</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3028,6 +3087,19 @@
             if (el('currentEmail')) el('currentEmail').value = userData.email || '';
             if (el('currentPhone')) el('currentPhone').value = userData.phone || '';
             if (el('securityEmail')) el('securityEmail').textContent = userData.email || '';
+            if (el('securityPhone')) el('securityPhone').textContent = userData.phone || '—';
+            
+            // ============================================================
+            // Обліковий запис — нові поля
+            // ============================================================
+            if (el('accountEmail')) el('accountEmail').textContent = userData.email || '—';
+            if (el('accountPhone')) el('accountPhone').textContent = userData.phone || '—';
+            if (el('accountCity')) el('accountCity').textContent = userData.city || 'Київ';
+            if (el('accountId')) el('accountId').textContent = currentUser?.id ? currentUser.id.substring(0, 8) + '...' : '—';
+            if (el('accountCreated')) el('accountCreated').textContent = currentUser?.created_at 
+                ? new Date(currentUser.created_at).toLocaleDateString('uk-UA') 
+                : '—';
+            
             renderCitySelect();
             updateAvatar();
         }
@@ -4618,6 +4690,7 @@
                                 <div class="meta">
                                     <span><i class="fas fa-globe"></i> ${session.browser || 'Невідомо'} • ${session.os || 'Невідомо'}</span>
                                     <span><i class="fas fa-clock"></i> ${timeAgo(session.last_active)}</span>
+                                    ${session.ip_address && session.ip_address !== '—' ? `<span><i class="fas fa-network-wired"></i> ${session.ip_address}</span>` : ''}
                                 </div>
                             </div>
                             ${isCurrent ? '<span class="session-badge">Поточна</span>' : 
@@ -4628,12 +4701,20 @@
                         </div>
                     `;
                 }).join('');
-            } catch (e) {
-                console.error('Помилка завантаження сесій:', e);
-                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--danger); font-size:13px;">Помилка завантаження</div>`;
-            }
-        }
-        
+                
+                // Оновлюємо "Останній вхід"
+                if (data && data.length > 0 && data[0].last_active) {
+                    const lastLoginEl = document.getElementById('securityLastLogin');
+                    if (lastLoginEl) {
+                        lastLoginEl.textContent = new Date(data[0].last_active).toLocaleString('uk-UA', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                }
         // Завершення сесії
         async function killSession(sessionId) {
             if (!confirm('Завершити цю сесію? Користувач буде виведений з акаунта на цьому пристрої.')) return;
@@ -4706,11 +4787,21 @@
             }
         }
         
-        // Запис сесії при вході
+        async function getIPInfo() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                return { ip: data.ip, location: '—' };
+            } catch (e) {
+                return { ip: '—', location: '—' };
+            }
+        }
+
         async function recordSession() {
             if (!currentUser) return;
             try {
                 const deviceInfo = getDeviceInfo();
+                const ipInfo = await getIPInfo();
                 
                 await supabase.from('user_sessions')
                     .update({ is_current: false })
@@ -4721,8 +4812,8 @@
                     device_info: deviceInfo.device,
                     browser: deviceInfo.browser,
                     os: deviceInfo.os,
-                    ip_address: '—',
-                    location: '—',
+                    ip_address: ipInfo.ip,
+                    location: ipInfo.location,
                     is_current: true,
                     last_active: new Date().toISOString()
                 });
@@ -4732,15 +4823,12 @@
                     device_info: deviceInfo.device,
                     browser: deviceInfo.browser,
                     os: deviceInfo.os,
-                    ip_address: '—',
-                    location: '—',
+                    ip_address: ipInfo.ip,
+                    location: ipInfo.location,
                     status: 'success'
                 });
                 
-                const lastLoginEl = document.getElementById('securityLastLogin');
-                if (lastLoginEl) lastLoginEl.textContent = new Date().toLocaleString('uk-UA');
-                
-                console.log('✅ Сесію записано');
+                console.log('✅ Сесію записано:', deviceInfo.browser, ipInfo.ip);
             } catch (e) {
                 console.error('Помилка запису сесії:', e);
             }
