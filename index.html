@@ -4720,19 +4720,7 @@
                 container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--danger); font-size:13px;">Помилка завантаження</div>`;
             }
         }
-                // Оновлюємо "Останній вхід"
-                if (data && data.length > 0 && data[0].last_active) {
-                    const lastLoginEl = document.getElementById('securityLastLogin');
-                    if (lastLoginEl) {
-                        lastLoginEl.textContent = new Date(data[0].last_active).toLocaleString('uk-UA', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-                }
+
         // Завершення сесії
         async function killSession(sessionId) {
             if (!confirm('Завершити цю сесію? Користувач буде виведений з акаунта на цьому пристрої.')) return;
