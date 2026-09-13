@@ -3027,6 +3027,33 @@
         let selectedPlan = 'standard';
 
         // ================================================================
+        // НАЛАШТУВАННЯ (оголошуємо РАНІШЕ, ніж функції)
+        // ================================================================
+        let privacySettings = {
+            show_phone: true,
+            show_city: true,
+            show_online: true,
+            show_last_seen: true,
+            allow_messages: true,
+            allow_calls: true,
+            find_by_phone: true,
+            find_by_name: true
+        };
+        
+        let messageSettings = {
+            sound_enabled: true,
+            vibration_enabled: true,
+            show_on_lock: true,
+            show_read_receipts: true,
+            show_typing: true,
+            auto_reply_enabled: false,
+            auto_reply_text: 'Я зараз недоступний, відповім пізніше'
+        };
+        
+        let typingTimeout = null;
+        let notificationAudio = null;
+
+        // ================================================================
         // КАТЕГОРІЇ
         // ================================================================
         const CATEGORIES_CONFIG = {
@@ -7020,6 +7047,13 @@
         window.sendAutoReply = sendAutoReply;
         window.confirmClearChats = confirmClearChats;
         window.confirmArchiveChats = confirmArchiveChats;
+        
+        // Блокування
+        window.openBlockedUsersModal = openBlockedUsersModal;
+        window.closeBlockedUsersModal = closeBlockedUsersModal;
+        window.loadBlockedUsers = loadBlockedUsers;
+        window.unblockUser = unblockUser;
+        window.blockUser = blockUser;
         
         
         
