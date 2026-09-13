@@ -2410,15 +2410,15 @@
                     </div>
                     <div class="settings-item">
                         <span class="settings-label">Звук нових повідомлень</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                        <div class="toggle-switch active" id="msgSound" onclick="toggleMessageSetting('sound_enabled', this)"><div class="toggle-thumb"></div></div>
                     </div>
                     <div class="settings-item">
                         <span class="settings-label">Вібрація</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                        <div class="toggle-switch active" id="msgVibration" onclick="toggleMessageSetting('vibration_enabled', this)"><div class="toggle-thumb"></div></div>
                     </div>
                     <div class="settings-item">
                         <span class="settings-label">Показувати на екрані блокування</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                        <div class="toggle-switch active" id="msgShowOnLock" onclick="toggleMessageSetting('show_on_lock', this)"><div class="toggle-thumb"></div></div>
                     </div>
                 </div>
                 
@@ -2429,11 +2429,11 @@
                     </div>
                     <div class="settings-item">
                         <span class="settings-label">Показувати "прочитано"</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                        <div class="toggle-switch active" id="msgReadReceipts" onclick="toggleMessageSetting('show_read_receipts', this)"><div class="toggle-thumb"></div></div>
                     </div>
                     <div class="settings-item">
                         <span class="settings-label">Показувати "друкує..."</span>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                        <div class="toggle-switch active" id="msgShowTyping" onclick="toggleMessageSetting('show_typing', this)"><div class="toggle-thumb"></div></div>
                     </div>
                 </div>
                 
@@ -2444,7 +2444,14 @@
                     </div>
                     <div class="settings-item">
                         <span class="settings-label">Автовідповідь коли я недоступний</span>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div>
+                        <div class="toggle-switch" id="msgAutoReply" onclick="toggleMessageSetting('auto_reply_enabled', this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="form-group" id="autoReplyGroup" style="display:none; margin-top:12px;">
+                        <label>Текст автовідповіді</label>
+                        <textarea id="msgAutoReplyText" class="filter-input" rows="2" placeholder="Я зараз недоступний..."></textarea>
+                        <button class="btn-submit" style="margin-top:8px; padding:10px; font-size:14px;" onclick="saveAutoReplyText()">
+                            <i class="fas fa-save"></i> Зберегти текст
+                        </button>
                     </div>
                 </div>
                 
@@ -3931,6 +3938,9 @@
                     break;
                 case 'settings-privacy':
                     applyPrivacySettingsToUI();
+                    break;
+                case 'settings-messages':
+                    applyMessageSettingsToUI();
                     break;
                 default: break;
             }
@@ -6009,6 +6019,7 @@
             await originalLoadAllData();
             await loadTwoFAStatus();
             await loadPrivacySettings();
+            await loadMessageSettings();
         };
         
 
@@ -6673,6 +6684,343 @@
         window.canShowCity = canShowCity;
         
 
+        
+        // ================================================================
+        // ПОВІДОМЛЕННЯ — налаштування, звук, вібрація, автовідповідь
+        // ================================================================
+        
+        let messageSettings = {
+            sound_enabled: true,
+            vibration_enabled: true,
+            show_on_lock: true,
+            show_read_receipts: true,
+            show_typing: true,
+            auto_reply_enabled: false,
+            auto_reply_text: 'Я зараз недоступний, відповім пізніше'
+        };
+        
+        let typingTimeout = null;
+        let notificationAudio = null;
+        
+        // Завантаження налаштувань повідомлень
+        async function loadMessageSettings() {
+            if (!currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('message_settings')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+                
+                if (error && error.code !== 'PGRST116') throw error;
+                
+                if (!data) {
+                    const { data: newData } = await supabase
+                        .from('message_settings')
+                        .insert({ user_id: currentUser.id })
+                        .select()
+                        .single();
+                    messageSettings = newData || messageSettings;
+                } else {
+                    messageSettings = data;
+                }
+                
+                applyMessageSettingsToUI();
+                console.log('✅ Налаштування повідомлень завантажено');
+                
+            } catch (e) {
+                console.error('Помилка завантаження налаштувань повідомлень:', e);
+            }
+        }
+        
+        // Застосування до UI
+        function applyMessageSettingsToUI() {
+            const toggles = {
+                'msgSound': messageSettings.sound_enabled,
+                'msgVibration': messageSettings.vibration_enabled,
+                'msgShowOnLock': messageSettings.show_on_lock,
+                'msgReadReceipts': messageSettings.show_read_receipts,
+                'msgShowTyping': messageSettings.show_typing,
+                'msgAutoReply': messageSettings.auto_reply_enabled
+            };
+            
+            Object.entries(toggles).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('active', value);
+            });
+            
+            const autoReplyText = document.getElementById('msgAutoReplyText');
+            if (autoReplyText) {
+                autoReplyText.value = messageSettings.auto_reply_text || '';
+            }
+            
+            const autoReplyGroup = document.getElementById('autoReplyGroup');
+            if (autoReplyGroup) {
+                autoReplyGroup.style.display = messageSettings.auto_reply_enabled ? 'block' : 'none';
+            }
+        }
+        
+        // Перемикання налаштування
+        async function toggleMessageSetting(settingKey, element) {
+            if (!currentUser) return;
+            
+            const newValue = !messageSettings[settingKey];
+            messageSettings[settingKey] = newValue;
+            element.classList.toggle('active', newValue);
+            
+            // Показуємо/ховаємо поле автовідповіді
+            if (settingKey === 'auto_reply_enabled') {
+                const autoReplyGroup = document.getElementById('autoReplyGroup');
+                if (autoReplyGroup) {
+                    autoReplyGroup.style.display = newValue ? 'block' : 'none';
+                }
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('message_settings')
+                    .upsert({
+                        user_id: currentUser.id,
+                        [settingKey]: newValue,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'user_id' });
+                
+                if (error) throw error;
+                console.log('✅ Збережено:', settingKey, '=', newValue);
+                
+            } catch (e) {
+                console.error('Помилка збереження:', e);
+                messageSettings[settingKey] = !newValue;
+                element.classList.toggle('active', !newValue);
+                alert('❌ Помилка збереження');
+            }
+        }
+        
+        // Збереження тексту автовідповіді
+        async function saveAutoReplyText() {
+            if (!currentUser) return;
+            
+            const text = document.getElementById('msgAutoReplyText')?.value?.trim() || '';
+            
+            try {
+                const { error } = await supabase
+                    .from('message_settings')
+                    .update({
+                        auto_reply_text: text,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('user_id', currentUser.id);
+                
+                if (error) throw error;
+                messageSettings.auto_reply_text = text;
+                alert('✅ Текст автовідповіді збережено');
+                
+            } catch (e) {
+                console.error('Помилка збереження тексту:', e);
+                alert('❌ Помилка збереження');
+            }
+        }
+        
+        // ================================================================
+        // ЗВУК ТА ВІБРАЦІЯ
+        // ================================================================
+        
+        // Відтворення звуку нового повідомлення
+        function playNotificationSound() {
+            if (!messageSettings.sound_enabled) return;
+            
+            try {
+                // Використовуємо Web Audio API для простого звуку
+                if (!notificationAudio) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContext) return;
+                    
+                    const ctx = new AudioContext();
+                    
+                    // Створюємо короткий "біп"
+                    const oscillator = ctx.createOscillator();
+                    const gainNode = ctx.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(ctx.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                    
+                    oscillator.start(ctx.currentTime);
+                    oscillator.stop(ctx.currentTime + 0.2);
+                } else {
+                    notificationAudio.play();
+                }
+            } catch (e) {
+                console.warn('Не вдалося відтворити звук:', e);
+            }
+        }
+        
+        // Вібрація
+        function vibrateDevice() {
+            if (!messageSettings.vibration_enabled) return;
+            
+            try {
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);
+                }
+            } catch (e) {
+                console.warn('Вібрація не підтримується');
+            }
+        }
+        
+        // Комбіноване сповіщення
+        function notifyNewMessage() {
+            playNotificationSound();
+            vibrateDevice();
+        }
+        
+        // ================================================================
+        // "ДРУКУЄ..."
+        // ================================================================
+        
+        async function sendTypingStatus(isTyping) {
+            if (!currentChatId || !currentUser) return;
+            if (!messageSettings.show_typing) return;
+            
+            try {
+                await supabase
+                    .from('chats')
+                    .update({
+                        typing_user_id: isTyping ? currentUser.id : null,
+                        typing_updated_at: new Date().toISOString()
+                    })
+                    .eq('id', currentChatId);
+            } catch (e) {
+                console.warn('Помилка typing:', e);
+            }
+        }
+        
+        // ================================================================
+        // АВТОВІДПОВІДЬ
+        // ================================================================
+        
+        async function sendAutoReply(chatId) {
+            if (!messageSettings.auto_reply_enabled) return;
+            if (!messageSettings.auto_reply_text) return;
+            if (!currentUser) return;
+            
+            try {
+                // Перевіряємо, чи вже відправляли автовідповідь у цьому чаті (останні 5 хв)
+                const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+                
+                const { data: recent } = await supabase
+                    .from('messages')
+                    .select('id')
+                    .eq('chat_id', chatId)
+                    .eq('sender_id', currentUser.id)
+                    .eq('text', messageSettings.auto_reply_text)
+                    .gte('created_at', fiveMinAgo)
+                    .limit(1);
+                
+                if (recent && recent.length > 0) return; // Вже відправляли
+                
+                // Відправляємо автовідповідь
+                await supabase.from('messages').insert({
+                    chat_id: chatId,
+                    sender_id: currentUser.id,
+                    text: `🤖 ${messageSettings.auto_reply_text}`,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                });
+                
+                console.log('🤖 Автовідповідь відправлено');
+                
+            } catch (e) {
+                console.error('Помилка автовідповіді:', e);
+            }
+        }
+        
+        // ================================================================
+        // ОЧИЩЕННЯ ТА АРХІВ ЧАТІВ
+        // ================================================================
+        
+        async function confirmClearChats() {
+            if (!currentUser) return;
+            
+            if (!confirm('🗑️ Видалити ВСІ чати?\n\nВсі повідомлення будуть видалені НАЗАВЖДИ. Цю дію не можна скасувати.')) return;
+            
+            const confirm2 = prompt('Введіть "ВИДАЛИТИ" для підтвердження:');
+            if (confirm2 !== 'ВИДАЛИТИ') {
+                if (confirm2 !== null) alert('❌ Скасовано');
+                return;
+            }
+            
+            try {
+                // Видаляємо всі повідомлення
+                const chatIds = chats.map(c => c.id);
+                
+                if (chatIds.length > 0) {
+                    await supabase.from('messages').delete().in('chat_id', chatIds);
+                    await supabase.from('chats').delete().in('id', chatIds);
+                }
+                
+                chats = [];
+                renderChats();
+                updateChatBadge();
+                
+                alert('✅ Всі чати видалено');
+                
+            } catch (e) {
+                console.error('Помилка видалення чатів:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        async function confirmArchiveChats() {
+            if (!currentUser) return;
+            
+            if (!confirm('📦 Архівувати всі чати?\n\nВони зникнуть зі списку, але залишаться в базі.')) return;
+            
+            try {
+                const chatIds = chats.map(c => c.id);
+                
+                if (chatIds.length > 0) {
+                    await supabase
+                        .from('chats')
+                        .update({ 
+                            archived: true,
+                            archived_at: new Date().toISOString()
+                        })
+                        .in('id', chatIds);
+                }
+                
+                alert('✅ Всі чати архівовано');
+                dataLoaded = false;
+                await loadAllData();
+                
+            } catch (e) {
+                console.error('Помилка архівування:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // ================================================================
+        // ЕКСПОРТ
+        // ================================================================
+        
+        window.loadMessageSettings = loadMessageSettings;
+        window.toggleMessageSetting = toggleMessageSetting;
+        window.saveAutoReplyText = saveAutoReplyText;
+        window.playNotificationSound = playNotificationSound;
+        window.vibrateDevice = vibrateDevice;
+        window.notifyNewMessage = notifyNewMessage;
+        window.sendTypingStatus = sendTypingStatus;
+        window.sendAutoReply = sendAutoReply;
+        window.confirmClearChats = confirmClearChats;
+        window.confirmArchiveChats = confirmArchiveChats;
+        
+        
         
         console.log('✅ UAMO готовий!');
     </script>
