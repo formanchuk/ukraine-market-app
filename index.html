@@ -2676,6 +2676,7 @@
                 <div class="options-item" onclick="shareListing()"><i class="fas fa-share-alt"></i> Поділитися</div>
                 <div class="options-item" onclick="copyListingLink()"><i class="fas fa-link"></i> Скопіювати посилання</div>
                 <div class="options-item danger" onclick="reportListing()"><i class="fas fa-flag"></i> Поскаржитися</div>
+                <div class="options-item danger" id="blockUserOption" onclick="blockSeller()" style="display:none;"><i class="fas fa-ban"></i> Заблокувати продавця</div>
             </div>
         </div>
 
@@ -4335,14 +4336,50 @@
 
         async function submitListing() {
             if (!currentUser) { navigateTo('auth'); return; }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка суспензії
+            // ============================================================
+            const suspension = await checkUserSuspended();
+            if (suspension) {
+                showSuspendedScreen();
+                return;
+            }
+            
             const title = document.getElementById('addTitle').value.trim();
             const price = document.getElementById('addPrice').value.trim();
             const city = document.getElementById('addCity').value.trim() || userData.city;
             const phone = document.getElementById('addPhone').value.trim() || userData.phone;
             const desc = document.getElementById('addDesc').value.trim();
             const category = document.getElementById('addCategory').value;
+            
             if (!title) { alert('Введіть назву'); return; }
             if (!price) { alert('Введіть ціну'); return; }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка спам-слів
+            // ============================================================
+            if (containsSpam(title) || containsSpam(desc)) {
+                alert('🚫 Ваше оголошення містить заборонені слова (реклама, казино, кредити тощо).\n\nБудь ласка, перепишіть текст.');
+                return;
+            }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка спам-патернів
+            // ============================================================
+            if (hasSpamPattern(title) || hasSpamPattern(desc)) {
+                alert('🚫 Ваше оголошення виглядає як спам (повторення символів/слів).\n\nБудь ласка, перепишіть текст.');
+                return;
+            }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка ліміту
+            // ============================================================
+            const limitCheck = await checkAndUpdateLimits('listings');
+            if (!limitCheck.allowed) {
+                alert(limitCheck.error);
+                return;
+            }
 
             const fields = getCategoryFields(category);
             const specs = {};
@@ -4357,6 +4394,9 @@
             }).select();
 
             if (error) { alert('Помилка: ' + error.message); return; }
+
+            // АНТИСПАМ: збільшуємо лічильник
+            await incrementLimit('listings');
 
             resetPhotoForm();
             document.getElementById('addTitle').value = '';
@@ -4440,6 +4480,33 @@
             if (!input) return;
             const content = input.value.trim();
             if (!content || !currentChatId || !currentUser) return;
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка суспензії
+            // ============================================================
+            const suspension = await checkUserSuspended();
+            if (suspension) {
+                showSuspendedScreen();
+                return;
+            }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка спам-слів
+            // ============================================================
+            if (containsSpam(content)) {
+                alert('🚫 Повідомлення містить заборонені слова (реклама).\n\nБудь ласка, перепишіть.');
+                return;
+            }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка ліміту повідомлень
+            // ============================================================
+            const limitCheck = await checkAndUpdateLimits('messages');
+            if (!limitCheck.allowed) {
+                alert(limitCheck.error);
+                return;
+            }
+            
             try {
                 const { error } = await supabase.from('messages').insert({
                     chat_id: currentChatId, 
@@ -4449,6 +4516,9 @@
                     created_at: new Date().toISOString()
                 });
                 if (error) throw error;
+                
+                // АНТИСПАМ: збільшуємо лічильник
+                await incrementLimit('messages');
                 
                 await supabase.from('chats').update({
                     last_message: content, 
@@ -4763,8 +4833,20 @@
         // ================================================================
         // OPTIONS
         // ================================================================
-        function openOptionsModal() { document.getElementById('optionsModal')?.classList.add('show'); }
-        function closeOptionsModal() { document.getElementById('optionsModal')?.classList.remove('show'); }
+        function openOptionsModal() {
+            // Показуємо/ховаємо кнопку блокування
+            const blockOption = document.getElementById('blockUserOption');
+            if (blockOption && currentDetailListing) {
+                const isOwn = currentDetailListing.user_id === currentUser?.id;
+                blockOption.style.display = isOwn ? 'none' : 'block';
+            }
+            document.getElementById('optionsModal')?.classList.add('show');
+        }
+        
+        function closeOptionsModal() { 
+            document.getElementById('optionsModal')?.classList.remove('show'); 
+        }
+        
         function shareListing() {
             if (!currentDetailListing) return;
             const text = `${currentDetailListing.title}\n${currentDetailListing.price} грн\n${currentDetailListing.location}`;
@@ -4772,15 +4854,31 @@
             else navigator.clipboard.writeText(text).then(() => alert('✅ Скопійовано!'));
             closeOptionsModal();
         }
+        
         function copyListingLink() {
             if (!currentDetailListing) return;
             navigator.clipboard.writeText(window.location.href + '?id=' + currentDetailListing.id).then(() => alert('✅ Скопійовано!'));
             closeOptionsModal();
         }
+        
         function reportListing() {
-            alert('✅ Скаргу надіслано!');
+            if (!currentDetailListing) return;
+            openReportModal('listing', currentDetailListing.id);
             closeOptionsModal();
         }
+        
+        async function blockSeller() {
+            if (!currentDetailListing) return;
+            const sellerId = currentDetailListing.user_id;
+            const sellerName = currentDetailListing.seller?.name || 'Продавець';
+            await blockUser(sellerId, sellerName);
+            closeOptionsModal();
+            dataLoaded = false;
+            await loadAllData();
+            navigateTo('home');
+        }
+        
+        window.blockSeller = blockSeller;
         // ================================================================
         // ФОТО
         // ================================================================
@@ -5885,6 +5983,498 @@
             await loadTwoFAStatus();
         };
         
+
+        // ================================================================
+        // АНТИСПАМ — ліміти, скарги, блокування
+        // ================================================================
+        
+        // Ліміти
+        const DAILY_LIMITS = {
+            listings: 10,      // 10 оголошень/день
+            messages: 30,      // 30 повідомлень/годину
+            reports: 5         // 5 скарг/день
+        };
+        
+        // Спам-слова
+        const SPAM_WORDS = [
+            'casino', 'казино', 'ставки', 'лотерея', 'выигрыш', 'виграш',
+            'заработок', 'заробіток', 'инвестиции', 'інвестиції', 'криптовалюта',
+            'кредит', 'займ', 'позика', 'мгновенно', 'миттєво',
+            'viagra', 'віагра', 'cialis', 'порно', 'sex', 'секс'
+        ];
+        
+        // Перевірка чи користувач заблокований
+        async function checkUserSuspended() {
+            if (!currentUser) return false;
+            
+            try {
+                const { data } = await supabase
+                    .from('user_limits')
+                    .select('is_suspended, suspended_until, suspended_reason')
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+                
+                if (!data) return false;
+                
+                // Перевіряємо чи прострочена суспензія
+                if (data.is_suspended && data.suspended_until) {
+                    if (new Date(data.suspended_until) < new Date()) {
+                        // Суспензія прострочена — знімаємо
+                        await supabase.from('user_limits')
+                            .update({ is_suspended: false, suspended_until: null })
+                            .eq('user_id', currentUser.id);
+                        return false;
+                    }
+                    
+                    // Суспензія активна
+                    return {
+                        suspended: true,
+                        until: data.suspended_until,
+                        reason: data.suspended_reason
+                    };
+                }
+                
+                return false;
+            } catch (e) {
+                console.error('Помилка перевірки суспензії:', e);
+                return false;
+            }
+        }
+        
+        // Показати екран суспензії
+        async function showSuspendedScreen() {
+            const suspension = await checkUserSuspended();
+            if (!suspension) return false;
+            
+            const until = new Date(suspension.until).toLocaleDateString('uk-UA');
+            
+            alert(
+                '🚫 ВАШ АКАУНТ ЗАБЛОКОВАНО\n\n' +
+                'Причина: ' + (suspension.reason || 'Порушення правил') + '\n' +
+                'До: ' + until + '\n\n' +
+                'Якщо ви вважаєте це помилкою — напишіть на support@uamo.ua'
+            );
+            
+            await supabase.auth.signOut();
+            currentUser = null;
+            navigateTo('auth');
+            return true;
+        }
+        
+        // Перевірка та оновлення лімітів
+        async function checkAndUpdateLimits(type) {
+            if (!currentUser) return { allowed: false, error: 'Не авторизовано' };
+            
+            try {
+                // Отримуємо або створюємо запис
+                let { data: limits } = await supabase
+                    .from('user_limits')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+                
+                if (!limits) {
+                    const { data: newLimits } = await supabase
+                        .from('user_limits')
+                        .insert({ user_id: currentUser.id })
+                        .select()
+                        .single();
+                    limits = newLimits;
+                }
+                
+                // Перевіряємо чи потрібно скинути (24 години)
+                const lastReset = new Date(limits.last_reset);
+                const now = new Date();
+                const hoursSinceReset = (now - lastReset) / (1000 * 60 * 60);
+                
+                if (hoursSinceReset >= 24) {
+                    await supabase.from('user_limits')
+                        .update({
+                            listings_today: 0,
+                            messages_today: 0,
+                            reports_today: 0,
+                            last_reset: now.toISOString()
+                        })
+                        .eq('user_id', currentUser.id);
+                    
+                    limits.listings_today = 0;
+                    limits.messages_today = 0;
+                    limits.reports_today = 0;
+                }
+                
+                // Перевіряємо суспензію
+                if (limits.is_suspended) {
+                    return { allowed: false, error: '🚫 Ваш акаунт заблоковано' };
+                }
+                
+                // Перевіряємо ліміт
+                const currentCount = type === 'listings' ? limits.listings_today :
+                                    type === 'messages' ? limits.messages_today :
+                                    limits.reports_today;
+                
+                const maxLimit = DAILY_LIMITS[type];
+                
+                if (currentCount >= maxLimit) {
+                    return {
+                        allowed: false,
+                        error: `🚫 Ліміт ${maxLimit} ${type === 'listings' ? 'оголошень' : type === 'messages' ? 'повідомлень' : 'скарг'} на день вичерпано`
+                    };
+                }
+                
+                return { allowed: true, currentCount, maxLimit };
+                
+            } catch (e) {
+                console.error('Помилка перевірки лімітів:', e);
+                return { allowed: true }; // Дозволяємо у разі помилки
+            }
+        }
+        
+        // Збільшення лічильника
+        async function incrementLimit(type) {
+            if (!currentUser) return;
+            
+            try {
+                const field = type === 'listings' ? 'listings_today' :
+                             type === 'messages' ? 'messages_today' :
+                             'reports_today';
+                
+                const { data: limits } = await supabase
+                    .from('user_limits')
+                    .select(field)
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+                
+                if (limits) {
+                    await supabase.from('user_limits')
+                        .update({ [field]: (limits[field] || 0) + 1 })
+                        .eq('user_id', currentUser.id);
+                }
+            } catch (e) {
+                console.error('Помилка збільшення ліміту:', e);
+            }
+        }
+        
+        // Перевірка тексту на спам
+        function containsSpam(text) {
+            if (!text) return false;
+            const lower = text.toLowerCase();
+            return SPAM_WORDS.some(word => lower.includes(word.toLowerCase()));
+        }
+        
+        // Перевірка на повторення символів (спам типу "ааааааа")
+        function hasSpamPattern(text) {
+            if (!text) return false;
+            // 5+ однакових символів підряд
+            if (/(.)\1{4,}/.test(text)) return true;
+            // Багато CAPS (більше 50% тексту)
+            const letters = text.replace(/[^a-zA-Zа-яА-Я]/g, '');
+            if (letters.length > 10) {
+                const caps = letters.replace(/[^A-ZА-Я]/g, '').length;
+                if (caps / letters.length > 0.5) return true;
+            }
+            return false;
+        }
+        
+        // ================================================================
+        // СКАРГИ
+        // ================================================================
+        
+        let currentReportType = null;
+        let currentReportId = null;
+        let selectedReason = null;
+        
+        // Відкрити модалку скарги
+        function openReportModal(type, id) {
+            currentReportType = type;
+            currentReportId = id;
+            selectedReason = null;
+            
+            // Очищаємо вибір
+            document.querySelectorAll('.report-reason').forEach(el => el.classList.remove('selected'));
+            const descEl = document.getElementById('reportDescription');
+            if (descEl) descEl.value = '';
+            
+            document.getElementById('reportModal').classList.add('show');
+        }
+        
+        function closeReportModal() {
+            document.getElementById('reportModal').classList.remove('show');
+            currentReportType = null;
+            currentReportId = null;
+            selectedReason = null;
+        }
+        
+        // Вибір причини
+        function selectReportReason(el) {
+            document.querySelectorAll('.report-reason').forEach(r => r.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedReason = el.dataset.reason;
+        }
+        
+        // Відправити скаргу
+        async function submitReport() {
+            if (!currentUser) { navigateTo('auth'); return; }
+            if (!selectedReason) {
+                alert('❌ Оберіть причину скарги');
+                return;
+            }
+            
+            // Перевіряємо ліміт скарг
+            const limitCheck = await checkAndUpdateLimits('reports');
+            if (!limitCheck.allowed) {
+                alert(limitCheck.error);
+                return;
+            }
+            
+            try {
+                const description = document.getElementById('reportDescription')?.value?.trim() || '';
+                
+                const reportData = {
+                    reporter_id: currentUser.id,
+                    reason: selectedReason,
+                    description: description,
+                    status: 'pending'
+                };
+                
+                if (currentReportType === 'listing') {
+                    reportData.listing_id = currentReportId;
+                    // Знаходимо власника оголошення
+                    const listing = listings.find(l => l.id === currentReportId);
+                    if (listing) reportData.reported_user_id = listing.user_id;
+                } else if (currentReportType === 'user') {
+                    reportData.reported_user_id = currentReportId;
+                }
+                
+                const { error } = await supabase.from('reports').insert(reportData);
+                if (error) throw error;
+                
+                await incrementLimit('reports');
+                
+                alert('✅ Скаргу надіслано! Ми розглянемо її найближчим часом.');
+                closeReportModal();
+                
+            } catch (e) {
+                console.error('Помилка скарги:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Оновимо функцію reportListing (в optionsModal)
+        function reportListing() {
+            if (!currentDetailListing) return;
+            openReportModal('listing', currentDetailListing.id);
+            closeOptionsModal();
+        }
+        
+        // ================================================================
+        // БЛОКУВАННЯ
+        // ================================================================
+        
+        // Заблокувати користувача
+        async function blockUser(userId, userName) {
+            if (!currentUser) { navigateTo('auth'); return; }
+            if (userId === currentUser.id) {
+                alert('❌ Не можна заблокувати себе');
+                return;
+            }
+            
+            if (!confirm(`🚫 Заблокувати ${userName || 'цього користувача'}?\n\nВи більше не бачитимете його оголошення та не зможете писати.`)) return;
+            
+            try {
+                const { error } = await supabase.from('blocked_users').insert({
+                    blocker_id: currentUser.id,
+                    blocked_id: userId
+                });
+                
+                if (error) {
+                    if (error.code === '23505') { // Unique violation
+                        alert('Користувач вже заблокований');
+                        return;
+                    }
+                    throw error;
+                }
+                
+                alert('✅ Користувача заблоковано');
+                
+                // Оновлюємо список
+                renderAll();
+                closeOptionsModal();
+                
+            } catch (e) {
+                console.error('Помилка блокування:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Розблокувати
+        async function unblockUser(userId) {
+            if (!confirm('Розблокувати цього користувача?')) return;
+            
+            try {
+                await supabase.from('blocked_users')
+                    .delete()
+                    .eq('blocker_id', currentUser.id)
+                    .eq('blocked_id', userId);
+                
+                alert('✅ Користувача розблоковано');
+                loadBlockedUsers();
+                
+            } catch (e) {
+                console.error('Помилка розблокування:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Завантажити список заблокованих
+        async function loadBlockedUsers() {
+            const container = document.getElementById('blockedUsersList');
+            if (!container || !currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('blocked_users')
+                    .select(`
+                        blocked_id,
+                        created_at,
+                        blocked_user:users!blocked_users_blocked_id_fkey (first_name, avatar_url)
+                    `)
+                    .eq('blocker_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:30px; color:var(--text-secondary); font-size:13px;">
+                            <i class="fas fa-check-circle" style="font-size:32px; color:var(--success); margin-bottom:10px; display:block;"></i>
+                            <p>Немає заблокованих користувачів</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.map(item => {
+                    const user = item.blocked_user || {};
+                    const name = user.first_name || 'Користувач';
+                    const avatar = user.avatar_url || name[0]?.toUpperCase() || '👤';
+                    
+                    return `
+                        <div class="blocked-user-item">
+                            <div class="user-avatar">
+                                ${user.avatar_url ? `<img src="${user.avatar_url}" />` : avatar}
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">${name}</div>
+                                <div class="user-since">Заблоковано ${timeAgo(item.created_at)}</div>
+                            </div>
+                            <button class="unblock-btn" onclick="unblockUser('${item.blocked_id}')">
+                                Розблокувати
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (e) {
+                console.error('Помилка завантаження заблокованих:', e);
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--danger); font-size:13px;">Помилка завантаження</div>`;
+            }
+        }
+        
+        function openBlockedUsersModal() {
+            document.getElementById('blockedUsersModal').classList.add('show');
+            loadBlockedUsers();
+        }
+        
+        function closeBlockedUsersModal() {
+            document.getElementById('blockedUsersModal').classList.remove('show');
+        }
+        
+        // ================================================================
+        // ПЕРЕВІРКА ЧИ ЗАБЛОКОВАНИЙ
+        // ================================================================
+        
+        async function isUserBlocked(userId) {
+            if (!currentUser) return false;
+            
+            try {
+                const { data } = await supabase
+                    .from('blocked_users')
+                    .select('id')
+                    .eq('blocker_id', currentUser.id)
+                    .eq('blocked_id', userId)
+                    .maybeSingle();
+                
+                return !!data;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        // ================================================================
+        // ПОПЕРЕДЖЕННЯ
+        // ================================================================
+        
+        async function addWarning(userId, reason) {
+            try {
+                const { data: limits } = await supabase
+                    .from('user_limits')
+                    .select('warnings')
+                    .eq('user_id', userId)
+                    .maybeSingle();
+                
+                const currentWarnings = (limits?.warnings || 0) + 1;
+                
+                // 3 попередження → суспензія на 7 днів
+                if (currentWarnings >= 3) {
+                    const suspendedUntil = new Date();
+                    suspendedUntil.setDate(suspendedUntil.getDate() + 7);
+                    
+                    await supabase.from('user_limits')
+                        .upsert({
+                            user_id: userId,
+                            warnings: currentWarnings,
+                            is_suspended: true,
+                            suspended_until: suspendedUntil.toISOString(),
+                            suspended_reason: reason
+                        }, { onConflict: 'user_id' });
+                } else {
+                    await supabase.from('user_limits')
+                        .upsert({
+                            user_id: userId,
+                            warnings: currentWarnings
+                        }, { onConflict: 'user_id' });
+                }
+                
+                return currentWarnings;
+            } catch (e) {
+                console.error('Помилка додавання попередження:', e);
+                return 0;
+            }
+        }
+        
+        // ================================================================
+        // ЕКСПОРТ
+        // ================================================================
+        
+        window.checkUserSuspended = checkUserSuspended;
+        window.checkAndUpdateLimits = checkAndUpdateLimits;
+        window.incrementLimit = incrementLimit;
+        window.containsSpam = containsSpam;
+        window.hasSpamPattern = hasSpamPattern;
+        window.openReportModal = openReportModal;
+        window.closeReportModal = closeReportModal;
+        window.selectReportReason = selectReportReason;
+        window.submitReport = submitReport;
+        window.blockUser = blockUser;
+        window.unblockUser = unblockUser;
+        window.loadBlockedUsers = loadBlockedUsers;
+        window.openBlockedUsersModal = openBlockedUsersModal;
+        window.closeBlockedUsersModal = closeBlockedUsersModal;
+        window.isUserBlocked = isUserBlocked;
+        window.addWarning = addWarning;        
+        
+
+
         
         console.log('✅ UAMO готовий!');
     </script>
