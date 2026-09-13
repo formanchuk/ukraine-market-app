@@ -2319,10 +2319,22 @@
                     <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
                         <i class="fas fa-eye"></i> Хто бачить
                     </div>
-                    <div class="settings-item"><span class="settings-label">Показувати номер телефону</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
-                    <div class="settings-item"><span class="settings-label">Показувати місто</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
-                    <div class="settings-item"><span class="settings-label">Показувати онлайн-статус</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
-                    <div class="settings-item"><span class="settings-label">Показувати останній візит</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item">
+                        <span class="settings-label">Показувати номер телефону</span>
+                        <div class="toggle-switch active" id="privacyShowPhone" onclick="togglePrivacySetting('show_phone', this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Показувати місто</span>
+                        <div class="toggle-switch active" id="privacyShowCity" onclick="togglePrivacySetting('show_city', this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Показувати онлайн-статус</span>
+                        <div class="toggle-switch active" id="privacyShowOnline" onclick="togglePrivacySetting('show_online', this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Показувати останній візит</span>
+                        <div class="toggle-switch active" id="privacyShowLastSeen" onclick="togglePrivacySetting('show_last_seen', this)"><div class="toggle-thumb"></div></div>
+                    </div>
                 </div>
                 
                 <!-- Хто може писати -->
@@ -2330,8 +2342,14 @@
                     <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
                         <i class="fas fa-comment"></i> Хто може писати
                     </div>
-                    <div class="settings-item"><span class="settings-label">Дозволити повідомлення від інших</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
-                    <div class="settings-item"><span class="settings-label">Дозволити дзвонити</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item">
+                        <span class="settings-label">Дозволити повідомлення від інших</span>
+                        <div class="toggle-switch active" id="privacyAllowMessages" onclick="togglePrivacySetting('allow_messages', this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Дозволити дзвонити</span>
+                        <div class="toggle-switch active" id="privacyAllowCalls" onclick="togglePrivacySetting('allow_calls', this)"><div class="toggle-thumb"></div></div>
+                    </div>
                 </div>
                 
                 <!-- Пошук -->
@@ -2339,8 +2357,14 @@
                     <div class="settings-title" style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
                         <i class="fas fa-search"></i> Пошук
                     </div>
-                    <div class="settings-item"><span class="settings-label">Знаходити мене за номером</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
-                    <div class="settings-item"><span class="settings-label">Знаходити мене за ім'ям</span><div class="toggle-switch active" onclick="toggleSetting(this)"><div class="toggle-thumb"></div></div></div>
+                    <div class="settings-item">
+                        <span class="settings-label">Знаходити мене за номером</span>
+                        <div class="toggle-switch active" id="privacyFindByPhone" onclick="togglePrivacySetting('find_by_phone', this)"><div class="toggle-thumb"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">Знаходити мене за ім'ям</span>
+                        <div class="toggle-switch active" id="privacyFindByName" onclick="togglePrivacySetting('find_by_name', this)"><div class="toggle-thumb"></div></div>
+                    </div>
                 </div>
                 
                 <!-- Заблоковані -->
@@ -3904,6 +3928,9 @@
                 case 'settings-security':
                     loadSessions();
                     loadLoginHistory();
+                    break;
+                case 'settings-privacy':
+                    applyPrivacySettingsToUI();
                     break;
                 default: break;
             }
@@ -5976,11 +6003,12 @@
         window.loadTwoFAStatus = loadTwoFAStatus;
         window.show2FAModal = show2FAModal;
         
-        // Завантажуємо статус 2FA при завантаженні даних
+        // Завантажуємо 2FA + Конфіденційність при завантаженні даних
         const originalLoadAllData = loadAllData;
         loadAllData = async function() {
             await originalLoadAllData();
             await loadTwoFAStatus();
+            await loadPrivacySettings();
         };
         
 
@@ -6164,7 +6192,7 @@
         // Перевірка на повторення символів (спам типу "ааааааа")
         function hasSpamPattern(text) {
             if (!text) return false;
-            // 5+ однакових символів підряд
+            
             if (/(.)\1{4,}/.test(text)) return true;
             // Багато CAPS (більше 50% тексту)
             const letters = text.replace(/[^a-zA-Zа-яА-Я]/g, '');
@@ -6474,6 +6502,176 @@
         window.addWarning = addWarning;        
         
 
+        // ================================================================
+        // КОНФІДЕНЦІЙНІСТЬ — налаштування приватності
+        // ================================================================
+        
+        let privacySettings = {
+            show_phone: true,
+            show_city: true,
+            show_online: true,
+            show_last_seen: true,
+            allow_messages: true,
+            allow_calls: true,
+            find_by_phone: true,
+            find_by_name: true
+        };
+        
+        // Завантаження налаштувань конфіденційності
+        async function loadPrivacySettings() {
+            if (!currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('privacy_settings')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+                
+                if (error && error.code !== 'PGRST116') throw error;
+                
+                if (!data) {
+                    // Створюємо з дефолтними значеннями
+                    const { data: newData } = await supabase
+                        .from('privacy_settings')
+                        .insert({ user_id: currentUser.id })
+                        .select()
+                        .single();
+                    privacySettings = newData || privacySettings;
+                } else {
+                    privacySettings = data;
+                }
+                
+                applyPrivacySettingsToUI();
+                console.log('✅ Конфіденційність завантажено:', privacySettings);
+                
+            } catch (e) {
+                console.error('Помилка завантаження конфіденційності:', e);
+            }
+        }
+        
+        // Застосування до UI (toggle switches)
+        function applyPrivacySettingsToUI() {
+            const toggles = {
+                'privacyShowPhone': privacySettings.show_phone,
+                'privacyShowCity': privacySettings.show_city,
+                'privacyShowOnline': privacySettings.show_online,
+                'privacyShowLastSeen': privacySettings.show_last_seen,
+                'privacyAllowMessages': privacySettings.allow_messages,
+                'privacyAllowCalls': privacySettings.allow_calls,
+                'privacyFindByPhone': privacySettings.find_by_phone,
+                'privacyFindByName': privacySettings.find_by_name
+            };
+            
+            Object.entries(toggles).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.toggle('active', value);
+                }
+            });
+        }
+        
+        // Перемикання налаштування (з збереженням)
+        async function togglePrivacySetting(settingKey, element) {
+            if (!currentUser) return;
+            
+            const newValue = !privacySettings[settingKey];
+            privacySettings[settingKey] = newValue;
+            
+            // Оновлюємо UI
+            element.classList.toggle('active', newValue);
+            
+            // Зберігаємо в БД
+            try {
+                const { error } = await supabase
+                    .from('privacy_settings')
+                    .upsert({
+                        user_id: currentUser.id,
+                        [settingKey]: newValue,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'user_id' });
+                
+                if (error) throw error;
+                
+                console.log('✅ Збережено:', settingKey, '=', newValue);
+                
+            } catch (e) {
+                console.error('Помилка збереження:', e);
+                // Відкочуємо
+                privacySettings[settingKey] = !newValue;
+                element.classList.toggle('active', !newValue);
+                alert('❌ Помилка збереження');
+            }
+        }
+        
+        // Перевірка чи можна писати користувачу
+        async function canMessageUser(userId) {
+            try {
+                const { data } = await supabase
+                    .from('privacy_settings')
+                    .select('allow_messages')
+                    .eq('user_id', userId)
+                    .maybeSingle();
+                
+                return data?.allow_messages !== false;
+            } catch (e) {
+                return true;
+            }
+        }
+        
+        // Перевірка чи можна дзвонити
+        async function canCallUser(userId) {
+            try {
+                const { data } = await supabase
+                    .from('privacy_settings')
+                    .select('allow_calls')
+                    .eq('user_id', userId)
+                    .maybeSingle();
+                
+                return data?.allow_calls !== false;
+            } catch (e) {
+                return true;
+            }
+        }
+        
+        // Перевірка чи показувати телефон
+        async function canShowPhone(userId) {
+            try {
+                const { data } = await supabase
+                    .from('privacy_settings')
+                    .select('show_phone')
+                    .eq('user_id', userId)
+                    .maybeSingle();
+                
+                return data?.show_phone !== false;
+            } catch (e) {
+                return true;
+            }
+        }
+        
+        // Перевірка чи показувати місто
+        async function canShowCity(userId) {
+            try {
+                const { data } = await supabase
+                    .from('privacy_settings')
+                    .select('show_city')
+                    .eq('user_id', userId)
+                    .maybeSingle();
+                
+                return data?.show_city !== false;
+            } catch (e) {
+                return true;
+            }
+        }
+        
+        // Експорт
+        window.loadPrivacySettings = loadPrivacySettings;
+        window.togglePrivacySetting = togglePrivacySetting;
+        window.canMessageUser = canMessageUser;
+        window.canCallUser = canCallUser;
+        window.canShowPhone = canShowPhone;
+        window.canShowCity = canShowCity;
+        
 
         
         console.log('✅ UAMO готовий!');
