@@ -6545,17 +6545,6 @@
         // КОНФІДЕНЦІЙНІСТЬ — налаштування приватності
         // ================================================================
         
-        let privacySettings = {
-            show_phone: true,
-            show_city: true,
-            show_online: true,
-            show_last_seen: true,
-            allow_messages: true,
-            allow_calls: true,
-            find_by_phone: true,
-            find_by_name: true
-        };
-        
         // Завантаження налаштувань конфіденційності
         async function loadPrivacySettings() {
             if (!currentUser) return;
@@ -6716,16 +6705,6 @@
         // ================================================================
         // ПОВІДОМЛЕННЯ — налаштування, звук, вібрація, автовідповідь
         // ================================================================
-        
-        let messageSettings = {
-            sound_enabled: true,
-            vibration_enabled: true,
-            show_on_lock: true,
-            show_read_receipts: true,
-            show_typing: true,
-            auto_reply_enabled: false,
-            auto_reply_text: 'Я зараз недоступний, відповім пізніше'
-        };
         
         let typingTimeout = null;
         let notificationAudio = null;
