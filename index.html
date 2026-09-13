@@ -7032,6 +7032,109 @@
         window.blockUser = blockUser;
         
         
+
+        // ================================================================
+        // ЗАБЛОКОВАНІ КОРИСТУВАЧІ
+        // ================================================================
+        
+        function openBlockedUsersModal() {
+            const modal = document.getElementById('blockedUsersModal');
+            if (modal) {
+                modal.classList.add('show');
+                loadBlockedUsers();
+            }
+        }
+        
+        function closeBlockedUsersModal() {
+            const modal = document.getElementById('blockedUsersModal');
+            if (modal) modal.classList.remove('show');
+        }
+        
+        async function loadBlockedUsers() {
+            const container = document.getElementById('blockedUsersList');
+            if (!container || !currentUser) return;
+            
+            try {
+                const { data: blocks, error: blocksError } = await supabase
+                    .from('blocked_users')
+                    .select('blocked_id, created_at')
+                    .eq('blocker_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+                
+                if (blocksError) throw blocksError;
+                
+                if (!blocks || blocks.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:30px; color:var(--text-secondary); font-size:13px;">
+                            <i class="fas fa-check-circle" style="font-size:32px; color:var(--success); margin-bottom:10px; display:block;"></i>
+                            <p>Немає заблокованих користувачів</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const userIds = blocks.map(b => b.blocked_id);
+                const { data: users, error: usersError } = await supabase
+                    .from('users')
+                    .select('id, first_name, avatar_url')
+                    .in('id', userIds);
+                
+                if (usersError) throw usersError;
+                
+                const usersMap = {};
+                (users || []).forEach(u => { usersMap[u.id] = u; });
+                
+                container.innerHTML = blocks.map(item => {
+                    const user = usersMap[item.blocked_id] || {};
+                    const name = user.first_name || 'Користувач';
+                    const avatar = user.avatar_url || name[0]?.toUpperCase() || '👤';
+                    
+                    return `
+                        <div class="blocked-user-item">
+                            <div class="user-avatar">
+                                ${user.avatar_url ? `<img src="${user.avatar_url}" />` : avatar}
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">${name}</div>
+                                <div class="user-since">Заблоковано ${timeAgo(item.created_at)}</div>
+                            </div>
+                            <button class="unblock-btn" onclick="unblockUser('${item.blocked_id}')">
+                                Розблокувати
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (e) {
+                console.error('Помилка завантаження заблокованих:', e);
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--danger); font-size:13px;">Помилка завантаження</div>`;
+            }
+        }
+        
+        async function unblockUser(userId) {
+            if (!confirm('Розблокувати цього користувача?')) return;
+            
+            try {
+                await supabase.from('blocked_users')
+                    .delete()
+                    .eq('blocker_id', currentUser.id)
+                    .eq('blocked_id', userId);
+                
+                alert('✅ Користувача розблоковано');
+                loadBlockedUsers();
+                
+            } catch (e) {
+                console.error('Помилка розблокування:', e);
+                alert('❌ Помилка: ' + e.message);
+            }
+        }
+        
+        // Експорт
+        window.openBlockedUsersModal = openBlockedUsersModal;
+        window.closeBlockedUsersModal = closeBlockedUsersModal;
+        window.loadBlockedUsers = loadBlockedUsers;
+        window.unblockUser = unblockUser;
+        
         
         console.log('✅ UAMO готовий!');
     </script>
