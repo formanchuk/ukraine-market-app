@@ -4604,21 +4604,23 @@ function initSupabase() {
                 }).eq('id', currentChatId);
                 
                 // ============================================================
-                // ВАЖЛИВО: Додаємо повідомлення в масив chatMessages,
-                // щоб Realtime-підписка не додала його вдруге
+                // ВАЖЛИВО: Додаємо повідомлення в масив chatMessages
                 // ============================================================
                 if (insertedMsg) {
                     chatMessages.push(insertedMsg);
                 }
                 
-                // Додаємо в UI
+                // Додаємо в UI (з data-id для перевірки дублікатів)
                 const container = document.getElementById('chatMessages');
                 if (container) {
-                    const msgDiv = document.createElement('div');
-                    msgDiv.className = 'chat-message own';
-                    msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())} <span class="chat-message-status"><i class="fas fa-check"></i></span></span>`;
-                    container.appendChild(msgDiv);
-                    container.scrollTop = container.scrollHeight;
+                    if (!container.querySelector(`[data-id="${insertedMsg.id}"]`)) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'chat-message own';
+                        msgDiv.setAttribute('data-id', insertedMsg.id);
+                        msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())} <span class="chat-message-status"><i class="fas fa-check"></i></span></span>`;
+                        container.appendChild(msgDiv);
+                        container.scrollTop = container.scrollHeight;
+                    }
                 }
                 
                 input.value = '';
@@ -4695,19 +4697,23 @@ function initSupabase() {
                         console.log('📨 Нове повідомлення (realtime):', payload.new);
                         const newMsg = payload.new;
                         
-                        // Перевірка на дублікат
+                        // Перевірка на дублікат в масиві
                         if (chatMessages.find(m => m.id === newMsg.id)) return;
                         
                         chatMessages.push(newMsg);
                         
                         const container = document.getElementById('chatMessages');
                         if (container) {
-                            const isOwn = newMsg.sender_id === currentUser.id;
-                            const msgDiv = document.createElement('div');
-                            msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
-                            msgDiv.innerHTML = `${newMsg.text}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
-                            container.appendChild(msgDiv);
-                            container.scrollTop = container.scrollHeight;
+                            // Перевірка на дублікат в UI (з data-id)
+                            if (!container.querySelector(`[data-id="${newMsg.id}"]`)) {
+                                const isOwn = newMsg.sender_id === currentUser.id;
+                                const msgDiv = document.createElement('div');
+                                msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
+                                msgDiv.setAttribute('data-id', newMsg.id);
+                                msgDiv.innerHTML = `${newMsg.text}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
+                                container.appendChild(msgDiv);
+                                container.scrollTop = container.scrollHeight;
+                            }
                         }
                         
                         // Якщо повідомлення не від нас — позначаємо прочитаним
@@ -4726,7 +4732,7 @@ function initSupabase() {
         }
 
         // ============================================================
-        // RENDER: повідомлення чату
+        // RENDER: повідомлення чату (з data-id)
         // ============================================================
         function renderChatMessages(container) {
             if (chatMessages.length === 0) {
@@ -4745,7 +4751,7 @@ function initSupabase() {
                             ? '<i class="fas fa-check-double"></i>'
                             : '<i class="fas fa-check"></i>')
                         : '';
-                    return `<div class="chat-message ${isOwn ? 'own' : 'other'}">
+                    return `<div class="chat-message ${isOwn ? 'own' : 'other'}" data-id="${msg.id}">
                         ${msg.text}
                         <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
                     </div>`;
