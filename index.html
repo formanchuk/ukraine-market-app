@@ -4583,13 +4583,15 @@ function initSupabase() {
             }
             
             try {
-                const { error } = await supabase.from('messages').insert({
+                // Відправляємо повідомлення і ОТРИМУЄМО його назад з ID
+                const { data: insertedMsg, error } = await supabase.from('messages').insert({
                     chat_id: currentChatId, 
                     sender_id: currentUser.id, 
                     text: content,
                     is_read: false,
                     created_at: new Date().toISOString()
-                });
+                }).select().single();
+                
                 if (error) throw error;
                 
                 // АНТИСПАМ: збільшуємо лічильник
@@ -4601,6 +4603,15 @@ function initSupabase() {
                     updated_at: new Date().toISOString()
                 }).eq('id', currentChatId);
                 
+                // ============================================================
+                // ВАЖЛИВО: Додаємо повідомлення в масив chatMessages,
+                // щоб Realtime-підписка не додала його вдруге
+                // ============================================================
+                if (insertedMsg) {
+                    chatMessages.push(insertedMsg);
+                }
+                
+                // Додаємо в UI
                 const container = document.getElementById('chatMessages');
                 if (container) {
                     const msgDiv = document.createElement('div');
@@ -4609,8 +4620,13 @@ function initSupabase() {
                     container.appendChild(msgDiv);
                     container.scrollTop = container.scrollHeight;
                 }
+                
                 input.value = '';
-            } catch (e) { alert('❌ ' + e.message); }
+                
+            } catch (e) { 
+                console.error('Помилка відправки:', e);
+                alert('❌ ' + e.message); 
+            }
         }
 
         let realtimeSubscription = null;
