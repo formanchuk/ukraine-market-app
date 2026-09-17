@@ -3228,21 +3228,32 @@
             ]
         }];
 
-        // ================================================================
-        // ІНІЦІАЛІЗАЦІЯ SUPABASE
-        // ================================================================
-        function initSupabase() {
-            try {
-                if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    console.log('✅ Supabase initialized');
-                    const badge = document.getElementById('statusBadge');
-                    if (badge) { badge.textContent = '✅'; badge.className = 'status-badge status-connected'; }
-                    return true;
+function initSupabase() {
+    try {
+        if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase initialized');
+            
+            // Обробка помилок авторизації (ВИПРАВЛЕННЯ)
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (event === 'TOKEN_REFRESHED') {
+                    console.log('✅ Токен оновлено');
                 }
-                return false;
-            } catch (e) { console.error('❌ Supabase error:', e); return false; }
+                if (event === 'SIGNED_OUT') {
+                    console.log('🚪 Користувач вийшов');
+                    currentUser = null;
+                    localStorage.clear();
+                    navigateTo('auth');
+                }
+            });
+            
+            const badge = document.getElementById('statusBadge');
+            if (badge) { badge.textContent = '✅'; badge.className = 'status-badge status-connected'; }
+            return true;
         }
+        return false;
+    } catch (e) { console.error('❌ Supabase error:', e); return false; }
+}
 
         // ================================================================
         // AUTH
