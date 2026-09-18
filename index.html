@@ -4656,8 +4656,85 @@ function initSupabase() {
             if (!input) return;
             const content = input.value.trim();
             if (!content || !currentChatId || !currentUser) return;
-
-
+            
+            // Очищаємо поле ОДРАЗУ, щоб не було затримки
+            input.value = '';
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка суспензії
+            // ============================================================
+            const suspension = await checkUserSuspended();
+            if (suspension) {
+                showSuspendedScreen();
+                return;
+            }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка спам-слів
+            // ============================================================
+            if (containsSpam(content)) {
+                alert('🚫 Повідомлення містить заборонені слова (реклама).\n\nБудь ласка, перепишіть.');
+                return;
+            }
+            
+            // ============================================================
+            // АНТИСПАМ: перевірка ліміту повідомлень
+            // ============================================================
+            const limitCheck = await checkAndUpdateLimits('messages');
+            if (!limitCheck.allowed) {
+                alert(limitCheck.error);
+                return;
+            }
+            
+            // Блокуємо кнопку відправки, щоб не було подвійного кліку
+            const sendBtn = document.querySelector('.chat-input button[onclick*="sendMessage"]');
+            if (sendBtn) sendBtn.disabled = true;
+            
+            try {
+                const { data: insertedMsg, error } = await supabase.from('messages').insert({
+                    chat_id: currentChatId, 
+                    sender_id: currentUser.id, 
+                    text: content,
+                    is_read: false,
+                    created_at: new Date().toISOString()
+                }).select().single();
+                
+                if (error) throw error;
+                
+                await incrementLimit('messages');
+                
+                await supabase.from('chats').update({
+                    last_message: content, 
+                    last_message_time: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                }).eq('id', currentChatId);
+                
+                if (insertedMsg) {
+                    chatMessages.push(insertedMsg);
+                }
+                
+                const container = document.getElementById('chatMessages');
+                if (container) {
+                    if (!container.querySelector(`[data-id="${insertedMsg.id}"]`)) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'chat-message own';
+                        msgDiv.setAttribute('data-id', insertedMsg.id);
+                        msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())} <span class="chat-message-status"><i class="fas fa-check"></i></span></span>`;
+                        container.appendChild(msgDiv);
+                        requestAnimationFrame(() => {
+                            container.scrollTop = container.scrollHeight;
+                        });
+                    }
+                }
+                
+            } catch (e) { 
+                console.error('Помилка відправки:', e);
+                alert('❌ ' + e.message); 
+            } finally {
+                const sendBtn = document.querySelector('.chat-input button[onclick*="sendMessage"]');
+                if (sendBtn) sendBtn.disabled = false;
+            }
+        }
 
         async function sendChatPhoto(event) {
             const file = event.target.files[0];
@@ -4677,7 +4754,6 @@ function initSupabase() {
                 reader.onload = async function(e) {
                     const img = new Image();
                     img.onload = async function() {
-                        // Стискаємо фото
                         const canvas = document.createElement('canvas');
                         const MAX_WIDTH = 800;
                         let width = img.width;
@@ -4692,7 +4768,6 @@ function initSupabase() {
                         ctx.drawImage(img, 0, 0, width, height);
                         const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
                         
-                        // Відправляємо в чат
                         const { data: insertedMsg, error } = await supabase.from('messages').insert({
                             chat_id: currentChatId,
                             sender_id: currentUser.id,
@@ -4734,99 +4809,12 @@ function initSupabase() {
             }
             event.target.value = '';
         }
-            
-            
 
-            
-            // Очищаємо поле ОДРАЗУ, щоб не було затримки
-            input.value = '';
-            
-            // ============================================================
-            // АНТИСПАМ: перевірка суспензії
-            // ============================================================
-            const suspension = await checkUserSuspended();
-            if (suspension) {
-                showSuspendedScreen();
-                return;
-            }
-            
-            // ============================================================
-            // АНТИСПАМ: перевірка спам-слів
-            // ============================================================
-            if (containsSpam(content)) {
-                alert('🚫 Повідомлення містить заборонені слова (реклама).\n\nБудь ласка, перепишіть.');
-                return;
-            }
-            
-            // ============================================================
-            // АНТИСПАМ: перевірка ліміту повідомлень
-            // ============================================================
-            const limitCheck = await checkAndUpdateLimits('messages');
-            if (!limitCheck.allowed) {
-                alert(limitCheck.error);
-                return;
-            }
-            
-            // Блокуємо кнопку відправки, щоб не було подвійного кліку
+        let realtimeSubscription = null;
 
+        async function openChatDetail(chatId) {
+            currentChatId = chatId;
             
-        const sendBtn = document.querySelector('.chat-input button[onclick*="sendMessage"]');
-            if (sendBtn) sendBtn.disabled = true;
-            
-            try {
-                // Відправляємо повідомлення і ОТРИМУЄМО його назад з ID
-                const { data: insertedMsg, error } = await supabase.from('messages').insert({
-                    chat_id: currentChatId, 
-                    sender_id: currentUser.id, 
-                    text: content,
-                    is_read: false,
-                    created_at: new Date().toISOString()
-                }).select().single();
-                
-                if (error) throw error;
-                
-                // АНТИСПАМ: збільшуємо лічильник
-                await incrementLimit('messages');
-                
-                await supabase.from('chats').update({
-                    last_message: content, 
-                    last_message_time: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                }).eq('id', currentChatId);
-                
-                // ============================================================
-                // ВАЖЛИВО: Додаємо повідомлення в масив chatMessages
-                // ============================================================
-                if (insertedMsg) {
-                    chatMessages.push(insertedMsg);
-                }
-                
-                // Додаємо в UI (з data-id для перевірки дублікатів)
-                const container = document.getElementById('chatMessages');
-                if (container) {
-                    if (!container.querySelector(`[data-id="${insertedMsg.id}"]`)) {
-                        const msgDiv = document.createElement('div');
-                        msgDiv.className = 'chat-message own';
-                        msgDiv.setAttribute('data-id', insertedMsg.id);
-                        msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())} <span class="chat-message-status"><i class="fas fa-check"></i></span></span>`;
-                        container.appendChild(msgDiv);
-                        requestAnimationFrame(() => {
-                            container.scrollTop = container.scrollHeight;
-                        });
-                    }
-                }
-                
-            } catch (e) { 
-                console.error('Помилка відправки:', e);
-                alert('❌ ' + e.message); 
-            } finally {
-                // Розблоковуємо кнопку
-                const sendBtn = document.querySelector('.chat-input button[onclick*="sendMessage"]');
-                if (sendBtn) sendBtn.disabled = false;
-            }
-        }
-            
-            // Відписуємось від попередньої підписки (якщо є)
             if (realtimeSubscription) {
                 supabase.removeChannel(realtimeSubscription);
                 realtimeSubscription = null;
@@ -4871,6 +4859,54 @@ function initSupabase() {
                 if (localChat) localChat.unread_count = 0;
                 updateChatBadge();
                 
+                console.log('📡 Підписка на чат:', chatId);
+                
+                realtimeSubscription = supabase
+                    .channel(`chat-${chatId}`)
+                    .on('postgres_changes', {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'messages',
+                        filter: `chat_id=eq.${chatId}`
+                    }, (payload) => {
+                        console.log('📨 Нове повідомлення (realtime):', payload.new);
+                        const newMsg = payload.new;
+                        
+                        if (chatMessages.find(m => m.id === newMsg.id)) return;
+                        
+                        chatMessages.push(newMsg);
+                        
+                        const container = document.getElementById('chatMessages');
+                        if (container) {
+                            if (!container.querySelector(`[data-id="${newMsg.id}"]`)) {
+                                const isOwn = newMsg.sender_id === currentUser.id;
+                                const msgDiv = document.createElement('div');
+                                msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
+                                msgDiv.setAttribute('data-id', newMsg.id);
+                                const imageHtml = newMsg.image_url 
+                                    ? `<img src="${newMsg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open('${newMsg.image_url}', '_blank')" />` 
+                                    : '';
+                                msgDiv.innerHTML = `${imageHtml}${newMsg.text || ''}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
+                                container.appendChild(msgDiv);
+                                requestAnimationFrame(() => {
+                                    container.scrollTop = container.scrollHeight;
+                                });
+                            }
+                        }
+                        
+                        if (newMsg.sender_id !== currentUser.id) {
+                            markMessagesAsRead(chatId);
+                        }
+                    })
+                    .subscribe((status) => {
+                        console.log('📡 Realtime status:', status);
+                    });
+                
+            } catch (e) {
+                console.error('Помилка відкриття чату:', e);
+                alert('❌ ' + e.message);
+            }
+        }
                 // ============================================================
                 // REALTIME: підписка на нові повідомлення в цьому чаті
                 // ============================================================
