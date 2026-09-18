@@ -1840,6 +1840,37 @@
 </head>
 <body>
 
+
+<!-- ABOUT MODAL -->
+<div class="success-modal" id="aboutModal">
+    <div class="modal-box" style="max-width: 400px; text-align: left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+            <h3 style="font-size:20px; font-weight:700;">Про UAMO</h3>
+            <button style="background:none; border:none; font-size:24px; color:var(--text-dim); cursor:pointer;" onclick="closeAboutModal()">&times;</button>
+        </div>
+        
+        <div style="text-align:center; margin-bottom:16px;">
+            <i class="fas fa-cube" style="font-size:48px; color:var(--accent);"></i>
+            <h3 style="font-size:22px; font-weight:700; margin-top:8px;">UAMO</h3>
+            <p style="font-size:14px; color:var(--text-secondary);">Версія 2.0</p>
+        </div>
+        
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.6; margin-bottom:16px;">
+            UAMO — це сучасний маркетплейс для українців. Купуйте, продавайте, спілкуйтеся та знаходьте потрібне поруч.
+        </p>
+        
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <a href="https://t.me/Markets_Ukraine" target="_blank" class="btn-submit" style="background:#0088CC; color:#fff; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:var(--radius-sm); font-weight:600;">
+                <i class="fab fa-telegram"></i> Telegram-канал
+            </a>
+            <button class="btn-submit" style="background:var(--bg); color:var(--text); border:1px solid var(--border);" onclick="closeAboutModal()">
+                Закрити
+            </button>
+        </div>
+    </div>
+</div>
+
+    
     <div id="app">
         <!-- HEADER -->
         <div class="header" id="globalHeader">
@@ -2097,6 +2128,7 @@
                     <div class="profile-menu-item" onclick="navigateTo('chats')"><i class="fas fa-comment-dots"></i> Повідомлення <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('settings')"><i class="fas fa-cog"></i> Налаштування <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="navigateTo('help')"><i class="fas fa-question-circle"></i> Допомога <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+                    <div class="profile-menu-item" onclick="window.open('https://t.me/Markets_Ukraine', '_blank')"><i class="fab fa-telegram" style="color:#0088CC;"></i> Telegram-канал <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item" onclick="showAbout()"><i class="fas fa-info-circle"></i> Про UAMO <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                     <div class="profile-menu-item danger" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Вийти <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
                 </div>
@@ -5027,6 +5059,8 @@ function initSupabase() {
         function editListing(id) {
             const listing = myListings.find(l => l.id === id) || listings.find(l => l.id === id);
             if (!listing) return;
+            
+            // Заповнюємо форму
             const sel = document.getElementById('addCategory');
             for (let i = 0; i < sel.options.length; i++) if (sel.options[i].value === listing.category) sel.selectedIndex = i;
             renderCategoryFields(listing.category);
@@ -5038,9 +5072,18 @@ function initSupabase() {
             if (listing.specs) Object.entries(listing.specs).forEach(([k, v]) => { const el = document.getElementById(`field_${k}`); if (el) el.value = v; });
             selectedPhotos = listing.photos || [];
             renderPhotoPreviews();
+            
+            // Запам'ятовуємо, що це редагування
+            currentDetailId = id;
+            
+            // Змінюємо кнопку
+            const publishBtn = document.getElementById('publishBtn');
+            if (publishBtn) { 
+                publishBtn.innerHTML = '<i class="fas fa-save"></i> Оновити'; 
+                publishBtn.setAttribute('onclick', `updateListing('${id}')`);
+            }
+            
             navigateTo('add');
-            const btn = document.querySelector('.btn-submit');
-            if (btn) { btn.innerHTML = '<i class="fas fa-save"></i> Оновити'; btn.onclick = () => updateListing(id); }
         }
 
         async function updateListing(id) {
@@ -5065,6 +5108,7 @@ function initSupabase() {
                 alert('✅ Оновлено!');
                 resetPhotoForm();
                 dataLoaded = false;
+                currentDetailId = null;
                 await loadAllData();
                 navigateTo('my-listings');
             } catch (e) { alert('❌ ' + e.message); }
@@ -5080,7 +5124,6 @@ function initSupabase() {
                 if (currentPage === 'my-listings') renderMyListings();
             } catch (e) { alert('❌ ' + e.message); }
         }
-
         // ================================================================
         // PROFILE / SETTINGS
         // ================================================================
@@ -5123,13 +5166,14 @@ function initSupabase() {
             container.innerHTML = filtered.map(c => `<div class="settings-item" onclick="selectCity('${c}')" style="cursor:pointer;"><span class="settings-label">${c}</span>${c === userData.city ? '<span style="color:var(--accent);"><i class="fas fa-check-circle"></i></span>' : ''}</div>`).join('');
         }
 
-        function saveLanguage() {
-            const sel = document.querySelector('input[name="language"]:checked');
-            if (!sel) return;
-            userData.language = sel.value;
-            supabase.from('users').update({ language: sel.value }).eq('id', currentUser.id);
-            alert('✅ Мову збережено');
-        }
+function saveLanguage() {
+    const sel = document.querySelector('input[name="language"]:checked');
+    if (!sel) return;
+    userData.language = sel.value;
+    supabase.from('users').update({ language: sel.value }).eq('id', currentUser.id);
+    renderAll();
+    showToast('✅ Мову збережено', 'success');
+}
 
         async function changePassword() {
             const np = document.getElementById('newPassword').value;
@@ -5165,7 +5209,15 @@ function initSupabase() {
 
         function showForgotPassword() { navigateTo('auth'); handleForgotPassword(); }
         function showHelp() { navigateTo('help'); }
-        function showAbout() { alert('UAMO v2.0\n\nУкраїнська платформа'); }
+        function showAbout() { 
+    const modal = document.getElementById('aboutModal');
+    if (modal) modal.classList.add('show');
+}
+
+function closeAboutModal() {
+    const modal = document.getElementById('aboutModal');
+    if (modal) modal.classList.remove('show');
+}
 
         async function handleLogout() {
             if (!confirm('Вийти?')) return;
