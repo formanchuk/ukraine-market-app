@@ -4962,34 +4962,34 @@ function initSupabase() {
         // ============================================================
         // RENDER: повідомлення чату (з data-id)
         // ============================================================
-function renderChatMessages(container) {
-    if (chatMessages.length === 0) {
-        container.innerHTML = `
-            <div style="text-align:center; color:var(--text-secondary); padding:30px;">
-                <i class="fas fa-comment-dots" style="font-size:32px; margin-bottom:10px; display:block;"></i>
-                <p>Немає повідомлень</p>
-                <p style="font-size:12px;">Напишіть перше повідомлення</p>
-            </div>
-        `;
-    } else {
-        container.innerHTML = chatMessages.map(msg => {
-            const isOwn = msg.sender_id === currentUser.id;
-            const status = isOwn 
-                ? (msg.is_read 
-                    ? '<i class="fas fa-check-double"></i>'
-                    : '<i class="fas fa-check"></i>')
-                : '';
-            const imageHtml = msg.image_url 
-                ? `<img src="${msg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open('${msg.image_url}', '_blank')" />` 
-                : '';
-            return `<div class="chat-message ${isOwn ? 'own' : 'other'}" data-id="${msg.id}">
-                ${imageHtml}
-                ${msg.text || ''}
-                <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
-            </div>`;
-        }).join('');
-    }
-}
+        function renderChatMessages(container) {
+            if (chatMessages.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; color:var(--text-secondary); padding:30px;">
+                        <i class="fas fa-comment-dots" style="font-size:32px; margin-bottom:10px; display:block;"></i>
+                        <p>Немає повідомлень</p>
+                        <p style="font-size:12px;">Напишіть перше повідомлення</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = chatMessages.map(msg => {
+                    const isOwn = msg.sender_id === currentUser.id;
+                    const status = isOwn 
+                        ? (msg.is_read 
+                            ? '<i class="fas fa-check-double"></i>'
+                            : '<i class="fas fa-check"></i>')
+                        : '';
+                    const imageHtml = msg.image_url 
+                        ? `<img src="${msg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open(this.src, '_blank')" />` 
+                        : '';
+                    return `<div class="chat-message ${isOwn ? 'own' : 'other'}" data-id="${msg.id}">
+                        ${imageHtml}
+                        ${msg.text || ''}
+                        <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
+                    </div>`;
+                }).join('');
+            }
+        }
 
         // ============================================================
         // Відкриття чату з оголошення
