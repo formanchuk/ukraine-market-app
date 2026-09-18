@@ -4640,7 +4640,9 @@ function initSupabase() {
                         msgDiv.setAttribute('data-id', insertedMsg.id);
                         msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())} <span class="chat-message-status"><i class="fas fa-check"></i></span></span>`;
                         container.appendChild(msgDiv);
-                        container.scrollTop = container.scrollHeight;
+                      requestAnimationFrame(() => {
+                      container.scrollTop = container.scrollHeight;
+                     });
                     }
                 }
                 
