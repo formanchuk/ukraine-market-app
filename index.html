@@ -605,10 +605,15 @@
             gap: 12px;
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 10px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
+            padding: 12px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             cursor: pointer;
+            transition: var(--transition);
+        }
+        .search-result-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
         }
         .search-result-card:hover { border-color: var(--accent); }
         .search-result-card .img {
@@ -1403,6 +1408,25 @@
             left: 18px;
         }
 
+
+        /* ================================================================
+           ВИПРАВЛЕННЯ: тач-події для телефону
+           ================================================================ */
+        .favorite-icon, 
+        .btn-submit, 
+        .profile-menu-item, 
+        .chat-delete-btn,
+        .listing-card,
+        .search-result-card,
+        .category-item {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+
+        
         /* ЧАТИ — онлайн-статус, час, прочитано */
         .chat-online-dot {
             width: 10px; height: 10px; border-radius: 50%;
@@ -1421,10 +1445,19 @@
         .chat-message-status { font-size: 10px; margin-left: 6px; opacity: 0.8; }
         .chat-message-status .fa-check { color: rgba(255, 255, 255, 0.6); }
         .chat-message-status .fa-check-double { color: #4FC3F7; }
-        .chat-delete-btn {
-            background: none; border: none; color: var(--danger);
-            cursor: pointer; font-size: 16px; padding: 8px;
-        }
+ .chat-delete-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px;
+    pointer-events: auto !important;
+    z-index: 100 !important;
+    position: relative;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
 
         @media (min-width: 640px) {
             .app-container { max-width: 600px; padding: 0 24px 80px 24px; }
@@ -2091,10 +2124,19 @@
                 </div>
                 <div id="chatMessagesContainer">
                     <div class="chat-messages" id="chatMessages"></div>
-                    <div class="chat-input">
-                        <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeydown="if(event.key==='Enter') sendMessage()" />
-                        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-                    </div>
+<div class="chat-input">
+    <button onclick="document.getElementById('chatPhotoInput').click()" style="background:none; border:none; color:var(--accent); font-size:18px; padding:0 8px; cursor:pointer;" title="Надіслати фото">
+        <i class="fas fa-image"></i>
+    </button>
+    <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;" onchange="sendChatPhoto(event)" />
+<div class="chat-input">
+    <button onclick="document.getElementById('chatPhotoInput').click()" style="background:none; border:none; color:var(--accent); font-size:18px; padding:0 8px; cursor:pointer;" title="Надіслати фото">
+        <i class="fas fa-image"></i>
+    </button>
+    <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;" onchange="sendChatPhoto(event)" />
+    <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeydown="if(event.key==='Enter') sendMessage()" />
+    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+</div>
                 </div>
             </div>
         </div>
@@ -3707,7 +3749,9 @@ function initSupabase() {
             return `<div class="listing-card" onclick="openDetail('${l.id}')">
                 <div class="listing-card-image" style="${photo ? `background-image:url('${photo}')` : `background:var(--border); display:flex; align-items:center; justify-content:center;`}">
                     ${!photo ? '<i class="fas fa-image" style="font-size:32px; color:var(--text-secondary);"></i>' : ''}
-                    <button class="favorite-icon ${fav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${l.id}')"><i class="${fav ? 'fas' : 'far'} fa-heart"></i></button>
+                    <button class="favorite-icon ${fav ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); event.preventDefault(); toggleFavorite('${l.id}')"
+                    ontouchend="event.stopPropagation(); event.preventDefault(); toggleFavorite('${l.id}')"><i class="${fav ? 'fas' : 'far'} fa-heart"></i></button>
                 </div>
                 <div class="listing-card-body">
                     <div class="price">${l.price} грн</div>
@@ -3811,9 +3855,13 @@ function initSupabase() {
                             </div>
                             ${isOnline ? `<div class="chat-status-text"><i class="fas fa-circle" style="font-size:6px;"></i> Онлайн</div>` : ''}
                         </div>
-                        <button class="chat-delete-btn" onclick="event.stopPropagation(); deleteChat('${chat.id}')" title="Видалити чат">
-                            <i class="fas fa-trash"></i>
-                        </button>
+<button class="chat-delete-btn" 
+        onclick="event.stopPropagation(); event.preventDefault(); deleteChat('${chat.id}')"
+        ontouchend="event.stopPropagation(); event.preventDefault(); deleteChat('${chat.id}')"
+        style="pointer-events: auto; z-index: 100; position: relative;"
+        title="Видалити чат">
+    <i class="fas fa-trash"></i>
+</button>
                     </div>`;
                 }).join('');
             }
@@ -4608,6 +4656,90 @@ function initSupabase() {
             if (!input) return;
             const content = input.value.trim();
             if (!content || !currentChatId || !currentUser) return;
+
+
+
+        async function sendChatPhoto(event) {
+            const file = event.target.files[0];
+            if (!file || !currentChatId || !currentUser) return;
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Файл завеликий! Максимум 5 МБ', 'error');
+                return;
+            }
+            if (!file.type.startsWith('image/')) {
+                showToast('Виберіть зображення', 'error');
+                return;
+            }
+            
+            try {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const img = new Image();
+                    img.onload = async function() {
+                        // Стискаємо фото
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        // Відправляємо в чат
+                        const { data: insertedMsg, error } = await supabase.from('messages').insert({
+                            chat_id: currentChatId,
+                            sender_id: currentUser.id,
+                            text: '📷 Фото',
+                            image_url: compressedDataUrl,
+                            is_read: false,
+                            created_at: new Date().toISOString()
+                        }).select().single();
+                        
+                        if (error) throw error;
+                        
+                        await supabase.from('chats').update({
+                            last_message: '📷 Фото',
+                            last_message_time: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        }).eq('id', currentChatId);
+                        
+                        if (insertedMsg) chatMessages.push(insertedMsg);
+                        
+                        const container = document.getElementById('chatMessages');
+                        if (container) {
+                            if (!container.querySelector(`[data-id="${insertedMsg.id}"]`)) {
+                                const msgDiv = document.createElement('div');
+                                msgDiv.className = 'chat-message own';
+                                msgDiv.setAttribute('data-id', insertedMsg.id);
+                                msgDiv.innerHTML = `<img src="${compressedDataUrl}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" /><span class="chat-time">${timeAgo(new Date().toISOString())}</span>`;
+                                container.appendChild(msgDiv);
+                                requestAnimationFrame(() => {
+                                    container.scrollTop = container.scrollHeight;
+                                });
+                            }
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } catch (e) {
+                showToast('❌ Помилка: ' + e.message, 'error');
+            }
+            event.target.value = '';
+        }
+            
+            
+
+            
+            // Очищаємо поле ОДРАЗУ, щоб не було затримки
+            input.value = '';
             
             // ============================================================
             // АНТИСПАМ: перевірка суспензії
@@ -4634,6 +4766,12 @@ function initSupabase() {
                 alert(limitCheck.error);
                 return;
             }
+            
+            // Блокуємо кнопку відправки, щоб не було подвійного кліку
+
+            
+        const sendBtn = document.querySelector('.chat-input button[onclick*="sendMessage"]');
+            if (sendBtn) sendBtn.disabled = true;
             
             try {
                 // Відправляємо повідомлення і ОТРИМУЄМО його назад з ID
@@ -4672,24 +4810,21 @@ function initSupabase() {
                         msgDiv.setAttribute('data-id', insertedMsg.id);
                         msgDiv.innerHTML = `${content}<span class="chat-time">${timeAgo(new Date().toISOString())} <span class="chat-message-status"><i class="fas fa-check"></i></span></span>`;
                         container.appendChild(msgDiv);
-                      requestAnimationFrame(() => {
-                      container.scrollTop = container.scrollHeight;
-                     });
+                        requestAnimationFrame(() => {
+                            container.scrollTop = container.scrollHeight;
+                        });
                     }
                 }
-                
-                input.value = '';
                 
             } catch (e) { 
                 console.error('Помилка відправки:', e);
                 alert('❌ ' + e.message); 
+            } finally {
+                // Розблоковуємо кнопку
+                const sendBtn = document.querySelector('.chat-input button[onclick*="sendMessage"]');
+                if (sendBtn) sendBtn.disabled = false;
             }
         }
-
-        let realtimeSubscription = null;
-
-        async function openChatDetail(chatId) {
-            currentChatId = chatId;
             
             // Відписуємось від попередньої підписки (якщо є)
             if (realtimeSubscription) {
@@ -4765,7 +4900,10 @@ function initSupabase() {
                                 const msgDiv = document.createElement('div');
                                 msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
                                 msgDiv.setAttribute('data-id', newMsg.id);
-                                msgDiv.innerHTML = `${newMsg.text}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
+                                const imageHtml = newMsg.image_url 
+                                ? `<img src="${newMsg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open('${newMsg.image_url}', '_blank')" />` 
+                                                                                                                                                                                                   : '';
+                                msgDiv.innerHTML = `${imageHtml}${newMsg.text || ''}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
                                 container.appendChild(msgDiv);
                                 container.scrollTop = container.scrollHeight;
                             }
@@ -4789,30 +4927,34 @@ function initSupabase() {
         // ============================================================
         // RENDER: повідомлення чату (з data-id)
         // ============================================================
-        function renderChatMessages(container) {
-            if (chatMessages.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; color:var(--text-secondary); padding:30px;">
-                        <i class="fas fa-comment-dots" style="font-size:32px; margin-bottom:10px; display:block;"></i>
-                        <p>Немає повідомлень</p>
-                        <p style="font-size:12px;">Напишіть перше повідомлення</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = chatMessages.map(msg => {
-                    const isOwn = msg.sender_id === currentUser.id;
-                    const status = isOwn 
-                        ? (msg.is_read 
-                            ? '<i class="fas fa-check-double"></i>'
-                            : '<i class="fas fa-check"></i>')
-                        : '';
-                    return `<div class="chat-message ${isOwn ? 'own' : 'other'}" data-id="${msg.id}">
-                        ${msg.text}
-                        <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
-                    </div>`;
-                }).join('');
-            }
-        }
+function renderChatMessages(container) {
+    if (chatMessages.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; color:var(--text-secondary); padding:30px;">
+                <i class="fas fa-comment-dots" style="font-size:32px; margin-bottom:10px; display:block;"></i>
+                <p>Немає повідомлень</p>
+                <p style="font-size:12px;">Напишіть перше повідомлення</p>
+            </div>
+        `;
+    } else {
+        container.innerHTML = chatMessages.map(msg => {
+            const isOwn = msg.sender_id === currentUser.id;
+            const status = isOwn 
+                ? (msg.is_read 
+                    ? '<i class="fas fa-check-double"></i>'
+                    : '<i class="fas fa-check"></i>')
+                : '';
+            const imageHtml = msg.image_url 
+                ? `<img src="${msg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open('${msg.image_url}', '_blank')" />` 
+                : '';
+            return `<div class="chat-message ${isOwn ? 'own' : 'other'}" data-id="${msg.id}">
+                ${imageHtml}
+                ${msg.text || ''}
+                <span class="chat-time">${timeAgo(msg.created_at)} <span class="chat-message-status">${status}</span></span>
+            </div>`;
+        }).join('');
+    }
+}
 
         // ============================================================
         // Відкриття чату з оголошення
