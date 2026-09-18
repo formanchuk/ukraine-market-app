@@ -4891,9 +4891,53 @@ const imageHtml = newMsg.image_url
                 alert('❌ ' + e.message);
             }
         }
-                // ============================================================
-                // REALTIME: підписка на нові повідомлення в цьому чаті
-                // ============================================================
+        async function openChatDetail(chatId) {
+            currentChatId = chatId;
+            
+            if (realtimeSubscription) {
+                supabase.removeChannel(realtimeSubscription);
+                realtimeSubscription = null;
+            }
+            
+            try {
+                const { data: messages } = await supabase
+                    .from('messages')
+                    .select('*')
+                    .eq('chat_id', chatId)
+                    .order('created_at', { ascending: true });
+                
+                chatMessages = messages || [];
+                
+                const container = document.getElementById('chatMessages');
+                if (!container) return;
+                
+                renderChatMessages(container);
+                
+                const chat = chats.find(c => c.id === chatId);
+                if (chat) {
+                    const isBuyer = chat.buyer_id === currentUser.id;
+                    const partner = isBuyer ? chat.seller : chat.buyer;
+                    const partnerName = partner?.first_name || 'Користувач';
+                    
+                    document.getElementById('chatPartnerName').textContent = partnerName;
+                    
+                    const avatarEl = document.getElementById('chatPartnerAvatar');
+                    if (partner?.avatar_url) {
+                        avatarEl.innerHTML = `<img src="${partner.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />`;
+                    } else {
+                        avatarEl.textContent = partnerName[0]?.toUpperCase() || '👤';
+                    }
+                }
+                
+                navigateTo('chat-detail');
+                setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100);
+                
+                await markMessagesAsRead(chatId);
+                
+                const localChat = chats.find(c => c.id === chatId);
+                if (localChat) localChat.unread_count = 0;
+                updateChatBadge();
+                
                 console.log('📡 Підписка на чат:', chatId);
                 
                 realtimeSubscription = supabase
@@ -4907,42 +4951,41 @@ const imageHtml = newMsg.image_url
                         console.log('📨 Нове повідомлення (realtime):', payload.new);
                         const newMsg = payload.new;
                         
-                        // Перевірка на дублікат в масиві
                         if (chatMessages.find(m => m.id === newMsg.id)) return;
                         
                         chatMessages.push(newMsg);
                         
                         const container = document.getElementById('chatMessages');
                         if (container) {
-                            // Перевірка на дублікат в UI (з data-id)
                             if (!container.querySelector(`[data-id="${newMsg.id}"]`)) {
                                 const isOwn = newMsg.sender_id === currentUser.id;
                                 const msgDiv = document.createElement('div');
                                 msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
                                 msgDiv.setAttribute('data-id', newMsg.id);
                                 const imageHtml = newMsg.image_url 
-                                ? `<img src="${newMsg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open('${newMsg.image_url}', '_blank')" />` 
-                                                                                                                                                                                                   : '';
+                                    ? `<img src="${newMsg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open(this.src, '_blank')" />` 
+                                    : '';
                                 msgDiv.innerHTML = `${imageHtml}${newMsg.text || ''}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
                                 container.appendChild(msgDiv);
-                                container.scrollTop = container.scrollHeight;
+                                requestAnimationFrame(() => {
+                                    container.scrollTop = container.scrollHeight;
+                                });
                             }
                         }
                         
-                        // Якщо повідомлення не від нас — позначаємо прочитаним
                         if (newMsg.sender_id !== currentUser.id) {
                             markMessagesAsRead(chatId);
                         }
                     })
                     .subscribe((status) => {
                         console.log('📡 Realtime status:', status);
-                    });          
+                    });
+                
             } catch (e) {
                 console.error('Помилка відкриття чату:', e);
                 alert('❌ ' + e.message);
             }
         }
-
         // ============================================================
         // RENDER: повідомлення чату (з data-id)
         // ============================================================
