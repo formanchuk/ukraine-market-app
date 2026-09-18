@@ -2113,6 +2113,15 @@
         </div>
 
         <!-- CHAT DETAIL -->
+        <div class="page" id="page-chat-detail">
+            <div class="app-container">
+                <div class="back-header">
+                    <button class="back-btn" onclick="navigateTo('chats')"><i class="fas fa-arrow-left"></i></button>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="avatar-small" id="chatPartnerAvatar" style="width:32px; height:32px;">👤</div>
+                        <span class="title" id="chatPartnerName">Продавець</span>
+                    </div>
+                </div>
                 <div id="chatMessagesContainer">
                     <div class="chat-messages" id="chatMessages"></div>
                     <div class="chat-input">
@@ -2124,6 +2133,8 @@
                         <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
+            </div>
+        </div>
 
         <!-- PROFILE -->
         <div class="page" id="page-profile">
