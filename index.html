@@ -4883,9 +4883,9 @@ function initSupabase() {
                                 const msgDiv = document.createElement('div');
                                 msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
                                 msgDiv.setAttribute('data-id', newMsg.id);
-                                const imageHtml = newMsg.image_url 
-                                    ? `<img src="${newMsg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open('${newMsg.image_url}', '_blank')" />` 
-                                    : '';
+const imageHtml = newMsg.image_url 
+    ? `<img src="${newMsg.image_url}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;" onclick="window.open(this.src, '_blank')" />` 
+    : '';
                                 msgDiv.innerHTML = `${imageHtml}${newMsg.text || ''}<span class="chat-time">${timeAgo(newMsg.created_at)} <span class="chat-message-status">${isOwn ? '<i class="fas fa-check"></i>' : ''}</span></span>`;
                                 container.appendChild(msgDiv);
                                 requestAnimationFrame(() => {
