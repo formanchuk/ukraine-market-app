@@ -887,8 +887,9 @@
             flex-direction: column;
             gap: 6px;
             padding: 12px 0;
-            max-height: 55vh;
+            max-height: 60vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .chat-message { 
             max-width: 80%; 
@@ -956,6 +957,21 @@
             }
         }
 
+
+                /* Контейнер чату */
+        #chatMessagesContainer {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            overflow: hidden;
+        }
+        
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         /* SETTINGS */
         .settings-group { margin-bottom: 20px; }
         .settings-item {
@@ -1009,7 +1025,16 @@
         }
         .radio-item input[type="radio"] { accent-color: var(--accent); }
 
-        .back-header { display: flex; align-items: center; gap: 12px; padding: 8px 0 12px 0; }
+        .back-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 8px 0 12px 0;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 20;
+        }
         .back-btn {
             background: none;
             border: none;
@@ -2179,9 +2204,9 @@
                             <i class="fas fa-image"></i>
                         </button>
                         <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;" onchange="sendChatPhoto(event)" />
-                      <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." 
+                     <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." 
        onkeydown="if(event.key==='Enter') sendMessage()" 
-       onfocus="setTimeout(() => this.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300)" />
+       onfocus="setTimeout(() => { document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }, 300)" />
                         <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
@@ -5017,12 +5042,9 @@ function initSupabase() {
                 navigateTo('chat-detail');
                 setTimeout(() => { 
                     container.scrollTop = container.scrollHeight;
-                    // Прокрутка до поля вводу
-                    const chatInput = document.getElementById('chatInput');
-                    if (chatInput) {
-                        chatInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                    }
-                }, 100);
+                    // Прокрутка всього вікна
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }, 200);
                 
                 await markMessagesAsRead(chatId);
                 
