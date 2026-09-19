@@ -1992,7 +1992,19 @@
         </div>
 
         <!-- SEARCH -->
-                     <div class="search-filters" id="searchFilters">
+        <div class="page" id="page-search">
+            <div class="app-container">
+                <div class="search-bar" style="position: relative;">
+                    <div class="search-bar-inner">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Пошук..." id="searchInput" 
+                               oninput="renderSearch(this.value)" 
+                               onblur="setTimeout(hideSearchSuggestions, 200)" />
+                    </div>
+                    <div id="searchSuggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border-radius: var(--radius-sm); box-shadow: var(--shadow); z-index: 100; max-height: 300px; overflow-y: auto; margin-top: 4px;"></div>
+                </div>
+                
+                <div class="search-filters" id="searchFilters">
                     <button class="active" onclick="filterByCategory('all')"><i class="fas fa-list"></i> Усі</button>
                     <button onclick="filterByCategory('products')"><i class="fas fa-tag"></i> Товари</button>
                     <button onclick="filterByCategory('electronics')"><i class="fas fa-laptop"></i> Електроніка</button>
@@ -2017,7 +2029,7 @@
                     Ми знайшли <span id="resultsCountNumber" style="color: var(--accent); font-weight: 700;">0</span> оголошень
                 </div>
 
-                <!-- Сортування (ЕТАП 3) -->
+                <!-- Сортування -->
                 <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
                     <span style="font-size: 13px; color: var(--text-secondary);">Сортувати:</span>
                     <select id="sortSelect" onchange="applySorting(this.value)" class="settings-select" style="flex: 1; padding: 8px 12px; font-size: 13px;">
@@ -2037,9 +2049,10 @@
                         <i class="fas fa-bookmark"></i> Мої пошуки
                     </button>
                 </div>
+                
                 <div class="search-results" id="searchResults"></div>
-            </div>
-        </div>
+            </div>  
+        </div>  
         
         <!-- ADD LISTING -->
         <div class="page" id="page-add">
