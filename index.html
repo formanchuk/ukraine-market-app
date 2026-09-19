@@ -580,16 +580,17 @@
         /* SEARCH PAGE */
         .search-filters {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             padding: 4px 0 14px 0;
             flex-wrap: wrap;
+            justify-content: flex-start;
         }
         .search-filters button {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 7px 14px;
-            font-size: 12px;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
             font-weight: 500;
             font-family: var(--font);
             color: var(--text-secondary);
@@ -597,6 +598,17 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .search-filters button:hover {
+            border-color: var(--accent);
+        }
+        .search-filters button.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
         }
         .search-filters button.active { background: var(--accent); color: white; border-color: var(--accent); }
         .search-results { display: flex; flex-direction: column; gap: 12px; padding-bottom: 16px; }
@@ -887,9 +899,8 @@
             flex-direction: column;
             gap: 6px;
             padding: 12px 0;
-            max-height: 60vh;
+            max-height: 45vh;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
         .chat-message { 
             max-width: 80%; 
