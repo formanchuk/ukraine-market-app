@@ -890,7 +890,13 @@
             max-height: 55vh;
             overflow-y: auto;
         }
-        .chat-message { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 14px; }
+        .chat-message { 
+            max-width: 80%; 
+            padding: 12px 16px; 
+            border-radius: 16px; 
+            font-size: 16px; 
+            line-height: 1.4;
+        }
         .chat-message.own {
             align-self: flex-end;
             background: var(--accent);
@@ -916,20 +922,38 @@
         }
         .chat-input input {
             flex: 1;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: var(--bg);
             outline: none;
             font-family: var(--font);
+            font-size: 16px;
         }
         .chat-input button {
-            padding: 10px 18px;
+            padding: 12px 20px;
             background: var(--accent);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* ================================================================
+           ВИПРАВЛЕННЯ ДЛЯ КЛАВІАТУРИ НА ANDROID
+           ================================================================ */
+        @media (max-width: 768px) {
+            .chat-input {
+                position: sticky;
+                bottom: 0;
+                background: var(--card-bg);
+                z-index: 10;
+            }
+            
+            .chat-messages {
+                padding-bottom: 80px;
+            }
         }
 
         /* SETTINGS */
@@ -2155,7 +2179,9 @@
                             <i class="fas fa-image"></i>
                         </button>
                         <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;" onchange="sendChatPhoto(event)" />
-                        <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." onkeydown="if(event.key==='Enter') sendMessage()" />
+                      <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." 
+       onkeydown="if(event.key==='Enter') sendMessage()" 
+       onfocus="setTimeout(() => this.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300)" />
                         <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
@@ -4989,7 +5015,14 @@ function initSupabase() {
                 }
                 
                 navigateTo('chat-detail');
-                setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100);
+                setTimeout(() => { 
+                    container.scrollTop = container.scrollHeight;
+                    // Прокрутка до поля вводу
+                    const chatInput = document.getElementById('chatInput');
+                    if (chatInput) {
+                        chatInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }
+                }, 100);
                 
                 await markMessagesAsRead(chatId);
                 
