@@ -920,6 +920,9 @@
             border-radius: 12px;
             border: 1px solid var(--border);
             margin-top: 8px;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
         }
         .chat-input input {
             flex: 1;
@@ -2206,6 +2209,11 @@
                         <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;" onchange="sendChatPhoto(event)" />
                      <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." 
        onkeydown="if(event.key==='Enter') sendMessage()" 
+       onfocus="setTimeout(() => { 
+           const container = document.getElementById('chatMessages');
+           if (container) container.scrollTop = container.scrollHeight;
+           window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+       }, 300)" />
        onfocus="setTimeout(() => { document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }, 300)" />
                         <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                     </div>
@@ -5044,7 +5052,12 @@ function initSupabase() {
                     container.scrollTop = container.scrollHeight;
                     // Прокрутка всього вікна
                     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                }, 200);
+                    // Прокрутка до поля вводу
+                    const chatInput = document.getElementById('chatInput');
+                    if (chatInput) {
+                        chatInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }
+                }, 300);
                 
                 await markMessagesAsRead(chatId);
                 
