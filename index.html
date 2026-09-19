@@ -1973,13 +1973,16 @@
         <!-- HOME -->
         <div class="page" id="page-home">
             <div class="app-container">
-                <div class="search-bar">
-                    <div class="search-bar-inner">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Що ви шукаєте?" id="globalSearch" onkeydown="if(event.key==='Enter'){navigateTo('search'); document.getElementById('searchInput').value=this.value; renderSearch(this.value);}" />
-                    </div>
-                </div>
-                <div class="category-slider" id="categorySlider"></div>
+<div class="search-bar" style="position: relative;">
+    <div class="search-bar-inner">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Що ви шукаєте?" id="globalSearch" 
+               oninput="showSearchSuggestions(this.value)" 
+               onkeydown="if(event.key==='Enter'){navigateTo('search'); document.getElementById('searchInput').value=this.value; renderSearch(this.value); hideSearchSuggestions();}" 
+               onblur="setTimeout(hideSearchSuggestions, 200)" />
+    </div>
+    <div id="searchSuggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--card-bg); border-radius: var(--radius-sm); box-shadow: var(--shadow); z-index: 100; max-height: 300px; overflow-y: auto; margin-top: 4px;"></div>
+</div>                <div class="category-slider" id="categorySlider"></div>
                 <div class="section-header"><h2>Рекомендовані</h2><a onclick="navigateTo('search')">Усі →</a></div>
                 <div class="listing-scroll" id="recommendedScroll"></div>
                 <div class="section-header"><h2>Нові оголошення</h2><a onclick="navigateTo('search')">Усі →</a></div>
@@ -1989,15 +1992,7 @@
         </div>
 
         <!-- SEARCH -->
-        <div class="page" id="page-search">
-            <div class="app-container">
-                <div class="search-bar">
-                    <div class="search-bar-inner">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Пошук..." id="searchInput" oninput="renderSearch(this.value)" />
-                    </div>
-                </div>
-                <div class="search-filters" id="searchFilters">
+                     <div class="search-filters" id="searchFilters">
                     <button class="active" onclick="filterByCategory('all')"><i class="fas fa-list"></i> Усі</button>
                     <button onclick="filterByCategory('products')"><i class="fas fa-tag"></i> Товари</button>
                     <button onclick="filterByCategory('electronics')"><i class="fas fa-laptop"></i> Електроніка</button>
@@ -2016,6 +2011,24 @@
                     <button onclick="filterByCategory('photo')"><i class="fas fa-camera"></i> Фото</button>
                     <button onclick="openFilterModal()"><i class="fas fa-sliders-h"></i> Фільтри</button>
                 </div>
+
+                <!-- Лічильник результатів -->
+                <div id="searchResultsCount" style="padding: 12px 0 8px 0; font-size: 13px; color: var(--text-secondary); font-weight: 500; display: none;">
+                    Ми знайшли <span id="resultsCountNumber" style="color: var(--accent); font-weight: 700;">0</span> оголошень
+                </div>
+
+                <!-- Сортування (ЕТАП 3) -->
+                <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
+                    <span style="font-size: 13px; color: var(--text-secondary);">Сортувати:</span>
+                    <select id="sortSelect" onchange="applySorting(this.value)" class="settings-select" style="flex: 1; padding: 8px 12px; font-size: 13px;">
+                        <option value="recommended">Рекомендоване</option>
+                        <option value="price_asc">Ціна: від дешевих</option>
+                        <option value="price_desc">Ціна: від дорогих</option>
+                        <option value="date_desc">Спочатку нові</option>
+                        <option value="date_asc">Спочатку старі</option>
+                    </select>
+                </div>
+
                 <div style="display:flex; gap:8px; margin-bottom:12px;">
                     <button class="btn-submit" style="background:var(--accent); padding:10px; font-size:14px; flex:1;" onclick="openSaveSearchModal()">
                         <i class="fas fa-bookmark"></i> Зберегти пошук
@@ -2027,7 +2040,7 @@
                 <div class="search-results" id="searchResults"></div>
             </div>
         </div>
-
+        
         <!-- ADD LISTING -->
         <div class="page" id="page-add">
             <div class="app-container">
@@ -3776,6 +3789,80 @@ function initSupabase() {
             </div>`;
         }
 
+
+
+        function showSearchSuggestions(query) {
+            const container = document.getElementById('searchSuggestions');
+            if (!container) return;
+            
+            if (!query || query.length < 2) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            const lowerQuery = query.toLowerCase();
+            
+            // Шукаємо категорії
+            const matchedCategories = Object.entries(CATEGORIES_CONFIG)
+                .filter(([key, val]) => val.name.toLowerCase().includes(lowerQuery))
+                .slice(0, 5);
+            
+            // Шукаємо оголошення
+            const matchedListings = listings
+                .filter(l => l.title.toLowerCase().includes(lowerQuery))
+                .slice(0, 5);
+            
+            let html = '';
+            
+            // Категорії
+            if (matchedCategories.length > 0) {
+                html += `<div style="padding: 8px 16px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 600;">Категорії</div>`;
+                html += matchedCategories.map(([key, val]) => 
+                    `<div onclick="selectCategoryFromSearch('${key}')" style="padding: 10px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border);">
+                        <i class="fas ${val.icon}" style="color: var(--accent); width: 20px;"></i>
+                        <span style="font-size: 14px;">${val.name}</span>
+                        <span style="margin-left: auto; font-size: 12px; color: var(--text-dim);">${listings.filter(l => l.category === key).length}</span>
+                    </div>`
+                ).join('');
+            }
+            
+            // Оголошення
+            if (matchedListings.length > 0) {
+                html += `<div style="padding: 8px 16px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; border-top: 1px solid var(--border);">Оголошення</div>`;
+                html += matchedListings.map(l => 
+                    `<div onclick="openDetail('${l.id}'); hideSearchSuggestions();" style="padding: 10px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border);">
+                        <i class="fas fa-tag" style="color: var(--text-secondary); width: 20px;"></i>
+                        <span style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${l.title}</span>
+                        <span style="margin-left: auto; font-size: 12px; color: var(--accent); font-weight: 600; white-space: nowrap;">${l.price} грн</span>
+                    </div>`
+                ).join('');
+            }
+            
+            if (!html) {
+                html = `<div style="padding: 16px; text-align: center; color: var(--text-secondary); font-size: 13px;">
+                    <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px; display: block; opacity: 0.3;"></i>
+                    Нічого не знайдено
+                </div>`;
+            }
+            
+            container.innerHTML = html;
+            container.style.display = 'block';
+        }
+        
+        function hideSearchSuggestions() {
+            const container = document.getElementById('searchSuggestions');
+            if (container) container.style.display = 'none';
+        }
+        
+        function selectCategoryFromSearch(categoryKey) {
+            currentFilterCategory = categoryKey;
+            hideSearchSuggestions();
+            navigateTo('search');
+            filterByCategory(categoryKey);
+        }
+        
+        
+        
         function renderHome() {
             if (!currentUser) { navigateTo('auth'); return; }
             const recommended = listings.filter(l => l.isFeatured).slice(0, 6);
@@ -3789,13 +3876,43 @@ function initSupabase() {
             document.getElementById('bottomNav')?.classList.add('show');
         }
 
+
+        let currentSort = 'recommended';
+        
+        function applySorting(sortType) {
+            currentSort = sortType;
+            renderSearch(document.getElementById('searchInput')?.value || '');
+        }
+        
+        
         function renderSearch(query = '') {
             const container = document.getElementById('searchResults');
+            const countContainer = document.getElementById('searchResultsCount');
+            const countNumber = document.getElementById('resultsCountNumber');
+            
             if (!container) return;
             if (query && document.getElementById('searchInput')) document.getElementById('searchInput').value = query;
+            
             const results = getFilteredListings();
+            
+            // Оновлюємо лічильник
+            if (countContainer && countNumber) {
+                if (results.length > 0) {
+                    countContainer.style.display = 'block';
+                    countNumber.textContent = results.length;
+                } else {
+                    countContainer.style.display = 'none';
+                }
+            }
+            
             if (results.length === 0) {
-                container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>Нічого не знайдено</h3></div>`;
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Нічого не знайдено</h3>
+                        <p style="font-size: 13px; margin-top: 8px;">Спробуйте змінити запит або фільтри</p>
+                    </div>
+                `;
             } else {
                 container.innerHTML = results.map(renderSearchResult).join('');
             }
@@ -3981,8 +4098,21 @@ function initSupabase() {
                 else if (dateFilter === 'week') cutoff.setDate(now.getDate() - 7);
                 results = results.filter(l => new Date(l.createdAt) >= cutoff);
             }
+
+            // Сортування
+            if (currentSort === 'price_asc') {
+                results.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+            } else if (currentSort === 'price_desc') {
+                results.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+            } else if (currentSort === 'date_desc') {
+                results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (currentSort === 'date_asc') {
+                results.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            }
+
             return results;
         }
+
 
         function filterByCategory(cat) {
             currentFilterCategory = cat;
