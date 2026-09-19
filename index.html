@@ -2191,6 +2191,7 @@
         </div>
 
         <!-- CHAT DETAIL -->
+        <!-- CHAT DETAIL -->
         <div class="page" id="page-chat-detail">
             <div class="app-container">
                 <div class="back-header">
@@ -2207,14 +2208,9 @@
                             <i class="fas fa-image"></i>
                         </button>
                         <input type="file" id="chatPhotoInput" accept="image/*" style="display:none;" onchange="sendChatPhoto(event)" />
-                     <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." 
-       onkeydown="if(event.key==='Enter') sendMessage()" 
-       onfocus="setTimeout(() => { 
-           const container = document.getElementById('chatMessages');
-           if (container) container.scrollTop = container.scrollHeight;
-           window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-       }, 300)" />
-       onfocus="setTimeout(() => { document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }, 300)" />
+                        <input type="text" id="chatInput" placeholder="Напишіть повідомлення..." 
+                               onkeydown="if(event.key==='Enter') sendMessage()" 
+                               onfocus="scrollToChatBottom()" />
                         <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
@@ -4848,6 +4844,19 @@ function initSupabase() {
             } catch (e) { console.error(e); return null; }
         }
 
+
+
+        function scrollToChatBottom() {
+            setTimeout(() => {
+                const container = document.getElementById('chatMessages');
+                if (container) container.scrollTop = container.scrollHeight;
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 300);
+        }
+
+
+        
+        
         async function sendMessage() {
             const input = document.getElementById('chatInput');
             if (!input) return;
