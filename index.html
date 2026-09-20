@@ -4704,10 +4704,7 @@ function initSupabase() {
             renderSavedSearches();
         }
 
-        // ================================================================
-        // ОПЕРАЦІЇ З ОГОЛОШЕННЯМИ
-        // ================================================================
-              async function toggleFavorite(listingId) {
+        async function toggleFavorite(listingId) {
             console.log('❤️ toggleFavorite викликано для:', listingId);
             console.log('👤 currentUser:', currentUser?.id);
             console.log('📋 favorites до:', favorites);
@@ -4737,6 +4734,9 @@ function initSupabase() {
             renderAll();
             updateProfileStats();
         }
+
+        async function submitListing() {
+            if (!currentUser) { navigateTo('auth'); return; }
             
             // ============================================================
             // АНТИСПАМ: перевірка суспензії
@@ -4746,6 +4746,7 @@ function initSupabase() {
                 showSuspendedScreen();
                 return;
             }
+
             
             const title = document.getElementById('addTitle').value.trim();
             const price = document.getElementById('addPrice').value.trim();
