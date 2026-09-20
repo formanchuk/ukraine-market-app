@@ -899,8 +899,10 @@
             flex-direction: column;
             gap: 6px;
             padding: 12px 0;
-            max-height: 45vh;
+            max-height: 35vh;
             overflow-y: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
         .chat-message { 
             max-width: 80%; 
@@ -961,19 +963,23 @@
         @media (max-width: 768px) {
             .chat-input {
                 position: sticky;
-                bottom: 0;
+                bottom: 70px;  /* ← відступ для нижньої навігації */
                 background: var(--card-bg);
                 z-index: 10;
+                margin-bottom: 0;
             }
             
             .chat-messages {
-                padding-bottom: 80px;
+                padding-bottom: 140px;  /* ← більше місця */
+                max-height: 35vh;
             }
         }
 
 
                 /* Контейнер чату */
         #chatMessagesContainer {
+            padding-bottom: 80px;
+        }
             display: flex;
             flex-direction: column;
             height: auto;
@@ -4701,22 +4707,36 @@ function initSupabase() {
         // ================================================================
         // ОПЕРАЦІЇ З ОГОЛОШЕННЯМИ
         // ================================================================
-        async function toggleFavorite(listingId) {
+              async function toggleFavorite(listingId) {
+            console.log('❤️ toggleFavorite викликано для:', listingId);
+            console.log('👤 currentUser:', currentUser?.id);
+            console.log('📋 favorites до:', favorites);
+            
             if (!currentUser) { navigateTo('auth'); return; }
             const isFav = favorites.includes(listingId);
+            
             if (isFav) {
-                await supabase.from('favorites').delete().eq('user_id', currentUser.id).eq('listing_id', listingId);
+                console.log('🗑️ Видаляємо з обраного');
+                const { error } = await supabase.from('favorites')
+                    .delete()
+                    .eq('user_id', currentUser.id)
+                    .eq('listing_id', listingId);
+                if (error) console.error('❌ Помилка видалення:', error);
                 favorites = favorites.filter(id => id !== listingId);
             } else {
-                await supabase.from('favorites').insert({ user_id: currentUser.id, listing_id: listingId });
+                console.log('➕ Додаємо в обране');
+                const { data, error } = await supabase.from('favorites')
+                    .insert({ user_id: currentUser.id, listing_id: listingId })
+                    .select();
+                console.log('📋 Результат вставки:', data);
+                if (error) console.error('❌ Помилка вставки:', error);
                 favorites.push(listingId);
             }
+            
+            console.log('📋 favorites після:', favorites);
             renderAll();
             updateProfileStats();
         }
-
-        async function submitListing() {
-            if (!currentUser) { navigateTo('auth'); return; }
             
             // ============================================================
             // АНТИСПАМ: перевірка суспензії
