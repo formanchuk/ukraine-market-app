@@ -4906,6 +4906,22 @@ function initSupabase() {
     if (modal) modal.classList.remove('show');
 }
 
+
+        function closeSuccessModal() { 
+            document.getElementById('successModal')?.classList.remove('show'); 
+        }
+
+        function showSuccessModal(title, message, primary, secondary) {
+            const modal = document.getElementById('successModal');
+            if (!modal) return;
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successPrimaryBtn').onclick = () => { closeSuccessModal(); primary?.(); };
+            document.getElementById('successSecondaryBtn').onclick = () => { closeSuccessModal(); secondary?.(); };
+            modal.classList.add('show');
+        }
+        
+        
         async function submitListing() {
             if (!currentUser) { navigateTo('auth'); return; }
             
