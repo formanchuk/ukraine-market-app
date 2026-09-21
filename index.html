@@ -3859,50 +3859,6 @@ function initSupabase() {
             }
         }
             
-            // Динамічне оновлення моделей для електроніки
-            if (category === 'electronics') {
-                const deviceTypeField = document.getElementById('field_device_type');
-                const brandField = document.getElementById('field_brand');
-                const modelList = document.getElementById('modelList');
-                
-                const updateModels = () => {
-                    const brand = brandField?.value || 'Інше';
-                    const deviceType = deviceTypeField?.value || 'Смартфон';
-                    const models = MODELS_BY_BRAND[brand]?.[deviceType] || ['Інше'];
-                    
-                    if (modelList) {
-                        modelList.innerHTML = models.map(m => `<option value="${m}">`).join('');
-                    }
-                };
-                
-                if (deviceTypeField) deviceTypeField.addEventListener('change', updateModels);
-                if (brandField) brandField.addEventListener('change', updateModels);
-                updateModels();
-            }
-        }
-            
-            // Динамічне оновлення моделей для електроніки
-            if (category === 'electronics') {
-                const deviceTypeField = document.getElementById('field_device_type');
-                const brandField = document.getElementById('field_brand');
-                const modelList = document.getElementById('modelList');
-                
-                const updateModels = () => {
-                    const brand = brandField?.value || 'Інше';
-                    const deviceType = deviceTypeField?.value || 'Смартфон';
-                    const models = MODELS_BY_BRAND[brand]?.[deviceType] || ['Інше'];
-                    
-                    if (modelList) {
-                        modelList.innerHTML = models.map(m => `<option value="${m}">`).join('');
-                    }
-                };
-                
-                if (deviceTypeField) deviceTypeField.addEventListener('change', updateModels);
-                if (brandField) brandField.addEventListener('change', updateModels);
-                updateModels();
-            }
-        }
-            
         function resetPhotoForm() {
             selectedPhotos = [];
             const grid = document.getElementById('photoPreviewGrid');
