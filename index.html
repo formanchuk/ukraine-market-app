@@ -3818,9 +3818,12 @@ function initSupabase() {
                 // Для моделі, пам'яті, кольору — використовуємо input + datalist
                 if (f.id === 'model' || f.id === 'memory' || f.id === 'color') {
                     const listId = f.id + 'List';
+                    const placeholderText = f.id === 'model' ? 'Модель' : 
+                                            f.id === 'memory' ? 'Пам\'ять' : 
+                                            'Колір';
                     return `<div class="form-group">
                         <label>${f.label}</label>
-                        <input type="text" id="field_${f.id}" class="category-field" list="${listId}" placeholder="Виберіть або введіть своє" />
+                        <input type="text" id="field_${f.id}" class="category-field" list="${listId}" placeholder="${placeholderText}" />
                         <datalist id="${listId}">
                             ${(f.options || []).map(o => `<option value="${o}">`).join('')}
                         </datalist>
