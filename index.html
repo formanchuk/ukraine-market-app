@@ -5517,8 +5517,11 @@ const imageHtml = newMsg.image_url
                         }
                     };
                     gallery.innerHTML = `<button class="nav-arrow left" onclick="event.stopPropagation(); changeDetailPhoto(-1)"><i class="fas fa-chevron-left"></i></button><button class="nav-arrow right" onclick="event.stopPropagation(); changeDetailPhoto(1)"><i class="fas fa-chevron-right"></i></button><div class="dots" id="detailDots"></div>`;
-                    renderDetailDots();
+     renderDetailDots();
+                } else { 
+                    gallery.innerHTML = `<i class="fas fa-image" style="font-size:42px; color:var(--text-secondary);"></i>`; 
                 }
+            }
             
             if (el('sellerAvatar')) el('sellerAvatar').textContent = listing.seller?.avatar || '👤';
             if (el('sellerName')) el('sellerName').textContent = listing.seller?.name || 'Продавець';
