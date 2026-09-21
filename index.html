@@ -3239,16 +3239,6 @@
         let notificationAudio = null;
 
         const CATEGORIES_CONFIG = {
-        const CATEGORY_ICONS = {};
-        const CATEGORY_NAMES = {};
-        const CATEGORY_PLACEHOLDERS = {};
-        for (const [key, val] of Object.entries(CATEGORIES_CONFIG)) {
-            CATEGORY_ICONS[key] = val.icon;
-            CATEGORY_NAMES[key] = val.name;
-            CATEGORY_PLACEHOLDERS[key] = val.placeholder || '';
-        }
-        CATEGORY_ICONS['all'] = 'fa-list';
-        CATEGORY_NAMES['all'] = 'Всі';
             'products': { name: 'Товари', icon: 'fa-tag',
                 fields: [
                     { id: 'category_type', label: 'Тип товару', type: 'select', options: ['Електроніка', 'Одяг', 'Меблі', 'Побутова техніка', 'Іграшки', 'Спорт', 'Книги', 'Краса', 'Інше'] },
@@ -3365,7 +3355,16 @@
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
                 ] }
         };
-
+        const CATEGORY_ICONS = {};
+        const CATEGORY_NAMES = {};
+        const CATEGORY_PLACEHOLDERS = {};
+        for (const [key, val] of Object.entries(CATEGORIES_CONFIG)) {
+            CATEGORY_ICONS[key] = val.icon;
+            CATEGORY_NAMES[key] = val.name;
+            CATEGORY_PLACEHOLDERS[key] = val.placeholder || '';
+        }
+        CATEGORY_ICONS['all'] = 'fa-list';
+        CATEGORY_NAMES['all'] = 'Всі';
 
 
                         
