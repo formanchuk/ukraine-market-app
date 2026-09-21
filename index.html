@@ -4887,6 +4887,14 @@ function initSupabase() {
             }
         }
 
+
+        const SPAM_WORDS = [
+            'casino', 'казино', 'ставки', 'лотерея', 'выигрыш', 'виграш',
+            'заработок', 'заробіток', 'инвестиции', 'інвестиції', 'криптовалюта',
+            'кредит', 'займ', 'позика', 'мгновенно', 'миттєво',
+            'viagra', 'віагра', 'cialis', 'порно', 'sex', 'секс'
+        ];
+
         
         async function submitListing() {
             if (!currentUser) { navigateTo('auth'); return; }
@@ -5502,12 +5510,15 @@ const imageHtml = newMsg.image_url
                 if (detailPhotos.length > 0) {
                     gallery.style.backgroundImage = `url('${detailPhotos[0]}')`;
                     gallery.style.backgroundSize = 'cover';
-                    gallery.innerHTML = `<button class="nav-arrow left" onclick="changeDetailPhoto(-1)"><i class="fas fa-chevron-left"></i></button><button class="nav-arrow right" onclick="changeDetailPhoto(1)"><i class="fas fa-chevron-right"></i></button><div class="dots" id="detailDots"></div>`;
+                    gallery.style.cursor = 'pointer';
+                    gallery.onclick = function(e) {
+                        if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'I') {
+                            openPhotoViewer(detailPhotos, detailIndex);
+                        }
+                    };
+                    gallery.innerHTML = `<button class="nav-arrow left" onclick="event.stopPropagation(); changeDetailPhoto(-1)"><i class="fas fa-chevron-left"></i></button><button class="nav-arrow right" onclick="event.stopPropagation(); changeDetailPhoto(1)"><i class="fas fa-chevron-right"></i></button><div class="dots" id="detailDots"></div>`;
                     renderDetailDots();
-                } else { 
-                    gallery.innerHTML = `<i class="fas fa-image" style="font-size:42px; color:var(--text-secondary);"></i>`; 
                 }
-            }
             
             if (el('sellerAvatar')) el('sellerAvatar').textContent = listing.seller?.avatar || '👤';
             if (el('sellerName')) el('sellerName').textContent = listing.seller?.name || 'Продавець';
@@ -6829,13 +6840,6 @@ function closeAboutModal() {
             reports: 5         // 5 скарг/день
         };
         
-        // Спам-слова
-        const SPAM_WORDS = [
-            'casino', 'казино', 'ставки', 'лотерея', 'выигрыш', 'виграш',
-            'заработок', 'заробіток', 'инвестиции', 'інвестиції', 'криптовалюта',
-            'кредит', 'займ', 'позика', 'мгновенно', 'миттєво',
-            'viagra', 'віагра', 'cialis', 'порно', 'sex', 'секс'
-        ];
         
         // Перевірка чи користувач заблокований
         async function checkUserSuspended() {
@@ -7904,8 +7908,78 @@ function closeAboutModal() {
         window.unblockUser = unblockUser;
         
         
-        console.log('✅ UAMO готовий!');
+   
+     console.log('✅ UAMO готовий!');
+    
+    
+        // ================================================================
+        // ПЕРЕГЛЯД ФОТО НА ПОВНИЙ ЕКРАН
+        // ================================================================
+        
+        let viewerPhotos = [];
+        let viewerIndex = 0;
+        
+        function openPhotoViewer(photos, index) {
+            if (!photos || photos.length === 0) return;
+            
+            viewerPhotos = photos;
+            viewerIndex = index || 0;
+            
+            const modal = document.getElementById('photoViewerModal');
+            const img = document.getElementById('photoViewerImage');
+            
+            if (modal && img) {
+                img.src = viewerPhotos[viewerIndex];
+                modal.classList.add('show');
+            }
+        }
+        
+        function closePhotoViewer() {
+            const modal = document.getElementById('photoViewerModal');
+            if (modal) modal.classList.remove('show');
+        }
+        
+        function prevPhoto() {
+            if (viewerPhotos.length === 0) return;
+            viewerIndex = (viewerIndex - 1 + viewerPhotos.length) % viewerPhotos.length;
+            const img = document.getElementById('photoViewerImage');
+            if (img) img.src = viewerPhotos[viewerIndex];
+        }
+        
+        function nextPhoto() {
+            if (viewerPhotos.length === 0) return;
+            viewerIndex = (viewerIndex + 1) % viewerPhotos.length;
+            const img = document.getElementById('photoViewerImage');
+            if (img) img.src = viewerPhotos[viewerIndex];
+        }
+        
+        // Експорт
+        window.openPhotoViewer = openPhotoViewer;
+        window.closePhotoViewer = closePhotoViewer;
+        window.prevPhoto = prevPhoto;
+        window.nextPhoto = nextPhoto;
+        
+        
     </script>
 
+
+    
+    <!-- PHOTO VIEWER MODAL -->
+    <div class="success-modal" id="photoViewerModal" style="background: rgba(0,0,0,0.95);" onclick="closePhotoViewer()">
+        <div style="position: relative; max-width: 95%; max-height: 95%;" onclick="event.stopPropagation()">
+            <img id="photoViewerImage" src="" style="max-width: 100%; max-height: 90vh; object-fit: contain; border-radius: 8px;" />
+            <button onclick="closePhotoViewer()" style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); border: none; color: #fff; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+            <button onclick="prevPhoto()" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: #fff; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="nextPhoto()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: #fff; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    
 </body>
 </html>
