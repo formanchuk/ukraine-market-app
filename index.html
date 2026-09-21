@@ -4854,103 +4854,144 @@ function initSupabase() {
             updateProfileStats();
         }
 
+
+
+        async function saveSuggestion(name, category, brand, subcategory) {
+            if (!name || name.length < 2) return;
+            if (!currentUser) return;
+            
+            try {
+                const { data: existing } = await supabase
+                    .from('product_suggestions')
+                    .select('id, popularity')
+                    .eq('name', name)
+                    .eq('category', category)
+                    .maybeSingle();
+                
+                if (existing) {
+                    await supabase
+                        .from('product_suggestions')
+                        .update({ popularity: (existing.popularity || 0) + 1 })
+                        .eq('id', existing.id);
+                } else {
+                    await supabase.from('product_suggestions').insert({
+                        name: name,
+                        category: category,
+                        brand: brand || null,
+                        subcategory: subcategory || null,
+                        popularity: 1
+                    });
+                }
+            } catch (e) {
+                console.error('Помилка збереження підказки:', e);
+            }
+        }
+
+        
         async function submitListing() {
             if (!currentUser) { navigateTo('auth'); return; }
             
-            // 1. СПОЧАТКУ отримуємо категорію
-            const category = document.getElementById('addCategory').value;
-            
-            // 2. ПОТІМ збираємо fields і specs
-            const fields = getCategoryFields(category);
-            const specs = {};
-            fields.forEach(f => { const el = document.getElementById(`field_${f.id}`); if (el) specs[f.label] = el.value; });
-            
-            // 3. ПОТІМ формуємо назву
-            const title = buildListingTitle(category, specs);
-            
-            // 4. Інші поля
-            const price = document.getElementById('addPrice').value.trim();
-            const city = document.getElementById('addCity').value.trim() || userData.city;
-            const phone = document.getElementById('addPhone').value.trim() || userData.phone;
-            const desc = document.getElementById('addDesc').value.trim();
-            
-            if (!title) { alert('Введіть назву'); return; }
-            if (!price) { alert('Введіть ціну'); return; }
-            
-            // ============================================================
-            // АНТИСПАМ: перевірка суспензії
-            // ============================================================
-            const suspension = await checkUserSuspended();
-            if (suspension) {
-                showSuspendedScreen();
-                return;
+            // Показуємо лоадер
+            const publishBtn = document.getElementById('publishBtn');
+            if (publishBtn) {
+                publishBtn.disabled = true;
+                publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Публікуємо...';
             }
             
-            // ============================================================
-            // АНТИСПАМ: перевірка спам-слів
-            // ============================================================
-            if (containsSpam(title) || containsSpam(desc)) {
-                alert('🚫 Ваше оголошення містить заборонені слова (реклама, казино, кредити тощо).\n\nБудь ласка, перепишіть текст.');
-                return;
+            try {
+                // 1. СПОЧАТКУ отримуємо категорію
+                const category = document.getElementById('addCategory').value;
+                
+                // 2. ПОТІМ збираємо fields і specs
+                const fields = getCategoryFields(category);
+                const specs = {};
+                fields.forEach(f => { const el = document.getElementById(`field_${f.id}`); if (el) specs[f.label] = el.value; });
+                
+                // 3. ПОТІМ формуємо назву
+                const title = buildListingTitle(category, specs);
+                
+                // 4. Інші поля
+                const price = document.getElementById('addPrice').value.trim();
+                const city = document.getElementById('addCity').value.trim() || userData.city;
+                const phone = document.getElementById('addPhone').value.trim() || userData.phone;
+                const desc = document.getElementById('addDesc').value.trim();
+                
+                if (!title) { alert('Введіть назву'); return; }
+                if (!price) { alert('Введіть ціну'); return; }
+                
+                // ============================================================
+                // АНТИСПАМ: перевірка суспензії
+                // ============================================================
+                const suspension = await checkUserSuspended();
+                if (suspension) {
+                    showSuspendedScreen();
+                    return;
+                }
+                
+                // ============================================================
+                // АНТИСПАМ: перевірка спам-слів
+                // ============================================================
+                if (containsSpam(title) || containsSpam(desc)) {
+                    alert('🚫 Ваше оголошення містить заборонені слова (реклама, казино, кредити тощо).\n\nБудь ласка, перепишіть текст.');
+                    return;
+                }
+                
+                // ============================================================
+                // АНТИСПАМ: перевірка спам-патернів
+                // ============================================================
+                if (hasSpamPattern(title) || hasSpamPattern(desc)) {
+                    alert('🚫 Ваше оголошення виглядає як спам (повторення символів/слів).\n\nБудь ласка, перепишіть текст.');
+                    return;
+                }
+                
+                // ============================================================
+                // АНТИСПАМ: перевірка ліміту
+                // ============================================================
+                const limitCheck = await checkAndUpdateLimits('listings');
+                if (!limitCheck.allowed) {
+                    alert(limitCheck.error);
+                    return;
+                }
+
+                const { data, error } = await supabase.from('listings').insert({
+                    user_id: currentUser.id,
+                    title, price: parseFloat(price), city, phone,
+                    description: desc || '', category, condition: 'new',
+                    specs, photos: selectedPhotos.length > 0 ? selectedPhotos : null,
+                    status: 'active', created_at: new Date().toISOString()
+                }).select();
+
+                if (error) { alert('Помилка: ' + error.message); return; }
+
+                // АНТИСПАМ: збільшуємо лічильник
+                await incrementLimit('listings');
+                
+                // Зберігаємо назву в базу підказок
+                await saveSuggestion(title, category, specs['Бренд'], specs['Тип одягу']);
+
+                resetPhotoForm();
+                document.getElementById('addPrice').value = '';
+                document.getElementById('addCity').value = '';
+                document.getElementById('addPhone').value = '';
+                document.getElementById('addDesc').value = '';
+
+                showSuccessModal('✓ Оголошення опубліковано!', 'Ваше оголошення вже доступне',
+                    () => navigateTo('home'),
+                    () => { if (data && data.length > 0) openDetail(data[0].id); else navigateTo('home'); });
+                dataLoaded = false;
+                setTimeout(loadAllData, 500);
+                
+            } catch (e) {
+                console.error('Помилка публікації:', e);
+                alert('❌ Помилка: ' + e.message);
+            } finally {
+                // Ховаємо лоадер
+                if (publishBtn) {
+                    publishBtn.disabled = false;
+                    publishBtn.innerHTML = 'Опублікувати';
+                }
             }
-            
-            // ============================================================
-            // АНТИСПАМ: перевірка спам-патернів
-            // ============================================================
-            if (hasSpamPattern(title) || hasSpamPattern(desc)) {
-                alert('🚫 Ваше оголошення виглядає як спам (повторення символів/слів).\n\nБудь ласка, перепишіть текст.');
-                return;
-            }
-            
-            // ============================================================
-            // АНТИСПАМ: перевірка ліміту
-            // ============================================================
-            const limitCheck = await checkAndUpdateLimits('listings');
-            if (!limitCheck.allowed) {
-                alert(limitCheck.error);
-                return;
-            }
-
-            const { data, error } = await supabase.from('listings').insert({
-                user_id: currentUser.id,
-                title, price: parseFloat(price), city, phone,
-                description: desc || '', category, condition: 'new',
-                specs, photos: selectedPhotos.length > 0 ? selectedPhotos : null,
-                status: 'active', created_at: new Date().toISOString()
-            }).select();
-
-            if (error) { alert('Помилка: ' + error.message); return; }
-
-            // АНТИСПАМ: збільшуємо лічильник
-            await incrementLimit('listings');
-            
-            // Зберігаємо назву в базу підказок
-            await saveSuggestion(title, category, specs['Бренд'], specs['Тип одягу']);
-
-            resetPhotoForm();
-            document.getElementById('addPrice').value = '';
-            document.getElementById('addCity').value = '';
-            document.getElementById('addPhone').value = '';
-            document.getElementById('addDesc').value = '';
-
-            showSuccessModal('✓ Оголошення опубліковано!', 'Ваше оголошення вже доступне',
-                () => navigateTo('home'),
-                () => { if (data && data.length > 0) openDetail(data[0].id); else navigateTo('home'); });
-            dataLoaded = false;
-            setTimeout(loadAllData, 500);
         }
-
-        function showSuccessModal(title, message, primary, secondary) {
-            const modal = document.getElementById('successModal');
-            if (!modal) return;
-            document.getElementById('successTitle').textContent = title;
-            document.getElementById('successMessage').textContent = message;
-            document.getElementById('successPrimaryBtn').onclick = () => { closeSuccessModal(); primary?.(); };
-            document.getElementById('successSecondaryBtn').onclick = () => { closeSuccessModal(); secondary?.(); };
-            modal.classList.add('show');
-        }
-
-        function closeSuccessModal() { document.getElementById('successModal')?.classList.remove('show'); }
         // ================================================================
         // ЧАТИ
         // ================================================================
