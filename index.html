@@ -3239,6 +3239,16 @@
         let notificationAudio = null;
 
         const CATEGORIES_CONFIG = {
+        const CATEGORY_ICONS = {};
+        const CATEGORY_NAMES = {};
+        const CATEGORY_PLACEHOLDERS = {};
+        for (const [key, val] of Object.entries(CATEGORIES_CONFIG)) {
+            CATEGORY_ICONS[key] = val.icon;
+            CATEGORY_NAMES[key] = val.name;
+            CATEGORY_PLACEHOLDERS[key] = val.placeholder || '';
+        }
+        CATEGORY_ICONS['all'] = 'fa-list';
+        CATEGORY_NAMES['all'] = 'Всі';
             'products': { name: 'Товари', icon: 'fa-tag',
                 fields: [
                     { id: 'category_type', label: 'Тип товару', type: 'select', options: ['Електроніка', 'Одяг', 'Меблі', 'Побутова техніка', 'Іграшки', 'Спорт', 'Книги', 'Краса', 'Інше'] },
@@ -3355,6 +3365,10 @@
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
                 ] }
         };
+
+
+
+                        
         // ================================================================
         // ДОПОМОГА
         // ================================================================
@@ -3699,21 +3713,88 @@ function initSupabase() {
 
 
 
-        const MODELS_BY_TYPE = {
-            'Смартфон': ['iPhone 14 Pro Max', 'iPhone 14 Pro', 'iPhone 14', 'iPhone 13', 'iPhone 12', 'Galaxy S24 Ultra', 'Galaxy S24', 'Galaxy S23', 'Galaxy A54', 'Redmi Note 13 Pro', 'Xiaomi 14', 'Pixel 8 Pro', 'Pixel 8', 'Huawei P60', 'OnePlus 12', 'Інше'],
-            'Ноутбук': ['MacBook Pro 16 M3 Max', 'MacBook Pro 14 M3 Pro', 'MacBook Air 15 M3', 'MacBook Air 13 M2', 'XPS 15', 'XPS 13', 'ThinkPad X1 Carbon', 'IdeaPad 5', 'ZenBook 14', 'ROG Strix G15', 'Aspire 5', 'Nitro 5', 'Katana GF66', 'Modern 14', 'Інше'],
-            'Планшет': ['iPad Pro 12.9 M2', 'iPad Pro 11 M2', 'iPad Air 5', 'iPad 10', 'iPad Mini 6', 'Galaxy Tab S9 Ultra', 'Galaxy Tab S9', 'Galaxy Tab A9+', 'Pad 6 Pro', 'Pad 6', 'Tab P12 Pro', 'Tab M10 Plus', 'Інше'],
-            'Телевізор': ['Samsung QLED 4K', 'Samsung Neo QLED', 'LG OLED C3', 'LG OLED G3', 'Sony Bravia XR', 'Sony Bravia X90L', 'Xiaomi TV Q2', 'Xiaomi TV A2', 'Інше'],
-            'Навушники': ['AirPods Pro 2', 'AirPods 3', 'AirPods Max', 'Galaxy Buds 2 Pro', 'Galaxy Buds FE', 'WH-1000XM5', 'WF-1000XM5', 'QuietComfort Ultra', 'Tune 770NC', 'Redmi Buds 5 Pro', 'Інше'],
-            'Клавіатура': ['Logitech MX Keys', 'Logitech K380', 'Razer BlackWidow', 'HyperX Alloy', 'Apple Magic Keyboard', 'Keychron K2', 'SteelSeries Apex', 'Інше'],
-            'Миша': ['Logitech MX Master 3S', 'Logitech G Pro X', 'Razer DeathAdder', 'HyperX Pulsefire', 'Apple Magic Mouse', 'SteelSeries Rival 3', 'Інше'],
-            'Монітор': ['Dell UltraSharp 27', 'LG UltraGear 27', 'Samsung Odyssey G7', 'Asus ProArt 27', 'Acer Nitro 27', 'BenQ MOBIUZ', 'Інше'],
-            'Колонка': ['JBL Charge 5', 'JBL Flip 6', 'Sony SRS-XB43', 'Bose SoundLink', 'Marshall Emberton', 'Xiaomi Mi Speaker', 'Інше'],
-            'Камера': ['Canon EOS R5', 'Canon EOS R6', 'Nikon Z6 II', 'Sony A7 IV', 'Sony A7S III', 'Fujifilm X-T5', 'Panasonic Lumix GH6', 'Інше'],
-            'Смарт-годинник': ['Apple Watch Ultra 2', 'Apple Watch Series 9', 'Galaxy Watch 6', 'Xiaomi Watch S3', 'Garmin Venu 3', 'Інше']
-        };
-        
-        
+        const MODELS_BY_BRAND = {
+            'Apple': {
+                'Смартфон': ['iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15', 'iPhone 14 Pro Max', 'iPhone 14 Pro', 'iPhone 14', 'iPhone 13', 'iPhone 12', 'iPhone SE', 'Інше'],
+                'Ноутбук': ['MacBook Pro 16 M3 Max', 'MacBook Pro 14 M3 Pro', 'MacBook Air 15 M3', 'MacBook Air 13 M2', 'MacBook Pro 13 M2', 'Інше'],
+                'Планшет': ['iPad Pro 12.9 M2', 'iPad Pro 11 M2', 'iPad Air 5', 'iPad 10', 'iPad Mini 6', 'Інше'],
+                'Навушники': ['AirPods Pro 2', 'AirPods 3', 'AirPods Max', 'AirPods 2', 'Інше'],
+                'Смарт-годинник': ['Apple Watch Ultra 2', 'Apple Watch Series 9', 'Apple Watch SE', 'Інше'],
+                'Монітор': ['Apple Studio Display', 'Apple Pro Display XDR', 'Інше'],
+                'Клавіатура': ['Apple Magic Keyboard', 'Apple Magic Keyboard with Touch ID', 'Інше'],
+                'Миша': ['Apple Magic Mouse', 'Apple Magic Trackpad', 'Інше']
+            },
+            'Samsung': {
+                'Смартфон': ['Galaxy S24 Ultra', 'Galaxy S24+', 'Galaxy S24', 'Galaxy S23 Ultra', 'Galaxy S23', 'Galaxy A54', 'Galaxy A34', 'Galaxy Z Fold 5', 'Galaxy Z Flip 5', 'Інше'],
+                'Ноутбук': ['Galaxy Book 3 Ultra', 'Galaxy Book 3 Pro', 'Galaxy Book 3', 'Інше'],
+                'Планшет': ['Galaxy Tab S9 Ultra', 'Galaxy Tab S9+', 'Galaxy Tab S9', 'Galaxy Tab A9+', 'Інше'],
+                'Телевізор': ['Samsung QLED 4K', 'Samsung Neo QLED', 'Samsung OLED', 'Samsung Crystal UHD', 'Інше'],
+                'Навушники': ['Galaxy Buds 2 Pro', 'Galaxy Buds 2', 'Galaxy Buds FE', 'Інше'],
+                'Монітор': ['Samsung Odyssey G7', 'Samsung Odyssey G9', 'Samsung Smart Monitor', 'Інше']
+            },
+            'Xiaomi': {
+                'Смартфон': ['Xiaomi 14 Ultra', 'Xiaomi 14', 'Xiaomi 13 Pro', 'Redmi Note 13 Pro', 'Redmi Note 13', 'Redmi 13C', 'POCO X6 Pro', 'Інше'],
+                'Ноутбук': ['Xiaomi Book Pro 16', 'Redmi Book Pro 15', 'Інше'],
+                'Планшет': ['Xiaomi Pad 6 Pro', 'Xiaomi Pad 6', 'Redmi Pad SE', 'Інше'],
+                'Телевізор': ['Xiaomi TV Q2', 'Xiaomi TV A2', 'Xiaomi TV F2', 'Інше'],
+                'Навушники': ['Redmi Buds 5 Pro', 'Xiaomi Buds 4 Pro', 'Redmi Buds 4', 'Інше'],
+                'Смарт-годинник': ['Xiaomi Watch S3', 'Redmi Watch 4', 'Інше']
+            },
+            'Sony': {
+                'Навушники': ['WH-1000XM5', 'WF-1000XM5', 'WH-CH720N', 'WF-C700N', 'Інше'],
+                'Телевізор': ['Sony Bravia XR', 'Sony Bravia X90L', 'Sony Bravia A95L', 'Інше'],
+                'Камера': ['Sony A7 IV', 'Sony A7S III', 'Sony A7R V', 'Sony ZV-E10', 'Інше'],
+                'Смартфон': ['Sony Xperia 1 V', 'Sony Xperia 5 V', 'Інше'],
+                'Монітор': ['Sony INZONE M9', 'Інше']
+            },
+            'Logitech': {
+                'Клавіатура': ['Logitech MX Keys', 'Logitech MX Keys Mini', 'Logitech K380', 'Logitech G915', 'Інше'],
+                'Миша': ['Logitech MX Master 3S', 'Logitech MX Anywhere 3', 'Logitech G Pro X Superlight', 'Logitech G502', 'Інше'],
+                'Навушники': ['Logitech G Pro X', 'Logitech G435', 'Інше'],
+                'Колонка': ['Logitech Z407', 'Logitech Z623', 'Інше']
+            },
+            'Razer': {
+                'Клавіатура': ['Razer BlackWidow V4', 'Razer Huntsman V2', 'Razer Cynosa V2', 'Інше'],
+                'Миша': ['Razer DeathAdder V3', 'Razer Basilisk V3', 'Razer Viper V2', 'Інше'],
+                'Навушники': ['Razer BlackShark V2', 'Razer Kraken V3', 'Інше']
+            },
+            'Asus': {
+                'Ноутбук': ['ZenBook 14', 'ROG Strix G15', 'ROG Zephyrus G14', 'VivoBook 15', 'TUF Gaming F15', 'Інше'],
+                'Монітор': ['Asus ProArt 27', 'Asus ROG Swift', 'Asus TUF Gaming', 'Інше'],
+                'Смартфон': ['Asus ROG Phone 7', 'Asus Zenfone 10', 'Інше']
+            },
+            'Lenovo': {
+                'Ноутбук': ['ThinkPad X1 Carbon', 'IdeaPad 5', 'Legion 5 Pro', 'Yoga Slim 7', 'Інше'],
+                'Планшет': ['Tab P12 Pro', 'Tab M10 Plus', 'Tab P11', 'Інше'],
+                'Монітор': ['Lenovo ThinkVision', 'Lenovo Legion', 'Інше']
+            },
+            'Dell': {
+                'Ноутбук': ['XPS 15', 'XPS 13', 'Inspiron 15', 'Latitude 14', 'Alienware m15', 'Інше'],
+                'Монітор': ['Dell UltraSharp 27', 'Dell S2721', 'Alienware AW3423', 'Інше']
+            },
+            'HP': {
+                'Ноутбук': ['Spectre x360', 'Envy 15', 'Pavilion 15', 'Omen 16', 'Інше'],
+                'Монітор': ['HP Omen 27', 'HP E24', 'Інше']
+            },
+            'Google': {
+                'Смартфон': ['Pixel 8 Pro', 'Pixel 8', 'Pixel 7a', 'Pixel 7 Pro', 'Інше'],
+                'Планшет': ['Pixel Tablet', 'Інше'],
+                'Навушники': ['Pixel Buds Pro', 'Pixel Buds A-Series', 'Інше']
+            },
+            'Інше': {
+                'Смартфон': ['Інше'],
+                'Ноутбук': ['Інше'],
+                'Планшет': ['Інше'],
+                'Телевізор': ['Інше'],
+                'Навушники': ['Інше'],
+                'Смарт-годинник': ['Інше'],
+                'Монітор': ['Інше'],
+                'Клавіатура': ['Інше'],
+                'Миша': ['Інше'],
+                'Колонка': ['Інше'],
+                'Камера': ['Інше']
+            }
+        };        
         // ================================================================
         // ДОПОМІЖНІ
         // ================================================================
@@ -3738,22 +3819,33 @@ function initSupabase() {
                 if (f.type === 'select') {
                     return `<div class="form-group"><label>${f.label}</label><select id="field_${f.id}" class="category-field">${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select></div>`;
                 }
+                // Для моделі використовуємо input + datalist (можна вибирати і вводити своє)
+                if (f.id === 'model') {
+                    return `<div class="form-group"><label>${f.label}</label><input type="text" id="field_${f.id}" class="category-field" list="modelList" placeholder="Виберіть або введіть свою" /><datalist id="modelList"></datalist></div>`;
+                }
                 return `<div class="form-group"><label>${f.label}</label><input type="${f.type}" id="field_${f.id}" class="category-field" placeholder="${f.placeholder || ''}" /></div>`;
             }).join('');
             
             // Динамічне оновлення моделей для електроніки
             if (category === 'electronics') {
                 const deviceTypeField = document.getElementById('field_device_type');
-                const modelField = document.getElementById('field_model');
+                const brandField = document.getElementById('field_brand');
+                const modelInput = document.getElementById('field_model');
+                const modelList = document.getElementById('modelList');
                 
-                if (deviceTypeField && modelField) {
-                    const updateModels = () => {
-                        const models = MODELS_BY_TYPE[deviceTypeField.value] || [];
-                        modelField.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
-                    };
-                    deviceTypeField.addEventListener('change', updateModels);
-                    updateModels();
-                }
+                const updateModels = () => {
+                    const brand = brandField?.value || 'Інше';
+                    const deviceType = deviceTypeField?.value || 'Смартфон';
+                    const models = MODELS_BY_BRAND[brand]?.[deviceType] || ['Інше'];
+                    
+                    if (modelList) {
+                        modelList.innerHTML = models.map(m => `<option value="${m}">`).join('');
+                    }
+                };
+                
+                if (deviceTypeField) deviceTypeField.addEventListener('change', updateModels);
+                if (brandField) brandField.addEventListener('change', updateModels);
+                updateModels();
             }
         }
             
