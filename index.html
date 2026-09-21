@@ -4857,6 +4857,26 @@ function initSupabase() {
         async function submitListing() {
             if (!currentUser) { navigateTo('auth'); return; }
             
+            // 1. СПОЧАТКУ отримуємо категорію
+            const category = document.getElementById('addCategory').value;
+            
+            // 2. ПОТІМ збираємо fields і specs
+            const fields = getCategoryFields(category);
+            const specs = {};
+            fields.forEach(f => { const el = document.getElementById(`field_${f.id}`); if (el) specs[f.label] = el.value; });
+            
+            // 3. ПОТІМ формуємо назву
+            const title = buildListingTitle(category, specs);
+            
+            // 4. Інші поля
+            const price = document.getElementById('addPrice').value.trim();
+            const city = document.getElementById('addCity').value.trim() || userData.city;
+            const phone = document.getElementById('addPhone').value.trim() || userData.phone;
+            const desc = document.getElementById('addDesc').value.trim();
+            
+            if (!title) { alert('Введіть назву'); return; }
+            if (!price) { alert('Введіть ціну'); return; }
+            
             // ============================================================
             // АНТИСПАМ: перевірка суспензії
             // ============================================================
@@ -4865,17 +4885,6 @@ function initSupabase() {
                 showSuspendedScreen();
                 return;
             }
-
-            
-            const title = buildListingTitle(category, specs);
-            const price = document.getElementById('addPrice').value.trim();
-            const city = document.getElementById('addCity').value.trim() || userData.city;
-            const phone = document.getElementById('addPhone').value.trim() || userData.phone;
-            const desc = document.getElementById('addDesc').value.trim();
-            const category = document.getElementById('addCategory').value;
-            
-            if (!title) { alert('Введіть назву'); return; }
-            if (!price) { alert('Введіть ціну'); return; }
             
             // ============================================================
             // АНТИСПАМ: перевірка спам-слів
@@ -4902,10 +4911,6 @@ function initSupabase() {
                 return;
             }
 
-            const fields = getCategoryFields(category);
-            const specs = {};
-            fields.forEach(f => { const el = document.getElementById(`field_${f.id}`); if (el) specs[f.label] = el.value; });
-
             const { data, error } = await supabase.from('listings').insert({
                 user_id: currentUser.id,
                 title, price: parseFloat(price), city, phone,
@@ -4918,9 +4923,11 @@ function initSupabase() {
 
             // АНТИСПАМ: збільшуємо лічильник
             await incrementLimit('listings');
+            
+            // Зберігаємо назву в базу підказок
+            await saveSuggestion(title, category, specs['Бренд'], specs['Тип одягу']);
 
             resetPhotoForm();
-            document.getElementById('addTitle').value = '';
             document.getElementById('addPrice').value = '';
             document.getElementById('addCity').value = '';
             document.getElementById('addPhone').value = '';
@@ -4944,7 +4951,6 @@ function initSupabase() {
         }
 
         function closeSuccessModal() { document.getElementById('successModal')?.classList.remove('show'); }
-
         // ================================================================
         // ЧАТИ
         // ================================================================
