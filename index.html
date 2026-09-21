@@ -2869,7 +2869,7 @@
                         <i class="fas fa-id-card"></i> Переглянути візитку
                     </button>
                     <div class="seller-box" id="detailSeller">
-                        <div class="avatar" id="sellerAvatar">А</div>
+                        <div class="avatar" id="sellerAvatar"><i class="fas fa-user"></i></div>
                         <div class="info">
                             <div class="name" id="sellerName">Продавець</div>
                             <div class="since" id="sellerSince">На UAMO з 2024</div>
@@ -5549,7 +5549,14 @@ const imageHtml = newMsg.image_url
                 }
             }
             
-            if (el('sellerAvatar')) el('sellerAvatar').textContent = listing.seller?.avatar || '👤';
+           if (el('sellerAvatar')) {
+    const avatarUrl = listing.seller?.avatar;
+    if (avatarUrl && avatarUrl.startsWith('http')) {
+        el('sellerAvatar').innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`;
+    } else {
+        el('sellerAvatar').innerHTML = `<i class="fas fa-user"></i>`;
+    }
+}
             if (el('sellerName')) el('sellerName').textContent = listing.seller?.name || 'Продавець';
             if (el('sellerSince')) el('sellerSince').textContent = listing.seller?.since || 'На UAMO';
             
