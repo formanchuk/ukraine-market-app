@@ -2154,10 +2154,6 @@
                     </div>
                     <div id="categoryFieldsContainer"></div>
                     <div class="form-group">
-                        <label>Назва *</label>
-                        <input type="text" id="addTitle" placeholder="Введіть назву" />
-                    </div>
-                    <div class="form-group">
                         <label>Опис</label>
                         <textarea id="addDesc" placeholder="Детальний опис..." rows="3"></textarea>
                     </div>
@@ -3728,21 +3724,82 @@ function initSupabase() {
             return l[c] || c || 'Не вказано';
         }
 
+
+
+        function renderSubcategories(category, subcategory) {
+            const container = document.getElementById('subcategoryContainer');
+            if (!container) return;
+            
+            const subcategories = {
+                'electronics': {
+                    'Смартфон': ['iPhone', 'Samsung Galaxy', 'Xiaomi Redmi', 'Google Pixel', 'Huawei', 'OnePlus'],
+                    'Ноутбук': ['MacBook', 'Windows ноутбук', 'Ігровий ноутбук', 'Ультрабук'],
+                    'Планшет': ['iPad', 'Samsung Galaxy Tab', 'Xiaomi Pad', 'Lenovo Tab'],
+                    'Навушники': ['AirPods', 'Galaxy Buds', 'Sony WH', 'JBL', 'Bose']
+                },
+                'clothing': {
+                    'Футболка': ['Nike', 'Adidas', 'Puma', 'H&M', 'Zara'],
+                    'Джинси': ['Levi\'s', 'Wrangler', 'Lee', 'Diesel'],
+                    'Куртка': ['The North Face', 'Columbia', 'Patagonia', 'Zara']
+                },
+                'transport': {
+                    'Легковий': ['Toyota', 'BMW', 'Audi', 'Mercedes', 'Volkswagen', 'Hyundai', 'Kia'],
+                    'Мотоцикл': ['Yamaha', 'Honda', 'Suzuki', 'Kawasaki', 'BMW'],
+                    'Велосипед': ['Trek', 'Giant', 'Specialized', 'Cannondale']
+                }
+            };
+            
+            if (!subcategories[category]) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const subs = subcategories[category][subcategory] || [];
+            if (subs.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="form-group">
+                    <label>Підкатегорія</label>
+                    <select id="field_subcategory" class="category-field">
+                        <option value="">Оберіть підкатегорію</option>
+                        ${subs.map(s => `<option value="${s}">${s}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+        }
+
+
+        
         function renderCategoryFields(category) {
             const fields = getCategoryFields(category);
             const container = document.getElementById('categoryFieldsContainer');
             if (!container) return;
-            const titleInput = document.getElementById('addTitle');
-            if (titleInput) titleInput.placeholder = getCategoryPlaceholder(category) || 'Введіть назву';
+            
             if (fields.length === 0) { container.innerHTML = ''; return; }
+            
             container.innerHTML = fields.map(f => {
                 if (f.type === 'select') {
                     return `<div class="form-group"><label>${f.label}</label><select id="field_${f.id}" class="category-field">${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select></div>`;
                 }
                 return `<div class="form-group"><label>${f.label}</label><input type="${f.type}" id="field_${f.id}" class="category-field" placeholder="${f.placeholder || ''}" /></div>`;
             }).join('');
+            
+            // Додаємо контейнер для підкатегорій
+            const subcategoryContainer = document.createElement('div');
+            subcategoryContainer.id = 'subcategoryContainer';
+            container.appendChild(subcategoryContainer);
+            
+            // Слухаємо зміну першого поля (тип)
+            const firstField = container.querySelector('.category-field');
+            if (firstField) {
+                firstField.addEventListener('change', function() {
+                    renderSubcategories(category, this.value);
+                });
+            }
         }
-
         function resetPhotoForm() {
             selectedPhotos = [];
             const grid = document.getElementById('photoPreviewGrid');
@@ -4748,7 +4805,7 @@ function initSupabase() {
             }
 
             
-            const title = document.getElementById('addTitle').value.trim();
+            const title = buildListingTitle(category, specs);
             const price = document.getElementById('addPrice').value.trim();
             const city = document.getElementById('addCity').value.trim() || userData.city;
             const phone = document.getElementById('addPhone').value.trim() || userData.phone;
@@ -5713,6 +5770,32 @@ function closeAboutModal() {
             }
         });
 
+
+
+        function buildListingTitle(category, specs) {
+            const parts = [];
+            
+            if (category === 'electronics') {
+                if (specs['Бренд']) parts.push(specs['Бренд']);
+                if (specs['Модель']) parts.push(specs['Модель']);
+                if (specs['Пам\'ять']) parts.push(specs['Пам\'ять']);
+            } else if (category === 'clothing') {
+                if (specs['Бренд']) parts.push(specs['Бренд']);
+                if (specs['Тип одягу']) parts.push(specs['Тип одягу']);
+                if (specs['Розмір']) parts.push('р.' + specs['Розмір']);
+            } else if (category === 'transport') {
+                if (specs['Марка']) parts.push(specs['Марка']);
+                if (specs['Модель']) parts.push(specs['Модель']);
+                if (specs['Рік випуску']) parts.push(specs['Рік випуску'] + ' р.');
+            } else {
+                if (specs['Бренд']) parts.push(specs['Бренд']);
+                if (specs['Модель']) parts.push(specs['Модель']);
+            }
+            
+            return parts.join(' ') || 'Без назви';
+        }
+
+        
         // Експорт
         window.handleAuth = handleAuth;
         window.toggleAuthMode = toggleAuthMode;
