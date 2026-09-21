@@ -3815,23 +3815,50 @@ function initSupabase() {
             if (fields.length === 0) { container.innerHTML = ''; return; }
             
             container.innerHTML = fields.map(f => {
-                // Для всіх select-полів — додаємо "Інше" як опцію
+                // Для моделі, пам'яті, кольору — використовуємо input + datalist
+                // Це дозволяє І вибрати зі списку, І ввести своє
+                if (f.id === 'model' || f.id === 'memory' || f.id === 'color') {
+                    const listId = f.id + 'List';
+                    return `<div class="form-group">
+                        <label>${f.label}</label>
+                        <input type="text" id="field_${f.id}" class="category-field" list="${listId}" placeholder="Виберіть або введіть своє" />
+                        <datalist id="${listId}">
+                            ${(f.options || []).map(o => `<option value="${o}">`).join('')}
+                        </datalist>
+                    </div>`;
+                }
+                
+                // Для всіх інших select-полів
                 if (f.type === 'select') {
                     const options = [...f.options];
                     if (!options.includes('Інше')) options.push('Інше');
                     return `<div class="form-group"><label>${f.label}</label><select id="field_${f.id}" class="category-field">${options.map(o => `<option value="${o}">${o}</option>`).join('')}</select></div>`;
                 }
-                // Для моделі — використовуємо input + datalist (можна вибирати і вводити своє)
-                if (f.id === 'model') {
-                    return `<div class="form-group"><label>${f.label}</label><input type="text" id="field_${f.id}" class="category-field" list="modelList" placeholder="Виберіть або введіть свою" /><datalist id="modelList"></datalist></div>`;
-                }
-                // Для пам'яті та кольору — також input + datalist
-                if (f.id === 'memory' || f.id === 'color') {
-                    const listId = f.id + 'List';
-                    return `<div class="form-group"><label>${f.label}</label><input type="text" id="field_${f.id}" class="category-field" list="${listId}" placeholder="Виберіть або введіть своє" /><datalist id="${listId}">${f.options.map(o => `<option value="${o}">`).join('')}</datalist></div>`;
-                }
+                
                 return `<div class="form-group"><label>${f.label}</label><input type="${f.type}" id="field_${f.id}" class="category-field" placeholder="${f.placeholder || ''}" /></div>`;
             }).join('');
+            
+            // Динамічне оновлення моделей для електроніки
+            if (category === 'electronics') {
+                const deviceTypeField = document.getElementById('field_device_type');
+                const brandField = document.getElementById('field_brand');
+                const modelList = document.getElementById('modelList');
+                
+                const updateModels = () => {
+                    const brand = brandField?.value || 'Інше';
+                    const deviceType = deviceTypeField?.value || 'Смартфон';
+                    const models = MODELS_BY_BRAND[brand]?.[deviceType] || ['Інше'];
+                    
+                    if (modelList) {
+                        modelList.innerHTML = models.map(m => `<option value="${m}">`).join('');
+                    }
+                };
+                
+                if (deviceTypeField) deviceTypeField.addEventListener('change', updateModels);
+                if (brandField) brandField.addEventListener('change', updateModels);
+                updateModels();
+            }
+        }
             
             // Динамічне оновлення моделей для електроніки
             if (category === 'electronics') {
