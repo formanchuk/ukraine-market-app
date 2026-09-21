@@ -3238,139 +3238,123 @@
         let typingTimeout = null;
         let notificationAudio = null;
 
-        // ================================================================
-        // КАТЕГОРІЇ
-        // ================================================================
         const CATEGORIES_CONFIG = {
-            'products': { name: 'Товари', icon: 'fa-tag', placeholder: 'Введіть назву товару',
+            'products': { name: 'Товари', icon: 'fa-tag',
                 fields: [
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Apple, Samsung, Nike...' },
-                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'iPhone 14 Pro...' },
-                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Білий...' },
+                    { id: 'category_type', label: 'Тип товару', type: 'select', options: ['Електроніка', 'Одяг', 'Меблі', 'Побутова техніка', 'Іграшки', 'Спорт', 'Книги', 'Краса', 'Інше'] },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['Apple', 'Samsung', 'Xiaomi', 'Nike', 'Adidas', 'Zara', 'H&M', 'IKEA', 'LG', 'Sony', 'Інше'] },
+                    { id: 'model', label: 'Модель', type: 'select', options: ['iPhone 14 Pro Max', 'Galaxy S24 Ultra', 'MacBook Air', 'AirPods Pro 2', 'Інше'] },
+                    { id: 'color', label: 'Колір', type: 'select', options: ['Чорний', 'Білий', 'Сірий', 'Синій', 'Червоний', 'Зелений', 'Жовтий', 'Рожевий'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В', 'Відновлений'] },
                     { id: 'warranty', label: 'Гарантія', type: 'select', options: ['Є', 'Немає'] }
                 ] },
-            'electronics': { name: 'Електроніка', icon: 'fa-laptop', placeholder: 'Введіть назву пристрою',
+            'electronics': { name: 'Електроніка', icon: 'fa-laptop',
                 fields: [
-                    { id: 'device_type', label: 'Тип пристрою', type: 'select', options: ['Смартфон', 'Ноутбук', 'Планшет', 'Телевізор', 'Навушники', 'Камера', 'Смарт-годинник', 'Зарядний пристрій', 'Чохол', 'Скло/Плівка', 'Колонка', 'Монітор', 'Клавіатура', 'Миша'] },
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Apple, Samsung, Sony...' },
-                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'iPhone 14 Pro...' },
-                    { id: 'memory', label: 'Пам\'ять', type: 'text', placeholder: '128 ГБ, 8 ГБ RAM' },
-                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Синій...' },
+                    { id: 'device_type', label: 'Тип пристрою', type: 'select', options: ['Смартфон', 'Ноутбук', 'Планшет', 'Телевізор', 'Навушники', 'Камера', 'Смарт-годинник', 'Колонка', 'Монітор', 'Клавіатура', 'Миша'] },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['Apple', 'Samsung', 'Xiaomi', 'Google', 'Huawei', 'OnePlus', 'Sony', 'LG', 'Asus', 'Acer', 'Lenovo', 'Dell', 'HP', 'MSI', 'Logitech', 'Razer', 'HyperX', 'Інше'] },
+                    { id: 'model', label: 'Модель', type: 'select', options: ['iPhone 14 Pro Max', 'iPhone 14 Pro', 'Galaxy S24 Ultra', 'MacBook Air M2', 'iPad Pro 12.9', 'AirPods Pro 2', 'WH-1000XM5', 'Інше'] },
+                    { id: 'memory', label: 'Пам\'ять', type: 'select', options: ['32 ГБ', '64 ГБ', '128 ГБ', '256 ГБ', '512 ГБ', '1 ТБ', '2 ТБ'] },
+                    { id: 'color', label: 'Колір', type: 'select', options: ['Чорний', 'Білий', 'Сірий', 'Синій', 'Червоний', 'Зелений', 'Жовтий', 'Рожевий', 'Фіолетовий', 'Золотий', 'Срібний'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Як новий', 'Б/В'] }
                 ] },
-            'clothing': { name: 'Одяг', icon: 'fa-tshirt', placeholder: 'Введіть назву одягу',
+            'clothing': { name: 'Одяг', icon: 'fa-tshirt',
                 fields: [
                     { id: 'clothing_type', label: 'Тип одягу', type: 'select', options: ['Футболка', 'Світшот', 'Джинси', 'Штани', 'Сукня', 'Спідниця', 'Піджак', 'Пальто', 'Куртка', 'Шапка', 'Шарф', 'Рукавички', 'Спортивний костюм', 'Піжама'] },
                     { id: 'gender', label: 'Стать', type: 'select', options: ['Чоловічий', 'Жіночий', 'Дитячий', 'Унісекс'] },
                     { id: 'size', label: 'Розмір', type: 'select', options: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'] },
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike, Adidas...' },
-                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Чорний, Білий...' },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['Nike', 'Adidas', 'Puma', 'Reebok', 'Zara', 'H&M', 'Levi\'s', 'Wrangler', 'Lee', 'Diesel', 'The North Face', 'Columbia', 'Patagonia', 'Champion', 'Carhartt', 'Uniqlo', 'Інше'] },
+                    { id: 'color', label: 'Колір', type: 'select', options: ['Чорний', 'Білий', 'Сірий', 'Синій', 'Червоний', 'Зелений', 'Жовтий', 'Рожевий', 'Фіолетовий', 'Коричневий', 'Бежевий'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий з биркою', 'Новий', 'Б/В'] }
                 ] },
-            'furniture': { name: 'Меблі', icon: 'fa-couch', placeholder: 'Введіть назву меблів',
+            'furniture': { name: 'Меблі', icon: 'fa-couch',
                 fields: [
                     { id: 'furniture_type', label: 'Тип меблів', type: 'select', options: ['Диван', 'Крісло', 'Стіл', 'Ліжко', 'Шафа', 'Комод', 'Тумба', 'Стелаж', 'Кухонний гарнітур', 'Офісне крісло', 'Стільці', 'Пуф', 'Журнальний столик', 'Вішалка', 'Дзеркало'] },
-                    { id: 'material', label: 'Матеріал', type: 'text', placeholder: 'Дерево, Шкіра...' },
-                    { id: 'color', label: 'Колір', type: 'text', placeholder: 'Коричневий...' },
-                    { id: 'dimensions', label: 'Розміри', type: 'text', placeholder: '200x80x90 см' },
+                    { id: 'material', label: 'Матеріал', type: 'select', options: ['Дерево', 'МДФ', 'ДСП', 'Метал', 'Скло', 'Шкіра', 'Тканина', 'Пластик'] },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['IKEA', 'JYSK', 'Blume', 'MebelOK', 'Інше'] },
+                    { id: 'color', label: 'Колір', type: 'select', options: ['Білий', 'Чорний', 'Сірий', 'Коричневий', 'Бежевий', 'Синій', 'Зелений'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
                 ] },
-            'jobs': { name: 'Робота', icon: 'fa-briefcase', placeholder: 'Введіть назву вакансії',
+            'jobs': { name: 'Робота', icon: 'fa-briefcase',
                 fields: [
-                    { id: 'company', label: 'Компанія', type: 'text', placeholder: 'Назва компанії' },
-                    { id: 'position', label: 'Посада', type: 'text', placeholder: 'Програміст...' },
-                    { id: 'salary', label: 'Зарплата', type: 'text', placeholder: 'Від 20000 грн' },
+                    { id: 'job_type', label: 'Тип роботи', type: 'select', options: ['IT', 'Маркетинг', 'Продажі', 'Будівництво', 'Транспорт', 'Освіта', 'Медицина', 'Краса', 'Ресторани', 'Інше'] },
+                    { id: 'company', label: 'Компанія', type: 'select', options: ['IT-компанія', 'Приватна', 'Державна', 'Стартап', 'Фріланс', 'Інше'] },
+                    { id: 'salary', label: 'Зарплата', type: 'select', options: ['До 10000', '10000-20000', '20000-30000', '30000-50000', '50000+'] },
                     { id: 'schedule', label: 'Графік', type: 'select', options: ['Повний день', 'Неповний день', 'Віддалено', 'Гнучкий', 'Змінний'] },
                     { id: 'experience', label: 'Досвід', type: 'select', options: ['Без досвіду', '1-2 роки', '3-5 років', '5+ років'] }
                 ] },
-            'services': { name: 'Послуги', icon: 'fa-wrench', placeholder: 'Введіть назву послуги',
+            'services': { name: 'Послуги', icon: 'fa-wrench',
                 fields: [
-                    { id: 'service_type', label: 'Тип послуги', type: 'text', placeholder: 'Ремонт, Прибирання...' },
-                    { id: 'price_type', label: 'Ціна', type: 'text', placeholder: 'За годину...' },
-                    { id: 'duration', label: 'Тривалість', type: 'text', placeholder: '1 година...' },
+                    { id: 'service_type', label: 'Тип послуги', type: 'select', options: ['Ремонт', 'Прибирання', 'Будівництво', 'Краса', 'Репетиторство', 'Перевезення', 'Фото/Відео', 'IT', 'Інше'] },
+                    { id: 'price_type', label: 'Ціна', type: 'select', options: ['За годину', 'За день', 'За послугу', 'Договірна'] },
                     { id: 'certified', label: 'Сертифікація', type: 'select', options: ['Є сертифікат', 'Без сертифікату'] }
                 ] },
-            'realestate': { name: 'Нерухомість', icon: 'fa-building', placeholder: 'Введіть назву об\'єкту',
+            'realestate': { name: 'Нерухомість', icon: 'fa-building',
                 fields: [
                     { id: 'property_type', label: 'Тип', type: 'select', options: ['Квартира', 'Будинок', 'Кімната', 'Офіс', 'Гараж', 'Склад', 'Земельна ділянка'] },
-                    { id: 'rooms', label: 'Кімнат', type: 'number', placeholder: '1, 2, 3...' },
-                    { id: 'area', label: 'Площа (м²)', type: 'number', placeholder: '50' },
-                    { id: 'floor', label: 'Поверх', type: 'number', placeholder: '3' },
+                    { id: 'rooms', label: 'Кімнат', type: 'select', options: ['1', '2', '3', '4', '5+'] },
+                    { id: 'area', label: 'Площа (м²)', type: 'select', options: ['До 30', '30-50', '50-100', '100-200', '200+'] },
+                    { id: 'floor', label: 'Поверх', type: 'select', options: ['1', '2', '3', '4', '5', '6-10', '10+'] },
                     { id: 'heating', label: 'Опалення', type: 'select', options: ['Центральне', 'Автономне', 'Пічне'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Після ремонту', 'Потребує ремонту'] }
                 ] },
-            'transport': { name: 'Транспорт', icon: 'fa-car', placeholder: 'Введіть назву транспорту',
+            'transport': { name: 'Транспорт', icon: 'fa-car',
                 fields: [
                     { id: 'vehicle_type', label: 'Тип', type: 'select', options: ['Легковий', 'Вантажний', 'Мотоцикл', 'Скутер', 'Велосипед', 'Автобус', 'Мікроавтобус', 'Трейлер', 'Спецтехніка'] },
-                    { id: 'brand', label: 'Марка', type: 'text', placeholder: 'Toyota...' },
-                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'Camry...' },
-                    { id: 'year', label: 'Рік випуску', type: 'number', placeholder: '2020' },
-                    { id: 'mileage', label: 'Пробіг (км)', type: 'number', placeholder: '50000' },
+                    { id: 'brand', label: 'Марка', type: 'select', options: ['Toyota', 'BMW', 'Audi', 'Mercedes-Benz', 'Volkswagen', 'Hyundai', 'Kia', 'Nissan', 'Mazda', 'Honda', 'Ford', 'Chevrolet', 'Renault', 'Peugeot', 'Skoda', 'Volvo', 'Lexus', 'Subaru', 'Mitsubishi', 'Suzuki', 'Інше'] },
+                    { id: 'model', label: 'Модель', type: 'select', options: ['Camry', 'Corolla', 'RAV4', 'X5', 'X3', 'Q7', 'Q5', 'Tiguan', 'Passat', 'Golf', 'Tucson', 'Sportage', 'Інше'] },
+                    { id: 'year', label: 'Рік випуску', type: 'select', options: ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010'] },
                     { id: 'fuel', label: 'Паливо', type: 'select', options: ['Бензин', 'Дизель', 'Газ', 'Електро', 'Гібрид'] },
                     { id: 'transmission', label: 'Коробка', type: 'select', options: ['Автомат', 'Механіка', 'Робот', 'Варіатор'] }
                 ] },
-            'animals': { name: 'Тварини', icon: 'fa-paw', placeholder: 'Введіть назву тварини',
+            'animals': { name: 'Тварини', icon: 'fa-paw',
                 fields: [
                     { id: 'animal_type', label: 'Тип', type: 'select', options: ['Собака', 'Кіт', 'Птах', 'Гризун', 'Риба', 'Рептилія', 'Хорек', 'Кролик'] },
-                    { id: 'breed', label: 'Порода', type: 'text', placeholder: 'Німецька вівчарка...' },
-                    { id: 'age', label: 'Вік', type: 'text', placeholder: '2 роки...' },
+                    { id: 'breed', label: 'Порода', type: 'select', options: ['Німецька вівчарка', 'Лабрадор', 'Хаскі', 'Британська', 'Шотландська', 'Персидська', 'Інше'] },
+                    { id: 'age', label: 'Вік', type: 'select', options: ['0-3 міс', '3-6 міс', '6-12 міс', '1-3 роки', '3-7 років', '7+ років'] },
                     { id: 'gender', label: 'Стать', type: 'select', options: ['Самець', 'Самка'] },
                     { id: 'vaccinated', label: 'Вакцинація', type: 'select', options: ['Є', 'Немає'] }
                 ] },
-            'kids': { name: 'Дитяче', icon: 'fa-child', placeholder: 'Введіть назву дитячого товару',
+            'kids': { name: 'Дитяче', icon: 'fa-child',
                 fields: [
                     { id: 'kids_type', label: 'Тип', type: 'select', options: ['Одяг', 'Іграшки', 'Візочок', 'Автокрісло', 'Ліжечко', 'Харчування', 'Підгузки', 'Горщик', 'Велосипед', 'Санки', 'Коляска', 'Манеж'] },
-                    { id: 'age_range', label: 'Вік', type: 'text', placeholder: '0-3 міс...' },
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Chicco...' },
+                    { id: 'age_range', label: 'Вік', type: 'select', options: ['0-3 міс', '3-6 міс', '6-12 міс', '1-3 роки', '3-7 років', '7+ років'] },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['Chicco', 'Pampers', 'Huggies', 'Fisher-Price', 'LEGO', 'Інше'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
                 ] },
-            'sport': { name: 'Спорт', icon: 'fa-football-ball', placeholder: 'Введіть назву спортивного товару',
+            'sport': { name: 'Спорт', icon: 'fa-football-ball',
                 fields: [
                     { id: 'sport_type', label: 'Тип', type: 'select', options: ['Футбол', 'Баскетбол', 'Теніс', 'Плавання', 'Фітнес', 'Велоспорт', 'Біг', 'Гірські лижі', 'Ковзани', 'Гольф', 'Бокс', 'Йога'] },
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Nike...' },
-                    { id: 'size', label: 'Розмір', type: 'text', placeholder: 'S, M, L...' },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['Nike', 'Adidas', 'Puma', 'Reebok', 'Under Armour', 'New Balance', 'Asics', 'Інше'] },
+                    { id: 'size', label: 'Розмір', type: 'select', options: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
                 ] },
-            'books': { name: 'Книги', icon: 'fa-book', placeholder: 'Введіть назву книги',
+            'books': { name: 'Книги', icon: 'fa-book',
                 fields: [
                     { id: 'book_type', label: 'Тип', type: 'select', options: ['Художня', 'Наукова', 'Дитяча', 'Підручник', 'Комікс', 'Фентезі', 'Детектив', 'Роман', 'Поезія', 'Історія', 'Філософія', 'Психологія'] },
-                    { id: 'author', label: 'Автор', type: 'text', placeholder: 'Тарас Шевченко...' },
-                    { id: 'language', label: 'Мова', type: 'text', placeholder: 'Українська...' },
+                    { id: 'author', label: 'Автор', type: 'select', options: ['Тарас Шевченко', 'Іван Франко', 'Леся Українка', 'Ліна Костенко', 'Стівен Кінг', 'Джоан Роулінг', 'Інше'] },
+                    { id: 'language', label: 'Мова', type: 'select', options: ['Українська', 'Англійська', 'Російська', 'Польська', 'Німецька'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Нове', 'Б/В'] }
                 ] },
-            'music': { name: 'Музика', icon: 'fa-music', placeholder: 'Введіть назву інструменту',
+            'music': { name: 'Музика', icon: 'fa-music',
                 fields: [
                     { id: 'music_type', label: 'Тип', type: 'select', options: ['Гітара', 'Фортепіано', 'Барабани', 'Скрипка', 'Синтезатор', 'Баян', 'Акордеон', 'Труба', 'Саксофон', 'Флейта', 'Кларнет', 'Віолончель'] },
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Fender...' },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['Fender', 'Yamaha', 'Gibson', 'Roland', 'Korg', 'Casio', 'Інше'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
                 ] },
-            'beauty': { name: 'Краса', icon: 'fa-spa', placeholder: 'Введіть назву товару',
+            'beauty': { name: 'Краса', icon: 'fa-spa',
                 fields: [
                     { id: 'beauty_type', label: 'Тип', type: 'select', options: ['Косметика', 'Парфуми', 'Аксесуари', 'Обладнання', 'Засоби для волосся', 'Засоби для тіла', 'Манікюр', 'Дезодоранти', 'Маски для обличчя'] },
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'L\'Oreal...' },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['L\'Oreal', 'Nivea', 'Garnier', 'Maybelline', 'Dior', 'Chanel', 'Інше'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
                 ] },
-            'photo': { name: 'Фото', icon: 'fa-camera', placeholder: 'Введіть назву фототехніки',
+            'photo': { name: 'Фото', icon: 'fa-camera',
                 fields: [
                     { id: 'photo_type', label: 'Тип', type: 'select', options: ['Камера', 'Об\'єктив', 'Спалах', 'Штатив', 'Аксесуари', 'Світло', 'Фільтри', 'Сумка', 'Карта пам\'яті', 'Дрон'] },
-                    { id: 'brand', label: 'Бренд', type: 'text', placeholder: 'Canon...' },
-                    { id: 'model', label: 'Модель', type: 'text', placeholder: 'EOS R5...' },
+                    { id: 'brand', label: 'Бренд', type: 'select', options: ['Canon', 'Nikon', 'Sony', 'Fujifilm', 'Panasonic', 'Olympus', 'Leica', 'Інше'] },
+                    { id: 'model', label: 'Модель', type: 'select', options: ['EOS R5', 'EOS R6', 'Z6 II', 'Z7 II', 'A7 IV', 'A7S III', 'X-T5', 'Інше'] },
                     { id: 'condition', label: 'Стан', type: 'select', options: ['Новий', 'Б/В'] }
                 ] }
         };
-
-        const CATEGORY_ICONS = {};
-        const CATEGORY_NAMES = {};
-        const CATEGORY_PLACEHOLDERS = {};
-        for (const [key, val] of Object.entries(CATEGORIES_CONFIG)) {
-            CATEGORY_ICONS[key] = val.icon;
-            CATEGORY_NAMES[key] = val.name;
-            CATEGORY_PLACEHOLDERS[key] = val.placeholder;
-        }
-        CATEGORY_ICONS['all'] = 'fa-list';
-        CATEGORY_NAMES['all'] = 'Всі';
-
         // ================================================================
         // ДОПОМОГА
         // ================================================================
@@ -3712,6 +3696,24 @@ function initSupabase() {
         }
         function editUploadAvatar(event) { uploadAvatar(event); }
 
+
+
+
+        const MODELS_BY_TYPE = {
+            'Смартфон': ['iPhone 14 Pro Max', 'iPhone 14 Pro', 'iPhone 14', 'iPhone 13', 'iPhone 12', 'Galaxy S24 Ultra', 'Galaxy S24', 'Galaxy S23', 'Galaxy A54', 'Redmi Note 13 Pro', 'Xiaomi 14', 'Pixel 8 Pro', 'Pixel 8', 'Huawei P60', 'OnePlus 12', 'Інше'],
+            'Ноутбук': ['MacBook Pro 16 M3 Max', 'MacBook Pro 14 M3 Pro', 'MacBook Air 15 M3', 'MacBook Air 13 M2', 'XPS 15', 'XPS 13', 'ThinkPad X1 Carbon', 'IdeaPad 5', 'ZenBook 14', 'ROG Strix G15', 'Aspire 5', 'Nitro 5', 'Katana GF66', 'Modern 14', 'Інше'],
+            'Планшет': ['iPad Pro 12.9 M2', 'iPad Pro 11 M2', 'iPad Air 5', 'iPad 10', 'iPad Mini 6', 'Galaxy Tab S9 Ultra', 'Galaxy Tab S9', 'Galaxy Tab A9+', 'Pad 6 Pro', 'Pad 6', 'Tab P12 Pro', 'Tab M10 Plus', 'Інше'],
+            'Телевізор': ['Samsung QLED 4K', 'Samsung Neo QLED', 'LG OLED C3', 'LG OLED G3', 'Sony Bravia XR', 'Sony Bravia X90L', 'Xiaomi TV Q2', 'Xiaomi TV A2', 'Інше'],
+            'Навушники': ['AirPods Pro 2', 'AirPods 3', 'AirPods Max', 'Galaxy Buds 2 Pro', 'Galaxy Buds FE', 'WH-1000XM5', 'WF-1000XM5', 'QuietComfort Ultra', 'Tune 770NC', 'Redmi Buds 5 Pro', 'Інше'],
+            'Клавіатура': ['Logitech MX Keys', 'Logitech K380', 'Razer BlackWidow', 'HyperX Alloy', 'Apple Magic Keyboard', 'Keychron K2', 'SteelSeries Apex', 'Інше'],
+            'Миша': ['Logitech MX Master 3S', 'Logitech G Pro X', 'Razer DeathAdder', 'HyperX Pulsefire', 'Apple Magic Mouse', 'SteelSeries Rival 3', 'Інше'],
+            'Монітор': ['Dell UltraSharp 27', 'LG UltraGear 27', 'Samsung Odyssey G7', 'Asus ProArt 27', 'Acer Nitro 27', 'BenQ MOBIUZ', 'Інше'],
+            'Колонка': ['JBL Charge 5', 'JBL Flip 6', 'Sony SRS-XB43', 'Bose SoundLink', 'Marshall Emberton', 'Xiaomi Mi Speaker', 'Інше'],
+            'Камера': ['Canon EOS R5', 'Canon EOS R6', 'Nikon Z6 II', 'Sony A7 IV', 'Sony A7S III', 'Fujifilm X-T5', 'Panasonic Lumix GH6', 'Інше'],
+            'Смарт-годинник': ['Apple Watch Ultra 2', 'Apple Watch Series 9', 'Galaxy Watch 6', 'Xiaomi Watch S3', 'Garmin Venu 3', 'Інше']
+        };
+        
+        
         // ================================================================
         // ДОПОМІЖНІ
         // ================================================================
@@ -3723,54 +3725,6 @@ function initSupabase() {
             const l = { 'new': '🆕 Новий', 'used': '🔄 Б/В', 'refurbished': '🔧 Відновлений' };
             return l[c] || c || 'Не вказано';
         }
-
-
-
-        function renderSubcategories(category, subcategory) {
-            const container = document.getElementById('subcategoryContainer');
-            if (!container) return;
-            
-            const subcategories = {
-                'electronics': {
-                    'Смартфон': ['iPhone', 'Samsung Galaxy', 'Xiaomi Redmi', 'Google Pixel', 'Huawei', 'OnePlus'],
-                    'Ноутбук': ['MacBook', 'Windows ноутбук', 'Ігровий ноутбук', 'Ультрабук'],
-                    'Планшет': ['iPad', 'Samsung Galaxy Tab', 'Xiaomi Pad', 'Lenovo Tab'],
-                    'Навушники': ['AirPods', 'Galaxy Buds', 'Sony WH', 'JBL', 'Bose']
-                },
-                'clothing': {
-                    'Футболка': ['Nike', 'Adidas', 'Puma', 'H&M', 'Zara'],
-                    'Джинси': ['Levi\'s', 'Wrangler', 'Lee', 'Diesel'],
-                    'Куртка': ['The North Face', 'Columbia', 'Patagonia', 'Zara']
-                },
-                'transport': {
-                    'Легковий': ['Toyota', 'BMW', 'Audi', 'Mercedes', 'Volkswagen', 'Hyundai', 'Kia'],
-                    'Мотоцикл': ['Yamaha', 'Honda', 'Suzuki', 'Kawasaki', 'BMW'],
-                    'Велосипед': ['Trek', 'Giant', 'Specialized', 'Cannondale']
-                }
-            };
-            
-            if (!subcategories[category]) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            const subs = subcategories[category][subcategory] || [];
-            if (subs.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="form-group">
-                    <label>Підкатегорія</label>
-                    <select id="field_subcategory" class="category-field">
-                        <option value="">Оберіть підкатегорію</option>
-                        ${subs.map(s => `<option value="${s}">${s}</option>`).join('')}
-                    </select>
-                </div>
-            `;
-        }
-
 
         
         function renderCategoryFields(category) {
@@ -3787,19 +3741,22 @@ function initSupabase() {
                 return `<div class="form-group"><label>${f.label}</label><input type="${f.type}" id="field_${f.id}" class="category-field" placeholder="${f.placeholder || ''}" /></div>`;
             }).join('');
             
-            // Додаємо контейнер для підкатегорій
-            const subcategoryContainer = document.createElement('div');
-            subcategoryContainer.id = 'subcategoryContainer';
-            container.appendChild(subcategoryContainer);
-            
-            // Слухаємо зміну першого поля (тип)
-            const firstField = container.querySelector('.category-field');
-            if (firstField) {
-                firstField.addEventListener('change', function() {
-                    renderSubcategories(category, this.value);
-                });
+            // Динамічне оновлення моделей для електроніки
+            if (category === 'electronics') {
+                const deviceTypeField = document.getElementById('field_device_type');
+                const modelField = document.getElementById('field_model');
+                
+                if (deviceTypeField && modelField) {
+                    const updateModels = () => {
+                        const models = MODELS_BY_TYPE[deviceTypeField.value] || [];
+                        modelField.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
+                    };
+                    deviceTypeField.addEventListener('change', updateModels);
+                    updateModels();
+                }
             }
         }
+            
         function resetPhotoForm() {
             selectedPhotos = [];
             const grid = document.getElementById('photoPreviewGrid');
