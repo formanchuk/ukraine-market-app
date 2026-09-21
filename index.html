@@ -3135,6 +3135,10 @@
     </div>
 
     <script>
+
+        let viewerPhotos = [];
+        let viewerIndex = 0;
+        
         // ================================================================
         // SUPABASE CONFIG
         // ================================================================
@@ -4895,7 +4899,13 @@ function initSupabase() {
             'viagra', 'віагра', 'cialis', 'порно', 'sex', 'секс'
         ];
 
+
         
+        function closeAboutModal() {
+    const modal = document.getElementById('aboutModal');
+    if (modal) modal.classList.remove('show');
+}
+
         async function submitListing() {
             if (!currentUser) { navigateTo('auth'); return; }
             
@@ -5862,10 +5872,6 @@ function saveLanguage() {
     if (modal) modal.classList.add('show');
 }
 
-function closeAboutModal() {
-    const modal = document.getElementById('aboutModal');
-    if (modal) modal.classList.remove('show');
-}
 
         async function handleLogout() {
             if (!confirm('Вийти?')) return;
@@ -7918,9 +7924,6 @@ function closeAboutModal() {
         // ================================================================
         // ПЕРЕГЛЯД ФОТО НА ПОВНИЙ ЕКРАН
         // ================================================================
-        
-        let viewerPhotos = [];
-        let viewerIndex = 0;
         
         function openPhotoViewer(photos, index) {
             if (!photos || photos.length === 0) return;
