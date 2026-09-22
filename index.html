@@ -3644,6 +3644,37 @@ function initSupabase() {
             } catch (e) { setLoading(false); showAuthError('Помилка.'); }
         }
 
+
+
+        // ================================================================
+        // FCM TOKEN — збереження токена пристрою
+        // ================================================================
+        async function saveFCMToken(token) {
+            if (!currentUser) {
+                console.log('⏳ Користувач не увійшов, чекаємо...');
+                // Чекаємо, поки користувач увійде
+                setTimeout(() => saveFCMToken(token), 2000);
+                return;
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .update({ fcm_token: token })
+                    .eq('id', currentUser.id);
+                
+                if (error) throw error;
+                console.log('✅ FCM токен збережено:', token.substring(0, 20) + '...');
+            } catch (e) {
+                console.error('❌ Помилка збереження FCM токена:', e);
+            }
+        }
+        
+        // Експорт для виклику з Android
+        window.saveFCMToken = saveFCMToken;
+
+
+        
         // ================================================================
         // ЗАВАНТАЖЕННЯ ДАНИХ (2 етапи)
         // ================================================================
