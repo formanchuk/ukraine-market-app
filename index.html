@@ -3637,7 +3637,9 @@ function initSupabase() {
             if (!email) { showAuthError('Введіть email'); return; }
             setLoading(true);
             try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+                const { error } = await supabase.auth.resetPasswordForEmail(email, { 
+                    redirectTo: 'https://formanchuk.github.io/ukraine-market-app/' 
+                });
                 setLoading(false);
                 if (error) { showAuthError(`Помилка: ${error.message}`); return; }
                 showAuthSuccess(`✅ Лист надіслано на ${email}`);
