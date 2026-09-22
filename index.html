@@ -5119,7 +5119,39 @@ function initSupabase() {
         }
 
 
-        
+                // ================================================================
+        // ВІДПРАВКА ПУШ-СПОВІЩЕННЯ
+        // ================================================================
+        async function sendPushNotification(receiverId, title, body) {
+            try {
+                // Отримуємо FCM-токен отримувача
+                const { data: user, error } = await supabase
+                    .from('users')
+                    .select('fcm_token')
+                    .eq('id', receiverId)
+                    .maybeSingle();
+                
+                if (error) throw error;
+                if (!user?.fcm_token) {
+                    console.log('⚠️ У отримувача немає FCM-токена');
+                    return;
+                }
+                
+                // Відправляємо через Edge Function
+                const { error: pushError } = await supabase.functions.invoke('send-push', {
+                    body: {
+                        token: user.fcm_token,
+                        title: title,
+                        body: body
+                    }
+                });
+                
+                if (pushError) throw pushError;
+                console.log('✅ Сповіщення відправлено');
+            } catch (e) {
+                console.error('❌ Помилка відправки сповіщення:', e);
+            }
+        }
         
         async function sendMessage() {
             const input = document.getElementById('chatInput');
@@ -5183,6 +5215,16 @@ function initSupabase() {
                     chatMessages.push(insertedMsg);
                 }
                 
+                // ============================================================
+                // ВІДПРАВКА ПУШ-СПОВІЩЕННЯ ОТРИМУВАЧУ
+                // ============================================================
+                const chat = chats.find(c => c.id === currentChatId);
+                if (chat) {
+                    const receiverId = chat.buyer_id === currentUser.id ? chat.seller_id : chat.buyer_id;
+                    const senderName = userData.name || 'Користувач';
+                    sendPushNotification(receiverId, senderName, content);
+                }
+                
                 const container = document.getElementById('chatMessages');
                 if (container) {
                     if (!container.querySelector(`[data-id="${insertedMsg.id}"]`)) {
@@ -5205,7 +5247,6 @@ function initSupabase() {
                 if (sendBtn) sendBtn.disabled = false;
             }
         }
-
         async function sendChatPhoto(event) {
             const file = event.target.files[0];
             if (!file || !currentChatId || !currentUser) return;
