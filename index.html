@@ -4223,6 +4223,33 @@ function initSupabase() {
             updateChatBadge();
         }
 
+
+        async function deleteListing(id) {
+            if (!confirm('Видалити оголошення?')) return;
+            
+            const btn = document.querySelector(`button[onclick*="deleteListing('${id}')"]`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+            
+            try {
+                await supabase.from('listings').delete().eq('id', id);
+                alert('🗑 Видалено');
+                dataLoaded = false;
+                await loadAllData();
+                if (currentPage === 'my-listings') renderMyListings();
+            } catch (e) { 
+                alert('❌ ' + e.message); 
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash"></i>';
+                }
+            }
+        }
+
+        
         function renderMyListings() {
             const container = document.getElementById('myListingsContainer');
             if (!container) return;
@@ -5870,14 +5897,24 @@ const imageHtml = newMsg.image_url
         }
 
         async function updateListing(id) {
-            const title = document.getElementById('addTitle').value.trim();
-            const price = document.getElementById('addPrice').value.trim();
-            if (!title || !price) { alert('Заповніть поля'); return; }
-            const category = document.getElementById('addCategory').value;
-            const fields = getCategoryFields(category);
-            const specs = {};
-            fields.forEach(f => { const el = document.getElementById(`field_${f.id}`); if (el) specs[f.label] = el.value; });
+            const publishBtn = document.getElementById('publishBtn');
+            if (publishBtn) {
+                publishBtn.disabled = true;
+                publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Оновлюємо...';
+            }
+            
             try {
+                const category = document.getElementById('addCategory').value;
+                const fields = getCategoryFields(category);
+                const specs = {};
+                fields.forEach(f => { const el = document.getElementById(`field_${f.id}`); if (el) specs[f.label] = el.value; });
+                
+                const title = buildListingTitle(category, specs);
+                const price = document.getElementById('addPrice').value.trim();
+                
+                if (!title) { alert('Введіть назву'); return; }
+                if (!price) { alert('Введіть ціну'); return; }
+                
                 const { error } = await supabase.from('listings').update({
                     title, price: parseFloat(price),
                     city: document.getElementById('addCity').value.trim() || userData.city,
@@ -5894,18 +5931,37 @@ const imageHtml = newMsg.image_url
                 currentDetailId = null;
                 await loadAllData();
                 navigateTo('my-listings');
-            } catch (e) { alert('❌ ' + e.message); }
+            } catch (e) { 
+                alert('❌ ' + e.message); 
+            } finally {
+                if (publishBtn) {
+                    publishBtn.disabled = false;
+                    publishBtn.innerHTML = 'Опублікувати';
+                }
+            }
         }
-
-        async function deleteListing(id) {
-            if (!confirm('Видалити оголошення?')) return;
+            
+            // Знаходимо кнопку
+            const btn = document.querySelector(`button[onclick*="deleteListing('${id}')"]`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+            
             try {
                 await supabase.from('listings').delete().eq('id', id);
                 alert('🗑 Видалено');
                 dataLoaded = false;
                 await loadAllData();
                 if (currentPage === 'my-listings') renderMyListings();
-            } catch (e) { alert('❌ ' + e.message); }
+            } catch (e) { 
+                alert('❌ ' + e.message); 
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash"></i>';
+                }
+            }
         }
         // ================================================================
         // PROFILE / SETTINGS
