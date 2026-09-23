@@ -5941,6 +5941,8 @@ const imageHtml = newMsg.image_url
         }
             
             // Знаходимо кнопку
+            async function deleteListing(id) {
+        if (!confirm('Видалити оголошення?')) return;
             const btn = document.querySelector(`button[onclick*="deleteListing('${id}')"]`);
             if (btn) {
                 btn.disabled = true;
