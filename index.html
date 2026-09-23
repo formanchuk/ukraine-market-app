@@ -4386,34 +4386,31 @@ function initSupabase() {
         // ================================================================
         let androidBackStack = [];
         
-        // Додаємо сторінку в стек при навігації
         function pushToBackStack(page) {
             if (androidBackStack[androidBackStack.length - 1] !== page) {
                 androidBackStack.push(page);
             }
         }
         
-        // Обробка кнопки "Назад" з Android
         function handleAndroidBack() {
             if (androidBackStack.length > 1) {
                 androidBackStack.pop();
                 const previousPage = androidBackStack[androidBackStack.length - 1];
                 navigateTo(previousPage);
-                return true; // Ми обробили
+                return true;
             }
-            return false; // Не обробили — виходимо з додатку
+            return false;
         }
         
-        // Експорт для Android
-        window.handleAndroidBack = handleAndroidBack
-        
-
+        window.handleAndroidBack = handleAndroidBack;
         
         // ================================================================
         // NAVIGATION
         // ================================================================
-        pushToBackStack(page); 
         window.navigateTo = function(page) {
+            // Додаємо в стек для кнопки "Назад"
+            pushToBackStack(page);
+            
             // ============================================================
             // REALTIME: відписуємось при виході з чату
             // ============================================================
