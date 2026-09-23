@@ -5873,7 +5873,6 @@ const imageHtml = newMsg.image_url
             const sel = document.getElementById('addCategory');
             for (let i = 0; i < sel.options.length; i++) if (sel.options[i].value === listing.category) sel.selectedIndex = i;
             renderCategoryFields(listing.category);
-            document.getElementById('addTitle').value = listing.title || '';
             document.getElementById('addPrice').value = listing.price || '';
             document.getElementById('addCity').value = listing.location || '';
             document.getElementById('addPhone').value = listing.phone || '';
